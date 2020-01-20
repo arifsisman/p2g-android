@@ -22,7 +22,6 @@ import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
 
-
     private var spotifyAccessToken: String? = null
     private var spotifyAccessCode: String? = null
     private var mCall: Call? = null
@@ -30,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
         spotify_login_btn.setOnClickListener {
             val request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN)
