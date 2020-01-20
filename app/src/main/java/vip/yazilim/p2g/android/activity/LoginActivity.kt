@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -27,10 +28,20 @@ class LoginActivity : AppCompatActivity() {
     private var spotifyAccessToken: String? = null
     private var mCall: Call? = null
     private val mOkHttpClient = OkHttpClient()
+    private lateinit var prefences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        prefences =
+            getSharedPreferences(SharedPreferencesConstants.SPOTIFY_INFO, Context.MODE_PRIVATE)
+
+        val accessToken = prefences.getString("access_token", null)
+
+        if (accessToken != null) {
+            startMainActivity()
+        }
 
         spotify_login_btn.setOnClickListener {
             val request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN)
@@ -40,7 +51,6 @@ class LoginActivity : AppCompatActivity() {
                 request
             )
         }
-
     }
 
     private fun getAuthenticationRequest(type: AuthenticationResponse.Type): AuthenticationRequest {
@@ -73,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
         mCall!!.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("Status: ", "Failed to fetch data: $e")
+                Toast.makeText(applicationContext, "Failed to login", Toast.LENGTH_SHORT).show()
             }
 
             @Throws(IOException::class)
@@ -84,12 +95,10 @@ class LoginActivity : AppCompatActivity() {
                     saveUserSpotifyInfo(jsonObject)
 
                     // start main activity
-                    val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(myIntent)
+                    startMainActivity()
 
                     finish()
                 } catch (e: JSONException) {
-                    Toast.makeText(applicationContext, "Failed to login", Toast.LENGTH_SHORT).show()
                     Log.d("Status: ", "Failed to parse data: $e")
                 }
             }
@@ -105,7 +114,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onDestroy() {
         cancelCall()
         super.onDestroy()
@@ -117,8 +125,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun startMainActivity() {
+        val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
+        startActivity(myIntent)
+    }
+
     private fun saveUserSpotifyInfo(jsonObject: JSONObject) {
-        val prefences = getSharedPreferences(SharedPreferencesConstants.SPOTIFY_INFO, Context.MODE_PRIVATE)
         val editor = prefences.edit()
 
         val spotifyId = jsonObject.getString("id")

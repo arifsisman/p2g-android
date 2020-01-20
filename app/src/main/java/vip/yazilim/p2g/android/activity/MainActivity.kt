@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.activity
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
@@ -14,6 +15,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var prefences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +37,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val prefences = getSharedPreferences(SharedPreferencesConstants.SPOTIFY_INFO, Context.MODE_PRIVATE)
-        val displayName = prefences.getString("display_name", "UNKNOWN")
+        prefences =
+            getSharedPreferences(SharedPreferencesConstants.SPOTIFY_INFO, Context.MODE_PRIVATE)
+        val displayName = prefences.getString("display_name", null)
 
-        val toast: Toast = Toast . makeText (applicationContext, "Logged in as $displayName", Toast.LENGTH_LONG)
+        val toast: Toast =
+            Toast.makeText(applicationContext, "Logged in as $displayName", Toast.LENGTH_LONG)
 
         toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
