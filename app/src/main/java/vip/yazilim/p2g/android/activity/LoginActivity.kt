@@ -1,8 +1,10 @@
 package vip.yazilim.p2g.android.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
@@ -15,15 +17,14 @@ import okhttp3.Request
 import org.json.JSONException
 import org.json.JSONObject
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
-import vip.yazilim.p2g.android.activity.DetailsActivity
 import java.io.IOException
 
 
 class LoginActivity : AppCompatActivity() {
 
     private var spotifyAccessToken: String? = null
-    private var spotifyAccessCode: String? = null
     private var mCall: Call? = null
     private val mOkHttpClient = OkHttpClient()
 
@@ -78,31 +79,17 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 try {
                     val jsonObject = JSONObject(response.body!!.string())
-                    val spotifyId = jsonObject.getString("id")
-                    Log.d("Spotify Id :", spotifyId)
-                    val spotifyDisplayName = jsonObject.getString("display_name")
-                    Log.d("Spotify Display Name :", spotifyDisplayName)
-                    val spotifyEmail = jsonObject.getString("email")
-                    Log.d("Spotify Email :", spotifyEmail)
-                    val spotifyProfilePic = jsonObject.getJSONArray("images")
-                    //Check if user has Avatar
-                    var spotifyPicURL = ""
-                    if (spotifyProfilePic.length() > 0) {
-                        spotifyPicURL = spotifyProfilePic.getJSONObject(0).getString("url")
-                        Log.d("Spotify Avatar :", spotifyPicURL)
-                    }
-                    val accessToken = spotifyAccessToken
-                    Log.d("Spotify AccessToken :", accessToken ?: "")
 
-                    val myIntent = Intent(this@LoginActivity, DetailsActivity::class.java)
-                    myIntent.putExtra("spotify_id", spotifyId)
-                    myIntent.putExtra("spotify_display_name", spotifyDisplayName)
-                    myIntent.putExtra("spotify_email", spotifyEmail)
-                    myIntent.putExtra("spotify_avatar", spotifyPicURL)
-                    myIntent.putExtra("spotify_access_token", accessToken)
-                    startActivity(myIntent)
                     Log.d("Status: ", "Success get all JSON ${jsonObject.toString(3)}")
+                    saveUserSpotifyInfo(jsonObject)
+
+                    // start main activity
+                    val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(myIntent)
+
+                    finish()
                 } catch (e: JSONException) {
+                    Toast.makeText(applicationContext, "Failed to login", Toast.LENGTH_SHORT).show()
                     Log.d("Status: ", "Failed to parse data: $e")
                 }
             }
@@ -128,6 +115,30 @@ class LoginActivity : AppCompatActivity() {
         if (mCall != null) {
             mCall!!.cancel()
         }
+    }
+
+    private fun saveUserSpotifyInfo(jsonObject: JSONObject) {
+        val prefences = getSharedPreferences(SharedPreferencesConstants.SPOTIFY_INFO, Context.MODE_PRIVATE)
+        val editor = prefences.edit()
+
+        val spotifyId = jsonObject.getString("id")
+        val spotifyEmail = jsonObject.getString("email")
+        val spotifyDisplayName = jsonObject.getString("display_name")
+        val spotifyProfileImage = jsonObject.getJSONArray("images")
+        val spotifyAccessToken = spotifyAccessToken
+        var spotifyImageURL = ""
+        if (spotifyProfileImage.length() > 0) {
+            spotifyImageURL = spotifyProfileImage.getJSONObject(0).getString("url")
+        }
+
+        editor.putString("id", spotifyId)
+        editor.putString("email", spotifyEmail)
+        editor.putString("display_name", spotifyDisplayName)
+        editor.putString("id", spotifyId)
+        editor.putString("images", spotifyImageURL)
+        editor.putString("access_token", spotifyAccessToken)
+
+        editor.apply()
     }
 
 }
