@@ -11,6 +11,6 @@ object SpotifyConstants {
     val CLIENT_ID = "76f07bcdc1054c32884054e43a135480"
     val AUTH_TOKEN_REQUEST_CODE = 0x10
     val AUTH_CODE_REQUEST_CODE = 0x11
-    val REDIRECT_URI = "play2gether://callback"
+    val REDIRECT_URI = "play2gether://"
 
 }

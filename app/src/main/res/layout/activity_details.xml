@@ -6,7 +6,7 @@
     android:layout_centerInParent="true"
     android:background="@color/colorPrimary"
     android:gravity="center"
-    tools:context=".DetailsActivity">
+    tools:context=".activity.DetailsActivity">
 
 
     <LinearLayout

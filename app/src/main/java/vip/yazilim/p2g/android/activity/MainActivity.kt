@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android
+package vip.yazilim.p2g.android.activity
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import vip.yazilim.p2g.android.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +22,9 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home,
+                R.id.navigation_dashboard,
+                R.id.navigation_notifications
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

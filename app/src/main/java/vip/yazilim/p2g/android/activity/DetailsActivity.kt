@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.details
+package vip.yazilim.p2g.android.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

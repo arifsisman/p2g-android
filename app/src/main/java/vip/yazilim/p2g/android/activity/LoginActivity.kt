@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.login
+package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,7 +16,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.SpotifyConstants
-import vip.yazilim.p2g.android.ui.details.DetailsActivity
+import vip.yazilim.p2g.android.activity.DetailsActivity
 import java.io.IOException
 
 
