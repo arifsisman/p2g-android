@@ -1,129 +1,134 @@
 package vip.yazilim.p2g.android.ui.login
 
-import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
-import androidx.annotation.StringRes
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
-
+import com.spotify.sdk.android.authentication.AuthenticationClient
+import com.spotify.sdk.android.authentication.AuthenticationRequest
+import com.spotify.sdk.android.authentication.AuthenticationResponse
+import kotlinx.android.synthetic.main.activity_login.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONException
+import org.json.JSONObject
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.SpotifyConstants
+import vip.yazilim.p2g.android.ui.details.DetailsActivity
+import java.io.IOException
+
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
+
+    private var spotifyAccessToken: String? = null
+    private var spotifyAccessCode: String? = null
+    private var mCall: Call? = null
+    private val mOkHttpClient = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        setContentView(R.layout.activity_login)
-
-        val username = findViewById<EditText>(R.id.username)
-        val password = findViewById<EditText>(R.id.password)
-        val login = findViewById<Button>(R.id.login)
-        val loading = findViewById<ProgressBar>(R.id.loading)
-
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
-
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
-
-            // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
-
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
-            }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        })
-
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
-
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
-        })
-
-        username.afterTextChanged {
-            loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
+        spotify_login_btn.setOnClickListener {
+            val request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN)
+            AuthenticationClient.openLoginActivity(
+                this,
+                SpotifyConstants.AUTH_TOKEN_REQUEST_CODE,
+                request
             )
         }
 
-        password.apply {
-            afterTextChanged {
-                loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
-                )
+    }
+
+    private fun getAuthenticationRequest(type: AuthenticationResponse.Type): AuthenticationRequest {
+        return AuthenticationRequest.Builder(
+            SpotifyConstants.CLIENT_ID,
+            type,
+            SpotifyConstants.REDIRECT_URI
+        )
+            .setShowDialog(false)
+            .setScopes(SpotifyConstants.SCOPE)
+            .build()
+    }
+
+
+    private fun fetchSpotifyUserProfile() {
+        Log.d("Status: ", "Please Wait...")
+        if (spotifyAccessToken == null) {
+            Log.i("Status: ", "Something went wrong - No Access Token found")
+            return
+        }
+
+        val request = Request.Builder()
+            .url("https://api.spotify.com/v1/me")
+            .addHeader("Authorization", "Bearer " + spotifyAccessToken!!)
+            .build()
+
+        cancelCall()
+        mCall = mOkHttpClient.newCall(request)
+
+        mCall!!.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("Status: ", "Failed to fetch data: $e")
             }
 
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: okhttp3.Response) {
+                try {
+                    val jsonObject = JSONObject(response.body!!.string())
+                    val spotifyId = jsonObject.getString("id")
+                    Log.d("Spotify Id :", spotifyId)
+                    val spotifyDisplayName = jsonObject.getString("display_name")
+                    Log.d("Spotify Display Name :", spotifyDisplayName)
+                    val spotifyEmail = jsonObject.getString("email")
+                    Log.d("Spotify Email :", spotifyEmail)
+                    val spotifyProfilePic = jsonObject.getJSONArray("images")
+                    //Check if user has Avatar
+                    var spotifyPicURL = ""
+                    if (spotifyProfilePic.length() > 0) {
+                        spotifyPicURL = spotifyProfilePic.getJSONObject(0).getString("url")
+                        Log.d("Spotify Avatar :", spotifyPicURL)
+                    }
+                    val accessToken = spotifyAccessToken
+                    Log.d("Spotify AccessToken :", accessToken ?: "")
+
+                    val myIntent = Intent(this@LoginActivity, DetailsActivity::class.java)
+                    myIntent.putExtra("spotify_id", spotifyId)
+                    myIntent.putExtra("spotify_display_name", spotifyDisplayName)
+                    myIntent.putExtra("spotify_email", spotifyEmail)
+                    myIntent.putExtra("spotify_avatar", spotifyPicURL)
+                    myIntent.putExtra("spotify_access_token", accessToken)
+                    startActivity(myIntent)
+                    Log.d("Status: ", "Success get all JSON ${jsonObject.toString(3)}")
+                } catch (e: JSONException) {
+                    Log.d("Status: ", "Failed to parse data: $e")
                 }
-                false
             }
+        })
+    }
 
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
-            }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
+            val response = AuthenticationClient.getResponse(resultCode, data)
+            spotifyAccessToken = response.accessToken
+            fetchSpotifyUserProfile()
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-        // TODO : initiate successful logged in experience
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
+
+    override fun onDestroy() {
+        cancelCall()
+        super.onDestroy()
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-    }
-}
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
+    private fun cancelCall() {
+        if (mCall != null) {
+            mCall!!.cancel()
         }
+    }
 
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
 }
