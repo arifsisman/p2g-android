@@ -45,6 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
         spotify_login_btn.setOnClickListener {
             val request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN)
+
             AuthenticationClient.openLoginActivity(
                 this,
                 SpotifyConstants.AUTH_TOKEN_REQUEST_CODE,
