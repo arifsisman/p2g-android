@@ -1,6 +1,6 @@
 package vip.yazilim.p2g.android.dto
 
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -13,7 +13,7 @@ data class User(
     val role: String,
     val onlineStatus: String,
     val countryCode: String,
-    val imageurl: String,
+    val imageUrl: String,
     val anthem: String,
     val spotifyProductType: String,
     val showActivityFlag: String,

@@ -19,7 +19,7 @@ class RetrofitClient {
             httpClient.addInterceptor {
                 it.proceed(
                     it.request().newBuilder().addHeader(
-                        "access_token",
+                        "Authorization",
                         accessToken!!
                     ).build()
                 )
