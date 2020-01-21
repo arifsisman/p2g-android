@@ -13,15 +13,12 @@ import vip.yazilim.p2g.android.constant.ApiConstants
 
 class RetrofitClient {
     companion object {
-        fun getClient(accessToken: String?): Retrofit {
+        fun getClient(accessToken: String): Retrofit {
             val httpClient = OkHttpClient.Builder()
 
             httpClient.addInterceptor {
                 it.proceed(
-                    it.request().newBuilder().addHeader(
-                        "Authorization",
-                        accessToken!!
-                    ).build()
+                    it.request().newBuilder().addHeader("Authorization", "Bearer $accessToken").build()
                 )
             }
 

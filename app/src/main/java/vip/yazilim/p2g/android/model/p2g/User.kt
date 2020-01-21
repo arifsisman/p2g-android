@@ -1,6 +1,4 @@
-package vip.yazilim.p2g.android.dto
-
-import org.threeten.bp.LocalDateTime
+package vip.yazilim.p2g.android.model.p2g
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -18,5 +16,5 @@ data class User(
     val spotifyProductType: String,
     val showActivityFlag: String,
     val showFriendsFlag: String,
-    val creationDate: LocalDateTime
+    val creationDate: String
 )

@@ -2,29 +2,21 @@ package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Response
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.p2g.LoginService
+import vip.yazilim.p2g.android.api.p2g.LoginApi
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
-import vip.yazilim.p2g.android.dto.User
-import vip.yazilim.p2g.android.util.SingletonSharedPref
+import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.network.RetrofitClient
-import java.io.IOException
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -32,23 +24,16 @@ import java.io.IOException
  */
 class LoginActivity : AppCompatActivity() {
 
-    private var spotifyAccessToken: String? = null
     private var mCall: Call? = null
-    private val mOkHttpClient = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidThreeTen.init(this)
-        SingletonSharedPref.init(this, SharedPreferencesConstants.INFO)
+//        AndroidThreeTen.init(this)
+        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
         setContentView(R.layout.activity_login)
 
-        //TODO: open
-//        if (SingletonSharedPref.contains("access_token")!!) {
-//            startMainActivity()
-//        }
-
         spotify_login_btn.setOnClickListener {
-            val request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN)
+            val request = getAuthenticationRequest()
 
             AuthenticationClient.openLoginActivity(
                 this,
@@ -56,12 +41,20 @@ class LoginActivity : AppCompatActivity() {
                 request
             )
         }
+
+        if (SharedPrefSingleton.contains("access_token")!!) {
+            //TODO: open
+//            startMainActivity()
+        } else {
+            spotify_login_btn.performClick()
+        }
+
     }
 
-    private fun getAuthenticationRequest(type: AuthenticationResponse.Type): AuthenticationRequest {
+    private fun getAuthenticationRequest(): AuthenticationRequest {
         return AuthenticationRequest.Builder(
             SpotifyConstants.CLIENT_ID,
-            type,
+            AuthenticationResponse.Type.TOKEN,
             SpotifyConstants.REDIRECT_URI
         )
             .setShowDialog(false)
@@ -69,56 +62,13 @@ class LoginActivity : AppCompatActivity() {
             .build()
     }
 
-
-    private fun fetchSpotifyUserProfile() {
-        Log.d("Status: ", "Please Wait...")
-        if (spotifyAccessToken == null) {
-            Log.i("Status: ", "Something went wrong - No Access Token found")
-            return
-        }
-
-        val request = Request.Builder()
-            .url("https://api.spotify.com/v1/me")
-            .addHeader("Authorization", "Bearer " + spotifyAccessToken!!)
-            .build()
-
-        cancelCall()
-        mCall = mOkHttpClient.newCall(request)
-
-        mCall!!.enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("Status: ", "Failed to fetch data: $e")
-                UIHelper.showToastLong(applicationContext, "Failed to login")
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-                try {
-                    val jsonObject = JSONObject(response.body!!.string())
-
-                    Log.d("Status: ", "Success get all JSON ${jsonObject.toString(3)}")
-                    saveUserSpotifyInfo(jsonObject)
-
-                    // Play2Gether Login
-                    loginToP2G()
-
-                    // start main activity
-                    startMainActivity()
-
-                    finish()
-                } catch (e: JSONException) {
-                    Log.d("Status: ", "Failed to parse data: $e")
-                }
-            }
-        })
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
-            spotifyAccessToken = response.accessToken
-            fetchSpotifyUserProfile()
+            val accessToken = response.accessToken
+            SharedPrefSingleton.write("access_token", accessToken)
+            loginToPlay2Gether(accessToken)
         }
     }
 
@@ -138,43 +88,21 @@ class LoginActivity : AppCompatActivity() {
         startActivity(myIntent)
     }
 
-    private fun saveUserSpotifyInfo(jsonObject: JSONObject) {
-        val spotifyId = jsonObject.getString("id")
-        val spotifyEmail = jsonObject.getString("email")
-        val spotifyDisplayName = jsonObject.getString("display_name")
-        val spotifyProfileImage = jsonObject.getJSONArray("images")
-        val spotifyAccessToken = spotifyAccessToken
-        var spotifyImageURL = ""
-        if (spotifyProfileImage.length() > 0) {
-            spotifyImageURL = spotifyProfileImage.getJSONObject(0).getString("url")
-        }
-
-        SingletonSharedPref.write("id", spotifyId)
-        SingletonSharedPref.write("email", spotifyEmail)
-        SingletonSharedPref.write("display_name", spotifyDisplayName)
-        SingletonSharedPref.write("images", spotifyImageURL)
-        SingletonSharedPref.write("access_token", spotifyAccessToken)
-    }
-
-    private fun loginToP2G() {
-        val accessToken = SingletonSharedPref.read("access_token", null)
-        println("accessToken:$accessToken")
-
-        RetrofitClient.getClient(accessToken)
-            .create(LoginService::class.java)
-            .login()
+    private fun loginToPlay2Gether(accessToken: String) {
+        RetrofitClient.getClient(accessToken).create(LoginApi::class.java).login()
             .enqueue(object : retrofit2.Callback<User> {
 
-                override fun onResponse(
-                    call: retrofit2.Call<User>,
-                    response: Response<User>
-                ) {
-                    val user = response.body()
-                    UIHelper.showToastLong(this@LoginActivity, "Success")
+                override fun onResponse(call: retrofit2.Call<User>, response: Response<User>) {
+                    val user = response.body()!!
+                    SharedPrefSingleton.write("id", user.id)
+                    SharedPrefSingleton.write("email", user.email)
+                    SharedPrefSingleton.write("name", user.name)
+                    SharedPrefSingleton.write("image_url", user.imageUrl)
+                    startMainActivity()
                 }
 
                 override fun onFailure(call: retrofit2.Call<User>?, t: Throwable?) {
-                    UIHelper.showToastLong(this@LoginActivity, "Failure")
+                    UIHelper.showToastLong(this@LoginActivity, "Failed to login")
                 }
             }
 

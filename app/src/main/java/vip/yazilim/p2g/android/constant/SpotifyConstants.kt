@@ -8,7 +8,7 @@ object SpotifyConstants {
 
     const val AUTH_TOKEN_REQUEST_CODE = 0x10
     const val CLIENT_ID = "76f07bcdc1054c32884054e43a135480"
-    const val REDIRECT_URI = "play2gether://"
+    const val REDIRECT_URI = "play2gether://callback"
     val SCOPE = arrayOf(
         "user-modify-playback-state",
         "user-read-email",

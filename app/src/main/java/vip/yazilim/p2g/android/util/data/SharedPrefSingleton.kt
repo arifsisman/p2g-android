@@ -1,11 +1,11 @@
-package vip.yazilim.p2g.android.util
+package vip.yazilim.p2g.android.util.data
 
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 
 
-object SingletonSharedPref {
+object SharedPrefSingleton {
     private var mSharedPref: SharedPreferences? = null
 
     fun init(context: Context, name: String) {
