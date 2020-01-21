@@ -1,11 +1,8 @@
 package vip.yazilim.p2g.android.activity
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.authentication.AuthenticationClient
@@ -24,6 +21,8 @@ import vip.yazilim.p2g.android.api.p2g.LoginService
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.dto.User
+import vip.yazilim.p2g.android.util.SingletonSharedPref
+import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.network.RetrofitClient
 import java.io.IOException
 
@@ -36,18 +35,15 @@ class LoginActivity : AppCompatActivity() {
     private var spotifyAccessToken: String? = null
     private var mCall: Call? = null
     private val mOkHttpClient = OkHttpClient()
-    private lateinit var prefences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidThreeTen.init(this)
+        SingletonSharedPref.init(this, SharedPreferencesConstants.INFO)
         setContentView(R.layout.activity_login)
 
-        prefences =
-            getSharedPreferences(SharedPreferencesConstants.SPOTIFY_INFO, Context.MODE_PRIVATE)
-
         //TODO: open
-//        if (prefences.contains("access_token")) {
+//        if (SingletonSharedPref.contains("access_token")!!) {
 //            startMainActivity()
 //        }
 
@@ -92,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
         mCall!!.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("Status: ", "Failed to fetch data: $e")
-                Toast.makeText(applicationContext, "Failed to login", Toast.LENGTH_SHORT).show()
+                UIHelper.showToastLong(applicationContext, "Failed to login")
             }
 
             @Throws(IOException::class)
@@ -143,8 +139,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun saveUserSpotifyInfo(jsonObject: JSONObject) {
-        val editor = prefences.edit()
-
         val spotifyId = jsonObject.getString("id")
         val spotifyEmail = jsonObject.getString("email")
         val spotifyDisplayName = jsonObject.getString("display_name")
@@ -155,18 +149,15 @@ class LoginActivity : AppCompatActivity() {
             spotifyImageURL = spotifyProfileImage.getJSONObject(0).getString("url")
         }
 
-        editor.putString("id", spotifyId)
-        editor.putString("email", spotifyEmail)
-        editor.putString("display_name", spotifyDisplayName)
-        editor.putString("id", spotifyId)
-        editor.putString("images", spotifyImageURL)
-        editor.putString("access_token", spotifyAccessToken)
-
-        editor.apply()
+        SingletonSharedPref.write("id", spotifyId)
+        SingletonSharedPref.write("email", spotifyEmail)
+        SingletonSharedPref.write("display_name", spotifyDisplayName)
+        SingletonSharedPref.write("images", spotifyImageURL)
+        SingletonSharedPref.write("access_token", spotifyAccessToken)
     }
 
     private fun loginToP2G() {
-        val accessToken = prefences.getString("access_token", null)
+        val accessToken = SingletonSharedPref.read("access_token", null)
         println("accessToken:$accessToken")
 
         RetrofitClient.getClient(accessToken)
@@ -179,15 +170,11 @@ class LoginActivity : AppCompatActivity() {
                     response: Response<User>
                 ) {
                     val user = response.body()
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Succesfuly login to p2g",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    UIHelper.showToastLong(this@LoginActivity, "Success")
                 }
 
                 override fun onFailure(call: retrofit2.Call<User>?, t: Throwable?) {
-                    Toast.makeText(this@LoginActivity, "Failure", Toast.LENGTH_SHORT).show()
+                    UIHelper.showToastLong(this@LoginActivity, "Failure")
                 }
             }
 
