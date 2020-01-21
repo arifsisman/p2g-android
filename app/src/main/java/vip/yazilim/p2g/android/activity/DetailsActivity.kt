@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_details.*
 import vip.yazilim.p2g.android.R
 
-
+/**
+ * @author mustafaarifsisman - 21.01.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
 class DetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

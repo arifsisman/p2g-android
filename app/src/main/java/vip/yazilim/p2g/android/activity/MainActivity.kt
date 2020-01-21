@@ -14,6 +14,10 @@ import androidx.navigation.ui.setupWithNavController
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 
+/**
+ * @author mustafaarifsisman - 21.01.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var prefences: SharedPreferences

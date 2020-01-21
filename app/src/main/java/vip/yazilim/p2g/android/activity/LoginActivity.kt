@@ -22,7 +22,10 @@ import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import java.io.IOException
 
-
+/**
+ * @author mustafaarifsisman - 21.01.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
 class LoginActivity : AppCompatActivity() {
 
     private var spotifyAccessToken: String? = null

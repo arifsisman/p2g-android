@@ -1,5 +1,9 @@
 package vip.yazilim.p2g.android.constant
 
+/**
+ * @author mustafaarifsisman - 21.01.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
 object SpotifyConstants {
 
     const val AUTH_TOKEN_REQUEST_CODE = 0x10
