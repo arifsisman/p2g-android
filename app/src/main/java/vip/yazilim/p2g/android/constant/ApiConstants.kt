@@ -8,6 +8,6 @@ object ApiConstants {
 
     private const val BASE_API_HOST = "142.93.239.61"
     private const val BASE_API_PORT = "8080"
-    const val BASE_API_URL = "http://$BASE_API_HOST:$BASE_API_PORT"
+    const val BASE_API_URL = "http://$BASE_API_HOST:$BASE_API_PORT/api/"
 
 }

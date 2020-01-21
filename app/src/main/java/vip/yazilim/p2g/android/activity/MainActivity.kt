@@ -5,19 +5,14 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import retrofit2.Call
-import retrofit2.Response
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
-import vip.yazilim.p2g.android.dto.Hero
-import vip.yazilim.p2g.android.util.network.HeroesService
-import vip.yazilim.p2g.android.util.network.RetrofitClient
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -56,24 +51,26 @@ class MainActivity : AppCompatActivity() {
         toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
 
-        getHeros()
+//        getHeros()
     }
 
-    private fun getHeros() {
-        RetrofitClient.getClient().create(HeroesService::class.java).getHeroes()
-            .enqueue(object : retrofit2.Callback<List<Hero>> {
+//    private fun getHeros() {
+//        val accessToken = prefences.getString("access_token", null)
+//        RetrofitClient.getClient(accessToken).create(HeroesService::class.java).getHeroes()
+//            .enqueue(object : retrofit2.Callback<List<Hero>> {
+//
+//                override fun onResponse(call: Call<List<Hero>>, response: Response<List<Hero>>) {
+//                    val herolist = ArrayList(response.body()!!)
+//
+//                    Toast.makeText(this@MainActivity, "Succes", Toast.LENGTH_SHORT).show()
+//                }
+//
+//                override fun onFailure(call: Call<List<Hero>>?, t: Throwable?) {
+//                    Toast.makeText(this@MainActivity, "Failure", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//
+//            )
+//    }
 
-                override fun onResponse(call: Call<List<Hero>>, response: Response<List<Hero>>) {
-                    val herolist = ArrayList(response.body()!!)
-
-                    Toast.makeText(this@MainActivity, "Succes", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onFailure(call: Call<List<Hero>>?, t: Throwable?) {
-                    Toast.makeText(this@MainActivity, "Failure", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            )
-    }
 }

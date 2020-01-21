@@ -17,9 +17,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Response
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.p2g.LoginService
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
+import vip.yazilim.p2g.android.dto.User
+import vip.yazilim.p2g.android.util.network.RetrofitClient
 import java.io.IOException
 
 /**
@@ -42,9 +46,10 @@ class LoginActivity : AppCompatActivity() {
 
         val accessToken = prefences.getString("access_token", null)
 
-        if (accessToken != null) {
-            startMainActivity()
-        }
+        //TODO: open
+//        if (accessToken != null) {
+//            startMainActivity()
+//        }
 
         spotify_login_btn.setOnClickListener {
             val request = getAuthenticationRequest(AuthenticationResponse.Type.TOKEN)
@@ -97,6 +102,9 @@ class LoginActivity : AppCompatActivity() {
 
                     Log.d("Status: ", "Success get all JSON ${jsonObject.toString(3)}")
                     saveUserSpotifyInfo(jsonObject)
+
+                    // Play2Gether Login
+                    loginToP2G()
 
                     // start main activity
                     startMainActivity()
@@ -155,6 +163,35 @@ class LoginActivity : AppCompatActivity() {
         editor.putString("access_token", spotifyAccessToken)
 
         editor.apply()
+    }
+
+    private fun loginToP2G() {
+        val accessToken = prefences.getString("access_token", null)
+        println("accessToken:$accessToken")
+
+        RetrofitClient.getClient(accessToken)
+            .create(LoginService::class.java)
+            .login()
+            .enqueue(object : retrofit2.Callback<User> {
+
+                override fun onResponse(
+                    call: retrofit2.Call<User>,
+                    response: Response<User>
+                ) {
+                    val user = response.body()
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Succesfuly login to p2g",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onFailure(call: retrofit2.Call<User>?, t: Throwable?) {
+                    Toast.makeText(this@LoginActivity, "Failure", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            )
     }
 
 }
