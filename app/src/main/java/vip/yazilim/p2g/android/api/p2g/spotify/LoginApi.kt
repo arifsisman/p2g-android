@@ -9,7 +9,7 @@ import vip.yazilim.p2g.android.model.p2g.User
  * @contact mustafaarifsisman@gmail.com
  */
 
-interface AuthorizationApi {
+interface LoginApi {
 
     @GET("spotify/login")
     fun login(): Call<User>

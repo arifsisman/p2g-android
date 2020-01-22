@@ -4,6 +4,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import vip.yazilim.p2g.android.service.spotify.AuthorizationService
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 
 /**
@@ -12,12 +13,13 @@ import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
  */
 class TokenAuthenticator : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (response.code == 401) {
-            println("expired!!! get new access token with refresh token")
-            //TODO: get new access token
-            // TODO: send new access token to p2g
-            SharedPrefSingleton.remove("access_token")
-        }
-        return null
+        val refreshToken = SharedPrefSingleton.read("refresh_token", null)
+        val updatedToken = refreshToken?.let { AuthorizationService.refreshExpiredToken(it) }
+
+        println("TOKEN REFRESHED")
+
+        return response.request.newBuilder()
+            .header("Authorization", "Bearer $updatedToken")
+            .build()
     }
 }

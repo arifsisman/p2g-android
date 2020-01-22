@@ -17,16 +17,17 @@ class RetrofitClient {
         fun getClient(accessToken: String): Retrofit {
             val httpClient = OkHttpClient.Builder()
 
-            httpClient.addInterceptor {
-                it.proceed(
-                    it.request().newBuilder().addHeader(
-                        "Authorization",
-                        "Bearer $accessToken"
-                    ).build()
-                )
-            }
+            httpClient
+                .authenticator(TokenAuthenticator())
 
-            httpClient.authenticator(TokenAuthenticator())
+                .addInterceptor {
+                    it.proceed(
+                        it.request().newBuilder().addHeader(
+                            "Authorization",
+                            "Bearer $accessToken"
+                        ).build()
+                    )
+                }
 
             return Retrofit.Builder()
                 .baseUrl(ApiConstants.BASE_API_URL)

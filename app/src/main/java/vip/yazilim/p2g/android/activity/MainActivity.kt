@@ -38,8 +38,6 @@ class MainActivity : AppCompatActivity() {
 
         val name = SharedPrefSingleton.read("name", null)
         UIHelper.showToastLong(applicationContext, "Logged in as $name")
-
-        UIHelper.showErrorDialog(this, "oldu")
     }
 
 }

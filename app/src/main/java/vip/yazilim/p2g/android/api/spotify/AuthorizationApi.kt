@@ -10,7 +10,9 @@ import vip.yazilim.p2g.android.model.spotify.TokenModel
  * @author mustafaarifsisman - 22.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-interface SpotifyTokenApi {
+interface AuthorizationApi {
+
+//    val encodedHeaders = Base64.getEncoder().encode("$CLIENT_ID:$CLIENT_SECRET".toByteArray())
 
     @FormUrlEncoded
     @POST("api/token")
@@ -24,7 +26,9 @@ interface SpotifyTokenApi {
 
     @FormUrlEncoded
     @POST("api/token")
-    fun refreshToken(
+    fun refreshExpiredToken(
+        @Field("client_id") clientId: String,
+        @Field("client_secret") clientSecret: String,
         @Field("grant_type") grantType: String,
         @Field("refresh_token") refreshToken: String
     ): Call<TokenModel>
