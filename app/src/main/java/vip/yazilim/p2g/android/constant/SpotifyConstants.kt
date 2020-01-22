@@ -18,4 +18,7 @@ object SpotifyConstants {
         "user-read-private"
     )
 
+    const val GRANT_TYPE_REFRESH_TOKEN_REQUEST = "refresh_token"
+    const val GRANT_TYPE_AUTHORIZATION_CODE_REQUEST = "authorization_code"
+
 }

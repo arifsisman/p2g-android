@@ -12,8 +12,6 @@ import vip.yazilim.p2g.android.model.spotify.TokenModel
  */
 interface AuthorizationApi {
 
-//    val encodedHeaders = Base64.getEncoder().encode("$CLIENT_ID:$CLIENT_SECRET".toByteArray())
-
     @FormUrlEncoded
     @POST("api/token")
     fun getTokens(

@@ -16,10 +16,8 @@ class RetrofitClient {
     companion object {
         fun getClient(accessToken: String): Retrofit {
             val httpClient = OkHttpClient.Builder()
-
             httpClient
                 .authenticator(TokenAuthenticator())
-
                 .addInterceptor {
                     it.proceed(
                         it.request().newBuilder().addHeader(

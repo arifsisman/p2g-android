@@ -13,9 +13,9 @@ import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
+import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
-import vip.yazilim.p2g.android.service.spotify.AuthorizationService
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
         } else if (SpotifyConstants.AUTH_CODE_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
             val code = response.code
-            val accessToken = AuthorizationService.getTokensFromSpotify(applicationContext, code)
+            val accessToken = getTokensFromSpotify(code)
             loginToPlay2Gether(accessToken)
         }
 
@@ -78,11 +78,12 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun loginToSpotify() {
-        val request: AuthenticationRequest = AuthenticationRequest.Builder(
-            SpotifyConstants.CLIENT_ID,
-            AuthenticationResponse.Type.CODE,
-            SpotifyConstants.REDIRECT_URI
-        )
+        val request: AuthenticationRequest = AuthenticationRequest
+            .Builder(
+                SpotifyConstants.CLIENT_ID,
+                AuthenticationResponse.Type.CODE,
+                SpotifyConstants.REDIRECT_URI
+            )
             .setShowDialog(false)
             .setScopes(SpotifyConstants.SCOPE)
             .build()
@@ -101,8 +102,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginToPlay2Gether(accessToken: String) {
         RetrofitClient.getClient(accessToken).create(LoginApi::class.java).login()
-            .enqueue{result ->
-                when(result) {
+            .enqueue { result ->
+                when (result) {
                     is Result.Success -> {
                         val user = result.response.body()
                         SharedPrefSingleton.write("id", user?.id)
@@ -111,11 +112,34 @@ class LoginActivity : AppCompatActivity() {
                         SharedPrefSingleton.write("image_url", user?.imageUrl)
                     }
                     is Result.Failure -> {
-                        Log.d("MyAndroidApp", result.error.toString())
+                        Log.d("Play2Gether", result.error.toString())
                         UIHelper.showToastLong(applicationContext, "Failed to login Play2Gether")
                     }
                 }
-
             }
+    }
+
+    private fun getTokensFromSpotify(code: String): String {
+        RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
+            .getTokens(
+                SpotifyConstants.CLIENT_ID,
+                SpotifyConstants.CLIENT_SECRET,
+                SpotifyConstants.GRANT_TYPE_AUTHORIZATION_CODE_REQUEST,
+                code,
+                SpotifyConstants.REDIRECT_URI
+            ).enqueue { result ->
+                when (result) {
+                    is Result.Success -> {
+                    val tokenModel = result.response.body()!!
+                    SharedPrefSingleton.write("access_token", tokenModel.access_token)
+                    SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                    }
+                    is Result.Failure -> {
+                        Log.d("Play2Gether", result.error.toString())
+                        UIHelper.showToastLong(applicationContext, "Failed to login Spotify")
+                    }
+                }
+            }
+        return SharedPrefSingleton.read("access_token", null).toString()
     }
 }
