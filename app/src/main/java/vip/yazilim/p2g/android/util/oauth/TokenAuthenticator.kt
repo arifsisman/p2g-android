@@ -16,7 +16,8 @@ class TokenAuthenticator : Authenticator {
         val refreshToken = SharedPrefSingleton.read("refresh_token", null)
         val updatedToken = refreshToken?.let { AuthorizationService.refreshExpiredToken(it) }
 
-        println("TOKEN REFRESHED")
+        println("Token refreshed")
+        SharedPrefSingleton.write("access_token", updatedToken)
 
         return response.request.newBuilder()
             .header("Authorization", "Bearer $updatedToken")

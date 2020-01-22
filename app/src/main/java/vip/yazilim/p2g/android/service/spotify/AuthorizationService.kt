@@ -15,7 +15,7 @@ import vip.yazilim.p2g.android.util.rest.RetrofitClient
  * @contact mustafaarifsisman@gmail.com
  */
 object AuthorizationService {
-    fun getTokensFromSpotify(context: Context, code: String) {
+    fun getTokensFromSpotify(context: Context, code: String):String {
         RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
             .getTokens(
                 SpotifyConstants.CLIENT_ID,
@@ -46,6 +46,8 @@ object AuthorizationService {
             }
 
             )
+
+        return SharedPrefSingleton.read("access_token", null).toString()
     }
 
     fun refreshExpiredToken(refreshToken: String):String {
