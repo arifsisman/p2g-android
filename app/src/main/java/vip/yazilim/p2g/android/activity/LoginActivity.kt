@@ -16,6 +16,7 @@ import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
 import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
+import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
@@ -60,8 +61,6 @@ class LoginActivity : AppCompatActivity() {
             val accessToken = getTokensFromSpotify(code)
             loginToPlay2Gether(accessToken)
         }
-
-        startMainActivity()
     }
 
 
@@ -95,8 +94,9 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
-    private fun startMainActivity() {
+    private fun startMainActivity(user: User?) {
         val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
+        myIntent.putExtra("user", user)
         startActivity(myIntent)
     }
 
@@ -110,6 +110,9 @@ class LoginActivity : AppCompatActivity() {
                         SharedPrefSingleton.write("email", user?.email)
                         SharedPrefSingleton.write("name", user?.name)
                         SharedPrefSingleton.write("image_url", user?.imageUrl)
+                        SharedPrefSingleton.write("creation_date", user?.creationDate?.time)
+
+                        startMainActivity(user)
                     }
                     is Result.Failure -> {
                         Log.d("Play2Gether", result.error.toString())
@@ -130,9 +133,9 @@ class LoginActivity : AppCompatActivity() {
             ).enqueue { result ->
                 when (result) {
                     is Result.Success -> {
-                    val tokenModel = result.response.body()!!
-                    SharedPrefSingleton.write("access_token", tokenModel.access_token)
-                    SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                        val tokenModel = result.response.body()!!
+                        SharedPrefSingleton.write("access_token", tokenModel.access_token)
+                        SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
                     }
                     is Result.Failure -> {
                         Log.d("Play2Gether", result.error.toString())

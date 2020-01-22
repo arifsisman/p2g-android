@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
-import vip.yazilim.p2g.android.model.spotify.TokenModel
+import vip.yazilim.p2g.android.data.spotify.TokenModel
 
 /**
  * @author mustafaarifsisman - 22.01.2020

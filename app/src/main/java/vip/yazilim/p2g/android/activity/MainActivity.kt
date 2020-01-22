@@ -9,7 +9,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 /**
@@ -36,8 +36,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val name = SharedPrefSingleton.read("name", null)
-        UIHelper.showToastLong(applicationContext, "Logged in as $name")
+        val user = intent.getSerializableExtra("user") as? User
+
+        UIHelper.showToastLong(applicationContext, "Logged in as ${user?.name}")
+        UIHelper.showToastLong(applicationContext, "Creation date ${user?.creationDate}")
     }
 
 }

@@ -1,4 +1,7 @@
-package vip.yazilim.p2g.android.model.p2g
+package vip.yazilim.p2g.android.data.p2g
+
+import java.io.Serializable
+import java.util.*
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -16,5 +19,5 @@ data class User(
     val spotifyProductType: String,
     val showActivityFlag: String,
     val showFriendsFlag: String,
-    val creationDate: String
-)
+    val creationDate: Date
+) : Serializable

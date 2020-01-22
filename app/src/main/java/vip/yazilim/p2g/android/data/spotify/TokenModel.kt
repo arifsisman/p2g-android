@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.model.spotify
+package vip.yazilim.p2g.android.data.spotify
 
 /**
  * @author mustafaarifsisman - 22.01.2020

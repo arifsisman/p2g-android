@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.util.refrofit
 
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,6 +16,8 @@ import vip.yazilim.p2g.android.util.oauth.TokenAuthenticator
 class RetrofitClient {
     companion object {
         fun getClient(accessToken: String): Retrofit {
+            val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
+
             val httpClient = OkHttpClient.Builder()
             httpClient
                 .authenticator(TokenAuthenticator())
@@ -29,7 +32,7 @@ class RetrofitClient {
 
             return Retrofit.Builder()
                 .baseUrl(ApiConstants.BASE_API_URL)
-                .addConverterFactory(GsonConverterFactory.create()).client(httpClient.build())
+                .addConverterFactory(GsonConverterFactory.create(gson)).client(httpClient.build())
                 .build()
         }
 

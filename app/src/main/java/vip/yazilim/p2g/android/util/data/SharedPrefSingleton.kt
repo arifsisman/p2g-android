@@ -42,6 +42,11 @@ object SharedPrefSingleton {
         prefsEditor.putInt(key, value!!).apply()
     }
 
+    fun write(key: String, value: Long?) {
+        val prefsEditor = mSharedPref!!.edit()
+        prefsEditor.putLong(key, value!!).apply()
+    }
+
     fun contains(key: String): Boolean? {
         return mSharedPref?.contains(key)
     }
@@ -51,4 +56,5 @@ object SharedPrefSingleton {
         prefsEditor.remove(key)
         prefsEditor.apply()
     }
+
 }
