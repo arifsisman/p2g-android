@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.rest
+package vip.yazilim.p2g.android.util.refrofit
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

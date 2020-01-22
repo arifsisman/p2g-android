@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -11,11 +12,15 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
-import vip.yazilim.p2g.android.service.p2g.LoginService.loginToPlay2Gether
 import vip.yazilim.p2g.android.service.spotify.AuthorizationService
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.refrofit.Result
+import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
+import vip.yazilim.p2g.android.util.refrofit.enqueue
 
 
 /**
@@ -48,12 +53,12 @@ class LoginActivity : AppCompatActivity() {
             val response = AuthenticationClient.getResponse(resultCode, data)
             val accessToken = response.accessToken
             SharedPrefSingleton.write("access_token", accessToken)
-            loginToPlay2Gether(applicationContext, accessToken)
+            loginToPlay2Gether(accessToken)
         } else if (SpotifyConstants.AUTH_CODE_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
             val code = response.code
             val accessToken = AuthorizationService.getTokensFromSpotify(applicationContext, code)
-            loginToPlay2Gether(applicationContext, accessToken)
+            loginToPlay2Gether(accessToken)
         }
 
         startMainActivity()
@@ -94,4 +99,23 @@ class LoginActivity : AppCompatActivity() {
         startActivity(myIntent)
     }
 
+    private fun loginToPlay2Gether(accessToken: String) {
+        RetrofitClient.getClient(accessToken).create(LoginApi::class.java).login()
+            .enqueue{result ->
+                when(result) {
+                    is Result.Success -> {
+                        val user = result.response.body()
+                        SharedPrefSingleton.write("id", user?.id)
+                        SharedPrefSingleton.write("email", user?.email)
+                        SharedPrefSingleton.write("name", user?.name)
+                        SharedPrefSingleton.write("image_url", user?.imageUrl)
+                    }
+                    is Result.Failure -> {
+                        Log.d("MyAndroidApp", result.error.toString())
+                        UIHelper.showToastLong(applicationContext, "Failed to login Play2Gether")
+                    }
+                }
+
+            }
+    }
 }
