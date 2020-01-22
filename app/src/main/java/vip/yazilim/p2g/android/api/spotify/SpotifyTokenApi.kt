@@ -4,13 +4,13 @@ import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
-import vip.yazilim.p2g.android.model.spotify.TokenResponse
+import vip.yazilim.p2g.android.model.spotify.TokenModel
 
 /**
  * @author mustafaarifsisman - 22.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-interface SpotifyApi {
+interface SpotifyTokenApi {
 
     @FormUrlEncoded
     @POST("api/token")
@@ -20,6 +20,13 @@ interface SpotifyApi {
         @Field("grant_type") grantType: String,
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String
-    ): Call<TokenResponse>
+    ): Call<TokenModel>
+
+    @FormUrlEncoded
+    @POST("api/token")
+    fun refreshToken(
+        @Field("grant_type") grantType: String,
+        @Field("refresh_token") refreshToken: String
+    ): Call<TokenModel>
 
 }

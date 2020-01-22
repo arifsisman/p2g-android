@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.util.helper
 
+import android.app.AlertDialog
 import android.content.Context
 import android.view.Gravity
 import android.widget.Toast
@@ -22,6 +23,18 @@ object UIHelper{
 
         toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
+    }
+
+    fun showErrorDialog(context: Context, message: String){
+        val dialogBuilder = AlertDialog.Builder(context)
+
+        dialogBuilder.setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.cancel()
+            }
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("Error")
+        alert.show()
     }
 
 }
