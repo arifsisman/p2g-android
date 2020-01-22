@@ -45,4 +45,10 @@ object SharedPrefSingleton {
     fun contains(key: String): Boolean? {
         return mSharedPref?.contains(key)
     }
+
+    fun remove(key: String?) {
+        val prefsEditor = mSharedPref!!.edit()
+        prefsEditor.remove(key)
+        prefsEditor.apply()
+    }
 }

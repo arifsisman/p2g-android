@@ -1,9 +1,10 @@
-package vip.yazilim.p2g.android.util.network
+package vip.yazilim.p2g.android.util.rest
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import vip.yazilim.p2g.android.constant.ApiConstants
+import vip.yazilim.p2g.android.util.oauth.TokenAuthenticator
 
 
 /**
@@ -18,12 +19,25 @@ class RetrofitClient {
 
             httpClient.addInterceptor {
                 it.proceed(
-                    it.request().newBuilder().addHeader("Authorization", "Bearer $accessToken").build()
+                    it.request().newBuilder().addHeader(
+                        "Authorization",
+                        "Bearer $accessToken"
+                    ).build()
                 )
             }
 
+            httpClient.authenticator(TokenAuthenticator())
+
             return Retrofit.Builder()
                 .baseUrl(ApiConstants.BASE_API_URL)
+                .addConverterFactory(GsonConverterFactory.create()).client(httpClient.build())
+                .build()
+        }
+
+        fun getSpotifyClient(): Retrofit {
+            val httpClient = OkHttpClient.Builder()
+            return Retrofit.Builder()
+                .baseUrl(ApiConstants.SPOTIFY_BASE_API_URL)
                 .addConverterFactory(GsonConverterFactory.create()).client(httpClient.build())
                 .build()
         }
