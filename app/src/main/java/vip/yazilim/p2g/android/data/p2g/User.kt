@@ -15,7 +15,7 @@ data class User(
     var onlineStatus: String,
     var countryCode: String,
     var imageUrl: String,
-    var anthem: String,
+    var anthem: String?,
     var spotifyProductType: String,
     var showActivityFlag: Boolean,
     var showFriendsFlag: Boolean,

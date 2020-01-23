@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.widget.Toast
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import vip.yazilim.p2g.android.data.p2g.User
@@ -13,7 +12,7 @@ import vip.yazilim.p2g.android.data.p2g.User
  * @author mustafaarifsisman - 23.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class DBHelper(val context: Context) :
+class DBHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     private val TABLE_NAME = "User"
     private val COL_ID = "id"
@@ -62,6 +61,7 @@ class DBHelper(val context: Context) :
         contentValues.put(COL_ID, user.id)
         contentValues.put(COL_NAME, user.name)
         contentValues.put(COL_EMAIL, user.email)
+        contentValues.put(COL_ROLE, user.role)
         contentValues.put(COL_ONLINE_STATUS, user.onlineStatus)
         contentValues.put(COL_COUNTRY_CODE, user.countryCode)
         contentValues.put(COL_IMAGE_URL, user.imageUrl)
@@ -71,14 +71,7 @@ class DBHelper(val context: Context) :
         contentValues.put(COL_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
         contentValues.put(COL_CREATION_DATE, user.creationDate.format(formatter))
 
-        val result = sqliteDB.insert(TABLE_NAME, null, contentValues)
-
-        //todo: delete
-        Toast.makeText(
-            context,
-            if (result != -1L) "Insert successful" else "Insert failed",
-            Toast.LENGTH_SHORT
-        ).show()
+        sqliteDB.insert(TABLE_NAME, null, contentValues)
     }
 
     fun readData(): MutableList<User> {

@@ -33,7 +33,7 @@ import vip.yazilim.p2g.android.util.refrofit.enqueue
 class LoginActivity : AppCompatActivity() {
 
     private var mCall: Call? = null
-    val db by lazy { DBHelper(this) }
+    private val db by lazy { DBHelper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +128,8 @@ class LoginActivity : AppCompatActivity() {
 
                             if (user != null) {
                                 db.insertData(user)
+                                UIHelper.showToastLong(applicationContext, "Logged in as ${user.name}")
+//                                UIHelper.showToastLong(applicationContext, "Creation date ${user.creationDate}")
                             }
 
                             startMainActivity(user, tokenModel)
