@@ -20,30 +20,19 @@ import vip.yazilim.p2g.android.util.helper.UIHelper
  */
 class MainActivity : AppCompatActivity() {
 
-    private val db by lazy { DBHelper(this) }
+    val db by lazy { DBHelper(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        if (SharedPrefSingleton.read("name", null) == null) {
-//            val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
-//            startActivity(loginIntent)
-//        }
-
-        try {
-            if (db.readData()[0].id != "") {
-                val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
-                startActivity(loginIntent)
-            } else {
-                val user = intent.getSerializableExtra("user") as? User
-
-                UIHelper.showToastLong(applicationContext, "Logged in as ${user?.name}")
-                UIHelper.showToastLong(applicationContext, "Creation date ${user?.creationDate}")
-            }
-        } catch (e: Exception) {
+        db.readData().ifEmpty {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(loginIntent)
         }
+
+        val user = intent.getSerializableExtra("user") as? User
+        UIHelper.showToastLong(applicationContext, "Logged in as ${user?.name}")
+        UIHelper.showToastLong(applicationContext, "Creation date ${user?.creationDate}")
 
         val navView: BottomNavigationView = nav_view
         val navController = nav_host_fragment.findNavController()

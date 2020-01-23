@@ -19,6 +19,7 @@ import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.util.helper.DBHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
 import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
@@ -32,6 +33,7 @@ import vip.yazilim.p2g.android.util.refrofit.enqueue
 class LoginActivity : AppCompatActivity() {
 
     private var mCall: Call? = null
+    val db by lazy { DBHelper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,10 +124,12 @@ class LoginActivity : AppCompatActivity() {
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
-//                            val responseRawString = result.response.toString()
-//                            val user = GsonHelper.gsonWithLocalDateTimeFormatter()
-//                                .fromJson<User>(responseRawString, User::class.java)
                             val user = result.response.body()
+
+                            if (user != null) {
+                                db.insertData(user)
+                            }
+
                             startMainActivity(user, tokenModel)
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()
