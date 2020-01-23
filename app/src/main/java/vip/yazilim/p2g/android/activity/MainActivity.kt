@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
@@ -10,6 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.data.p2g.User
+import vip.yazilim.p2g.android.util.helper.DBHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 /**
@@ -18,9 +20,30 @@ import vip.yazilim.p2g.android.util.helper.UIHelper
  */
 class MainActivity : AppCompatActivity() {
 
+    private val db by lazy { DBHelper(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+//        if (SharedPrefSingleton.read("name", null) == null) {
+//            val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
+//            startActivity(loginIntent)
+//        }
+
+        try {
+            if (db.readData()[0].id != "") {
+                val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(loginIntent)
+            } else {
+                val user = intent.getSerializableExtra("user") as? User
+
+                UIHelper.showToastLong(applicationContext, "Logged in as ${user?.name}")
+                UIHelper.showToastLong(applicationContext, "Creation date ${user?.creationDate}")
+            }
+        } catch (e: Exception) {
+            val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(loginIntent)
+        }
 
         val navView: BottomNavigationView = nav_view
         val navController = nav_host_fragment.findNavController()
@@ -35,11 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        val user = intent.getSerializableExtra("user") as? User
-
-        UIHelper.showToastLong(applicationContext, "Logged in as ${user?.name}")
-        UIHelper.showToastLong(applicationContext, "Creation date ${user?.creationDate}")
     }
 
 }

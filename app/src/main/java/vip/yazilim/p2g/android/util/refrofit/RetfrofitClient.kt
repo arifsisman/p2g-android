@@ -16,7 +16,7 @@ import vip.yazilim.p2g.android.util.oauth.TokenAuthenticator
 class RetrofitClient {
     companion object {
         fun getClient(accessToken: String): Retrofit {
-            val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
+            val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").create()
 
             val httpClient = OkHttpClient.Builder()
             httpClient

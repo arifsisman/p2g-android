@@ -7,7 +7,7 @@ import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
  * @contact mustafaarifsisman@gmail.com
  */
 object TokenHelper {
-    fun getAccessToken(): String? {
+    fun getAccessTokenFromSharedPref(): String? {
         return SharedPrefSingleton.read(
             "access_token",
             null

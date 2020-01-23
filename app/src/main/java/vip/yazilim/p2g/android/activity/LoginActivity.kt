@@ -39,14 +39,9 @@ class LoginActivity : AppCompatActivity() {
         Logger.addLogAdapter(AndroidLogAdapter())
         setContentView(R.layout.activity_login)
 
-        if (SharedPrefSingleton.contains("access_token")!!) {
-//            startMainActivity()
-        }
-
         spotify_login_btn.setOnClickListener {
             getAuthorizationCodeFromSpotify()
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -90,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // getTokensFromSpotify via Spotify Web API
-    private fun getTokensFromSpotify(code: String){
+    private fun getTokensFromSpotify(code: String) {
         RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
             .getTokens(
                 SpotifyConstants.CLIENT_ID,
@@ -127,6 +122,9 @@ class LoginActivity : AppCompatActivity() {
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
+//                            val responseRawString = result.response.toString()
+//                            val user = GsonHelper.gsonWithLocalDateTimeFormatter()
+//                                .fromJson<User>(responseRawString, User::class.java)
                             val user = result.response.body()
                             startMainActivity(user, tokenModel)
                         } else {
@@ -144,10 +142,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity(user: User?, tokenModel: TokenModel) {
-        val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
-        myIntent.putExtra("user", user)
-        myIntent.putExtra("tokenModel", tokenModel)
-        startActivity(myIntent)
+        val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+        startMainIntent.putExtra("user", user)
+        startMainIntent.putExtra("tokenModel", tokenModel)
+        startActivity(startMainIntent)
     }
 
 }

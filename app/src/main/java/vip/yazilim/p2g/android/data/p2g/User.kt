@@ -1,23 +1,23 @@
 package vip.yazilim.p2g.android.data.p2g
 
+import org.threeten.bp.LocalDateTime
 import java.io.Serializable
-import java.util.*
 
 /**
  * @author mustafaarifsisman - 21.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
 data class User(
-    val id: String,
-    val name: String,
-    val email: String,
-    val role: String,
-    val onlineStatus: String,
-    val countryCode: String,
-    val imageUrl: String,
-    val anthem: String,
-    val spotifyProductType: String,
-    val showActivityFlag: String,
-    val showFriendsFlag: String,
-    val creationDate: Date
+    var id: String,
+    var name: String,
+    var email: String,
+    var role: String,
+    var onlineStatus: String,
+    var countryCode: String,
+    var imageUrl: String,
+    var anthem: String,
+    var spotifyProductType: String,
+    var showActivityFlag: Boolean,
+    var showFriendsFlag: Boolean,
+    var creationDate: LocalDateTime
 ) : Serializable
