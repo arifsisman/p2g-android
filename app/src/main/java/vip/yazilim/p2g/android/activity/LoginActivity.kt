@@ -17,6 +17,7 @@ import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.data.p2g.User
+import vip.yazilim.p2g.android.data.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
@@ -43,26 +44,20 @@ class LoginActivity : AppCompatActivity() {
         }
 
         spotify_login_btn.setOnClickListener {
-            loginToSpotify()
+            getAuthorizationCodeFromSpotify()
         }
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
+
+        // If the authorization code has been received successfully
+        if (SpotifyConstants.AUTH_CODE_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
-            val accessToken = response.accessToken
-            SharedPrefSingleton.write("access_token", accessToken)
-            loginToPlay2Gether(accessToken)
-        } else if (SpotifyConstants.AUTH_CODE_REQUEST_CODE == requestCode) {
-            val response = AuthenticationClient.getResponse(resultCode, data)
-            val code = response.code
-            val accessToken = getTokensFromSpotify(code)
-            loginToPlay2Gether(accessToken)
+            getTokensFromSpotify(response.code)
         }
     }
-
 
     override fun onDestroy() {
         cancelCall()
@@ -75,8 +70,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun loginToSpotify() {
+    // getAuthorizationCodeFromSpotify via Spotify Android SDK
+    private fun getAuthorizationCodeFromSpotify() {
         val request: AuthenticationRequest = AuthenticationRequest
             .Builder(
                 SpotifyConstants.CLIENT_ID,
@@ -94,35 +89,8 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
-    private fun startMainActivity(user: User?) {
-        val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
-        myIntent.putExtra("user", user)
-        startActivity(myIntent)
-    }
-
-    private fun loginToPlay2Gether(accessToken: String) {
-        RetrofitClient.getClient(accessToken).create(LoginApi::class.java).login()
-            .enqueue { result ->
-                when (result) {
-                    is Result.Success -> {
-                        val user = result.response.body()
-                        SharedPrefSingleton.write("id", user?.id)
-                        SharedPrefSingleton.write("email", user?.email)
-                        SharedPrefSingleton.write("name", user?.name)
-                        SharedPrefSingleton.write("image_url", user?.imageUrl)
-                        SharedPrefSingleton.write("creation_date", user?.creationDate?.time)
-
-                        startMainActivity(user)
-                    }
-                    is Result.Failure -> {
-                        Log.d("Play2Gether", result.error.toString())
-                        UIHelper.showToastLong(applicationContext, "Failed to login Play2Gether")
-                    }
-                }
-            }
-    }
-
-    private fun getTokensFromSpotify(code: String): String {
+    // getTokensFromSpotify via Spotify Web API
+    private fun getTokensFromSpotify(code: String){
         RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
             .getTokens(
                 SpotifyConstants.CLIENT_ID,
@@ -133,9 +101,16 @@ class LoginActivity : AppCompatActivity() {
             ).enqueue { result ->
                 when (result) {
                     is Result.Success -> {
-                        val tokenModel = result.response.body()!!
-                        SharedPrefSingleton.write("access_token", tokenModel.access_token)
-                        SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                        if (result.response.isSuccessful) {
+                            val tokenModel = result.response.body()!!
+                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
+                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                            loginToPlay2Gether(tokenModel)
+                        } else {
+                            val errorMessage = result.response.errorBody()!!.string()
+                            Log.d("Play2Gether", errorMessage)
+                            UIHelper.showErrorDialog(this, errorMessage)
+                        }
                     }
                     is Result.Failure -> {
                         Log.d("Play2Gether", result.error.toString())
@@ -143,6 +118,36 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
-        return SharedPrefSingleton.read("access_token", null).toString()
     }
+
+    // loginToPlay2Gether via Play2Gether Web API
+    private fun loginToPlay2Gether(tokenModel: TokenModel) {
+        RetrofitClient.getClient(tokenModel.access_token).create(LoginApi::class.java).login()
+            .enqueue { result ->
+                when (result) {
+                    is Result.Success -> {
+                        if (result.response.isSuccessful) {
+                            val user = result.response.body()
+                            startMainActivity(user, tokenModel)
+                        } else {
+                            val errorMessage = result.response.errorBody()!!.string()
+                            Log.d("Play2Gether", errorMessage)
+                            UIHelper.showErrorDialog(this, errorMessage)
+                        }
+                    }
+                    is Result.Failure -> {
+                        Log.d("Play2Gether", result.error.toString())
+                        UIHelper.showToastLong(applicationContext, "Failed to login Play2Gether")
+                    }
+                }
+            }
+    }
+
+    private fun startMainActivity(user: User?, tokenModel: TokenModel) {
+        val myIntent = Intent(this@LoginActivity, MainActivity::class.java)
+        myIntent.putExtra("user", user)
+        myIntent.putExtra("tokenModel", tokenModel)
+        startActivity(myIntent)
+    }
+
 }
