@@ -137,12 +137,10 @@ class DBHelper(context: Context) :
     }
 
     fun insertData(tokenModel: TokenModel) {
-//        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         val sqliteDB = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_REFRESH_TOKEN, tokenModel.refresh_token)
         contentValues.put(COL_ACCESS_TOKEN, tokenModel.refresh_token)
-//        contentValues.put(COL_INSERT_DATE, LocalDateTime.now().toString())
 
         sqliteDB.insert(TOKEN_TABLE_NAME, null, contentValues)
     }
@@ -173,5 +171,17 @@ class DBHelper(context: Context) :
         sqliteDB.delete(TOKEN_TABLE_NAME, null, null)
         sqliteDB.close()
 
+    }
+
+    fun isUserExists(): Boolean {
+        val sqliteDB = this.readableDatabase
+        val query = "SELECT * FROM $USER_TABLE_NAME"
+        val result = sqliteDB.rawQuery(query, null)
+
+        val userCount = result.count
+        result.close()
+        sqliteDB.close()
+
+        return userCount > 0
     }
 }

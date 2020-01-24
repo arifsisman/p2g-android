@@ -140,11 +140,13 @@ class LoginActivity : AppCompatActivity() {
 
                             if (user != null) {
                                 db.insertData(user)
-                                UIHelper.showToastLong(applicationContext, "Logged in as ${user.name}")
-//                                UIHelper.showToastLong(applicationContext, "Creation date ${user.creationDate}")
+                                UIHelper.showToastLong(
+                                    applicationContext,
+                                    "Logged in as ${user.name}"
+                                )
+                                startMainActivity(user, tokenModel)
                             }
 
-                            startMainActivity(user, tokenModel)
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()
                             Log.d("Play2Gether", errorMessage)

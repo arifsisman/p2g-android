@@ -12,7 +12,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.util.helper.DBHelper
 
 
@@ -23,16 +22,18 @@ import vip.yazilim.p2g.android.util.helper.DBHelper
 class MainActivity : AppCompatActivity() {
 
     private val db by lazy { DBHelper(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        try {
-            val user = intent.getSerializableExtra("user") as? User
-            val tokenModel = intent.getSerializableExtra("tokenModel") as? User
-        } catch (e: Exception) {
+        if(!db.isUserExists()){
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(loginIntent)
+            finish()
+        }else{
+            val user = db.readUser()
+            println(user[0].email)
         }
 
         val navView: BottomNavigationView = nav_view
