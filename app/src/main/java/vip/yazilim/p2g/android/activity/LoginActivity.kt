@@ -12,7 +12,9 @@ import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
 import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
+import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
+import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.data.p2g.User
@@ -137,14 +139,20 @@ class LoginActivity : AppCompatActivity() {
                             val user = result.response.body()
 
                             if (user != null) {
-                                db.insertData(user)
-                                UIHelper.showToastLong(
-                                    applicationContext,
-                                    "Logged in as ${user.name}"
-                                )
-                                startMainActivity(user, tokenModel)
+                                if (user.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
+                                    UIHelper.showToastLong(
+                                        applicationContext,
+                                        SPOTIFY_PRODUCT_TYPE_ERROR
+                                    )
+                                } else {
+                                    db.insertData(user)
+                                    UIHelper.showToastLong(
+                                        applicationContext,
+                                        "Logged in as ${user.name}"
+                                    )
+                                    startMainActivity(user, tokenModel)
+                                }
                             }
-
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()
                             Log.d(LOG_TAG, errorMessage)

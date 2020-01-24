@@ -3,14 +3,9 @@
     <!-- Base application theme. -->
     <style name="Theme.P2G" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-<!--        <item name="android:actionBarStyle">@style/MyActionBar</item>-->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/primaryLightColor</item>
     </style>
-
-<!--    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">-->
-<!--        <item name="android:background">#212121</item>-->
-<!--    </style>-->
 
 </resources>
