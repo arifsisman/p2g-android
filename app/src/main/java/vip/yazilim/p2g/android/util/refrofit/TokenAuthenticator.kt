@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.oauth
+package vip.yazilim.p2g.android.util.refrofit
 
 import android.util.Log
 import okhttp3.Authenticator
@@ -9,9 +9,6 @@ import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.data.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
-import vip.yazilim.p2g.android.util.refrofit.Result
-import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
-import vip.yazilim.p2g.android.util.refrofit.enqueue
 
 /**
  * @author mustafaarifsisman - 22.01.2020
@@ -51,4 +48,6 @@ class TokenAuthenticator : Authenticator {
             }
         return SharedPrefSingleton.read("access_token", null).toString()
     }
+
+    //TODO: send refreshed token to p2g
 }

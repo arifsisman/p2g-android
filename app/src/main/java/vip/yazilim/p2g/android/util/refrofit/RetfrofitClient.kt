@@ -7,7 +7,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.util.helper.GsonHelper
-import vip.yazilim.p2g.android.util.oauth.TokenAuthenticator
 
 
 /**
