@@ -110,9 +110,9 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-                            //TODO: Search project and change SharedPrefSingeton calls with DB read token model
-//                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
-//                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+//                            TODO: Search project and change SharedPrefSingeton calls with DB read token model
+                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
+                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
                             db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {

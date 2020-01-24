@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             finish()
         }else{
             val user = db.readUser()
-            println(user[0].email)
+            println(user.email)
         }
 
         val navView: BottomNavigationView = nav_view
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean { //İtem id return some arbitary integer
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.Logout -> {
                 db.deleteAllData()

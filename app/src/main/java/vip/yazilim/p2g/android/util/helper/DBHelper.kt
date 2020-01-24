@@ -90,7 +90,7 @@ class DBHelper(context: Context) :
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }
 
-    fun readUser(): MutableList<User> {
+    fun readUser(): User {
         val userList = mutableListOf<User>()
         val sqliteDB = this.readableDatabase
         val query = "SELECT * FROM $USER_TABLE_NAME"
@@ -133,7 +133,7 @@ class DBHelper(context: Context) :
         }
         result.close()
         sqliteDB.close()
-        return userList
+        return userList.last()
     }
 
     fun insertData(tokenModel: TokenModel) {
@@ -145,7 +145,7 @@ class DBHelper(context: Context) :
         sqliteDB.insert(TOKEN_TABLE_NAME, null, contentValues)
     }
 
-    fun readTokenModel(): MutableList<TokenModel> {
+    fun readTokenModel(): TokenModel {
         val tokenModelList = mutableListOf<TokenModel>()
         val sqliteDB = this.readableDatabase
         val query = "SELECT * FROM $TOKEN_TABLE_NAME"
@@ -162,7 +162,7 @@ class DBHelper(context: Context) :
         }
         result.close()
         sqliteDB.close()
-        return tokenModelList
+        return tokenModelList.last()
     }
 
     fun deleteAllData() {
