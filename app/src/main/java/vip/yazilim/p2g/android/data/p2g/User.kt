@@ -11,7 +11,7 @@ data class User(
     var id: String,
     var name: String,
     var email: String,
-    var role: String,
+    var role: String?,
     var onlineStatus: String,
     var countryCode: String,
     var imageUrl: String,

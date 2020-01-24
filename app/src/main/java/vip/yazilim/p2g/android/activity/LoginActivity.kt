@@ -1,11 +1,12 @@
 package vip.yazilim.p2g.android.activity
 
+//import com.orhanobut.logger.AndroidLogAdapter
+//import com.orhanobut.logger.Logger
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.orhanobut.logger.AndroidLogAdapter
-import com.orhanobut.logger.Logger
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
@@ -38,7 +39,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
-        Logger.addLogAdapter(AndroidLogAdapter())
         setContentView(R.layout.activity_login)
 
         spotify_login_btn.setOnClickListener {
@@ -54,6 +54,16 @@ class LoginActivity : AppCompatActivity() {
             val response = AuthenticationClient.getResponse(resultCode, data)
             getTokensFromSpotify(response.code)
         }
+    }
+
+    override fun startActivity(intent: Intent?) {
+        super.startActivity(intent)
+        overridePendingTransition(R.anim.from_right_in, R.anim.from_left_out)
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out)
     }
 
     override fun onDestroy() {
@@ -100,8 +110,10 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
-                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                            //TODO: Search project and change SharedPrefSingeton calls with DB read token model
+//                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
+//                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                            db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()

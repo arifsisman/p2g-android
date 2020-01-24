@@ -21,18 +21,6 @@ object GsonHelper {
                 LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
             }).create()
     }
-//
-//    fun getGsonLocalDateTimeAdapter(): TypeAdapter<LocalDateTime> {
-//        return TypeAdapter<LocalDateTime>.
-//
-//
-//        GsonBuilder().registerTypeAdapter(
-//            LocalDateTime::class.java,
-//            JsonDeserializer<Any?> { json, _, _ ->
-//                val instant: Instant = Instant.ofEpochMilli(json.asJsonPrimitive.asLong)
-//                LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-//            }).create()
-//    }
 
     object DateDeserializer : JsonDeserializer<LocalDateTime?> {
         @Throws(JsonParseException::class)

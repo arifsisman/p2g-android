@@ -2,6 +2,8 @@ package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -12,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.util.helper.DBHelper
+
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -24,13 +27,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        db.readData().ifEmpty {
+        try {
+            val user = intent.getSerializableExtra("user") as? User
+            val tokenModel = intent.getSerializableExtra("tokenModel") as? User
+        } catch (e: Exception) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(loginIntent)
         }
-
-        val user = intent.getSerializableExtra("user") as? User
-        val tokenModel = intent.getSerializableExtra("tokenModel") as? User
 
         val navView: BottomNavigationView = nav_view
         val navController = nav_host_fragment.findNavController()
@@ -47,4 +50,29 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    override fun startActivity(intent: Intent?) {
+        super.startActivity(intent)
+        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out)
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.from_right_out, R.anim.from_left_in)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.options_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { //İtem id return some arbitary integer
+        when (item.itemId) {
+            R.id.Logout -> {
+                db.deleteAllData()
+                val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(loginIntent)
+            }
+        }
+        return false
+    }
 }
