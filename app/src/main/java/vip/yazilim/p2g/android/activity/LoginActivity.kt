@@ -1,8 +1,5 @@
 package vip.yazilim.p2g.android.activity
 
-//import com.orhanobut.logger.AndroidLogAdapter
-//import com.orhanobut.logger.Logger
-
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +12,7 @@ import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
 import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
+import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.data.p2g.User
@@ -110,19 +108,18 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-//                            TODO: Search project and change SharedPrefSingeton calls with DB read token model
                             SharedPrefSingleton.write("access_token", tokenModel.access_token)
                             SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
                             db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()
-                            Log.d("Play2Gether", errorMessage)
+                            Log.d(LOG_TAG, errorMessage)
                             UIHelper.showErrorDialog(this, errorMessage)
                         }
                     }
                     is Result.Failure -> {
-                        Log.d("Play2Gether", result.error.toString())
+                        Log.d(LOG_TAG, result.error.toString())
                         UIHelper.showToastLong(applicationContext, "Failed to login Spotify")
                     }
                 }
@@ -131,7 +128,8 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        RetrofitClient.getClient(tokenModel.access_token).create(LoginApi::class.java).login()
+        RetrofitClient.getClient(tokenModel.access_token).create(LoginApi::class.java)
+            .login()
             .enqueue { result ->
                 when (result) {
                     is Result.Success -> {
@@ -149,12 +147,12 @@ class LoginActivity : AppCompatActivity() {
 
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()
-                            Log.d("Play2Gether", errorMessage)
+                            Log.d(LOG_TAG, errorMessage)
                             UIHelper.showErrorDialog(this, errorMessage)
                         }
                     }
                     is Result.Failure -> {
-                        Log.d("Play2Gether", result.error.toString())
+                        Log.d(LOG_TAG, result.error.toString())
                         UIHelper.showToastLong(applicationContext, "Failed to login Play2Gether")
                     }
                 }
