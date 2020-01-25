@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.util.refrofit
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
-import org.joda.time.LocalDateTime
+import org.joda.time.DateTime
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import vip.yazilim.p2g.android.constant.ApiConstants
@@ -19,7 +19,7 @@ class RetrofitClient {
         fun getClient(accessToken: String): Retrofit {
             val gson = GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                .registerTypeAdapter(LocalDateTime::class.java, GsonHelper.DateDeserializer)
+                .registerTypeAdapter(DateTime::class.java, GsonHelper.DateDeserializer)
                 .create()
 
             val httpClient = OkHttpClient.Builder()

@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import org.joda.time.LocalDateTime
+import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import vip.yazilim.p2g.android.data.p2g.User
@@ -113,7 +113,7 @@ class DBHelper(context: Context) :
                 val userShowFriendsFlag =
                     result.getInt(result.getColumnIndex(COL_SHOW_FRIENDS_FLAG)) > 0
                 val userCreationDate =
-                    LocalDateTime.parse(result.getString(result.getColumnIndex(COL_CREATION_DATE)))
+                    DateTime.parse(result.getString(result.getColumnIndex(COL_CREATION_DATE)))
 
                 val user = User(
                     userId,

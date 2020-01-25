@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import org.joda.time.LocalDateTime
+import org.joda.time.DateTime
 import java.lang.reflect.Type
 import java.text.ParseException
 
@@ -14,17 +14,17 @@ import java.text.ParseException
  * @contact mustafaarifsisman@gmail.com
  */
 object GsonHelper {
-    object DateDeserializer : JsonDeserializer<LocalDateTime?> {
+    object DateDeserializer : JsonDeserializer<DateTime?> {
         @Throws(JsonParseException::class)
         override fun deserialize(
             jsonElement: JsonElement?,
             typeOF: Type?,
             context: JsonDeserializationContext?
-        ): LocalDateTime? {
+        ): DateTime? {
             if (jsonElement == null) return null
             val dateStr = jsonElement.asString
             try {
-                return LocalDateTime.parse(dateStr)
+                return DateTime.parse(dateStr)
             } catch (ex: ParseException) {
                 ex.printStackTrace()
             }

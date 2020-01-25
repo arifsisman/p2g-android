@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
-import org.joda.time.LocalDateTime
+import org.joda.time.DateTime
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        AndroidThreeTen.init(this)
 
         if (!db.isUserExists()) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    @SuppressLint("CheckResult")
     private fun connectRoomWebSocket(roomId: String) {
         val stompClient: StompClient = Stomp.over(
             Stomp.ConnectionProvider.OKHTTP,
@@ -95,10 +96,6 @@ class MainActivity : AppCompatActivity() {
         ).withClientHeartbeat(0).withServerHeartbeat(0)
 
         stompClient.connect()
-
-        stompClient.topic("/p2g/room/$roomId/messages").subscribe { topicMessage ->
-            Log.d(LOG_TAG, topicMessage.payload)
-        }
 
         stompClient.lifecycle().subscribe {
             when (it.type) {
@@ -115,7 +112,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", LocalDateTime.now())
+        stompClient.topic("/p2g/room/$roomId/messages").subscribe { message ->
+            Log.d(LOG_TAG, message.payload)
+        }
+
+        stompClient.topic("/p2g/room/$roomId/songs").subscribe { songList ->
+            Log.d(LOG_TAG, songList.payload)
+        }
+
+        stompClient.topic("/p2g/room/$roomId/status").subscribe { roomStatus ->
+            Log.d(LOG_TAG, roomStatus.payload)
+        }
+
+//        val moshi = Moshi.Builder().build()
+//        val adapter: JsonAdapter<ChatMessage> = moshi.adapter(ChatMessage::class.java)
+
+        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", DateTime.now())
         val chatMessageJson = Gson().toJson(chatMessage)
 
         stompClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()

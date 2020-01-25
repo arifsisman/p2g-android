@@ -59,9 +59,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 
-    // ThreeTenABP
-//    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
-
     // Joda Time
     implementation 'net.danlew:android.joda:2.10.3'
 
@@ -75,7 +72,7 @@ dependencies {
     // StompProtocolAndroid
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
 
-    // ? - RxJava
+    //  RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 

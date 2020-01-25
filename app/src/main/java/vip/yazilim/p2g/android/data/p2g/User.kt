@@ -1,12 +1,14 @@
 package vip.yazilim.p2g.android.data.p2g
 
-import org.joda.time.LocalDateTime
+import com.squareup.moshi.JsonClass
+import org.joda.time.DateTime
 import java.io.Serializable
 
 /**
  * @author mustafaarifsisman - 21.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
+@JsonClass(generateAdapter = true)
 data class User(
     var id: String,
     var name: String,
@@ -19,5 +21,5 @@ data class User(
     var spotifyProductType: String,
     var showActivityFlag: Boolean,
     var showFriendsFlag: Boolean,
-    var creationDate: LocalDateTime
+    var creationDate: DateTime
 ) : Serializable
