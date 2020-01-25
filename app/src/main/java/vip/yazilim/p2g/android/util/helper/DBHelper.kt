@@ -4,8 +4,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.format.DateTimeFormatter
+import org.joda.time.LocalDateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.spotify.TokenModel
 
@@ -71,7 +72,7 @@ class DBHelper(context: Context) :
     }
 
     fun insertData(user: User) {
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        val formatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         val sqliteDB = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_ID, user.id)
@@ -85,7 +86,7 @@ class DBHelper(context: Context) :
         contentValues.put(COL_SPOTIFY_PRODUCT_TYPE, user.spotifyProductType)
         contentValues.put(COL_SHOW_ACTIVITY_FLAG, user.showActivityFlag)
         contentValues.put(COL_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
-        contentValues.put(COL_CREATION_DATE, user.creationDate.format(formatter))
+        contentValues.put(COL_CREATION_DATE, user.creationDate.toString(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }

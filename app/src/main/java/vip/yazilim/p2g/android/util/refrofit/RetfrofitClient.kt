@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.util.refrofit
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
-import org.threeten.bp.LocalDateTime
+import org.joda.time.LocalDateTime
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import vip.yazilim.p2g.android.constant.ApiConstants

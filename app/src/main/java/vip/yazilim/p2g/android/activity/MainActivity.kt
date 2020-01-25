@@ -12,9 +12,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
-import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.activity_main.*
-import org.threeten.bp.LocalDateTime
+import org.joda.time.LocalDateTime
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        AndroidThreeTen.init(this)
+//        AndroidThreeTen.init(this)
 
         if (!db.isUserExists()) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
@@ -97,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
         stompClient.connect()
 
-        stompClient.topic("/p2g/room/$roomId").subscribe { topicMessage ->
+        stompClient.topic("/p2g/room/$roomId/messages").subscribe { topicMessage ->
             Log.d(LOG_TAG, topicMessage.payload)
         }
 
@@ -116,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val chatMessage = ChatMessage("1", "1", "1", "1", LocalDateTime.now())
+        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", LocalDateTime.now())
         val chatMessageJson = Gson().toJson(chatMessage)
 
         stompClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()

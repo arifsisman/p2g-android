@@ -1,6 +1,6 @@
 package vip.yazilim.p2g.android.data.websocket
 
-import org.threeten.bp.LocalDateTime
+import org.joda.time.LocalDateTime
 import java.io.Serializable
 
 /**

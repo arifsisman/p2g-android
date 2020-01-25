@@ -1,9 +1,10 @@
 package vip.yazilim.p2g.android.util.helper
 
-import com.google.gson.*
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import org.joda.time.LocalDateTime
 import java.lang.reflect.Type
 import java.text.ParseException
 
@@ -13,15 +14,6 @@ import java.text.ParseException
  * @contact mustafaarifsisman@gmail.com
  */
 object GsonHelper {
-    fun gsonWithLocalDateTimeFormatter(): Gson {
-        return GsonBuilder().registerTypeAdapter(
-            LocalDateTime::class.java,
-            JsonDeserializer<Any?> { json, _, _ ->
-                val instant: Instant = Instant.ofEpochMilli(json.asJsonPrimitive.asLong)
-                LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-            }).create()
-    }
-
     object DateDeserializer : JsonDeserializer<LocalDateTime?> {
         @Throws(JsonParseException::class)
         override fun deserialize(
