@@ -22,6 +22,7 @@ import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
+import vip.yazilim.p2g.android.data.spotify.TokenModel
 import vip.yazilim.p2g.android.data.websocket.ChatMessage
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter.registerLocalDateTime
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
@@ -34,20 +35,29 @@ import vip.yazilim.p2g.android.util.sqlite.DBHelper
 class MainActivity : AppCompatActivity() {
 
     private val db by lazy { DBHelper(this) }
+    private lateinit var tokenModel:TokenModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidThreeTen.init(this)
         setContentView(R.layout.activity_main)
 
-        if (!db.isUserExists()) {
+        try {
+            tokenModel = intent.extras?.get("tokenModel") as TokenModel
+        } catch (e: Exception) {
+            val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(loginIntent)
+            finish()
+        }
+
+        if (!db.isUserExists() || !this::tokenModel.isInitialized) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(loginIntent)
             finish()
         } else {
             val user = db.readUser()
             Log.d(LOG_TAG, user.email)
-            connectRoomWebSocket("1")
+            connectRoomWebSocket(tokenModel.access_token, "1")
         }
 
         val navView: BottomNavigationView = nav_view
@@ -92,10 +102,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("CheckResult")
-    private fun connectRoomWebSocket(roomId: String) {
+    private fun connectRoomWebSocket(accessToken: String, roomId: String) {
+        val header: MutableMap<String, String> = mutableMapOf()
+        header["Authorization"] = "Bearer $accessToken"
+
         val stompClient: StompClient = Stomp.over(
             Stomp.ConnectionProvider.OKHTTP,
-            ApiConstants.BASE_WS_URL_ROOM + roomId
+            ApiConstants.BASE_WS_URL_ROOM + roomId,
+            header
         ).withClientHeartbeat(0).withServerHeartbeat(0)
 
         stompClient.connect()
@@ -126,9 +140,6 @@ class MainActivity : AppCompatActivity() {
         stompClient.topic("/p2g/room/$roomId/status").subscribe { roomStatus ->
             Log.d(LOG_TAG, roomStatus.payload)
         }
-
-//        val moshi = Moshi.Builder().build()
-//        val adapter: JsonAdapter<ChatMessage> = moshi.adapter(ChatMessage::class.java)
 
         val gsonBuilder = GsonBuilder()
         val gson = registerLocalDateTime(gsonBuilder).create()

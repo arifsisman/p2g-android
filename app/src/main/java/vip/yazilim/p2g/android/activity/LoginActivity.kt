@@ -17,6 +17,7 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
+import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
@@ -110,8 +111,8 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
-                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                            SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, tokenModel.access_token)
+                            SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, tokenModel.refresh_token)
                             db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {
