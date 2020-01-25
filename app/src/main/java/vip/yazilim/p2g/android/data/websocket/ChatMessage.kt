@@ -1,7 +1,7 @@
 package vip.yazilim.p2g.android.data.websocket
 
 import com.squareup.moshi.JsonClass
-import org.joda.time.DateTime
+import org.threeten.bp.LocalDateTime
 import java.io.Serializable
 
 /**
@@ -14,7 +14,7 @@ data class ChatMessage(
     var userName: String,
     var roomId: String,
     var message: String,
-    var timestamp: DateTime
+    var timestamp: LocalDateTime
 ) : Serializable
 
 

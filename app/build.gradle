@@ -59,13 +59,13 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 
-    // Joda Time
-    implementation 'net.danlew:android.joda:2.10.3'
-
     // Material
     implementation 'com.google.android.material:material:1.2.0-alpha03'
 
-    // ? - Moshi
+    // ThreeTenABP
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
+
+    // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 

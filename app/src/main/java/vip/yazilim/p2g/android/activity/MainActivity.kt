@@ -12,9 +12,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.activity_main.*
-import org.joda.time.DateTime
+import org.threeten.bp.LocalDateTime
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
@@ -22,7 +23,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.data.websocket.ChatMessage
-import vip.yazilim.p2g.android.util.helper.DBHelper
+import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter.registerLocalDateTime
+import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 
 /**
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidThreeTen.init(this)
         setContentView(R.layout.activity_main)
 
         if (!db.isUserExists()) {
@@ -127,8 +130,11 @@ class MainActivity : AppCompatActivity() {
 //        val moshi = Moshi.Builder().build()
 //        val adapter: JsonAdapter<ChatMessage> = moshi.adapter(ChatMessage::class.java)
 
-        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", DateTime.now())
-        val chatMessageJson = Gson().toJson(chatMessage)
+        val gsonBuilder = GsonBuilder()
+        val gson = registerLocalDateTime(gsonBuilder).create()
+
+        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", LocalDateTime.now())
+        val chatMessageJson = gson.toJson(chatMessage)
 
         stompClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
     }

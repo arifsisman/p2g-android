@@ -1,7 +1,7 @@
 package vip.yazilim.p2g.android.data.p2g
 
 import com.squareup.moshi.JsonClass
-import org.joda.time.DateTime
+import org.threeten.bp.LocalDateTime
 import java.io.Serializable
 
 /**
@@ -21,5 +21,5 @@ data class User(
     var spotifyProductType: String,
     var showActivityFlag: Boolean,
     var showFriendsFlag: Boolean,
-    var creationDate: DateTime
+    var creationDate: LocalDateTime
 ) : Serializable

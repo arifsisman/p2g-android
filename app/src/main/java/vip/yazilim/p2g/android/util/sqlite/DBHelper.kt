@@ -1,12 +1,11 @@
-package vip.yazilim.p2g.android.util.helper
+package vip.yazilim.p2g.android.util.sqlite
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.spotify.TokenModel
 
@@ -15,7 +14,10 @@ import vip.yazilim.p2g.android.data.spotify.TokenModel
  * @contact mustafaarifsisman@gmail.com
  */
 class DBHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    SQLiteOpenHelper(context,
+        DATABASE_NAME, null,
+        DATABASE_VERSION
+    ) {
     private val USER_TABLE_NAME = "User"
     private val TOKEN_TABLE_NAME = "Token"
 
@@ -72,7 +74,7 @@ class DBHelper(context: Context) :
     }
 
     fun insertData(user: User) {
-        val formatter: DateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         val sqliteDB = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_ID, user.id)
@@ -86,7 +88,7 @@ class DBHelper(context: Context) :
         contentValues.put(COL_SPOTIFY_PRODUCT_TYPE, user.spotifyProductType)
         contentValues.put(COL_SHOW_ACTIVITY_FLAG, user.showActivityFlag)
         contentValues.put(COL_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
-        contentValues.put(COL_CREATION_DATE, user.creationDate.toString(formatter))
+        contentValues.put(COL_CREATION_DATE, user.creationDate.format(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }
@@ -113,7 +115,7 @@ class DBHelper(context: Context) :
                 val userShowFriendsFlag =
                     result.getInt(result.getColumnIndex(COL_SHOW_FRIENDS_FLAG)) > 0
                 val userCreationDate =
-                    DateTime.parse(result.getString(result.getColumnIndex(COL_CREATION_DATE)))
+                    LocalDateTime.parse(result.getString(result.getColumnIndex(COL_CREATION_DATE)))
 
                 val user = User(
                     userId,
