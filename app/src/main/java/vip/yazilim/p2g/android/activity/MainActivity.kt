@@ -11,14 +11,18 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
+import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.*
-import okio.ByteString
+import org.threeten.bp.LocalDateTime
+import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.StompClient
+import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
+import vip.yazilim.p2g.android.data.websocket.ChatMessage
 import vip.yazilim.p2g.android.util.helper.DBHelper
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        AndroidThreeTen.init(this)
 
         if (!db.isUserExists()) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
@@ -40,21 +45,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val user = db.readUser()
             Log.d(LOG_TAG, user.email)
-
-            Thread(Runnable {
-                val client = OkHttpClient.Builder()
-                    .readTimeout(3, TimeUnit.SECONDS)
-                    .build()
-
-                val request = Request.Builder()
-                    .url(ApiConstants.BASE_WS_URL + "room/1")
-                    .build()
-
-                val wsListener = EchoWebSocketListener()
-                val webSocket = client.newWebSocket(request, wsListener) // this provide to make 'Open ws connection'
-                client.dispatcher.executorService.shutdown()
-
-            }).start()
+            connectRoomWebSocket("1")
         }
 
         val navView: BottomNavigationView = nav_view
@@ -98,40 +89,37 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    private class EchoWebSocketListener : WebSocketListener() {
-        override fun onOpen(webSocket: WebSocket, response: Response) {
-//            webSocket.send("Hello!")
-//            webSocket.send("Whats up?")
-//            webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !")
-            webSocket.send("{\n" +
-                    "  \"type\": \"subscribe\",\n" +
-                    "  \"channels\": [{\"name\": \"room/1\"}]\n" +
-                    "}")
+    private fun connectRoomWebSocket(roomId: String) {
+        val stompClient: StompClient = Stomp.over(
+            Stomp.ConnectionProvider.OKHTTP,
+            ApiConstants.BASE_WS_URL_ROOM + roomId
+        ).withClientHeartbeat(0).withServerHeartbeat(0)
+
+        stompClient.connect()
+
+        stompClient.topic("/p2g/room/$roomId").subscribe { topicMessage ->
+            Log.d(LOG_TAG, topicMessage.payload)
         }
 
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            output("Receiving : $text")
+        stompClient.lifecycle().subscribe {
+            when (it.type) {
+                LifecycleEvent.Type.OPENED -> {
+                    Log.i(LOG_TAG, it.toString())
+                }
+                LifecycleEvent.Type.CLOSED -> {
+                    Log.i(LOG_TAG, it.toString())
+                }
+                LifecycleEvent.Type.ERROR -> {
+                    Log.i(LOG_TAG, it.toString())
+                }
+                else -> Log.i(LOG_TAG, it.toString())
+            }
         }
 
-        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            output("Receiving bytes : " + bytes.hex())
-        }
+        val chatMessage = ChatMessage("1", "1", "1", "1", LocalDateTime.now())
+        val chatMessageJson = Gson().toJson(chatMessage)
 
-        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            webSocket.close(NORMAL_CLOSURE_STATUS, null)
-            output("Closing : $code / $reason")
-        }
-
-        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            output("Error : " + t.message)
-        }
-
-        companion object {
-            private const val NORMAL_CLOSURE_STATUS = 1000
-        }
-
-        private fun output(txt: String) {
-            Log.d("WSS", txt)
-        }
+        stompClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
     }
+
 }
