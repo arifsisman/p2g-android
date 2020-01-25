@@ -5,6 +5,8 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import vip.yazilim.p2g.android.constant.ApiConstants
+import vip.yazilim.p2g.android.constant.TokenConstants
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
 
@@ -15,7 +17,9 @@ import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
 class RetrofitClient {
     companion object {
-        fun getClient(accessToken: String): Retrofit {
+        fun getClient(): Retrofit {
+            val accessToken =
+                SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
             val gsonBuilder = GsonBuilder()
             val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
 

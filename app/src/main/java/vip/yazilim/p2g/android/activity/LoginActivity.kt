@@ -15,7 +15,6 @@ import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
-import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.data.p2g.User
@@ -39,7 +38,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
         setContentView(R.layout.activity_login)
 
         spotify_login_btn.setOnClickListener {
@@ -131,7 +129,7 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        RetrofitClient.getClient(tokenModel.access_token).create(LoginApi::class.java)
+        RetrofitClient.getClient().create(LoginApi::class.java)
             .login()
             .enqueue { result ->
                 when (result) {

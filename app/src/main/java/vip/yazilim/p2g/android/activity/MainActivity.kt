@@ -16,16 +16,18 @@ import com.google.gson.GsonBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.activity_main.*
 import org.threeten.bp.LocalDateTime
-import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
-import vip.yazilim.p2g.android.data.spotify.TokenModel
+import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
+import vip.yazilim.p2g.android.constant.TokenConstants
+import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.websocket.ChatMessage
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter.registerLocalDateTime
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
+import vip.yazilim.p2g.android.util.stomp.WebSocketClient.Companion.getRoomWebSocketClient
 
 
 /**
@@ -35,29 +37,27 @@ import vip.yazilim.p2g.android.util.sqlite.DBHelper
 class MainActivity : AppCompatActivity() {
 
     private val db by lazy { DBHelper(this) }
-    private lateinit var tokenModel:TokenModel
+    private lateinit var user: User
+    private lateinit var roomWSClient: StompClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidThreeTen.init(this)
+        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
         setContentView(R.layout.activity_main)
 
-        try {
-            tokenModel = intent.extras?.get("tokenModel") as TokenModel
-        } catch (e: Exception) {
-            val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
-            startActivity(loginIntent)
-            finish()
-        }
+        if (!db.isUserExists() ||
+            SharedPrefSingleton
+                .read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
+                .equals(TokenConstants.UNDEFINED)) {
 
-        if (!db.isUserExists() || !this::tokenModel.isInitialized) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(loginIntent)
             finish()
         } else {
-            val user = db.readUser()
+            user = db.readUser()
             Log.d(LOG_TAG, user.email)
-            connectRoomWebSocket(tokenModel.access_token, "1")
+            connectRoomWebSocket("1")
         }
 
         val navView: BottomNavigationView = nav_view
@@ -101,20 +101,19 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    override fun onDestroy() {
+        if (this::roomWSClient.isInitialized) {
+            roomWSClient.disconnect()
+        }
+        super.onDestroy()
+    }
+
     @SuppressLint("CheckResult")
-    private fun connectRoomWebSocket(accessToken: String, roomId: String) {
-        val header: MutableMap<String, String> = mutableMapOf()
-        header["Authorization"] = "Bearer $accessToken"
+    private fun connectRoomWebSocket(roomId: String) {
+        roomWSClient = getRoomWebSocketClient(roomId)
+        roomWSClient.connect()
 
-        val stompClient: StompClient = Stomp.over(
-            Stomp.ConnectionProvider.OKHTTP,
-            ApiConstants.BASE_WS_URL_ROOM + roomId,
-            header
-        ).withClientHeartbeat(0).withServerHeartbeat(0)
-
-        stompClient.connect()
-
-        stompClient.lifecycle().subscribe {
+        roomWSClient.lifecycle().subscribe {
             when (it.type) {
                 LifecycleEvent.Type.OPENED -> {
                     Log.i(LOG_TAG, it.toString())
@@ -129,15 +128,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        stompClient.topic("/p2g/room/$roomId/messages").subscribe { message ->
+        roomWSClient.topic("/p2g/room/$roomId/messages").subscribe { message ->
             Log.d(LOG_TAG, message.payload)
         }
 
-        stompClient.topic("/p2g/room/$roomId/songs").subscribe { songList ->
+        roomWSClient.topic("/p2g/room/$roomId/songs").subscribe { songList ->
             Log.d(LOG_TAG, songList.payload)
         }
 
-        stompClient.topic("/p2g/room/$roomId/status").subscribe { roomStatus ->
+        roomWSClient.topic("/p2g/room/$roomId/status").subscribe { roomStatus ->
             Log.d(LOG_TAG, roomStatus.payload)
         }
 
@@ -147,7 +146,7 @@ class MainActivity : AppCompatActivity() {
         val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", LocalDateTime.now())
         val chatMessageJson = gson.toJson(chatMessage)
 
-        stompClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
+        roomWSClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
     }
 
 }

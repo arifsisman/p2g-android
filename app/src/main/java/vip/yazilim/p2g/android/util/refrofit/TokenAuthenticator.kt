@@ -55,7 +55,7 @@ class TokenAuthenticator : Authenticator {
     }
 
     private fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-        RetrofitClient.getClient(accessToken).create(LoginApi::class.java)
+        RetrofitClient.getClient().create(LoginApi::class.java)
             .updateAccessToken(accessToken).enqueue { result ->
                 when (result) {
                     is Result.Failure -> {
