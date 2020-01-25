@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +12,13 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.*
+import okio.ByteString
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.ApiConstants
+import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.util.helper.DBHelper
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -27,13 +33,28 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(!db.isUserExists()){
+        if (!db.isUserExists()) {
             val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(loginIntent)
             finish()
-        }else{
+        } else {
             val user = db.readUser()
-            println(user.email)
+            Log.d(LOG_TAG, user.email)
+
+            Thread(Runnable {
+                val client = OkHttpClient.Builder()
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build()
+
+                val request = Request.Builder()
+                    .url(ApiConstants.BASE_WS_URL + "room/1")
+                    .build()
+
+                val wsListener = EchoWebSocketListener()
+                val webSocket = client.newWebSocket(request, wsListener) // this provide to make 'Open ws connection'
+                client.dispatcher.executorService.shutdown()
+
+            }).start()
         }
 
         val navView: BottomNavigationView = nav_view
@@ -75,5 +96,42 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return false
+    }
+
+    private class EchoWebSocketListener : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+//            webSocket.send("Hello!")
+//            webSocket.send("Whats up?")
+//            webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !")
+            webSocket.send("{\n" +
+                    "  \"type\": \"subscribe\",\n" +
+                    "  \"channels\": [{\"name\": \"room/1\"}]\n" +
+                    "}")
+        }
+
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            output("Receiving : $text")
+        }
+
+        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+            output("Receiving bytes : " + bytes.hex())
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            webSocket.close(NORMAL_CLOSURE_STATUS, null)
+            output("Closing : $code / $reason")
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            output("Error : " + t.message)
+        }
+
+        companion object {
+            private const val NORMAL_CLOSURE_STATUS = 1000
+        }
+
+        private fun output(txt: String) {
+            Log.d("WSS", txt)
+        }
     }
 }

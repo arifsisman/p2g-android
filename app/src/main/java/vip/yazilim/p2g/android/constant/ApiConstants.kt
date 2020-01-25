@@ -6,10 +6,11 @@ package vip.yazilim.p2g.android.constant
  */
 object ApiConstants {
 
-    private const val BASE_API_HOST = "192.168.1.39"
-//    private const val BASE_API_HOST = "142.93.239.61"
-    private const val BASE_API_PORT = "8080"
-    const val BASE_API_URL = "http://$BASE_API_HOST:$BASE_API_PORT/api/"
+//    private const val HOST = "142.93.239.61"
+    private const val HOST = "192.168.1.39"
+    private const val PORT = "8080"
+    const val BASE_API_URL = "http://$HOST:$PORT/api/"
+    const val BASE_WS_URL = "ws://$HOST:$PORT/p2g/"
 
     const val SPOTIFY_BASE_API_URL = "https://accounts.spotify.com/"
 
