@@ -19,10 +19,10 @@ import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
  */
 class TokenAuthenticator : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
-        val refreshToken = SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
-        val updatedToken =  refreshExpiredToken(refreshToken.toString())
+        val refreshToken =
+            SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
+        val updatedToken = refreshExpiredToken(refreshToken.toString())
 
-        Log.d(LOG_TAG, "Token refreshed")
         SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, updatedToken)
 
         updateAccessTokenOnPlay2Gether(updatedToken)
@@ -32,26 +32,39 @@ class TokenAuthenticator : Authenticator {
             .build()
     }
 
-    private fun refreshExpiredToken(refreshToken: String): String {
-        RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
-            .refreshExpiredToken(
-                SpotifyConstants.CLIENT_ID,
-                SpotifyConstants.CLIENT_SECRET,
-                SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
-                refreshToken
-            ).enqueue { result ->
-                when (result) {
-                    is Result.Success -> {
-                        val tokenModel: TokenModel = result.response.body()!!
-                        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, tokenModel.access_token)
-                        SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, tokenModel.refresh_token)
-                    }
-                    is Result.Failure -> {
-                        Log.d(LOG_TAG, result.error.toString())
+
+    companion object {
+        fun refreshExpiredToken(refreshToken: String): String {
+            RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
+                .refreshExpiredToken(
+                    SpotifyConstants.CLIENT_ID,
+                    SpotifyConstants.CLIENT_SECRET,
+                    SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
+                    refreshToken
+                ).enqueue { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            val tokenModel: TokenModel? = result.response.body()
+                            if (tokenModel != null) {
+                                SharedPrefSingleton.write(
+                                    TokenConstants.ACCESS_TOKEN,
+                                    tokenModel.access_token
+                                )
+                                SharedPrefSingleton.write(
+                                    TokenConstants.REFRESH_TOKEN,
+                                    tokenModel.refresh_token
+                                )
+                                Log.d(LOG_TAG, "Token refreshed")
+                            }
+                        }
+                        is Result.Failure -> {
+                            Log.d(LOG_TAG, result.error.toString())
+                        }
                     }
                 }
-            }
-        return SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED).toString()
+            return SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
+                .toString()
+        }
     }
 
     private fun updateAccessTokenOnPlay2Gether(accessToken: String) {

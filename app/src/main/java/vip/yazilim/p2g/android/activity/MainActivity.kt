@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(loginIntent)
             finish()
         } else {
+            //todo: try a request, if fails start login activity
             user = db.readUser()
             Log.d(LOG_TAG, user.email)
             connectRoomWebSocket("1")
