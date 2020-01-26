@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             //todo: try a request, if fails start login activity
             user = db.readUser()
             Log.d(LOG_TAG, user.email)
-            connectRoomWebSocket("1")
+            connectRoomWebSocket(1)
         }
 
         val navView: BottomNavigationView = nav_view
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("CheckResult")
-    private fun connectRoomWebSocket(roomId: String) {
+    private fun connectRoomWebSocket(roomId: Long) {
         roomWSClient = getRoomWebSocketClient(roomId)
         roomWSClient.connect()
 
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
         val gsonBuilder = GsonBuilder()
         val gson = registerLocalDateTime(gsonBuilder).create()
 
-        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", LocalDateTime.now())
+        val chatMessage = ChatMessage("TEST", "TEST", 1, "TEST", LocalDateTime.now())
         val chatMessageJson = gson.toJson(chatMessage)
 
         roomWSClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
