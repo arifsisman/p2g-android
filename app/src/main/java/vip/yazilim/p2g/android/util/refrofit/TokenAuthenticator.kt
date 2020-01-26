@@ -5,8 +5,8 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
-import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
+import vip.yazilim.p2g.android.api.SpotifyWebApi
+import vip.yazilim.p2g.android.api.p2g.AuthorizationApi
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
@@ -35,7 +35,7 @@ class TokenAuthenticator : Authenticator {
 
     companion object {
         fun refreshExpiredToken(refreshToken: String): String {
-            RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
+            RetrofitClient.getSpotifyClient().create(SpotifyWebApi::class.java)
                 .refreshExpiredToken(
                     SpotifyConstants.CLIENT_ID,
                     SpotifyConstants.CLIENT_SECRET,
@@ -68,7 +68,7 @@ class TokenAuthenticator : Authenticator {
     }
 
     private fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-        RetrofitClient.getClient().create(LoginApi::class.java)
+        RetrofitClient.getClient().create(AuthorizationApi::class.java)
             .updateAccessToken(accessToken).enqueue { result ->
                 when (result) {
                     is Result.Failure -> {

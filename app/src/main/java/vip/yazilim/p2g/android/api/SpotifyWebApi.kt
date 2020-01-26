@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.api.spotify
+package vip.yazilim.p2g.android.api
 
 import retrofit2.Call
 import retrofit2.http.Field
@@ -10,7 +10,7 @@ import vip.yazilim.p2g.android.data.spotify.TokenModel
  * @author mustafaarifsisman - 22.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-interface AuthorizationApi {
+interface SpotifyWebApi {
 
     @FormUrlEncoded
     @POST("api/token")

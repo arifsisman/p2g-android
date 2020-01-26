@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.api.p2g.spotify
+package vip.yazilim.p2g.android.api.p2g
 
 import retrofit2.Call
 import retrofit2.http.Body
@@ -11,7 +11,7 @@ import vip.yazilim.p2g.android.data.p2g.User
  * @contact mustafaarifsisman@gmail.com
  */
 
-interface LoginApi {
+interface AuthorizationApi {
 
     @GET("spotify/login")
     fun login(): Call<User>
