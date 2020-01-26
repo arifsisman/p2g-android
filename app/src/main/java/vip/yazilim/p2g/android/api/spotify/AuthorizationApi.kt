@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.api.p2g
+package vip.yazilim.p2g.android.api.spotify
 
 import retrofit2.Call
 import retrofit2.http.Body
