@@ -1,8 +1,6 @@
 package vip.yazilim.p2g.android.data.p2g.model
 
-import vip.yazilim.p2g.android.data.p2g.Room
-import vip.yazilim.p2g.android.data.p2g.Song
-import vip.yazilim.p2g.android.data.p2g.User
+import vip.yazilim.p2g.android.constant.enums.SearchType
 import java.io.Serializable
 
 /**
@@ -10,8 +8,12 @@ import java.io.Serializable
  * @contact mustafaarifsisman@gmail.com
  */
 data class SearchModel(
-    var room: Room,
-    var userList: List<User>,
-    var songList: List<Song>?,
-    var invitedUserList: List<User>?
+    var type: SearchType,
+    var name: String,
+    var artistNames: List<String>,
+    var albumName: String,
+    var id: String,
+    var uri: String,
+    var durationMs: Int,
+    var imageUrl: String
 ) : Serializable

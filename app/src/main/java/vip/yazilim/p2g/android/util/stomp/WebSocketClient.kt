@@ -22,7 +22,7 @@ class WebSocketClient {
                 Stomp.ConnectionProvider.OKHTTP,
                 ApiConstants.BASE_WS_URL_ROOM + roomId,
                 header
-            ).withClientHeartbeat(0).withServerHeartbeat(0)
+            )
         }
 
         fun getUserWebSocketClient(userId: String): StompClient {
@@ -35,7 +35,7 @@ class WebSocketClient {
                 Stomp.ConnectionProvider.OKHTTP,
                 ApiConstants.BASE_WS_URL_USER + userId,
                 header
-            ).withClientHeartbeat(0).withServerHeartbeat(0)
+            )
         }
     }
 }

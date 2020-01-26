@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
@@ -15,6 +16,7 @@ import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
+import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.data.p2g.User
@@ -39,6 +41,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // Init DB and AndroidThreeTen
+        AndroidThreeTen.init(this)
+        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
 
         spotify_login_btn.setOnClickListener {
             getAuthorizationCodeFromSpotify()
@@ -109,8 +115,14 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-                            SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, tokenModel.access_token)
-                            SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, tokenModel.refresh_token)
+                            SharedPrefSingleton.write(
+                                TokenConstants.ACCESS_TOKEN,
+                                tokenModel.access_token
+                            )
+                            SharedPrefSingleton.write(
+                                TokenConstants.REFRESH_TOKEN,
+                                tokenModel.refresh_token
+                            )
                             db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {

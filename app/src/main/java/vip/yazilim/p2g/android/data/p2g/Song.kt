@@ -14,7 +14,7 @@ data class Song(
     var songUri: String,
     var songName: String,
     var albumName: String,
-    var artists: List<String>,
+    var artistNames: List<String>,
     var imageUrl: String,
     var durationMs: Int,
     var songStatus: String,
