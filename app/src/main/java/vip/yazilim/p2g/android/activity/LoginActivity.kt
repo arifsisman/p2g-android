@@ -12,17 +12,19 @@ import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
 import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
+import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
-import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
+import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SpotifyConstants
+import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
-import vip.yazilim.p2g.android.util.helper.DBHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
 import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
 import vip.yazilim.p2g.android.util.refrofit.enqueue
+import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 
 /**
@@ -36,7 +38,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
         setContentView(R.layout.activity_login)
 
         spotify_login_btn.setOnClickListener {
@@ -108,8 +109,8 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-                            SharedPrefSingleton.write("access_token", tokenModel.access_token)
-                            SharedPrefSingleton.write("refresh_token", tokenModel.refresh_token)
+                            SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, tokenModel.access_token)
+                            SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, tokenModel.refresh_token)
                             db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {
@@ -128,7 +129,7 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        RetrofitClient.getClient(tokenModel.access_token).create(LoginApi::class.java)
+        RetrofitClient.getClient().create(LoginApi::class.java)
             .login()
             .enqueue { result ->
                 when (result) {
@@ -137,14 +138,20 @@ class LoginActivity : AppCompatActivity() {
                             val user = result.response.body()
 
                             if (user != null) {
-                                db.insertData(user)
-                                UIHelper.showToastLong(
-                                    applicationContext,
-                                    "Logged in as ${user.name}"
-                                )
-                                startMainActivity(user, tokenModel)
+                                if (user.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
+                                    UIHelper.showToastLong(
+                                        applicationContext,
+                                        SPOTIFY_PRODUCT_TYPE_ERROR
+                                    )
+                                } else {
+                                    db.insertData(user)
+                                    UIHelper.showToastLong(
+                                        applicationContext,
+                                        "Logged in as ${user.name}"
+                                    )
+                                    startMainActivity(user, tokenModel)
+                                }
                             }
-
                         } else {
                             val errorMessage = result.response.errorBody()!!.string()
                             Log.d(LOG_TAG, errorMessage)

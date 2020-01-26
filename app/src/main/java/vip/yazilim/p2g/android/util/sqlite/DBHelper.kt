@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.helper
+package vip.yazilim.p2g.android.util.sqlite
 
 import android.content.ContentValues
 import android.content.Context
@@ -14,22 +14,26 @@ import vip.yazilim.p2g.android.data.spotify.TokenModel
  * @contact mustafaarifsisman@gmail.com
  */
 class DBHelper(context: Context) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    SQLiteOpenHelper(context,
+        DATABASE_NAME, null,
+        DATABASE_VERSION
+    ) {
     private val USER_TABLE_NAME = "User"
     private val TOKEN_TABLE_NAME = "Token"
 
-    private val COL_ID = "id"
-    private val COL_NAME = "name"
-    private val COL_EMAIL = "email"
-    private val COL_ROLE = "role"
-    private val COL_ONLINE_STATUS = "online_status"
-    private val COL_COUNTRY_CODE = "country_code"
-    private val COL_IMAGE_URL = "image_url"
-    private val COL_ANTHEM = "anthem"
-    private val COL_SPOTIFY_PRODUCT_TYPE = "spotify_product_type"
-    private val COL_SHOW_ACTIVITY_FLAG = "show_activity_flag"
-    private val COL_SHOW_FRIENDS_FLAG = "show_friends_flag"
-    private val COL_CREATION_DATE = "creation_date"
+    private val COL_ID = "table_id"
+    private val COL_USER_ID = "id"
+    private val COL_USER_NAME = "name"
+    private val COL_USER_EMAIL = "email"
+    private val COL_USER_ROLE = "role"
+    private val COL_USER_ONLINE_STATUS = "online_status"
+    private val COL_USER_COUNTRY_CODE = "country_code"
+    private val COL_USER_IMAGE_URL = "image_url"
+    private val COL_USER_ANTHEM = "anthem"
+    private val COL_USER_SPOTIFY_PRODUCT_TYPE = "spotify_product_type"
+    private val COL_USER_SHOW_ACTIVITY_FLAG = "show_activity_flag"
+    private val COL_USER_SHOW_FRIENDS_FLAG = "show_friends_flag"
+    private val COL_USER_CREATION_DATE = "creation_date"
 
     private val COL_REFRESH_TOKEN = "refresh_token"
     private val COL_ACCESS_TOKEN = "access_token"
@@ -43,22 +47,24 @@ class DBHelper(context: Context) :
 
     override fun onCreate(db: SQLiteDatabase?) {
         val createUserTable = "CREATE TABLE $USER_TABLE_NAME (" +
-                "$COL_ID TEXT PRIMARY KEY, " +
-                "$COL_NAME  TEXT," +
-                "$COL_EMAIL  TEXT," +
-                "$COL_ROLE  TEXT," +
-                "$COL_ONLINE_STATUS  TEXT," +
-                "$COL_COUNTRY_CODE  TEXT," +
-                "$COL_IMAGE_URL  TEXT," +
-                "$COL_ANTHEM  TEXT," +
-                "$COL_SPOTIFY_PRODUCT_TYPE  TEXT," +
-                "$COL_SHOW_ACTIVITY_FLAG  BOOLEAN," +
-                "$COL_SHOW_FRIENDS_FLAG  BOOLEAN," +
-                "$COL_CREATION_DATE  TEXT" +
+                "$COL_ID INTEGER PRIMARY KEY, " +
+                "$COL_USER_ID TEXT, " +
+                "$COL_USER_NAME  TEXT," +
+                "$COL_USER_EMAIL  TEXT," +
+                "$COL_USER_ROLE  TEXT," +
+                "$COL_USER_ONLINE_STATUS  TEXT," +
+                "$COL_USER_COUNTRY_CODE  TEXT," +
+                "$COL_USER_IMAGE_URL  TEXT," +
+                "$COL_USER_ANTHEM  TEXT," +
+                "$COL_USER_SPOTIFY_PRODUCT_TYPE  TEXT," +
+                "$COL_USER_SHOW_ACTIVITY_FLAG  BOOLEAN," +
+                "$COL_USER_SHOW_FRIENDS_FLAG  BOOLEAN," +
+                "$COL_USER_CREATION_DATE  TEXT" +
                 ")"
 
         val createTokenTable = "CREATE TABLE $TOKEN_TABLE_NAME (" +
-                "$COL_REFRESH_TOKEN TEXT PRIMARY KEY, " +
+                "$COL_ID INTEGER PRIMARY KEY, " +
+                "$COL_REFRESH_TOKEN TEXT, " +
                 "$COL_ACCESS_TOKEN  TEXT," +
                 "$COL_INSERT_DATE  DATE default CURRENT_DATE" +
                 ")"
@@ -74,18 +80,18 @@ class DBHelper(context: Context) :
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
         val sqliteDB = this.writableDatabase
         val contentValues = ContentValues()
-        contentValues.put(COL_ID, user.id)
-        contentValues.put(COL_NAME, user.name)
-        contentValues.put(COL_EMAIL, user.email)
-        contentValues.put(COL_ROLE, user.role)
-        contentValues.put(COL_ONLINE_STATUS, user.onlineStatus)
-        contentValues.put(COL_COUNTRY_CODE, user.countryCode)
-        contentValues.put(COL_IMAGE_URL, user.imageUrl)
-        contentValues.put(COL_ANTHEM, user.anthem)
-        contentValues.put(COL_SPOTIFY_PRODUCT_TYPE, user.spotifyProductType)
-        contentValues.put(COL_SHOW_ACTIVITY_FLAG, user.showActivityFlag)
-        contentValues.put(COL_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
-        contentValues.put(COL_CREATION_DATE, user.creationDate.format(formatter))
+        contentValues.put(COL_USER_ID, user.id)
+        contentValues.put(COL_USER_NAME, user.name)
+        contentValues.put(COL_USER_EMAIL, user.email)
+        contentValues.put(COL_USER_ROLE, user.role)
+        contentValues.put(COL_USER_ONLINE_STATUS, user.onlineStatus)
+        contentValues.put(COL_USER_COUNTRY_CODE, user.countryCode)
+        contentValues.put(COL_USER_IMAGE_URL, user.imageUrl)
+        contentValues.put(COL_USER_ANTHEM, user.anthem)
+        contentValues.put(COL_USER_SPOTIFY_PRODUCT_TYPE, user.spotifyProductType)
+        contentValues.put(COL_USER_SHOW_ACTIVITY_FLAG, user.showActivityFlag)
+        contentValues.put(COL_USER_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
+        contentValues.put(COL_USER_CREATION_DATE, user.creationDate.format(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }
@@ -97,22 +103,22 @@ class DBHelper(context: Context) :
         val result = sqliteDB.rawQuery(query, null)
         if (result.moveToFirst()) {
             do {
-                val userId = result.getString(result.getColumnIndex(COL_ID))
-                val userName = result.getString(result.getColumnIndex(COL_NAME))
-                val userEmail = result.getString(result.getColumnIndex(COL_EMAIL))
-                val userRole = result.getString(result.getColumnIndex(COL_ROLE))
-                val userOnlineStatus = result.getString(result.getColumnIndex(COL_ONLINE_STATUS))
-                val userCountryCode = result.getString(result.getColumnIndex(COL_COUNTRY_CODE))
-                val userImageUrl = result.getString(result.getColumnIndex(COL_IMAGE_URL))
-                val userAnthem = result.getString(result.getColumnIndex(COL_ANTHEM))
+                val userId = result.getString(result.getColumnIndex(COL_USER_ID))
+                val userName = result.getString(result.getColumnIndex(COL_USER_NAME))
+                val userEmail = result.getString(result.getColumnIndex(COL_USER_EMAIL))
+                val userRole = result.getString(result.getColumnIndex(COL_USER_ROLE))
+                val userOnlineStatus = result.getString(result.getColumnIndex(COL_USER_ONLINE_STATUS))
+                val userCountryCode = result.getString(result.getColumnIndex(COL_USER_COUNTRY_CODE))
+                val userImageUrl = result.getString(result.getColumnIndex(COL_USER_IMAGE_URL))
+                val userAnthem = result.getString(result.getColumnIndex(COL_USER_ANTHEM))
                 val userSpotifyProductType =
-                    result.getString(result.getColumnIndex(COL_SPOTIFY_PRODUCT_TYPE))
+                    result.getString(result.getColumnIndex(COL_USER_SPOTIFY_PRODUCT_TYPE))
                 val userShowActivityFlag =
-                    result.getInt(result.getColumnIndex(COL_SHOW_ACTIVITY_FLAG)) > 0
+                    result.getInt(result.getColumnIndex(COL_USER_SHOW_ACTIVITY_FLAG)) > 0
                 val userShowFriendsFlag =
-                    result.getInt(result.getColumnIndex(COL_SHOW_FRIENDS_FLAG)) > 0
+                    result.getInt(result.getColumnIndex(COL_USER_SHOW_FRIENDS_FLAG)) > 0
                 val userCreationDate =
-                    LocalDateTime.parse(result.getString(result.getColumnIndex(COL_CREATION_DATE)))
+                    LocalDateTime.parse(result.getString(result.getColumnIndex(COL_USER_CREATION_DATE)))
 
                 val user = User(
                     userId,

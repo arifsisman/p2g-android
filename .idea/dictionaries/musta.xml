@@ -2,6 +2,8 @@
   <dictionary name="musta">
     <words>
       <w>gether</w>
+      <w>gson</w>
+      <w>sqlite</w>
     </words>
   </dictionary>
 </component>
