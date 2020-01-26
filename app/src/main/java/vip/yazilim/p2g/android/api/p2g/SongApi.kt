@@ -18,7 +18,7 @@ interface SongApi {
     fun getRoomSongList(@Path("roomId") roomId: Long): Call<List<Song>>
 
     @POST("song/{roomId}")
-    fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModel: SearchModel): Call<List<Song>>
+    fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<List<Song>>
 
     @DELETE("song/{songId}")
     fun removeSongFromRoom(@Path("songId") songId: Long): Call<List<Song>>
