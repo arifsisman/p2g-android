@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.data.p2g.model
+package vip.yazilim.p2g.android.model.p2g
 
 import vip.yazilim.p2g.android.constant.enums.SearchType
 import java.io.Serializable

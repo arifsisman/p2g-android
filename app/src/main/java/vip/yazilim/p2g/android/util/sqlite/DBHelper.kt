@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
-import vip.yazilim.p2g.android.data.p2g.User
-import vip.yazilim.p2g.android.data.spotify.TokenModel
+import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.model.spotify.TokenModel
 
 /**
  * @author mustafaarifsisman - 23.01.2020

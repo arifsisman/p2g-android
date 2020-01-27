@@ -1,8 +1,5 @@
-package vip.yazilim.p2g.android.data.p2g.model
+package vip.yazilim.p2g.android.model.p2g
 
-import vip.yazilim.p2g.android.data.p2g.Room
-import vip.yazilim.p2g.android.data.p2g.Song
-import vip.yazilim.p2g.android.data.p2g.User
 import java.io.Serializable
 
 

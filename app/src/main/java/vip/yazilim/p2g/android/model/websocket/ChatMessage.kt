@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.data.websocket
+package vip.yazilim.p2g.android.model.websocket
 
 import org.threeten.bp.LocalDateTime
 import java.io.Serializable

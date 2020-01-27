@@ -15,4 +15,6 @@
     <string name="login_button_text">Login with Spotify</string>
     <string name="logout">Logout</string>
     <string name="logo">Logo</string>
+    <string name="empty_list">List is empty</string>
+    <string name="an_error_occurred">An error occurred</string>
 </resources>

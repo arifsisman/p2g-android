@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import vip.yazilim.p2g.android.data.p2g.User
+import vip.yazilim.p2g.android.model.p2g.User
 
 /**
  * @author mustafaarifsisman - 21.01.2020

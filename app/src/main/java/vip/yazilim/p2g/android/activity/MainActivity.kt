@@ -19,8 +19,8 @@ import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
-import vip.yazilim.p2g.android.data.p2g.User
-import vip.yazilim.p2g.android.data.websocket.ChatMessage
+import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.model.websocket.ChatMessage
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter.registerLocalDateTime
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient.Companion.getRoomWebSocketClient

@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.data.p2g
+package vip.yazilim.p2g.android.model.p2g
 
 import java.io.Serializable
 

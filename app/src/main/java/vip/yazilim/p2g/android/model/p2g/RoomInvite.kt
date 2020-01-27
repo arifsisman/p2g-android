@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.data.p2g
+package vip.yazilim.p2g.android.model.p2g
 
 import org.threeten.bp.LocalDateTime
 import java.io.Serializable
@@ -7,10 +7,10 @@ import java.io.Serializable
  * @author mustafaarifsisman - 26.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-data class FriendRequest(
+data class RoomInvite(
     var id: Long,
+    var roomId: Long,
     var userId: String,
-    var friendId: String,
-    var requestStatus: String,
-    var requestDate: LocalDateTime
+    var invitationDate: LocalDateTime,
+    var acceptedFlag: Boolean
 ) : Serializable

@@ -2,11 +2,7 @@ package vip.yazilim.p2g.android.api.p2g
 
 import retrofit2.Call
 import retrofit2.http.*
-import vip.yazilim.p2g.android.data.p2g.Room
-import vip.yazilim.p2g.android.data.p2g.RoomInvite
-import vip.yazilim.p2g.android.data.p2g.RoomUser
-import vip.yazilim.p2g.android.data.p2g.User
-import vip.yazilim.p2g.android.data.p2g.model.RoomModel
+import vip.yazilim.p2g.android.model.p2g.*
 
 /**
  * @author mustafaarifsisman - 26.01.2020
@@ -21,7 +17,10 @@ interface RoomApi {
     fun getRoom(@Path("id") roomId: Long): Call<Room>
 
     @GET("room/")
-    fun getAllRoom(): Call<List<Room>>
+    fun getAllRooms(): Call<List<Room>>
+
+    @GET("room/model/")
+    fun getAllRoomModels(): Call<List<RoomModel>>
 
     @PUT("room/")
     fun updateRoom(@Body room: Room): Call<Room>
@@ -29,7 +28,7 @@ interface RoomApi {
     @DELETE("room/{id}")
     fun deleteRoom(@Path("id") roomId: Long): Call<Boolean>
 
-    @GET("room/{id}/model")
+    @GET("room/model/{id}")
     fun getRoomModel(@Path("id") roomId: Long): Call<RoomModel>
 
     @POST("room/{roomId}/invite/{userId}")

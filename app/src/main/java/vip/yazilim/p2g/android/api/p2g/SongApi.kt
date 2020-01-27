@@ -2,8 +2,8 @@ package vip.yazilim.p2g.android.api.p2g
 
 import retrofit2.Call
 import retrofit2.http.*
-import vip.yazilim.p2g.android.data.p2g.Song
-import vip.yazilim.p2g.android.data.p2g.model.SearchModel
+import vip.yazilim.p2g.android.model.p2g.SearchModel
+import vip.yazilim.p2g.android.model.p2g.Song
 
 /**
  * @author mustafaarifsisman - 26.01.2020

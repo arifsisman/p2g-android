@@ -19,14 +19,15 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
-import vip.yazilim.p2g.android.data.p2g.User
-import vip.yazilim.p2g.android.data.spotify.TokenModel
+import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
 import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
 import vip.yazilim.p2g.android.util.refrofit.enqueue
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
+import vip.yazilim.p2g.android.view.HomeActivity
 
 
 /**
@@ -179,7 +180,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity(user: User, tokenModel: TokenModel) {
-        val startMainIntent = Intent(this, MainActivity::class.java)
+        val startMainIntent = Intent(this, HomeActivity::class.java)
         startMainIntent.putExtra("user", user)
         startMainIntent.putExtra("tokenModel", tokenModel)
         startActivity(startMainIntent)

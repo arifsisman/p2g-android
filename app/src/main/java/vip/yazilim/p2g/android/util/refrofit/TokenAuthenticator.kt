@@ -10,7 +10,7 @@ import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
-import vip.yazilim.p2g.android.data.spotify.TokenModel
+import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 
 /**
