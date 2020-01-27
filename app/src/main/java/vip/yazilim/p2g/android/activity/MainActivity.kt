@@ -13,18 +13,14 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.GsonBuilder
-import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.activity_main.*
 import org.threeten.bp.LocalDateTime
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
-import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
-import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.data.p2g.User
 import vip.yazilim.p2g.android.data.websocket.ChatMessage
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter.registerLocalDateTime
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient.Companion.getRoomWebSocketClient
@@ -42,28 +38,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidThreeTen.init(this)
-        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
         setContentView(R.layout.activity_main)
 
-        if (!db.isUserExists() ||
-            SharedPrefSingleton
-                .read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
-                .equals(TokenConstants.UNDEFINED)) {
-
-            val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
-            startActivity(loginIntent)
-            finish()
-        } else {
-            //todo: try a request, if fails start login activity
-            user = db.readUser()
-            Log.d(LOG_TAG, user.email)
-            connectRoomWebSocket("1")
-        }
-
+        // Bind views
         val navView: BottomNavigationView = nav_view
         val navController = nav_host_fragment.findNavController()
-
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home,
@@ -74,6 +53,10 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // custom code
+        user = db.readUser()
+        connectRoomWebSocket(1)
     }
 
     override fun startActivity(intent: Intent?) {
@@ -84,6 +67,11 @@ class MainActivity : AppCompatActivity() {
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.from_right_out, R.anim.from_left_in)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        connectRoomWebSocket(1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -103,48 +91,55 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         if (this::roomWSClient.isInitialized) {
             roomWSClient.disconnect()
         }
-        super.onDestroy()
     }
 
     @SuppressLint("CheckResult")
-    private fun connectRoomWebSocket(roomId: String) {
+    private fun connectRoomWebSocket(roomId: Long) {
         roomWSClient = getRoomWebSocketClient(roomId)
+
         roomWSClient.connect()
 
-        roomWSClient.lifecycle().subscribe {
-            when (it.type) {
-                LifecycleEvent.Type.OPENED -> {
-                    Log.i(LOG_TAG, it.toString())
+        roomWSClient.lifecycle()
+            .subscribe({
+                when (it.type) {
+                    LifecycleEvent.Type.OPENED -> {
+                        Log.i(LOG_TAG, it.toString())
+                    }
+                    LifecycleEvent.Type.CLOSED -> {
+                        Log.i(LOG_TAG, it.toString())
+                    }
+                    LifecycleEvent.Type.ERROR -> {
+                        Log.i(LOG_TAG, it.toString())
+                    }
+                    else -> Log.i(LOG_TAG, it.toString())
                 }
-                LifecycleEvent.Type.CLOSED -> {
-                    Log.i(LOG_TAG, it.toString())
-                }
-                LifecycleEvent.Type.ERROR -> {
-                    Log.i(LOG_TAG, it.toString())
-                }
-                else -> Log.i(LOG_TAG, it.toString())
-            }
-        }
+            }, { t: Throwable? ->
+                Log.d(LOG_TAG, t?.message.toString())
+            })
 
-        roomWSClient.topic("/p2g/room/$roomId/messages").subscribe { message ->
-            Log.d(LOG_TAG, message.payload)
-        }
+        roomWSClient.topic("/p2g/room/$roomId/messages")
+            .subscribe({
+                Log.d(LOG_TAG, it.payload)
+            }, { t: Throwable? -> Log.d(LOG_TAG, t?.message.toString()) })
 
-        roomWSClient.topic("/p2g/room/$roomId/songs").subscribe { songList ->
-            Log.d(LOG_TAG, songList.payload)
-        }
+        roomWSClient.topic("/p2g/room/$roomId/songs")
+            .subscribe({
+                Log.d(LOG_TAG, it.payload)
+            }, { t: Throwable? -> Log.d(LOG_TAG, t?.message.toString()) })
 
-        roomWSClient.topic("/p2g/room/$roomId/status").subscribe { roomStatus ->
-            Log.d(LOG_TAG, roomStatus.payload)
-        }
+        roomWSClient.topic("/p2g/room/$roomId/status")
+            .subscribe({
+                Log.d(LOG_TAG, it.payload)
+            }, { t: Throwable? -> Log.d(LOG_TAG, t?.message.toString()) })
 
         val gsonBuilder = GsonBuilder()
         val gson = registerLocalDateTime(gsonBuilder).create()
 
-        val chatMessage = ChatMessage("TEST", "TEST", "TEST", "TEST", LocalDateTime.now())
+        val chatMessage = ChatMessage("TEST", "TEST", 1, "TEST", LocalDateTime.now())
         val chatMessageJson = gson.toJson(chatMessage)
 
         roomWSClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()

@@ -4,17 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.p2g.spotify.LoginApi
+import vip.yazilim.p2g.android.api.SpotifyWebApi
 import vip.yazilim.p2g.android.api.spotify.AuthorizationApi
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
+import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.data.p2g.User
@@ -39,6 +41,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // Init DB and AndroidThreeTen
+        AndroidThreeTen.init(this)
+        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
 
         spotify_login_btn.setOnClickListener {
             getAuthorizationCodeFromSpotify()
@@ -97,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
 
     // getTokensFromSpotify via Spotify Web API
     private fun getTokensFromSpotify(code: String) {
-        RetrofitClient.getSpotifyClient().create(AuthorizationApi::class.java)
+        RetrofitClient.getSpotifyClient().create(SpotifyWebApi::class.java)
             .getTokens(
                 SpotifyConstants.CLIENT_ID,
                 SpotifyConstants.CLIENT_SECRET,
@@ -109,8 +115,14 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val tokenModel = result.response.body()!!
-                            SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, tokenModel.access_token)
-                            SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, tokenModel.refresh_token)
+                            SharedPrefSingleton.write(
+                                TokenConstants.ACCESS_TOKEN,
+                                tokenModel.access_token
+                            )
+                            SharedPrefSingleton.write(
+                                TokenConstants.REFRESH_TOKEN,
+                                tokenModel.refresh_token
+                            )
                             db.insertData(tokenModel)
                             loginToPlay2Gether(tokenModel)
                         } else {
@@ -129,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        RetrofitClient.getClient().create(LoginApi::class.java)
+        RetrofitClient.getClient().create(AuthorizationApi::class.java)
             .login()
             .enqueue { result ->
                 when (result) {
@@ -166,8 +178,8 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun startMainActivity(user: User?, tokenModel: TokenModel) {
-        val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+    private fun startMainActivity(user: User, tokenModel: TokenModel) {
+        val startMainIntent = Intent(this, MainActivity::class.java)
         startMainIntent.putExtra("user", user)
         startMainIntent.putExtra("tokenModel", tokenModel)
         startActivity(startMainIntent)

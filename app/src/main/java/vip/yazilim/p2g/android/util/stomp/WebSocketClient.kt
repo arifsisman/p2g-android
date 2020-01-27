@@ -12,7 +12,7 @@ import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
  */
 class WebSocketClient {
     companion object {
-        fun getRoomWebSocketClient(roomId: String): StompClient {
+        fun getRoomWebSocketClient(roomId: Long): StompClient {
             val accessToken =
                 SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
             val header: MutableMap<String, String> = mutableMapOf()
@@ -22,7 +22,7 @@ class WebSocketClient {
                 Stomp.ConnectionProvider.OKHTTP,
                 ApiConstants.BASE_WS_URL_ROOM + roomId,
                 header
-            ).withClientHeartbeat(0).withServerHeartbeat(0)
+            )
         }
 
         fun getUserWebSocketClient(userId: String): StompClient {
@@ -35,7 +35,7 @@ class WebSocketClient {
                 Stomp.ConnectionProvider.OKHTTP,
                 ApiConstants.BASE_WS_URL_USER + userId,
                 header
-            ).withClientHeartbeat(0).withServerHeartbeat(0)
+            )
         }
     }
 }
