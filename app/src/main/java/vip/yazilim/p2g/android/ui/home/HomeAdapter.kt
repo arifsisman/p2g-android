@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.view
+package vip.yazilim.p2g.android.ui.home
 
 import android.view.LayoutInflater
 import android.view.View

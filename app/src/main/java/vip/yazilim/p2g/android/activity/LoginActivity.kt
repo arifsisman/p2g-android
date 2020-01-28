@@ -27,7 +27,6 @@ import vip.yazilim.p2g.android.util.refrofit.Result
 import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
 import vip.yazilim.p2g.android.util.refrofit.enqueue
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
-import vip.yazilim.p2g.android.view.HomeActivity
 
 
 /**
@@ -180,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity(user: User, tokenModel: TokenModel) {
-        val startMainIntent = Intent(this, HomeActivity::class.java)
+        val startMainIntent = Intent(this, MainActivity::class.java)
         startMainIntent.putExtra("user", user)
         startMainIntent.putExtra("tokenModel", tokenModel)
         startActivity(startMainIntent)
