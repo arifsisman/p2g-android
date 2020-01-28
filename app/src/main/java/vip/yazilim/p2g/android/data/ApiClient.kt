@@ -6,16 +6,18 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
+import vip.yazilim.p2g.android.constant.ApiConstants.BASE_URL
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 
 object ApiClient {
-
-    private const val API_BASE_URL = "http://192.168.1.39:8080"
 
     private var servicesApiInterface: ServicesApiInterface? = null
 
@@ -38,7 +40,7 @@ object ApiClient {
 
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
         val builder: Retrofit.Builder = Retrofit.Builder()
-            .baseUrl(API_BASE_URL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
 
         val retrofit: Retrofit = builder
@@ -59,5 +61,11 @@ object ApiClient {
     interface ServicesApiInterface {
         @GET("/api/room/model/")
         fun getRoomModels(): Call<RestResponse<List<RoomModel>>>
+
+        @GET("/api/spotify/login")
+        fun login(): Call<RestResponse<User>>
+
+        @POST("/api/spotify/token")
+        fun updateAccessToken(@Body accessToken:String): Call<RestResponse<String>>
     }
 }

@@ -44,7 +44,7 @@ class RetrofitClient {
         fun getSpotifyClient(): Retrofit {
             val httpClient = OkHttpClient.Builder()
             return Retrofit.Builder()
-                .baseUrl(ApiConstants.SPOTIFY_BASE_API_URL)
+                .baseUrl(ApiConstants.SPOTIFY_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).client(httpClient.build())
                 .build()
         }

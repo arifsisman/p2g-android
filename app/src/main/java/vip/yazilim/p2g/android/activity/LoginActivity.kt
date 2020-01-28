@@ -149,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
-                            val user = result.response.body()
+                            val user = result.response.body()?.data
 
                             if (user != null) {
                                 if (user.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
