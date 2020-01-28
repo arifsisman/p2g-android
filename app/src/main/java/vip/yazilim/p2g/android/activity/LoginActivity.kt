@@ -13,6 +13,8 @@ import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Play2GetherWebApi
 import vip.yazilim.p2g.android.api.SpotifyWebApi
+import vip.yazilim.p2g.android.api.helper.Result
+import vip.yazilim.p2g.android.api.helper.enqueue
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
@@ -23,9 +25,7 @@ import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
-import vip.yazilim.p2g.android.util.refrofit.Result
 import vip.yazilim.p2g.android.util.refrofit.SimpleClient
-import vip.yazilim.p2g.android.util.refrofit.enqueue
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 
