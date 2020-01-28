@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 class HomeAdapter(private var roomModels: List<RoomModel>) :
@@ -19,19 +20,30 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
         val roomModel = roomModels[position]
 
-        val ownerText = "Owner: " + roomModel.owner.name
-        val nowPlayingText: String
-
-        if (!roomModel.songList.isNullOrEmpty()) {
-            nowPlayingText =
-                "Now Playing: " + roomModel.songList!![0].songName + " - " + roomModel.songList!![0].artistNames[0]
-            vh.nowPlaying.text = nowPlayingText
-        } else {
-            vh.nowPlaying.visibility = View.INVISIBLE
-        }
+        val ownerText = "Room Owner: " + roomModel.owner.name
 
         vh.roomName.text = roomModel.room.name
         vh.owner.text = ownerText
+
+        roomModel.songList?.forEach {
+            when (it.songStatus) {
+                SongStatus.PLAYING.songStatus -> {
+                    val nowPlayingText = "Now Playing: " + it.songName + " - " + it.artistNames[0]
+                    vh.nowPlaying.text = nowPlayingText
+                    return
+                }
+                SongStatus.PAUSED.songStatus -> {
+                    val nowPlayingText = "Paused: " + it.songName + " - " + it.artistNames[0]
+                    vh.nowPlaying.text = nowPlayingText
+                    return
+                }
+                SongStatus.NEXT.songStatus -> {
+                    val nowPlayingText = "Next: " + it.songName + " - " + it.artistNames[0]
+                    vh.nowPlaying.text = nowPlayingText
+                    return
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int {

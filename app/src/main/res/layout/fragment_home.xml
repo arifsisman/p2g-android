@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="65dp"
-    app:layout_constraintBottom_toBottomOf="@+id/nav_host_fragment">
+    android:layout_marginBottom="60dp">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -14,7 +13,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_room"
+        app:layout_constraintBottom_toBottomOf="@+id/layoutError"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -60,6 +59,7 @@
         app:layout_constraintVertical_bias="1.0"
         tools:visibility="visible" />
 
+
     <Button
         android:id="@+id/button_create_room"
         android:layout_width="wrap_content"
@@ -68,5 +68,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/layoutError"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

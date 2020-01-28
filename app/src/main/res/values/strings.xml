@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Play2Gether</string>
     <string name="title_home">Home</string>
+    <string name="title_rooms">Spotify Rooms</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_login">Sign in</string>
@@ -15,10 +16,10 @@
     <string name="login_button_text">Login with Spotify</string>
     <string name="logout">Logout</string>
     <string name="logo">Logo</string>
-    <string name="empty_list">List is empty</string>
+    <string name="empty_list"> </string>
     <string name="an_error_occurred">An error occurred</string>
-    <string name="create_room">Create Room</string>
+    <string name="create_room">Create New Room</string>
     <string name="room_name">Room Name</string>
-    <string name="room_now_playing">Now Playing</string>
-    <string name="room_owner">Owner</string>
+    <string name="room_now_playing">No song found in the room</string>
+    <string name="room_owner">Room Owner</string>
 </resources>
