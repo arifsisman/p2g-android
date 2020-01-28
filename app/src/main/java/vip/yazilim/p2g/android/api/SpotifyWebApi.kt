@@ -13,7 +13,7 @@ import vip.yazilim.p2g.android.model.spotify.TokenModel
 interface SpotifyWebApi {
 
     @FormUrlEncoded
-    @POST("api/token")
+    @POST("/api/token")
     fun getTokens(
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,
@@ -23,7 +23,7 @@ interface SpotifyWebApi {
     ): Call<TokenModel>
 
     @FormUrlEncoded
-    @POST("api/token")
+    @POST("/api/token")
     fun refreshExpiredToken(
         @Field("client_id") clientId: String,
         @Field("client_secret") clientSecret: String,

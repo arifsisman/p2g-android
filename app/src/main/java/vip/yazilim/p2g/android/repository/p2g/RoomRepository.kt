@@ -1,16 +1,16 @@
-package vip.yazilim.p2g.android.model
+package vip.yazilim.p2g.android.repository.p2g
 
 import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
-import vip.yazilim.p2g.android.data.ApiClient
-import vip.yazilim.p2g.android.data.OperationCallback
-import vip.yazilim.p2g.android.data.RestResponse
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.util.data.ApiClient
+import vip.yazilim.p2g.android.util.data.OperationCallback
+import vip.yazilim.p2g.android.util.data.RestResponse
 
-class RoomRepository:RoomDataSource {
+class RoomRepository: RoomDataSource {
 
     private var call:Call<RestResponse<List<RoomModel>>>?=null
 

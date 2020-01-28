@@ -1,17 +1,17 @@
 package vip.yazilim.p2g.android.di
 
-import vip.yazilim.p2g.android.model.RoomDataSource
-import vip.yazilim.p2g.android.model.RoomRepository
-import vip.yazilim.p2g.android.model.spotify.SpotifyDataSource
-import vip.yazilim.p2g.android.model.spotify.SpotifyRepository
+import vip.yazilim.p2g.android.repository.p2g.RoomDataSource
+import vip.yazilim.p2g.android.repository.p2g.RoomRepository
+import vip.yazilim.p2g.android.repository.spotify.SpotifyDataSource
+import vip.yazilim.p2g.android.repository.spotify.SpotifyRepository
 
 object Injection {
 
-    fun roomProviderRepository():RoomDataSource{
+    fun roomProviderRepository(): RoomDataSource {
         return RoomRepository()
     }
 
-    fun spotifyProviderRepository():SpotifyDataSource{
+    fun spotifyProviderRepository(): SpotifyDataSource {
         return SpotifyRepository()
     }
 }

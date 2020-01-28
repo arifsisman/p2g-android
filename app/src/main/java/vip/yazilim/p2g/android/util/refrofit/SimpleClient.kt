@@ -15,7 +15,7 @@ import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
  * @contact mustafaarifsisman@gmail.com
  */
 
-class RetrofitClient {
+class SimpleClient {
     companion object {
         fun getClient(): Retrofit {
             val accessToken =

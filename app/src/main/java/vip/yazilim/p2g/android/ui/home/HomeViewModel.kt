@@ -3,9 +3,9 @@ package vip.yazilim.p2g.android.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import vip.yazilim.p2g.android.data.OperationCallback
-import vip.yazilim.p2g.android.model.RoomDataSource
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.repository.p2g.RoomDataSource
+import vip.yazilim.p2g.android.util.data.OperationCallback
 
 class HomeViewModel(private val repository: RoomDataSource):ViewModel() {
 
@@ -24,7 +24,8 @@ class HomeViewModel(private val repository: RoomDataSource):ViewModel() {
     @Suppress("UNCHECKED_CAST")
     fun loadRooms(){
         _isViewLoading.postValue(true)
-        repository.getRoomModels(object: OperationCallback {
+        repository.getRoomModels(object:
+            OperationCallback {
             override fun onError(obj: Any?) {
                 _isViewLoading.postValue(false)
                 _onMessageError.postValue(obj)

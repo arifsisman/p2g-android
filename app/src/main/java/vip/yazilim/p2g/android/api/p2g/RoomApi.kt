@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.api.p2g
 import retrofit2.Call
 import retrofit2.http.*
 import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.util.data.RestResponse
 
 /**
  * @author mustafaarifsisman - 26.01.2020
@@ -10,49 +11,49 @@ import vip.yazilim.p2g.android.model.p2g.*
  */
 interface RoomApi {
 
-    @POST("room/")
-    fun createRoom(@Body room: Room): Call<Room>
+    @POST("/api/room/")
+    fun createRoom(@Body room: Room): Call<RestResponse<Room>>
 
-    @GET("room/{id}")
-    fun getRoom(@Path("id") roomId: Long): Call<Room>
+    @GET("/api/room/{id}")
+    fun getRoom(@Path("id") roomId: Long): Call<RestResponse<Room>>
 
-    @GET("room/")
-    fun getAllRooms(): Call<List<Room>>
+    @GET("/api/room/")
+    fun getAllRooms(): Call<List<RestResponse<Room>>>
 
-    @GET("room/model/")
-    fun getAllRoomModels(): Call<List<RoomModel>>
+    @GET("/api/room/model/")
+    fun getRoomModels(): Call<RestResponse<List<RoomModel>>>
 
-    @PUT("room/")
-    fun updateRoom(@Body room: Room): Call<Room>
+    @PUT("/apiroom/")
+    fun updateRoom(@Body room: Room): Call<RestResponse<Room>>
 
-    @DELETE("room/{id}")
-    fun deleteRoom(@Path("id") roomId: Long): Call<Boolean>
+    @DELETE("/api/room/{id}")
+    fun deleteRoom(@Path("id") roomId: Long): Call<RestResponse<Boolean>>
 
-    @GET("room/model/{id}")
-    fun getRoomModel(@Path("id") roomId: Long): Call<RoomModel>
+    @GET("/api/room/model/{id}")
+    fun getRoomModel(@Path("id") roomId: Long): Call<RestResponse<RoomModel>>
 
-    @POST("room/{roomId}/invite/{userId}")
-    fun inviteUser(@Path("roomId") roomId: Long, @Path("userId") userId: String): Call<RoomInvite>
+    @POST("/api/room/{roomId}/invite/{userId}")
+    fun inviteUser(@Path("roomId") roomId: Long, @Path("userId") userId: String): Call<RestResponse<RoomInvite>>
 
-    @POST("room/invite/accept")
-    fun acceptInvite(@Body roomInvite: RoomInvite): Call<RoomUser>
+    @POST("/api/room/invite/accept")
+    fun acceptInvite(@Body roomInvite: RoomInvite): Call<RestResponse<RoomUser>>
 
-    @DELETE("room/invite/{id}/reject")
-    fun rejectInvite(@Path("id") roomId: Long): Call<Boolean>
+    @DELETE("/api/room/invite/{id}/reject")
+    fun rejectInvite(@Path("id") roomId: Long): Call<RestResponse<Boolean>>
 
-    @POST("room/{id}/join")
-    fun joinRoom(@Path("id") roomId: Long, @Body password: String): Call<RoomUser>
+    @POST("/api/room/{id}/join")
+    fun joinRoom(@Path("id") roomId: Long, @Body password: String): Call<RestResponse<RoomUser>>
 
-    @DELETE("room/leave")
-    fun leaveRoom(): Call<Boolean>
+    @DELETE("/api/room/leave")
+    fun leaveRoom(): Call<RestResponse<Boolean>>
 
-    @GET("room/{id}/users")
-    fun getRoomUsers(@Path("id") roomId: Long): Call<List<User>>
+    @GET("/api/room/{id}/users")
+    fun getRoomUsers(@Path("id") roomId: Long): Call<RestResponse<List<User>>>
 
-    @PUT("room/user/{id}/promote")
-    fun promoteUser(@Path("id") roomId: String): Call<RoomUser>
+    @PUT("/api/room/user/{id}/promote")
+    fun promoteUser(@Path("id") roomId: String): Call<RestResponse<RoomUser>>
 
-    @PUT("room/user/{id}/demote")
-    fun demoteUser(@Path("id") roomId: String): Call<RoomUser>
+    @PUT("/api/room/user/{id}/demote")
+    fun demoteUser(@Path("id") roomId: String): Call<RestResponse<RoomUser>>
 
 }

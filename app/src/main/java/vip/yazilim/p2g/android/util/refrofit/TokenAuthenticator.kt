@@ -35,7 +35,7 @@ class TokenAuthenticator : Authenticator {
 
     companion object {
         fun refreshExpiredToken(refreshToken: String): String {
-            RetrofitClient.getSpotifyClient().create(SpotifyWebApi::class.java)
+            SimpleClient.getSpotifyClient().create(SpotifyWebApi::class.java)
                 .refreshExpiredToken(
                     SpotifyConstants.CLIENT_ID,
                     SpotifyConstants.CLIENT_SECRET,
@@ -68,7 +68,7 @@ class TokenAuthenticator : Authenticator {
     }
 
     private fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-        RetrofitClient.getClient().create(AuthorizationApi::class.java)
+        SimpleClient.getClient().create(AuthorizationApi::class.java)
             .updateAccessToken(accessToken).enqueue { result ->
                 when (result) {
                     is Result.Failure -> {

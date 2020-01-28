@@ -24,7 +24,7 @@ import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Result
-import vip.yazilim.p2g.android.util.refrofit.RetrofitClient
+import vip.yazilim.p2g.android.util.refrofit.SimpleClient
 import vip.yazilim.p2g.android.util.refrofit.enqueue
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
@@ -105,7 +105,7 @@ class LoginActivity : AppCompatActivity() {
 
     // getTokensFromSpotify via Spotify Web API
     private fun getTokensFromSpotify(code: String) {
-        RetrofitClient.getSpotifyClient().create(SpotifyWebApi::class.java)
+        SimpleClient.getSpotifyClient().create(SpotifyWebApi::class.java)
             .getTokens(
                 SpotifyConstants.CLIENT_ID,
                 SpotifyConstants.CLIENT_SECRET,
@@ -143,7 +143,7 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        RetrofitClient.getClient().create(AuthorizationApi::class.java)
+        SimpleClient.getClient().create(AuthorizationApi::class.java)
             .login()
             .enqueue { result ->
                 when (result) {
