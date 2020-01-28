@@ -1,9 +1,9 @@
 package vip.yazilim.p2g.android.repository.spotify
 
-import vip.yazilim.p2g.android.api.helper.OperationCallback
+import vip.yazilim.p2g.android.api.generic.Callback
 
 interface SpotifyDataSource {
-    fun getTokens(code: String, callback: OperationCallback)
-    fun refreshTokens(refreshToken: String, callback: OperationCallback)
+    fun getTokens(code: String, callback: Callback)
+    fun refreshTokens(refreshToken: String, callback: Callback)
     fun cancel()
 }

@@ -5,7 +5,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
-import vip.yazilim.p2g.android.api.helper.OperationCallback
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.model.spotify.TokenModel
@@ -15,7 +14,7 @@ class SpotifyRepository :
 
     private var call: Call<TokenModel>? = null
 
-    override fun getTokens(code: String, callback: OperationCallback) {
+    override fun getTokens(code: String, callback: vip.yazilim.p2g.android.api.generic.Callback) {
         call = SpotifyApiClient.build()?.getTokens(
             SpotifyConstants.CLIENT_ID,
             SpotifyConstants.CLIENT_SECRET,
@@ -41,7 +40,7 @@ class SpotifyRepository :
         })
     }
 
-    override fun refreshTokens(refreshToken: String, callback: OperationCallback) {
+    override fun refreshTokens(refreshToken: String, callback: vip.yazilim.p2g.android.api.generic.Callback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

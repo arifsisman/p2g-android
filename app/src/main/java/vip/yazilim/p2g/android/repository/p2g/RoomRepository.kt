@@ -3,18 +3,18 @@ package vip.yazilim.p2g.android.repository.p2g
 import android.util.Log
 import retrofit2.Call
 import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.helper.OperationCallback
-import vip.yazilim.p2g.android.api.helper.RestResponse
-import vip.yazilim.p2g.android.api.helper.Result
-import vip.yazilim.p2g.android.api.helper.enqueue
+import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.Response
+import vip.yazilim.p2g.android.api.generic.Result
+import vip.yazilim.p2g.android.api.generic.enqueue
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 class RoomRepository : RoomDataSource {
 
-    private var call: Call<RestResponse<List<RoomModel>>>? = null
+    private var call: Call<Response<List<RoomModel>>>? = null
 
-    override fun getRoomModels(callback: OperationCallback) {
+    override fun getRoomModels(callback: Callback) {
         call = ApiClient.build()?.getRoomModels()
         call?.enqueue { result ->
             when (result) {

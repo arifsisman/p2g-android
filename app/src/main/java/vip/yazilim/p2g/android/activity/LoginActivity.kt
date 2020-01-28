@@ -13,8 +13,8 @@ import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Play2GetherWebApi
 import vip.yazilim.p2g.android.api.SpotifyWebApi
-import vip.yazilim.p2g.android.api.helper.Result
-import vip.yazilim.p2g.android.api.helper.enqueue
+import vip.yazilim.p2g.android.api.generic.Result
+import vip.yazilim.p2g.android.api.generic.enqueue
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE

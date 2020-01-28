@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.api.helper
+package vip.yazilim.p2g.android.api.generic
 
 import retrofit2.Call
 import retrofit2.Response

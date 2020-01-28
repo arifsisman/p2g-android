@@ -7,8 +7,8 @@ import okhttp3.Response
 import okhttp3.Route
 import vip.yazilim.p2g.android.api.Play2GetherWebApi
 import vip.yazilim.p2g.android.api.SpotifyWebApi
-import vip.yazilim.p2g.android.api.helper.Result
-import vip.yazilim.p2g.android.api.helper.enqueue
+import vip.yazilim.p2g.android.api.generic.Result
+import vip.yazilim.p2g.android.api.generic.enqueue
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
