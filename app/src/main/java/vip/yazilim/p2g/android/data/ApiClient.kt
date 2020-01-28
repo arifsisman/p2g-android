@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import vip.yazilim.p2g.android.constant.TokenConstants
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
@@ -57,6 +58,6 @@ object ApiClient {
 
     interface ServicesApiInterface {
         @GET("/api/room/model/")
-        fun getRoomModels(): Call<RoomModelResponse>
+        fun getRoomModels(): Call<RestResponse<List<RoomModel>>>
     }
 }

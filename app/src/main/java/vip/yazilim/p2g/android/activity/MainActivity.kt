@@ -55,8 +55,8 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         // custom code
-        user = db.readUser()
-        connectRoomWebSocket(1)
+//        user = db.readUser()
+//        connectRoomWebSocket(1)
     }
 
     override fun startActivity(intent: Intent?) {
