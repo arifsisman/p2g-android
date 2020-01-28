@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
-class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapter<HomeAdapter.MViewHolder>() {
+class HomeAdapter(private var roomModels: List<RoomModel>) :
+    RecyclerView.Adapter<HomeAdapter.MViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
@@ -18,8 +19,19 @@ class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapte
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
         val roomModel = roomModels[position]
 
-        vh.textViewName.text = roomModel.room.name
-//        Glide.with(vh.imageView.context).load(room.photo).into(vh.imageView)
+        val ownerText = "Owner: " + roomModel.owner.name
+        val nowPlayingText: String
+
+        if (!roomModel.songList.isNullOrEmpty()) {
+            nowPlayingText =
+                "Now Playing: " + roomModel.songList!![0].songName + " - " + roomModel.songList!![0].artistNames[0]
+            vh.nowPlaying.text = nowPlayingText
+        } else {
+            vh.nowPlaying.visibility = View.INVISIBLE
+        }
+
+        vh.roomName.text = roomModel.room.name
+        vh.owner.text = ownerText
     }
 
     override fun getItemCount(): Int {
@@ -32,6 +44,8 @@ class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapte
     }
 
     class MViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textViewName: TextView = view.findViewById(R.id.textViewName)
+        val roomName: TextView = view.findViewById(R.id.room_name)
+        val owner: TextView = view.findViewById(R.id.room_owner)
+        val nowPlaying: TextView = view.findViewById(R.id.room_now_playing)
     }
 }

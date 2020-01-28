@@ -18,4 +18,7 @@
     <string name="empty_list">List is empty</string>
     <string name="an_error_occurred">An error occurred</string>
     <string name="create_room">Create Room</string>
+    <string name="room_name">Room Name</string>
+    <string name="room_now_playing">Now Playing</string>
+    <string name="room_owner">Owner</string>
 </resources>

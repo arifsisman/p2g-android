@@ -9,7 +9,9 @@ import java.io.Serializable
  */
 data class RoomModel(
     var room: Room,
+    var owner: User,
     var userList: List<User>,
+    var roomUserList: List<RoomUser>,
     var songList: List<Song>?,
     var invitedUserList: List<User>?
 ) : Serializable
