@@ -8,6 +8,7 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.Request
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
+
 class HomeViewModel : ViewModel() {
 
     private val _roomModels = MutableLiveData<List<RoomModel>>().apply { value = emptyList() }

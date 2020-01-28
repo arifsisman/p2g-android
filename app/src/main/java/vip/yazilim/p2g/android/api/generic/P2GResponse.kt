@@ -1,6 +1,6 @@
 package vip.yazilim.p2g.android.api.generic
 
-data class Response<E>(
+data class P2GResponse<E>(
     val timestamp: Long?,
     val path: String?,
     val hasError: Boolean?,

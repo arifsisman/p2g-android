@@ -20,9 +20,8 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
         val roomModel = roomModels[position]
 
-        val ownerText = "Room Owner: " + roomModel.owner.name
-
         vh.roomName.text = roomModel.room.name
+        val ownerText = "Room Owner: " + roomModel.owner.name
         vh.owner.text = ownerText
 
         roomModel.songList?.forEach {
@@ -33,12 +32,12 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
                     return
                 }
                 SongStatus.PAUSED.songStatus -> {
-                    val nowPlayingText = "Paused: " + it.songName + " - " + it.artistNames[0]
+                    val nowPlayingText = "Paused Song: " + it.songName + " - " + it.artistNames[0]
                     vh.nowPlaying.text = nowPlayingText
                     return
                 }
                 SongStatus.NEXT.songStatus -> {
-                    val nowPlayingText = "Next: " + it.songName + " - " + it.artistNames[0]
+                    val nowPlayingText = "Next Song: " + it.songName + " - " + it.artistNames[0]
                     vh.nowPlaying.text = nowPlayingText
                     return
                 }
