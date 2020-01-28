@@ -5,10 +5,10 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import vip.yazilim.p2g.android.api.Play2GetherWebApi
-import vip.yazilim.p2g.android.api.SpotifyWebApi
-import vip.yazilim.p2g.android.api.generic.Result
-import vip.yazilim.p2g.android.api.generic.enqueue
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.SpotifyApiClient
+import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.SpotifyRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
@@ -37,46 +37,40 @@ class TokenAuthenticator : Authenticator {
 
     companion object {
         fun refreshExpiredToken(refreshToken: String): String {
-            SimpleClient.getSpotifyClient().create(SpotifyWebApi::class.java)
-                .refreshExpiredToken(
+            SpotifyRequest.build(
+                SpotifyApiClient.build().refreshExpiredToken(
                     SpotifyConstants.CLIENT_ID,
                     SpotifyConstants.CLIENT_SECRET,
                     SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
                     refreshToken
-                ).enqueue { result ->
-                    when (result) {
-                        is Result.Success -> {
-                            val tokenModel: TokenModel? = result.response.body()
-                            if (tokenModel != null) {
-                                SharedPrefSingleton.write(
-                                    TokenConstants.ACCESS_TOKEN,
-                                    tokenModel.access_token
-                                )
-                                SharedPrefSingleton.write(
-                                    TokenConstants.REFRESH_TOKEN,
-                                    tokenModel.refresh_token
-                                )
-                                Log.d(LOG_TAG, "Token refreshed")
-                            }
-                        }
-                        is Result.Failure -> {
-                            Log.d(LOG_TAG, result.error.toString())
-                        }
+                ), object : Callback<TokenModel> {
+                    override fun onError(msg: String) {
+                        Log.d(LOG_TAG, msg)
                     }
-                }
+
+                    override fun onSuccess(obj: TokenModel) {
+                        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
+                        SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
+                        Log.d(LOG_TAG, "Token refreshed")
+                    }
+                })
+
             return SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
                 .toString()
         }
     }
 
     private fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-        SimpleClient.getClient().create(Play2GetherWebApi::class.java)
-            .updateAccessToken(accessToken).enqueue { result ->
-                when (result) {
-                    is Result.Failure -> {
-                        Log.d(LOG_TAG, result.error.toString())
-                    }
+        vip.yazilim.p2g.android.api.generic.Request.build(
+            ApiClient.build().updateAccessToken(accessToken),
+            object : Callback<String> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
                 }
-            }
+
+                override fun onSuccess(obj: String) {
+                }
+            })
     }
+
 }
