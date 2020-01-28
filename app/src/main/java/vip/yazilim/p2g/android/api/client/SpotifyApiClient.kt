@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.data
+package vip.yazilim.p2g.android.api.client
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,8 +13,6 @@ import vip.yazilim.p2g.android.constant.ApiConstants
  */
 object SpotifyApiClient {
 
-    private var servicesApiInterface: SpotifyWebApi? = null
-
     fun build(): SpotifyWebApi? {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(interceptor())
@@ -23,14 +21,9 @@ object SpotifyApiClient {
             .baseUrl(ApiConstants.SPOTIFY_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
 
-        val retrofit: Retrofit = builder
-            .client(httpClient.build())
-            .build()
+        val retrofit: Retrofit = builder.client(httpClient.build()).build()
 
-        servicesApiInterface = retrofit.create(
-            SpotifyWebApi::class.java)
-
-        return servicesApiInterface as SpotifyWebApi
+        return retrofit.create(SpotifyWebApi::class.java) as SpotifyWebApi
     }
 
     private fun interceptor(): HttpLoggingInterceptor {

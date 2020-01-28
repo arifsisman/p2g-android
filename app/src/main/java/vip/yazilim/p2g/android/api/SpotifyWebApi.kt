@@ -12,6 +12,7 @@ import vip.yazilim.p2g.android.model.spotify.TokenModel
  */
 interface SpotifyWebApi {
 
+    // Token API
     @FormUrlEncoded
     @POST("/api/token")
     fun getTokens(

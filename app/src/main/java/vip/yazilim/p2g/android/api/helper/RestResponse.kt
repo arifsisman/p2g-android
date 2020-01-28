@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.data
+package vip.yazilim.p2g.android.api.helper
 
 data class RestResponse<E>(
     val timestamp: Long?,

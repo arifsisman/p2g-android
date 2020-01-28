@@ -4,11 +4,11 @@ import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.helper.OperationCallback
+import vip.yazilim.p2g.android.api.helper.RestResponse
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.util.data.ApiClient
-import vip.yazilim.p2g.android.util.data.OperationCallback
-import vip.yazilim.p2g.android.util.data.RestResponse
 
 class RoomRepository: RoomDataSource {
 

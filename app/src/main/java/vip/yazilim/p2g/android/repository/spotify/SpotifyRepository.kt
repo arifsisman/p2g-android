@@ -4,11 +4,11 @@ import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import vip.yazilim.p2g.android.api.client.SpotifyApiClient
+import vip.yazilim.p2g.android.api.helper.OperationCallback
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.model.spotify.TokenModel
-import vip.yazilim.p2g.android.util.data.OperationCallback
-import vip.yazilim.p2g.android.util.data.SpotifyApiClient
 
 class SpotifyRepository :
     SpotifyDataSource {

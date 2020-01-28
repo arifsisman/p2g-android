@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.data
+package vip.yazilim.p2g.android.api.helper
 
 interface OperationCallback {
     fun onSuccess(obj:Any?)

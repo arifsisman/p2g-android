@@ -3,9 +3,9 @@ package vip.yazilim.p2g.android.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import vip.yazilim.p2g.android.api.helper.OperationCallback
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.repository.p2g.RoomDataSource
-import vip.yazilim.p2g.android.util.data.OperationCallback
 
 class HomeViewModel(private val repository: RoomDataSource):ViewModel() {
 

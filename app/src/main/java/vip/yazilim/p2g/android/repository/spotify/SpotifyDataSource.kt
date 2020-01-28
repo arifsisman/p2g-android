@@ -1,6 +1,6 @@
 package vip.yazilim.p2g.android.repository.spotify
 
-import vip.yazilim.p2g.android.util.data.OperationCallback
+import vip.yazilim.p2g.android.api.helper.OperationCallback
 
 interface SpotifyDataSource {
     fun getTokens(code: String, callback: OperationCallback)
