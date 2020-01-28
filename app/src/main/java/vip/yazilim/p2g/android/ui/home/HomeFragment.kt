@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.ui.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,12 +27,11 @@ class HomeFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreate(savedInstanceState)
+//        super.onCreate(savedInstanceState)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         setupViewModel()
 
         // setupUI
-//        val v: View = inflater.inflate(R.layout.fragment_home, container, false)
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
 
@@ -44,20 +44,11 @@ class HomeFragment : Fragment() {
     }
 
 
-//    //ui
-//    private fun setupUI(){
-////        recyclerView.layoutManager= LinearLayoutManager(this)
-//
-//
-//
-//    }
-
     //viewmodel
     private fun setupViewModel(){
-        viewModel = ViewModelProvider(this, ViewModelFactory(Injection.roomProviderRepository())).get(
-            HomeViewModel::class.java)
-        viewModel.roomModels.observe(this,renderRoomModels)
+        viewModel = ViewModelProvider(this, ViewModelFactory(Injection.roomProviderRepository())).get(HomeViewModel::class.java)
 
+        viewModel.roomModels.observe(this,renderRoomModels)
         viewModel.isViewLoading.observe(this,isViewLoadingObserver)
         viewModel.onMessageError.observe(this,onMessageErrorObserver)
         viewModel.isEmptyList.observe(this,emptyListObserver)
@@ -78,6 +69,7 @@ class HomeFragment : Fragment() {
         progressBar.visibility= visibility
     }
 
+    @SuppressLint("SetTextI18n")
     private val onMessageErrorObserver= Observer<Any> {
         Log.v(GeneralConstants.LOG_TAG, "onMessageError $it")
         layoutError.visibility=View.VISIBLE

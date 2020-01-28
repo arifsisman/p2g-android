@@ -18,7 +18,6 @@ class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapte
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
         val roomModel = roomModels[position]
 
-        //render
         vh.textViewName.text = roomModel.room.name
 //        Glide.with(vh.imageView.context).load(room.photo).into(vh.imageView)
     }
@@ -32,9 +31,7 @@ class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapte
         notifyDataSetChanged()
     }
 
-    class MViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    class MViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewName: TextView = view.findViewById(R.id.textViewName)
-//        val imageView: ImageView = view.findViewById(R.id.imageView)
-//        val textViewLink: TextView = view.findViewById(R.id.textViewLink)
     }
 }

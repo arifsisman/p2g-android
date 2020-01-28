@@ -17,4 +17,5 @@
     <string name="logo">Logo</string>
     <string name="empty_list">List is empty</string>
     <string name="an_error_occurred">An error occurred</string>
+    <string name="create_room">Create Room</string>
 </resources>

@@ -49,6 +49,8 @@ class LoginActivity : AppCompatActivity() {
         spotify_login_btn.setOnClickListener {
             getAuthorizationCodeFromSpotify()
         }
+
+        spotify_login_btn.performClick()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
