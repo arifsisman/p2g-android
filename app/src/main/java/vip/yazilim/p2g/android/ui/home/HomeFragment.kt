@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants
-import vip.yazilim.p2g.android.di.Injection
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 
@@ -45,9 +44,7 @@ class HomeFragment : Fragment() {
 
     //viewmodel
     private fun setupViewModel(){
-        viewModel = ViewModelProvider(this,
-            HomeViewModelFactory(Injection.roomProviderRepository())
-        ).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this, HomeViewModelFactory()).get(HomeViewModel::class.java)
 
         viewModel.roomModels.observe(this,renderRoomModels)
         viewModel.isViewLoading.observe(this,isViewLoadingObserver)
