@@ -4,23 +4,22 @@ import android.util.Log
 import retrofit2.Call
 import vip.yazilim.p2g.android.constant.GeneralConstants
 
-
 /**
- * @author mustafaarifsisman - 28.01.2020
+ * @author mustafaarifsisman - 29.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-abstract class Request {
+abstract class SpotifyRequest {
     companion object {
-        fun <T> build(call: Call<Response<T>>, callback: Callback<T>) {
+        inline fun <reified T> build(call: Call<T>, callback: Callback<T>) {
             call.enqueue { result ->
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
-                            val data = result.response.body()?.data
+                            val data = result.response.body()
                             Log.v(GeneralConstants.LOG_TAG, "Response Data -> $data")
-                            callback.onSuccess(data!!)
+                            callback.onSuccess(data as T)
                         } else {
-                            callback.onError(result.response.errorBody()!!.string())
+                            callback.onError(result.response.message())
                         }
                     }
                     is Result.Failure -> {

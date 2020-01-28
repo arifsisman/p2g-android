@@ -13,14 +13,13 @@ import vip.yazilim.p2g.android.constant.ApiConstants
  */
 object SpotifyApiClient {
 
-    fun build(): SpotifyWebApi? {
+    fun build(): SpotifyWebApi {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(interceptor())
 
         val builder: Retrofit.Builder = Retrofit.Builder()
             .baseUrl(ApiConstants.SPOTIFY_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-
         val retrofit: Retrofit = builder.client(httpClient.build()).build()
 
         return retrofit.create(SpotifyWebApi::class.java) as SpotifyWebApi

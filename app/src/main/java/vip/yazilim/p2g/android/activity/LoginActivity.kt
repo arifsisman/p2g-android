@@ -11,10 +11,11 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.Play2GetherWebApi
-import vip.yazilim.p2g.android.api.SpotifyWebApi
-import vip.yazilim.p2g.android.api.generic.Result
-import vip.yazilim.p2g.android.api.generic.enqueue
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.SpotifyApiClient
+import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.Request
+import vip.yazilim.p2g.android.api.generic.SpotifyRequest
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
@@ -25,7 +26,6 @@ import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
-import vip.yazilim.p2g.android.util.refrofit.SimpleClient
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 
@@ -105,79 +105,48 @@ class LoginActivity : AppCompatActivity() {
 
     // getTokensFromSpotify via Spotify Web API
     private fun getTokensFromSpotify(code: String) {
-        SimpleClient.getSpotifyClient().create(SpotifyWebApi::class.java)
-            .getTokens(
+        SpotifyRequest.build(
+            SpotifyApiClient.build().getTokens(
                 SpotifyConstants.CLIENT_ID,
                 SpotifyConstants.CLIENT_SECRET,
                 SpotifyConstants.GRANT_TYPE_AUTHORIZATION_CODE_REQUEST,
                 code,
                 SpotifyConstants.REDIRECT_URI
-            ).enqueue { result ->
-                when (result) {
-                    is Result.Success -> {
-                        if (result.response.isSuccessful) {
-                            val tokenModel = result.response.body()!!
-                            SharedPrefSingleton.write(
-                                TokenConstants.ACCESS_TOKEN,
-                                tokenModel.access_token
-                            )
-                            SharedPrefSingleton.write(
-                                TokenConstants.REFRESH_TOKEN,
-                                tokenModel.refresh_token
-                            )
-                            db.insertData(tokenModel)
-                            loginToPlay2Gether(tokenModel)
-                        } else {
-                            val errorMessage = result.response.errorBody()!!.string()
-                            Log.d(LOG_TAG, errorMessage)
-                            UIHelper.showErrorDialog(this, errorMessage)
-                        }
-                    }
-                    is Result.Failure -> {
-                        Log.d(LOG_TAG, result.error.toString())
-                        UIHelper.showToastLong(applicationContext, "Failed to login Spotify")
-                    }
+            ), object : Callback<TokenModel> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showToastLong(this@LoginActivity, msg)
+                }
+
+                override fun onSuccess(obj: TokenModel) {
+                    SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
+                    SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
+                    db.insertData(obj)
+                    loginToPlay2Gether(obj)
                 }
             }
+        )
     }
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        SimpleClient.getClient().create(Play2GetherWebApi::class.java)
-            .login()
-            .enqueue { result ->
-                when (result) {
-                    is Result.Success -> {
-                        if (result.response.isSuccessful) {
-                            val user = result.response.body()?.data
+        Request.build(ApiClient.build().login(),
+            object : Callback<User> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showErrorDialog(this@LoginActivity, msg)
+                }
 
-                            if (user != null) {
-                                if (user.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
-                                    UIHelper.showToastLong(
-                                        applicationContext,
-                                        SPOTIFY_PRODUCT_TYPE_ERROR
-                                    )
-                                } else {
-                                    db.insertData(user)
-                                    UIHelper.showToastLong(
-                                        applicationContext,
-                                        "Logged in as ${user.name}"
-                                    )
-                                    startMainActivity(user, tokenModel)
-                                }
-                            }
-                        } else {
-                            val errorMessage = result.response.errorBody()!!.string()
-                            Log.d(LOG_TAG, errorMessage)
-                            UIHelper.showErrorDialog(this, errorMessage)
-                        }
-                    }
-                    is Result.Failure -> {
-                        Log.d(LOG_TAG, result.error.toString())
-                        UIHelper.showToastLong(applicationContext, "Failed to login Play2Gether")
+                override fun onSuccess(obj: User) {
+                    if (obj.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
+                        UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
+                    } else {
+                        db.insertData(obj)
+                        UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
+                        startMainActivity(obj, tokenModel)
                     }
                 }
-            }
+            })
     }
 
     private fun startMainActivity(user: User, tokenModel: TokenModel) {

@@ -22,27 +22,24 @@ class HomeViewModel : ViewModel() {
     private val _isEmptyList = MutableLiveData<Boolean>()
     val isEmptyList: LiveData<Boolean> = _isEmptyList
 
-    @Suppress("UNCHECKED_CAST")
     fun loadRooms() {
         _isViewLoading.postValue(true)
 
         Request.build(
-            ApiClient.build()!!.getRoomModels(),
-            object : Callback {
-                override fun onError(obj: Any?) {
+            ApiClient.build().getRoomModels(),
+            object : Callback <List<RoomModel>>{
+                override fun  onError(msg: String) {
                     _isViewLoading.postValue(false)
-                    _onMessageError.postValue(obj)
+                    _onMessageError.postValue(msg)
                 }
 
-                override fun onSuccess(obj: Any?) {
+                override fun onSuccess(obj: List<RoomModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj != null && obj is List<*>) {
-                        if (obj.isEmpty()) {
-                            _isEmptyList.postValue(true)
-                        } else {
-                            _roomModels.value = obj as List<RoomModel>
-                        }
+                    if (obj.isEmpty()) {
+                        _isEmptyList.postValue(true)
+                    } else {
+                        _roomModels.value = obj
                     }
                 }
             })
