@@ -14,20 +14,14 @@ import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 
-class HomeAdapter(private var roomModels: List<RoomModel>) :
-    RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
+class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
+
+    private var roomModelsFull:MutableList<RoomModel> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
-//        view.setOnClickListener(mOnClickListener)
         return MViewHolder(view)
     }
-
-//    fun onClick(view: View?) {
-//        val itemPosition: Int = mRecyclerView.getChildLayoutPosition(view)
-//        val item: String = mList.get(itemPosition)
-//        Toast.makeText(mContext, item, Toast.LENGTH_LONG).show()
-//    }
 
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
         vh.onClick(itemOnClick)
@@ -59,13 +53,13 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
         }
     }
 
-    private val itemOnClick: (View, Int, Int) -> Unit = { view, position, type ->
-        Log.d(LOG_TAG, roomModels[position].room.name)
-    }
-
     private fun <T : RecyclerView.ViewHolder> T.onClick(event: (view: View, position: Int, type: Int) -> Unit): T {
         itemView.setOnClickListener { event.invoke(it, adapterPosition, itemViewType) }
         return this
+    }
+
+    private val itemOnClick: (View, Int, Int) -> Unit = { view, position, type ->
+        Log.d(LOG_TAG, roomModels[position].room.name)
     }
 
     override fun getItemCount(): Int {
@@ -75,6 +69,9 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
 
     fun update(data: List<RoomModel>) {
         roomModels = data
+        data.forEach{
+            roomModelsFull.add(it)
+        }
         notifyDataSetChanged()
     }
 
@@ -86,28 +83,30 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
 
     override fun getFilter(): Filter {
         return object : Filter() {
-            var filteredRoomModelList: MutableList<RoomModel> = mutableListOf()
 
-            override fun performFiltering(charSequence: CharSequence?): FilterResults? {
-                val charString = charSequence.toString()
-                if (charString.isEmpty()) {
-                    filteredRoomModelList = roomModels as MutableList<RoomModel>
+            override fun performFiltering(constaint: CharSequence?): FilterResults? {
+                val filteredList: MutableList<RoomModel> = mutableListOf()
+                val charString = constaint.toString()
+
+                if (constaint == null || charString.isEmpty()) {
+                    filteredList.addAll(roomModelsFull)
                 } else {
-                    for (row in roomModels) {
-                        if (row.room.name.contains(charString, ignoreCase = true)) {
-                            filteredRoomModelList.add(row)
+                    val filter = constaint.toString().trim()
+
+                    roomModelsFull.forEach{
+                        if (it.room.name.contains(filter, ignoreCase = true)) {
+                            filteredList.add(it)
                         }
                     }
-                    roomModels = filteredRoomModelList
                 }
 
-                val filterResults = FilterResults()
-                filterResults.values = filteredRoomModelList
-                return filterResults
+                val results = FilterResults()
+                results.values = filteredList
+                return results
             }
 
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                update(filteredRoomModelList)
+                roomModels = filterResults.values as List<RoomModel>
                 notifyDataSetChanged()
             }
         }

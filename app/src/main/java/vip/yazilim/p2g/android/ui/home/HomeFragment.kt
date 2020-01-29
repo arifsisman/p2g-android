@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -94,6 +95,7 @@ class HomeFragment : Fragment() {
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
         searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
+        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -108,22 +110,6 @@ class HomeFragment : Fragment() {
             }
         })
     }
-
-
-//    private val searchObserver = Observer<String> { str ->
-//        Log.v(GeneralConstants.LOG_TAG, "searchObserver $str")
-//        val filtered: ArrayList<RoomModel> = arrayListOf()
-//        val roomModel = viewModel.roomModels
-//
-//        roomModel.value?.forEach { r ->
-//            if (r.room.name.contains(str, ignoreCase = true)) {
-//                filtered.add(r)
-//            }
-//        }
-//
-//        adapter = HomeAdapter(filtered)
-//        recyclerView.adapter = adapter
-//    }
 
     override fun onResume() {
         super.onResume()
