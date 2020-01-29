@@ -23,13 +23,15 @@ class HomeViewModel : ViewModel() {
     private val _isEmptyList = MutableLiveData<Boolean>()
     val isEmptyList: LiveData<Boolean> = _isEmptyList
 
+//    val searchString = MutableLiveData<String>()
+
     fun loadRooms() {
         _isViewLoading.postValue(true)
 
         Request.build(
             ApiClient.build().getRoomModels(),
-            object : Callback <List<RoomModel>>{
-                override fun  onError(msg: String) {
+            object : Callback<List<RoomModel>> {
+                override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
