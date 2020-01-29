@@ -14,9 +14,10 @@ import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 
-class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
+class HomeAdapter(private var roomModels: List<RoomModel>) :
+    RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
-    private var roomModelsFull:MutableList<RoomModel> = mutableListOf()
+    private var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
@@ -69,7 +70,7 @@ class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapte
 
     fun update(data: List<RoomModel>) {
         roomModels = data
-        data.forEach{
+        data.forEach {
             roomModelsFull.add(it)
         }
         notifyDataSetChanged()
@@ -93,9 +94,10 @@ class HomeAdapter(private var roomModels: List<RoomModel>) : RecyclerView.Adapte
                 } else {
                     val filter = constaint.toString().trim()
 
-                    roomModelsFull.forEach{
-                        if (it.room.name.contains(filter, ignoreCase = true)) {
-                            filteredList.add(it)
+                    roomModelsFull.forEach {
+                        if (it.room.name.contains(filter, ignoreCase = true)
+                            || it.owner.name.contains(filter, ignoreCase = true)) {
+                        filteredList.add(it)
                         }
                     }
                 }

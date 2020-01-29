@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -58,7 +57,6 @@ class HomeFragment : Fragment() {
         viewModel.isViewLoading.observe(this, isViewLoadingObserver)
         viewModel.onMessageError.observe(this, onMessageErrorObserver)
         viewModel.isEmptyList.observe(this, emptyListObserver)
-//        viewModel.searchString.observe(this, searchObserver)
     }
 
 
@@ -94,8 +92,6 @@ class HomeFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
-        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
-        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -109,6 +105,27 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                searchView.requestFocus()
+                searchView.isIconified = false
+                searchView.isIconifiedByDefault = false
+                searchView.visibility = View.VISIBLE
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                searchView.clearFocus()
+                searchView.setQuery("", false)
+                adapter.filter.filter("")
+                searchView.isIconified = true
+                searchView.isIconifiedByDefault = true
+                searchView.visibility = View.VISIBLE
+                return true
+            }
+        })
+
     }
 
     override fun onResume() {
