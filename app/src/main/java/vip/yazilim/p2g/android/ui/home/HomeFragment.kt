@@ -93,6 +93,8 @@ class HomeFragment : Fragment() {
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
+        searchView.queryHint = "Search Room or Room Owner"
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 Log.d("queryText", query)
