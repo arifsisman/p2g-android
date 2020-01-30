@@ -23,8 +23,6 @@ class HomeViewModel : ViewModel() {
     private val _isEmptyList = MutableLiveData<Boolean>()
     val isEmptyList: LiveData<Boolean> = _isEmptyList
 
-//    val searchString = MutableLiveData<String>()
-
     fun loadRooms() {
         _isViewLoading.postValue(true)
 

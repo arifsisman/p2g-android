@@ -59,7 +59,13 @@ class LoginActivity : AppCompatActivity() {
         // If the authorization code has been received successfully
         if (SpotifyConstants.AUTH_CODE_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
-            getTokensFromSpotify(response.code)
+            if (response.code != null) {
+                getTokensFromSpotify(response.code)
+            } else {
+                val msg = "Can not get authorization code from Spotify"
+                Log.d(LOG_TAG, msg)
+                UIHelper.showToastShort(this, msg)
+            }
         }
     }
 
@@ -150,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity(user: User, tokenModel: TokenModel) {
-        val startMainIntent = Intent(this, MainActivity::class.java)
+        val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
         startMainIntent.putExtra("user", user)
         startMainIntent.putExtra("tokenModel", tokenModel)
         startActivity(startMainIntent)

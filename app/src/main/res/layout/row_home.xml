@@ -34,7 +34,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="3dp"
             android:layout_marginEnd="8dp"
             android:text="@string/room_owner"
             app:layout_constraintBottom_toTopOf="@+id/room_now_playing"

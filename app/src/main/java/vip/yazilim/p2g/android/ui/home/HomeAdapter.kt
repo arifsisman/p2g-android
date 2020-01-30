@@ -18,7 +18,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomModel
 class HomeAdapter(private var roomModels: List<RoomModel>) :
     RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
-    private var roomModelsFull: MutableList<RoomModel> = mutableListOf()
+    var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
@@ -76,9 +76,6 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
 
     fun update(data: List<RoomModel>) {
         roomModels = data
-        data.forEach {
-            roomModelsFull.add(it)
-        }
         notifyDataSetChanged()
     }
 
@@ -115,8 +112,7 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
             }
 
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                roomModels = filterResults.values as List<RoomModel>
-                notifyDataSetChanged()
+                update(filterResults.values as List<RoomModel>)
             }
         }
     }

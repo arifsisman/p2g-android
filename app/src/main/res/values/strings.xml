@@ -19,9 +19,11 @@
     <string name="empty_list"> </string>
     <string name="an_error_occurred">An error occurred</string>
     <string name="create_room">Create New Room</string>
-    <string name="room_name">Room Name</string>
     <string name="room_now_playing">No song found in the room</string>
     <string name="room_owner">Room Owner</string>
     <string name="search_room_hint">Search Room</string>
     <string name="lock_button">Private Room</string>
+    <string name="room_name">Room Name</string>
+    <string name="room_password">Room Password (Optional)</string>
+    <string name="cancel">Cancel</string>
 </resources>
