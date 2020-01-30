@@ -11,14 +11,14 @@ import android.widget.Toast
  */
 object UIHelper{
 
-    fun showToastShort(context: Context, message: String) {
+    fun showToastShort(context: Context?, message: String) {
         val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
 
         toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
     }
 
-    fun showToastLong(context: Context, message: String) {
+    fun showToastLong(context: Context?, message: String) {
         val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
 
         toast.setGravity(Gravity.BOTTOM, 0, 200)

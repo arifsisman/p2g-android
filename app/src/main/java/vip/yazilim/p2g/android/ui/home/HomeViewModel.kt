@@ -48,22 +48,4 @@ class HomeViewModel : ViewModel() {
                 }
             })
     }
-
-    fun createRoom(roomName: String, roomPassword: String) {
-        _isViewLoading.postValue(true)
-
-        P2GRequest.build(
-            ApiClient.build().createRoom(roomName , roomPassword),
-            object : Callback<Room> {
-                override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: Room) {
-                    _isViewLoading.postValue(false)
-                    createdRoom = obj
-                }
-            })
-    }
 }

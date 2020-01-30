@@ -18,43 +18,55 @@ import vip.yazilim.p2g.android.model.p2g.RoomModel
 class HomeAdapter(private var roomModels: List<RoomModel>) :
     RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
+    private lateinit var view: View
     var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
         return MViewHolder(view)
     }
 
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
         vh.onClick(itemOnClick)
-
         val roomModel = roomModels[position]
 
+        val roomOwnerString = view.resources.getString(R.string.room_owner)
+        val roomNowPlayingString = view.resources.getString(R.string.room_now_playing_song)
+        val roomPausedString = view.resources.getString(R.string.room_paused_song)
+        val roomNextSongString = view.resources.getString(R.string.room_next_song)
+        val roomSongNotFoundString = view.resources.getString(R.string.room_song_not_found)
+
+        val ownerText = roomOwnerString + roomModel.owner.name
+        vh.owner.text = ownerText
         vh.roomName.text = roomModel.room.name
 
-        val ownerText = "Room Owner: " + roomModel.owner.name
-        vh.owner.text = ownerText
-
-        if(!roomModel.room.privateFlag){
+        if (!roomModel.room.privateFlag) {
             vh.lock.visibility = View.INVISIBLE
         }
 
-        roomModel.songList?.forEach {
-            when (it.songStatus) {
-                SongStatus.PLAYING.songStatus -> {
-                    val nowPlayingText = "Now Playing: " + it.songName + " - " + it.artistNames[0]
-                    vh.nowPlaying.text = nowPlayingText
-                    return
-                }
-                SongStatus.PAUSED.songStatus -> {
-                    val nowPlayingText = "Paused Song: " + it.songName + " - " + it.artistNames[0]
-                    vh.nowPlaying.text = nowPlayingText
-                    return
-                }
-                SongStatus.NEXT.songStatus -> {
-                    val nowPlayingText = "Next Song: " + it.songName + " - " + it.artistNames[0]
-                    vh.nowPlaying.text = nowPlayingText
-                    return
+        if (roomModel.songList.isNullOrEmpty()) {
+            vh.roomSongStatus.text = roomSongNotFoundString
+        } else {
+            roomModel.songList?.forEach {
+                when (it.songStatus) {
+                    SongStatus.PLAYING.songStatus -> {
+                        val roomSongStatus =
+                            roomNowPlayingString + it.songName + " - " + it.artistNames[0]
+                        vh.roomSongStatus.text = roomSongStatus
+                        return
+                    }
+                    SongStatus.PAUSED.songStatus -> {
+                        val roomSongStatus =
+                            roomPausedString + it.songName + " - " + it.artistNames[0]
+                        vh.roomSongStatus.text = roomSongStatus
+                        return
+                    }
+                    SongStatus.NEXT.songStatus -> {
+                        val roomSongStatus =
+                            roomNextSongString + it.songName + " - " + it.artistNames[0]
+                        vh.roomSongStatus.text = roomSongStatus
+                        return
+                    }
                 }
             }
         }
@@ -82,26 +94,27 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
     class MViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val roomName: TextView = view.findViewById(R.id.room_name)
         val owner: TextView = view.findViewById(R.id.room_owner)
-        val nowPlaying: TextView = view.findViewById(R.id.room_now_playing)
+        val roomSongStatus: TextView = view.findViewById(R.id.roomSongStatus)
         val lock: ImageView = view.findViewById(R.id.lock_view)
     }
 
     override fun getFilter(): Filter {
         return object : Filter() {
 
-            override fun performFiltering(constaint: CharSequence?): FilterResults? {
+            override fun performFiltering(constraint: CharSequence?): FilterResults? {
                 val filteredList: MutableList<RoomModel> = mutableListOf()
-                val charString = constaint.toString()
+                val charString = constraint.toString()
 
-                if (constaint == null || charString.isEmpty()) {
+                if (constraint == null || charString.isEmpty()) {
                     filteredList.addAll(roomModelsFull)
                 } else {
-                    val filter = constaint.toString().trim()
+                    val filter = constraint.toString().trim()
 
                     roomModelsFull.forEach {
                         if (it.room.name.contains(filter, ignoreCase = true)
-                            || it.owner.name.contains(filter, ignoreCase = true)) {
-                        filteredList.add(it)
+                            || it.owner.name.contains(filter, ignoreCase = true)
+                        ) {
+                            filteredList.add(it)
                         }
                     }
                 }

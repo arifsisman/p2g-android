@@ -20,8 +20,13 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 
@@ -183,16 +188,22 @@ class HomeFragment : Fragment() {
         // Click create
         createButton.setOnClickListener {
             val roomName = roomNameEditText.text.toString()
-            val password = roomPasswordEditText.text.toString()
+            val roomPassword = roomPasswordEditText.text.toString()
 
-            viewModel.createRoom(roomName, password)
+            P2GRequest.build(
+                ApiClient.build().createRoom(roomName, roomPassword),
+                object : Callback<Room> {
+                    override fun onError(msg: String) {
+                        Log.d(LOG_TAG, "Room can not created")
+                        UIHelper.showToastLong(context, msg)
+                    }
 
-            //TODO: cannot update viewmodel.created room , it is always null
-            if (viewModel.createdRoom != null) {
-                Log.d(LOG_TAG, "Room created with ID" + viewModel.createdRoom!!.id.toString())
-            }
+                    override fun onSuccess(obj: Room) {
+                        Log.d(LOG_TAG, "Room created with ID: " + obj.id)
+                        mAlertDialog.dismiss()
+                    }
+                })
 
-            mAlertDialog.dismiss()
         }
 
         // Click cancel
@@ -220,13 +231,15 @@ class HomeFragment : Fragment() {
         viewModel.loadRooms()
     }
 
-    fun showKeyboard() {
-        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun showKeyboard() {
+        val inputMethodManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
-    fun closeKeyboard() {
-        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun closeKeyboard() {
+        val inputMethodManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 }
