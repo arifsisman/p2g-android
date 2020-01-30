@@ -2,9 +2,13 @@ package vip.yazilim.p2g.android.ui.home
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -152,22 +156,34 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
-
     }
 
     private fun createRoomButtonEvent() {
-        val mDialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_create_room, null)
+        val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
         val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
         val mAlertDialog = mBuilder.show()
 
-//        val roomNameEditText = mDialogView.dialogRoomName
-//        roomNameEditText.requestFocus()
-//        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-//        imm!!.showSoftInput(roomNameEditText, InputMethodManager.SHOW_FORCED)
+        val roomNameEditText = mDialogView.dialogRoomName
+        val roomPasswordEditText = mDialogView.dialogRoomPassword
+        val createButton = mDialogView.dialogCreateRoomBtn
 
-        mDialogView.dialogCreateRoomBtn.setOnClickListener {
-            val roomName = mDialogView.dialogRoomName.text.toString()
-            val password = mDialogView.dialogRoomPassword.text.toString()
+        // For request focus and open keyboard
+        roomNameEditText.requestFocus()
+        showKeyboard()
+
+        // For disable create button if name is empty
+        roomNameEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                createButton.isEnabled = s.isNotEmpty()
+            }
+        })
+
+        // Click create
+        createButton.setOnClickListener {
+            val roomName = roomNameEditText.text.toString()
+            val password = roomPasswordEditText.text.toString()
 
             viewModel.createRoom(roomName, password)
 
@@ -175,13 +191,17 @@ class HomeFragment : Fragment() {
             if (viewModel.createdRoom != null) {
                 Log.d(LOG_TAG, "Room created with ID" + viewModel.createdRoom!!.id.toString())
             }
+
+            mAlertDialog.dismiss()
         }
 
+        // Click cancel
         mDialogView.dialogCancelBtn.setOnClickListener {
             mAlertDialog.cancel()
+            roomNameEditText.clearFocus()
+            roomPasswordEditText.clearFocus()
+            closeKeyboard()
         }
-
-        Log.v(LOG_TAG, "Button click")
     }
 
     private fun setItemsVisibility(
@@ -200,4 +220,13 @@ class HomeFragment : Fragment() {
         viewModel.loadRooms()
     }
 
+    fun showKeyboard() {
+        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    }
+
+    fun closeKeyboard() {
+        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+    }
 }
