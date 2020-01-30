@@ -9,7 +9,7 @@ import vip.yazilim.p2g.android.model.p2g.*
  * @author mustafaarifsisman - 28.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-interface Play2GetherWebApi{
+interface Play2GetherWebApi {
 
     // User API
     @GET("/api/user/{id}")
@@ -23,8 +23,8 @@ interface Play2GetherWebApi{
 
 
     // Room API
-    @POST("/api/room/")
-    fun createRoom(@Body room: Room): Call<P2GResponse<Room>>
+    @POST("/api/room/create/{roomName}")
+    fun createRoom(@Path("roomName") roomName: String, @Body roomPassword: String): Call<P2GResponse<Room>>
 
     @GET("/api/room/{id}")
     fun getRoom(@Path("id") roomId: Long): Call<P2GResponse<Room>>
@@ -114,7 +114,7 @@ interface Play2GetherWebApi{
     fun login(): Call<P2GResponse<User>>
 
     @POST("/api/spotify/token")
-    fun updateAccessToken(@Body accessToken:String): Call<P2GResponse<String>>
+    fun updateAccessToken(@Body accessToken: String): Call<P2GResponse<String>>
 
     // Player API
     @POST("/api/spotify/player/play")

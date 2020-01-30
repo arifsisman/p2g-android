@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.Request
+import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 
@@ -23,10 +24,12 @@ class HomeViewModel : ViewModel() {
     private val _isEmptyList = MutableLiveData<Boolean>()
     val isEmptyList: LiveData<Boolean> = _isEmptyList
 
+    var createdRoom: Room? = null
+
     fun loadRooms() {
         _isViewLoading.postValue(true)
 
-        Request.build(
+        P2GRequest.build(
             ApiClient.build().getRoomModels(),
             object : Callback<List<RoomModel>> {
                 override fun onError(msg: String) {
@@ -46,4 +49,21 @@ class HomeViewModel : ViewModel() {
             })
     }
 
+    fun createRoom(roomName: String, roomPassword: String) {
+        _isViewLoading.postValue(true)
+
+        P2GRequest.build(
+            ApiClient.build().createRoom(roomName , roomPassword),
+            object : Callback<Room> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
+
+                override fun onSuccess(obj: Room) {
+                    _isViewLoading.postValue(false)
+                    createdRoom = obj
+                }
+            })
+    }
 }

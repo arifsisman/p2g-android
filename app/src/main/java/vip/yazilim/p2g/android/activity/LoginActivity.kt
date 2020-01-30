@@ -14,7 +14,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.Request
+import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.api.generic.SpotifyRequest
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
@@ -136,7 +136,7 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        Request.build(ApiClient.build().login(),
+        P2GRequest.build(ApiClient.build().login(),
             object : Callback<User> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)

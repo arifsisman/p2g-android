@@ -61,7 +61,7 @@ class TokenAuthenticator : Authenticator {
     }
 
     private fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-        vip.yazilim.p2g.android.api.generic.Request.build(
+        vip.yazilim.p2g.android.api.generic.P2GRequest.build(
             ApiClient.build().updateAccessToken(accessToken),
             object : Callback<String> {
                 override fun onError(msg: String) {

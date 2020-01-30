@@ -158,18 +158,23 @@ class HomeFragment : Fragment() {
     private fun createRoomButtonEvent() {
         val mDialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_create_room, null)
         val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
-        val  mAlertDialog = mBuilder.show()
+        val mAlertDialog = mBuilder.show()
+
+//        val roomNameEditText = mDialogView.dialogRoomName
+//        roomNameEditText.requestFocus()
+//        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+//        imm!!.showSoftInput(roomNameEditText, InputMethodManager.SHOW_FORCED)
 
         mDialogView.dialogCreateRoomBtn.setOnClickListener {
-            //get text from EditTexts of custom layout
             val roomName = mDialogView.dialogRoomName.text.toString()
             val password = mDialogView.dialogRoomPassword.text.toString()
 
-            val user = db?.readUser()
+            viewModel.createRoom(roomName, password)
 
-            // TODO: send request if room received dismiss dialog
-            //            mAlertDialog.dismiss()
-
+            //TODO: cannot update viewmodel.created room , it is always null
+            if (viewModel.createdRoom != null) {
+                Log.d(LOG_TAG, "Room created with ID" + viewModel.createdRoom!!.id.toString())
+            }
         }
 
         mDialogView.dialogCancelBtn.setOnClickListener {

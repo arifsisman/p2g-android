@@ -9,7 +9,7 @@ import vip.yazilim.p2g.android.constant.GeneralConstants
  * @author mustafaarifsisman - 28.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-abstract class Request {
+abstract class P2GRequest {
     companion object {
         fun <T> build(call: Call<P2GResponse<T>>, callback: Callback<T>) {
             call.enqueue { result ->
