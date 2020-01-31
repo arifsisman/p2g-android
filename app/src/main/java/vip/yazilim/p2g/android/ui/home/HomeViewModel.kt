@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
-import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 
@@ -23,8 +22,6 @@ class HomeViewModel : ViewModel() {
 
     private val _isEmptyList = MutableLiveData<Boolean>()
     val isEmptyList: LiveData<Boolean> = _isEmptyList
-
-    var createdRoom: Room? = null
 
     fun loadRooms() {
         _isViewLoading.postValue(true)

@@ -19,6 +19,7 @@
     <string name="empty_list"> </string>
     <string name="an_error_occurred">An error occurred</string>
     <string name="create_room">Create New Room</string>
+    <string name="join_room">Join Room</string>
     <string name="room_now_playing_song">Now Playing: </string>
     <string name="room_paused_song">Paused: </string>
     <string name="room_next_song">Next Song: </string>
@@ -27,7 +28,8 @@
     <string name="search_room_hint">Search Room</string>
     <string name="lock_button">Private Room</string>
     <string name="room_name">Room Name</string>
-    <string name="room_password">Room Password (Optional)</string>
+    <string name="room_password_optional">Room Password (Optional)</string>
+    <string name="room_password_required">Room Password</string>
     <string name="cancel">Cancel</string>
     <string name="profile_image">Profile Image</string>
     <string name="name">Name</string>

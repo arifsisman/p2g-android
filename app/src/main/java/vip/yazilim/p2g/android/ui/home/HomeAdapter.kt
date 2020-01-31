@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.home
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +9,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
 
-class HomeAdapter(private var roomModels: List<RoomModel>) :
-    RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
+class HomeAdapter(var roomModels: List<RoomModel>, private val itemClickListener: OnItemClickListener) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
     private lateinit var view: View
     var roomModelsFull: MutableList<RoomModel> = mutableListOf()
@@ -27,7 +24,7 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
     }
 
     override fun onBindViewHolder(vh: MViewHolder, position: Int) {
-        vh.onClick(itemOnClick)
+        vh.bind(roomModels[position], itemClickListener)
         val roomModel = roomModels[position]
 
         val roomOwnerString = view.resources.getString(R.string.room_owner)
@@ -72,31 +69,13 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
         }
     }
 
-    private fun <T : RecyclerView.ViewHolder> T.onClick(event: (view: View, position: Int, type: Int) -> Unit): T {
-        itemView.setOnClickListener { event.invoke(it, adapterPosition, itemViewType) }
-        return this
-    }
-
-    private val itemOnClick: (View, Int, Int) -> Unit = { view, position, type ->
-        //TODO: Open room preview fragment or activity
-        Log.d(LOG_TAG, roomModels[position].room.name)
-    }
-
     override fun getItemCount(): Int {
         return roomModels.size
     }
 
-
     fun update(data: List<RoomModel>) {
         roomModels = data
         notifyDataSetChanged()
-    }
-
-    class MViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val roomName: TextView = view.findViewById(R.id.room_name)
-        val owner: TextView = view.findViewById(R.id.room_owner)
-        val roomSongStatus: TextView = view.findViewById(R.id.roomSongStatus)
-        val lock: ImageView = view.findViewById(R.id.lock_view)
     }
 
     override fun getFilter(): Filter {
@@ -129,6 +108,24 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
                 update(filterResults.values as List<RoomModel>)
             }
         }
+    }
+
+    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val roomName: TextView = itemView.findViewById(R.id.room_name)
+        val owner: TextView = itemView.findViewById(R.id.room_owner)
+        val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
+        val lock: ImageView = itemView.findViewById(R.id.lock_view)
+
+        fun bind(roomModel: RoomModel, clickListener: OnItemClickListener)
+        {
+            itemView.setOnClickListener {
+                clickListener.onItemClicked(roomModel)
+            }
+        }
+    }
+
+    interface OnItemClickListener{
+        fun onItemClicked(roomModel: RoomModel)
     }
 
 }
