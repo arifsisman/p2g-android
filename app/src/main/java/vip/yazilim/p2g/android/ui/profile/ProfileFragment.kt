@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.notifications
+package vip.yazilim.p2g.android.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,17 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import vip.yazilim.p2g.android.R
 
-class NotificationsFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
-    private lateinit var notificationsViewModel: NotificationsViewModel
+    private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        profileViewModel =
+            ViewModelProvider(this).get(ProfileViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_profile, container, false)
 
         return root

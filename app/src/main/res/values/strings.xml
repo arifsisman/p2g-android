@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Play2Gether</string>
     <string name="title_home">Home</string>
-    <string name="title_rooms">Spotify Rooms</string>
+    <string name="title_rooms">Rooms</string>
     <string name="title_friends">Friends</string>
     <string name="title_profile">Profile</string>
     <string name="title_activity_login">Sign in</string>
@@ -41,4 +41,6 @@
     <string name="settings">Settings</string>
     <string name="set_anthem">Set Anthem</string>
     <string name="online_status">Online Status</string>
+    <string name="invites">Invites</string>
+    <string name="room_invites">Room Invites</string>
 </resources>

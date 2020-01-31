@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.dashboard
+package vip.yazilim.p2g.android.ui.friends
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import vip.yazilim.p2g.android.R
 
-class DashboardFragment : Fragment() {
+class FriendsFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var friendsViewModel: FriendsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+        friendsViewModel =
+            ViewModelProvider(this).get(FriendsViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_friends, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
-        dashboardViewModel.text.observe(this, Observer {
+        val textView: TextView = root.findViewById(R.id.text_friends)
+        friendsViewModel.text.observe(this, Observer {
             textView.text = it
         })
         return root
