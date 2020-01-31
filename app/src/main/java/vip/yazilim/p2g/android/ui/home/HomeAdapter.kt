@@ -78,6 +78,7 @@ class HomeAdapter(private var roomModels: List<RoomModel>) :
     }
 
     private val itemOnClick: (View, Int, Int) -> Unit = { view, position, type ->
+        //TODO: Open room preview fragment or activity
         Log.d(LOG_TAG, roomModels[position].room.name)
     }
 

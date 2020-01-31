@@ -199,6 +199,7 @@ class HomeFragment : Fragment() {
                     }
 
                     override fun onSuccess(obj: Room) {
+                        //TODO: Start room activity from here
                         Log.d(LOG_TAG, "Room created with ID: " + obj.id)
                         mAlertDialog.dismiss()
                     }
