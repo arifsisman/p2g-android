@@ -24,6 +24,7 @@
     <string name="room_paused_song">Paused: </string>
     <string name="room_next_song">Next Song: </string>
     <string name="room_song_not_found">No song found in the room</string>
+    <string name="room_user_not_found">Not in any room</string>
     <string name="room_owner">Room Owner: </string>
     <string name="search_room_hint">Search Room</string>
     <string name="lock_button">Private Room</string>

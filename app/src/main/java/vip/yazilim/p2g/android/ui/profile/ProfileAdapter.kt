@@ -53,10 +53,12 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
         val user = userModel.user
 
         if(user != null){
-            Glide.with(view)
-                .load(user.imageUrl)
-                .apply(RequestOptions.circleCropTransform())
-                .into(holder.profileImage)
+            if(user.imageUrl != null){
+                Glide.with(view)
+                    .load(user.imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.profileImage)
+            }
 
             holder.userName.text = user.name
             holder.country.text = user.countryCode
@@ -72,8 +74,11 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
             holder.friendCountsTextView.text = userModel.friends?.size.toString()
             if (userModel.room != null) {
                 holder.songAndRoomStatus.text = "In" + userModel.room!!.name
+            }else{
+                val songAndRoomStatusString = view.resources.getString(R.string.room_user_not_found)
+                holder.songAndRoomStatus.text = songAndRoomStatusString
             }
         }
-
     }
+
 }

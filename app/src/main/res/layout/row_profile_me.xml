@@ -19,7 +19,7 @@
             android:id="@+id/profile_photo_image_view"
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="20dp"
             android:contentDescription="@string/profile_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
