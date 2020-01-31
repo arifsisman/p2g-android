@@ -37,7 +37,9 @@ class HomeAdapter(var roomModels: List<RoomModel>, private val itemClickListener
         vh.owner.text = ownerText
         vh.roomName.text = roomModel.room.name
 
-        if (!roomModel.room.privateFlag) {
+        if (roomModel.room.privateFlag) {
+            vh.lock.visibility = View.VISIBLE
+        }else{
             vh.lock.visibility = View.INVISIBLE
         }
 

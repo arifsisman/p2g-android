@@ -21,6 +21,8 @@ interface Play2GetherWebApi {
     @GET("/api/user/{id}/model")
     fun getUserModel(@Path("id") userId: String): Call<P2GResponse<UserModel>>
 
+    @GET("/api/user/me/model")
+    fun getUserModelMe(): Call<P2GResponse<UserModel>>
 
     // Room API
     @POST("/api/room/create/{roomName}")

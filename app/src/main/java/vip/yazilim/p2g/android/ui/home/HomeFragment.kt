@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -65,7 +66,6 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         return root
     }
 
-    //viewmodel
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, HomeViewModelFactory()).get(HomeViewModel::class.java)
 
@@ -74,6 +74,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         viewModel.onMessageError.observe(this, onMessageErrorObserver)
         viewModel.isEmptyList.observe(this, emptyListObserver)
     }
+
 
     private fun setupUI() {
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
@@ -89,7 +90,6 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
             createRoomButtonEvent()
         }
     }
-
 
     //observers
     private val renderRoomModels = Observer<List<RoomModel>> {
@@ -211,6 +211,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
                         override fun onError(msg: String) {
                             Log.d(LOG_TAG, msg)
                             UIHelper.showToastLong(context, msg)
+//                            UIHelper.showSnackBarLong(root, msg)
                         }
 
                         override fun onSuccess(obj: RoomUser) {
@@ -237,6 +238,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, msg)
                         UIHelper.showToastLong(context, msg)
+//                        UIHelper.showSnackBarLong(root, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
@@ -283,6 +285,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, "Room can not created")
                         UIHelper.showToastLong(context, msg)
+//                        UIHelper.showSnackBarLong(root, msg)
                     }
 
                     override fun onSuccess(obj: Room) {
@@ -332,4 +335,10 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 
+    class HomeViewModelFactory :ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return HomeViewModel() as T
+        }
+    }
 }

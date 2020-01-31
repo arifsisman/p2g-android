@@ -7,10 +7,10 @@ import java.io.Serializable
  * @contact mustafaarifsisman@gmail.com
  */
 data class UserModel(
-    var user: User,
-    var room: Room?,
-    var userDevices: List<UserDevice>,
-    var roomUser: RoomUser?,
-    var friends: List<User>?,
-    var friendRequests: List<User>?
+    var user: User? = null,
+    var room: Room? = null,
+    var userDevices: List<UserDevice> = emptyList(),
+    var roomUser: RoomUser? = null,
+    var friends: List<User>? = emptyList(),
+    var friendRequests: List<User>? = emptyList()
 ) : Serializable

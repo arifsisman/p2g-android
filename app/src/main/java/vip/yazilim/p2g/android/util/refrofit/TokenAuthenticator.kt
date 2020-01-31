@@ -25,10 +25,6 @@ class TokenAuthenticator : Authenticator {
             SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
         val updatedToken = refreshExpiredToken(refreshToken.toString())
 
-        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, updatedToken)
-
-        updateAccessTokenOnPlay2Gether(updatedToken)
-
         return response.request.newBuilder()
             .header("Authorization", "Bearer $updatedToken")
             .build()
@@ -36,7 +32,7 @@ class TokenAuthenticator : Authenticator {
 
 
     companion object {
-        fun refreshExpiredToken(refreshToken: String): String {
+        fun refreshExpiredToken(refreshToken: String) {
             SpotifyRequest.build(
                 SpotifyApiClient.build().refreshExpiredToken(
                     SpotifyConstants.CLIENT_ID,
@@ -51,26 +47,25 @@ class TokenAuthenticator : Authenticator {
                     override fun onSuccess(obj: TokenModel) {
                         SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                         SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
+                        updateAccessTokenOnPlay2Gether(obj.access_token)
                         Log.d(LOG_TAG, "Token refreshed")
                     }
                 })
-
-            return SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
-                .toString()
         }
-    }
 
-    private fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-        vip.yazilim.p2g.android.api.generic.P2GRequest.build(
-            ApiClient.build().updateAccessToken(accessToken),
-            object : Callback<String> {
-                override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
-                }
+        fun updateAccessTokenOnPlay2Gether(accessToken: String) {
+            vip.yazilim.p2g.android.api.generic.P2GRequest.build(
+                ApiClient.build().updateAccessToken(accessToken),
+                object : Callback<String> {
+                    override fun onError(msg: String) {
+                        Log.d(LOG_TAG, msg)
+                    }
 
-                override fun onSuccess(obj: String) {
-                }
-            })
+                    override fun onSuccess(obj: String) {
+                        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj)
+                    }
+                })
+        }
     }
 
 }

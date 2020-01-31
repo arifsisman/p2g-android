@@ -39,17 +39,17 @@
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@+id/spotify_login_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_view"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.085" />
 
     <ImageView
         android:id="@+id/logo_view"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="14dp"
         android:contentDescription="@string/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

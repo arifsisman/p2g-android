@@ -65,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
                 val msg = "Can not get authorization code from Spotify"
                 Log.d(LOG_TAG, msg)
                 UIHelper.showToastShort(this, msg)
+//                UIHelper.showSnackBarLong(findViewById(android.R.id.content), msg)
             }
         }
     }
@@ -122,6 +123,7 @@ class LoginActivity : AppCompatActivity() {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
                     UIHelper.showToastLong(this@LoginActivity, msg)
+//                    UIHelper.showSnackBarLong(findViewById(android.R.id.content), msg)
                 }
 
                 override fun onSuccess(obj: TokenModel) {
@@ -146,9 +148,12 @@ class LoginActivity : AppCompatActivity() {
                 override fun onSuccess(obj: User) {
                     if (obj.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
                         UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
+//                        UIHelper.showSnackBarLong(findViewById(android.R.id.content), SPOTIFY_PRODUCT_TYPE_ERROR)
+
                     } else {
                         db.insertData(obj)
                         UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
+//                        UIHelper.showSnackBarLong(findViewById(android.R.id.content), "Logged in as ${obj.name}")
                         startMainActivity(obj, tokenModel)
                     }
                 }

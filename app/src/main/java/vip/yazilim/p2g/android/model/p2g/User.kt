@@ -8,16 +8,16 @@ import java.io.Serializable
  * @contact mustafaarifsisman@gmail.com
  */
 data class User(
-    var id: String,
-    var name: String,
-    var email: String,
-    var role: String?,
-    var onlineStatus: String?,
-    var countryCode: String,
-    var imageUrl: String?,
-    var anthem: String?,
-    var spotifyProductType: String?,
-    var showActivityFlag: Boolean,
-    var showFriendsFlag: Boolean,
-    var creationDate: LocalDateTime
+    var id: String = "",
+    var name: String = "",
+    var email: String = "",
+    var role: String? = "",
+    var onlineStatus: String? = "",
+    var countryCode: String = "",
+    var imageUrl: String? = "",
+    var anthem: String? = "",
+    var spotifyProductType: String? = "",
+    var showActivityFlag: Boolean = false,
+    var showFriendsFlag: Boolean = false,
+    var creationDate: LocalDateTime = LocalDateTime.now()
 ) : Serializable
