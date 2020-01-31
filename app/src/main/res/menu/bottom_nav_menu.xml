@@ -3,8 +3,8 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_play_circle_outline_black_24dp"
-        android:title="@string/title_rooms" />
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
 
     <item
         android:id="@+id/navigation_invites"

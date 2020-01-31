@@ -60,15 +60,15 @@ class MainActivity : AppCompatActivity() {
 //        connectRoomWebSocket(1)
     }
 
-    override fun startActivity(intent: Intent?) {
-        super.startActivity(intent)
-        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out)
-    }
-
-    override fun finish() {
-        super.finish()
-        overridePendingTransition(R.anim.from_right_out, R.anim.from_left_in)
-    }
+//    override fun startActivity(intent: Intent?) {
+//        super.startActivity(intent)
+//        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out)
+//    }
+//
+//    override fun finish() {
+//        super.finish()
+//        overridePendingTransition(R.anim.from_right_out, R.anim.from_left_in)
+//    }
 
     override fun onResume() {
         super.onResume()

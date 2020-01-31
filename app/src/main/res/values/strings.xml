@@ -45,4 +45,7 @@
     <string name="online_status">Online Status</string>
     <string name="invites">Invites</string>
     <string name="room_invites">Room Invites</string>
+    <string name="title_activity_room">RoomActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.ui.home
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
@@ -212,9 +214,12 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
                         }
 
                         override fun onSuccess(obj: RoomUser) {
-                            //TODO: Start room activity from here
                             Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
                             mAlertDialog.dismiss()
+                            closeKeyboard()
+
+                            val intent = Intent(activity, RoomActivity::class.java)
+                            startActivity(intent)
                         }
                     })
             }
@@ -235,8 +240,10 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
                     }
 
                     override fun onSuccess(obj: RoomUser) {
-                        //TODO: Start room activity from here
                         Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+
+                        val intent = Intent(activity, RoomActivity::class.java)
+                        startActivity(intent)
                     }
                 })
         }
@@ -279,9 +286,11 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
                     }
 
                     override fun onSuccess(obj: Room) {
-                        //TODO: Start room activity from here
                         Log.d(LOG_TAG, "Room created with ID: " + obj.id)
                         mAlertDialog.dismiss()
+
+                        val intent = Intent(activity, RoomActivity::class.java)
+                        startActivity(intent)
                     }
                 })
         }
