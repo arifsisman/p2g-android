@@ -27,15 +27,14 @@ class HomeAdapter(var roomModels: List<RoomModel>, private val itemClickListener
         vh.bind(roomModels[position], itemClickListener)
         val roomModel = roomModels[position]
 
-        val roomOwnerPlaceholder = view.resources.getString(R.string.placeholder_room_owner)
+        val roomOwnerPlaceholder = view.resources.getString(R.string.placeholder_room_owner) + roomModel.owner.name
         val roomNowPlayingPlaceholder = view.resources.getString(R.string.placeholder_room_now_playing_song)
         val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
         val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
         val roomSongNotFoundPlaceholder = view.resources.getString(R.string.placeholder_room_song_not_found)
 
-        val ownerText = roomOwnerPlaceholder + roomModel.owner.name
-        vh.owner.text = ownerText
         vh.roomName.text = roomModel.room.name
+        vh.owner.text = roomOwnerPlaceholder
 
         if (roomModel.room.privateFlag) {
             vh.lock.visibility = View.VISIBLE

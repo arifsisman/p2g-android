@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -23,10 +24,11 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
         val email: TextView = itemView.findViewById(R.id.email_text_view)
-        val statusOnline: ImageView = itemView.findViewById(R.id.online_status_image_view_online)
-        val statusOffline: ImageView = itemView.findViewById(R.id.online_status_image_view_offline)
-        val statusAway: ImageView = itemView.findViewById(R.id.online_status_image_view_offline)
+        val statusOnline: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
+        val statusOffline: ImageView = itemView.findViewById(R.id.online_status_offline_image_view)
+        val statusAway: ImageView = itemView.findViewById(R.id.online_status_offline_image_view)
         val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
         val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
@@ -53,7 +55,22 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
         val userModel = userModel[position]
         val user = userModel.user
 
+
         if (user != null) {
+            val profileNamePlaceholder = user.name
+            val profileEmailPlaceholder =
+                view.resources.getString(R.string.placeholder_email) + " " + user.email
+            val profileFriendCountsPlaceholder =
+                userModel.friends?.size.toString() + " " + view.resources.getString(R.string.placeholder_friend_counts)
+            val profileSongAndRoomStatusPlaceholder =
+                view.resources.getString(R.string.placeholder_song_and_room_status_helper) + " " + userModel.room?.name
+            val profileAnthemPlaceholder =
+                view.resources.getString(R.string.placeholder_anthem) + " " + user.anthem
+            val profileSpotifyAccountIdPlaceholder =
+                view.resources.getString(R.string.placeholder_spotify_account_id) + " " + user.id
+            val profileCountryPlaceholder =
+                view.resources.getString(R.string.placeholder_country) + " " + user.countryCode
+
             if (user.imageUrl != null) {
                 Glide.with(view)
                     .load(user.imageUrl)
@@ -61,22 +78,31 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
                     .into(holder.profileImage)
             }
 
-            holder.userName.text = user.name
-            holder.country.text = user.countryCode
-            holder.email.text = user.email
+            try {
+                holder.flagImage.countryCode = user.countryCode
+            } catch (exception: Exception) {
+                holder.flagImage.visibility = View.INVISIBLE
+            }
+
+            holder.userName.text = profileNamePlaceholder
+            holder.country.text = profileCountryPlaceholder
+            holder.email.text = profileEmailPlaceholder
 
             if (user.anthem == null) {
                 holder.anthem.visibility = View.INVISIBLE
             } else {
                 holder.anthem.visibility = View.VISIBLE
-                holder.anthem.text = user.anthem
+                holder.anthem.text = profileAnthemPlaceholder
             }
-            holder.spotifyId.text = user.id
-            holder.friendCountsTextView.text = userModel.friends?.size.toString()
+
+            holder.spotifyId.text = profileSpotifyAccountIdPlaceholder
+            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
+
             if (userModel.room != null) {
-                holder.songAndRoomStatus.text = "In" + userModel.room!!.name
+                holder.songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
             } else {
-                val songAndRoomStatusString = view.resources.getString(R.string.placeholder_room_user_not_found)
+                val songAndRoomStatusString =
+                    view.resources.getString(R.string.placeholder_room_user_not_found)
                 holder.songAndRoomStatus.text = songAndRoomStatusString
             }
 
