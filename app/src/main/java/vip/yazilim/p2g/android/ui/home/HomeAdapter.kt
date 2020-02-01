@@ -27,13 +27,13 @@ class HomeAdapter(var roomModels: List<RoomModel>, private val itemClickListener
         vh.bind(roomModels[position], itemClickListener)
         val roomModel = roomModels[position]
 
-        val roomOwnerString = view.resources.getString(R.string.room_owner)
-        val roomNowPlayingString = view.resources.getString(R.string.room_now_playing_song)
-        val roomPausedString = view.resources.getString(R.string.room_paused_song)
-        val roomNextSongString = view.resources.getString(R.string.room_next_song)
-        val roomSongNotFoundString = view.resources.getString(R.string.room_song_not_found)
+        val roomOwnerPlaceholder = view.resources.getString(R.string.placeholder_room_owner)
+        val roomNowPlayingPlaceholder = view.resources.getString(R.string.placeholder_room_now_playing_song)
+        val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
+        val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
+        val roomSongNotFoundPlaceholder = view.resources.getString(R.string.placeholder_room_song_not_found)
 
-        val ownerText = roomOwnerString + roomModel.owner.name
+        val ownerText = roomOwnerPlaceholder + roomModel.owner.name
         vh.owner.text = ownerText
         vh.roomName.text = roomModel.room.name
 
@@ -44,25 +44,25 @@ class HomeAdapter(var roomModels: List<RoomModel>, private val itemClickListener
         }
 
         if (roomModel.songList.isNullOrEmpty()) {
-            vh.roomSongStatus.text = roomSongNotFoundString
+            vh.roomSongStatus.text = roomSongNotFoundPlaceholder
         } else {
             roomModel.songList?.forEach {
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         val roomSongStatus =
-                            roomNowPlayingString + it.songName + " - " + it.artistNames[0]
+                            roomNowPlayingPlaceholder + it.songName + " - " + it.artistNames[0]
                         vh.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.PAUSED.songStatus -> {
                         val roomSongStatus =
-                            roomPausedString + it.songName + " - " + it.artistNames[0]
+                            roomPausedPlaceholder + it.songName + " - " + it.artistNames[0]
                         vh.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.NEXT.songStatus -> {
                         val roomSongStatus =
-                            roomNextSongString + it.songName + " - " + it.artistNames[0]
+                            roomNextSongPlaceholder + it.songName + " - " + it.artistNames[0]
                         vh.roomSongStatus.text = roomSongStatus
                         return
                     }
@@ -93,8 +93,8 @@ class HomeAdapter(var roomModels: List<RoomModel>, private val itemClickListener
                     val filter = constraint.toString().trim()
 
                     roomModelsFull.forEach {
-                        if (it.room.name.contains(filter, ignoreCase = true)
-                            || it.owner.name.contains(filter, ignoreCase = true)
+                        if (it.room.name.contains(filter,  true)
+                            || it.owner.name.contains(filter,  true)
                         ) {
                             filteredList.add(it)
                         }

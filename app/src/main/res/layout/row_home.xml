@@ -30,7 +30,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            tools:text="@string/room_name" />
+            tools:text="@string/hint_room_name" />
 
         <TextView
             android:id="@+id/room_owner"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/room_owner"
+            android:text="@string/placeholder_room_owner"
             app:layout_constraintBottom_toTopOf="@+id/roomSongStatus"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -52,7 +52,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/room_now_playing_song"
+            android:text="@string/placeholder_room_now_playing_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -62,7 +62,7 @@
             android:id="@+id/lock_view"
             android:layout_width="19dp"
             android:layout_height="19dp"
-            android:contentDescription="@string/lock_button"
+            android:contentDescription="@string/description_lock_button"
             app:layout_constraintBottom_toBottomOf="@+id/room_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

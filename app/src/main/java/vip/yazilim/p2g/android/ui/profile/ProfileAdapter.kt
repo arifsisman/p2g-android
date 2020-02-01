@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.profile
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.UserModel
 
 /**
@@ -24,7 +24,9 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         val email: TextView = itemView.findViewById(R.id.email_text_view)
-        val onlineStatus: ImageView = itemView.findViewById(R.id.online_status_image_view)
+        val statusOnline: ImageView = itemView.findViewById(R.id.online_status_image_view_online)
+        val statusOffline: ImageView = itemView.findViewById(R.id.online_status_image_view_offline)
+        val statusAway: ImageView = itemView.findViewById(R.id.online_status_image_view_offline)
         val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
         val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
@@ -47,13 +49,12 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
         notifyDataSetChanged()
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         val userModel = userModel[position]
         val user = userModel.user
 
-        if(user != null){
-            if(user.imageUrl != null){
+        if (user != null) {
+            if (user.imageUrl != null) {
                 Glide.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
@@ -74,9 +75,21 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
             holder.friendCountsTextView.text = userModel.friends?.size.toString()
             if (userModel.room != null) {
                 holder.songAndRoomStatus.text = "In" + userModel.room!!.name
-            }else{
-                val songAndRoomStatusString = view.resources.getString(R.string.room_user_not_found)
+            } else {
+                val songAndRoomStatusString = view.resources.getString(R.string.placeholder_room_user_not_found)
                 holder.songAndRoomStatus.text = songAndRoomStatusString
+            }
+
+            when (user.onlineStatus) {
+                OnlineStatus.ONLINE.onlineStatus -> {
+                    holder.statusOnline.visibility = View.VISIBLE
+                }
+                OnlineStatus.OFFLINE.onlineStatus -> {
+                    holder.statusOffline.visibility = View.VISIBLE
+                }
+                OnlineStatus.AWAY.onlineStatus -> {
+                    holder.statusAway.visibility = View.VISIBLE
+                }
             }
         }
     }

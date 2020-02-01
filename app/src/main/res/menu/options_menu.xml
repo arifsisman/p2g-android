@@ -4,11 +4,11 @@
 
     <item
         android:id="@+id/Logout"
-        android:title="@string/logout" />
+        android:title="@string/title_logout" />
 
     <item android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
-        android:title="@string/search_room_hint"
+        android:title="@string/title_search_room"
         app:showAsAction="collapseActionView|always"
         app:actionViewClass="android.widget.SearchView" />
 

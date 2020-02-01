@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.home
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -110,12 +109,11 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         progressBar.visibility = visibility
     }
 
-    @SuppressLint("SetTextI18n")
     private val onMessageErrorObserver = Observer<Any> {
         Log.v(LOG_TAG, "onMessageError $it")
         layoutError.visibility = View.VISIBLE
         layoutEmpty.visibility = View.GONE
-        textViewError.text = "Error $it"
+        textViewError.text = it?.toString()
     }
 
     private val emptyListObserver = Observer<Boolean> {
@@ -166,6 +164,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
             }
         })
     }
+
 
     override fun onItemClicked(roomModel: RoomModel) {
         Log.d(LOG_TAG, "Click " + roomModel.room.name)

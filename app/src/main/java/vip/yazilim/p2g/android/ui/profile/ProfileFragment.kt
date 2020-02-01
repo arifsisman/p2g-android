@@ -1,9 +1,11 @@
 package vip.yazilim.p2g.android.ui.profile
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -16,12 +18,23 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.UserModel
 
+
 class ProfileFragment : Fragment() {
 
     private lateinit var viewModel: ProfileViewModel
     private lateinit var adapter: ProfileAdapter
     private lateinit var root: View
     private lateinit var container: ViewGroup
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val item = menu.findItem(R.id.action_search)
+        if (item != null) item.isVisible = false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,10 +79,6 @@ class ProfileFragment : Fragment() {
         viewModel.loadUserModel()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-    }
-
     //observers
     private val renderUser = Observer<List<UserModel>> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
@@ -84,12 +93,11 @@ class ProfileFragment : Fragment() {
         progressBar.visibility = visibility
     }
 
-    @SuppressLint("SetTextI18n")
     private val onMessageErrorObserver = Observer<Any> {
         Log.v(GeneralConstants.LOG_TAG, "onMessageError $it")
         layoutError.visibility = View.VISIBLE
         layoutEmpty.visibility = View.GONE
-        textViewError.text = "Error $it"
+        textViewError.text = it?.toString()
     }
 
     private val emptyListObserver = Observer<Boolean> {
