@@ -169,14 +169,14 @@
             android:id="@+id/country_flag_image_view"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
-            app:countryCode="TR"
-            tools:src="@drawable/flag_us"
+            tools:src="@drawable/flag_de"
             android:paddingTop="4dp"
             android:paddingBottom="8dp"
+            app:countryCode="FR"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/friend_counts_text_view"
-            android:contentDescription="@string/description_country_flag_image_of_user" />
+            android:contentDescription="@string/description_country_flag_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

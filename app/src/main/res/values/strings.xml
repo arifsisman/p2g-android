@@ -50,6 +50,6 @@
     <string name="placeholder_anthem">Anthem:</string>
     <string name="placeholder_settings">Settings</string>
     <string name="placeholder_set_anthem">Set Anthem</string>
-    <string name="description_country_flag_image_of_user">Country Flag Image of User</string>
+    <string name="description_country_flag_image">Country Flag Image</string>
 
 </resources>
