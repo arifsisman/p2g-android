@@ -95,12 +95,7 @@ class HomeAdapter(
         }
 
         try {
-            if (roomModel.owner.countryCode != "") {
-                holder.flagImage.countryCode = roomModel.owner.countryCode
-            } else {
-                holder.flagImage.visibility = View.INVISIBLE
-
-            }
+            holder.flagImage.countryCode = roomModel.owner.countryCode
         } catch (exception: Exception) {
             holder.flagImage.visibility = View.INVISIBLE
         }

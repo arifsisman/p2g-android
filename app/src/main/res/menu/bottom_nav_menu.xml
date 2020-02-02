@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/navigation_invites"
-        android:icon="@drawable/ic_play_for_work_black_24dp"
+        android:icon="@drawable/ic_plus_one_black_24dp"
         android:title="@string/title_invites" />
 
     <item
