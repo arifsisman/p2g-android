@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants
+import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 
 
@@ -59,6 +60,7 @@ class ProfileFragment : Fragment() {
             ViewModelProvider(this, ProfileViewModelFactory()).get(ProfileViewModel::class.java)
 
         viewModel.userModel.observe(this, renderUser)
+        viewModel.friendRequestModel.observe(this, renderFriendsCount)
         viewModel.isViewLoading.observe(this, isViewLoadingObserver)
         viewModel.onMessageError.observe(this, onMessageErrorObserver)
         viewModel.isEmptyList.observe(this, emptyListObserver)
@@ -70,17 +72,28 @@ class ProfileFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = ProfileAdapter(viewModel.userModel.value ?: emptyList())
+        adapter = ProfileAdapter(
+            viewModel.userModel.value ?: emptyList(),
+            FriendRequestModel(emptyList(), emptyList(), emptyList())
+        )
         recyclerView.adapter = adapter
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.loadUserModel()
+        viewModel.loadFriendsCount()
     }
 
     //observers
     private val renderUser = Observer<List<UserModel>> {
+        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        layoutError.visibility = View.GONE
+        layoutEmpty.visibility = View.GONE
+        adapter.update(it)
+    }
+
+    private val renderFriendsCount = Observer<FriendRequestModel> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE

@@ -9,8 +9,5 @@ import java.io.Serializable
 data class UserModel(
     var user: User? = null,
     var room: Room? = null,
-    var userDevices: List<UserDevice> = emptyList(),
-    var roomUser: RoomUser? = null,
-    var friends: List<User>? = emptyList(),
-    var friendRequests: List<User>? = emptyList()
+    var roomUser: RoomUser? = null
 ) : Serializable

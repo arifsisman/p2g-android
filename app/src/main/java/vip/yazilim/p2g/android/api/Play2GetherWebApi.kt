@@ -70,6 +70,9 @@ interface Play2GetherWebApi {
     @PUT("/api/room/user/{id}/demote")
     fun demoteUser(@Path("id") roomId: String): Call<P2GResponse<RoomUser>>
 
+    @GET("/api/room/invite/model")
+    fun getRoomInviteModel(): Call<P2GResponse<RoomInviteModel>>
+
 
     // Song API
     @GET("/api/song/{id}")
@@ -109,6 +112,9 @@ interface Play2GetherWebApi {
 
     @PUT("/api/friend/requests/{id}/ignore")
     fun ignore(@Path("id") friendRequestId: Long): Call<P2GResponse<Boolean>>
+
+    @GET("/api/room/invite/model")
+    fun getFriendRequestModel(): Call<P2GResponse<FriendRequestModel>>
 
 
     // Authorization API

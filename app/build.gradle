@@ -65,17 +65,13 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    kapt 'com.github.bumptech.glide:compiler:4.9.0'
 
     // Material
     implementation 'com.google.android.material:material:1.2.0-alpha04'
 
     // ThreeTenABP
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
-
-    // Moshi
-    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
     // StompProtocolAndroid
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'

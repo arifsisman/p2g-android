@@ -6,18 +6,22 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
+import vip.yazilim.p2g.android.util.glide.GlideApp
 
 /**
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class ProfileAdapter(private var userModel: List<UserModel>) :
+class ProfileAdapter(
+    private var userModel: List<UserModel>,
+    private var friendRequestModel: FriendRequestModel
+) :
     RecyclerView.Adapter<ProfileAdapter.MViewHolder>() {
 
     private lateinit var view: View
@@ -51,17 +55,19 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
         notifyDataSetChanged()
     }
 
+    fun update(data: FriendRequestModel) {
+        friendRequestModel = data
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         val userModel = userModel[position]
         val user = userModel.user
-
 
         if (user != null) {
             val profileNamePlaceholder = user.name
             val profileEmailPlaceholder =
                 view.resources.getString(R.string.placeholder_email) + " " + user.email
-            val profileFriendCountsPlaceholder =
-                userModel.friends?.size.toString() + " " + view.resources.getString(R.string.placeholder_friend_counts)
             val profileSongAndRoomStatusPlaceholder =
                 view.resources.getString(R.string.placeholder_song_and_room_status_helper) + " " + userModel.room?.name
             val profileAnthemPlaceholder =
@@ -72,7 +78,7 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
                 view.resources.getString(R.string.placeholder_country) + " " + user.countryCode
 
             if (user.imageUrl != null) {
-                Glide.with(view)
+                GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(holder.profileImage)
@@ -96,7 +102,6 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
             }
 
             holder.spotifyId.text = profileSpotifyAccountIdPlaceholder
-            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
 
             if (userModel.room != null) {
                 holder.songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
@@ -117,6 +122,16 @@ class ProfileAdapter(private var userModel: List<UserModel>) :
                     holder.statusAway.visibility = View.VISIBLE
                 }
             }
+        }
+
+        if (friendRequestModel.friends != null) {
+            val profileFriendCountsPlaceholder =
+                friendRequestModel.friends?.size.toString() + " " + view.resources.getString(R.string.placeholder_friend_counts)
+            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
+        } else {
+            val profileFriendCountsPlaceholder =
+                "0 " + view.resources.getString(R.string.placeholder_friend_counts)
+            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         }
     }
 
