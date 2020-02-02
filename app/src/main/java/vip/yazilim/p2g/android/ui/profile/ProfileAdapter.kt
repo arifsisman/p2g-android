@@ -129,9 +129,7 @@ class ProfileAdapter(
                 friendRequestModel.friends?.size.toString() + " " + view.resources.getString(R.string.placeholder_friend_counts)
             holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         } else {
-            val profileFriendCountsPlaceholder =
-                "0 " + view.resources.getString(R.string.placeholder_friend_counts)
-            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
+            holder.friendCountsTextView.visibility = View.INVISIBLE
         }
     }
 
