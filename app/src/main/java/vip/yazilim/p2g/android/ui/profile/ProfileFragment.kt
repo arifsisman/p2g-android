@@ -72,10 +72,7 @@ class ProfileFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = ProfileAdapter(
-            viewModel.userModel.value ?: emptyList(),
-            FriendRequestModel(emptyList(), emptyList(), emptyList())
-        )
+        adapter = ProfileAdapter(UserModel(), FriendRequestModel())
         recyclerView.adapter = adapter
     }
 
@@ -86,7 +83,7 @@ class ProfileFragment : Fragment() {
     }
 
     //observers
-    private val renderUser = Observer<List<UserModel>> {
+    private val renderUser = Observer<UserModel> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE

@@ -19,7 +19,7 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @contact mustafaarifsisman@gmail.com
  */
 class ProfileAdapter(
-    private var userModel: List<UserModel>,
+    private var userModel: UserModel,
     private var friendRequestModel: FriendRequestModel
 ) :
     RecyclerView.Adapter<ProfileAdapter.MViewHolder>() {
@@ -47,10 +47,10 @@ class ProfileAdapter(
     }
 
     override fun getItemCount(): Int {
-        return userModel.size
+        return 1
     }
 
-    fun update(data: List<UserModel>) {
+    fun update(data: UserModel) {
         userModel = data
         notifyDataSetChanged()
     }
@@ -61,7 +61,6 @@ class ProfileAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        val userModel = userModel[position]
         val user = userModel.user
 
         if (user != null) {
@@ -129,7 +128,9 @@ class ProfileAdapter(
                 friendRequestModel.friends?.size.toString() + " " + view.resources.getString(R.string.placeholder_friend_counts)
             holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         } else {
-            holder.friendCountsTextView.visibility = View.INVISIBLE
+            val profileFriendCountsPlaceholder =
+                "0 " + view.resources.getString(R.string.placeholder_friend_counts)
+            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         }
     }
 

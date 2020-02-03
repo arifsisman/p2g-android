@@ -8,12 +8,11 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
-import java.util.*
 
 class ProfileViewModel : ViewModel() {
 
-    private val _userModel = MutableLiveData<List<UserModel>>().apply { value = emptyList() }
-    val userModel: LiveData<List<UserModel>> = _userModel
+    private val _userModel = MutableLiveData<UserModel>()
+    val userModel: LiveData<UserModel> = _userModel
 
     private val _friendRequestModel = MutableLiveData<FriendRequestModel>()
     val friendRequestModel: LiveData<FriendRequestModel> = _friendRequestModel
@@ -40,7 +39,7 @@ class ProfileViewModel : ViewModel() {
 
                 override fun onSuccess(obj: UserModel) {
                     _isViewLoading.postValue(false)
-                    _userModel.value = Collections.singletonList(obj)
+                    _userModel.value = obj
                 }
             })
     }

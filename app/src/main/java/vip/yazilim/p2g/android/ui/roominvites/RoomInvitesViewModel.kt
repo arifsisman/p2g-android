@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.invites
+package vip.yazilim.p2g.android.ui.roominvites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class InvitesViewModel : ViewModel() {
+class RoomInvitesViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is invites Fragment"

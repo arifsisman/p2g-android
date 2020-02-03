@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_invites"
-        android:name="vip.yazilim.p2g.android.ui.invites.InvitesFragment"
+        android:name="vip.yazilim.p2g.android.ui.roominvites.RoomInvitesFragment"
         android:label="@string/title_room_invites"
         tools:layout="@layout/fragment_invites" />
 
