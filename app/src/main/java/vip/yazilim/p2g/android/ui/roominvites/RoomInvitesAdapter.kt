@@ -1,119 +1,61 @@
-//package vip.yazilim.p2g.android.ui.roominvites
-//
-//import android.view.LayoutInflater
-//import android.view.View
-//import android.view.ViewGroup
-//import android.widget.Filter
-//import android.widget.Filterable
-//import android.widget.ImageView
-//import android.widget.TextView
-//import androidx.recyclerview.widget.RecyclerView
-//import com.haipq.android.flagkit.FlagImageView
-//import vip.yazilim.p2g.android.R
-//import vip.yazilim.p2g.android.constant.enums.SongStatus
-//import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
-//import vip.yazilim.p2g.android.model.p2g.RoomModel
-//
-///**
-// * @author mustafaarifsisman - 03.02.2020
-// * @contact mustafaarifsisman@gmail.com
-// */
-//class RoomInvitesAdapter(
-//    var roomInviteModels: List<RoomInviteModel>,
-//    private val itemClickListener: OnItemClickListener
-//) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(), Filterable {
-//
-//    private lateinit var view: View
-//    var roomInviteModelsFull: MutableList<RoomInviteModel> = mutableListOf()
-//
-//    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+package vip.yazilim.p2g.android.ui.roominvites
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
+
+/**
+ * @author mustafaarifsisman - 03.02.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
+class RoomInvitesAdapter(
+    var roomInviteModel: RoomInviteModel,
+    private val itemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>() {
+
+    private lateinit var view: View
+    var roomInviteModelFull: RoomInviteModel = RoomInviteModel()
+
+    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 //        val roomName: TextView = itemView.findViewById(R.id.room_name)
 //        val owner: TextView = itemView.findViewById(R.id.room_owner)
 //        val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
 //        val lock: ImageView = itemView.findViewById(R.id.lock_view)
 //        val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
-//
-//        fun bind(roomModel: RoomModel, clickListener: OnItemClickListener) {
-//            itemView.setOnClickListener {
-//                clickListener.onItemClicked(roomModel)
-//            }
-//        }
-//    }
-//
-//    interface OnItemClickListener {
-//        fun onItemClicked(roomModel: RoomModel)
-//    }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
-//        view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
-//        return MViewHolder(view)
-//    }
-//
-//    override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-//        holder.bind(roomModels[position], itemClickListener)
-//        val roomModel = roomModels[position]
-//
-//        val roomOwnerPlaceholder =
-//            view.resources.getString(R.string.placeholder_room_owner) + " " + roomModel.owner.name
-//        val roomNowPlayingPlaceholder =
-//            view.resources.getString(R.string.placeholder_room_now_playing_song)
-//        val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
-//        val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
-//        val roomSongNotFoundPlaceholder =
-//            view.resources.getString(R.string.placeholder_room_song_not_found)
-//
-//        holder.roomName.text = roomModel.room.name
-//        holder.owner.text = roomOwnerPlaceholder
-//
-//        if (roomModel.room.privateFlag) {
-//            holder.lock.visibility = View.VISIBLE
-//        } else {
-//            holder.lock.visibility = View.INVISIBLE
-//        }
-//
-//        if (roomModel.songList.isNullOrEmpty()) {
-//            holder.roomSongStatus.text = roomSongNotFoundPlaceholder
-//        } else {
-//            roomModel.songList?.forEach {
-//                when (it.songStatus) {
-//                    SongStatus.PLAYING.songStatus -> {
-//                        val roomSongStatus =
-//                            roomNowPlayingPlaceholder + " " + it.songName + " - " + it.artistNames[0]
-//                        holder.roomSongStatus.text = roomSongStatus
-//                        return
-//                    }
-//                    SongStatus.PAUSED.songStatus -> {
-//                        val roomSongStatus =
-//                            roomPausedPlaceholder + " " + it.songName + " - " + it.artistNames[0]
-//                        holder.roomSongStatus.text = roomSongStatus
-//                        return
-//                    }
-//                    SongStatus.NEXT.songStatus -> {
-//                        val roomSongStatus =
-//                            roomNextSongPlaceholder + " " + it.songName + " - " + it.artistNames[0]
-//                        holder.roomSongStatus.text = roomSongStatus
-//                        return
-//                    }
-//                }
-//            }
-//        }
-//
-//        try {
-//            holder.flagImage.countryCode = roomModel.owner.countryCode
-//        } catch (exception: Exception) {
-//            holder.flagImage.visibility = View.INVISIBLE
-//        }
-//    }
-//
-//    override fun getItemCount(): Int {
-//        return roomModels.size
-//    }
-//
-//    fun update(data: List<RoomModel>) {
-//        roomModels = data
-//        notifyDataSetChanged()
-//    }
-//
+
+        fun bind(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener {
+                clickListener.onItemClicked(roomInviteModel)
+            }
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClicked(roomInviteModel: RoomInviteModel)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
+        return MViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: MViewHolder, position: Int) {
+        holder.bind(roomInviteModel, itemClickListener)
+
+    }
+
+    override fun getItemCount(): Int {
+        return roomInviteModel.roomInvites?.size!!
+    }
+
+    fun update(data: RoomInviteModel) {
+        roomInviteModel = data
+        notifyDataSetChanged()
+    }
+
 //    override fun getFilter(): Filter {
 //        return object : Filter() {
 //
@@ -145,5 +87,5 @@
 //            }
 //        }
 //    }
-//
-//}
+
+}

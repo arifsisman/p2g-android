@@ -7,7 +7,7 @@ import java.io.Serializable
  * @contact mustafaarifsisman@gmail.com
  */
 data class FriendRequestModel(
-    var friendRequests: List<FriendRequest>? = null,
-    var friendRequestUsers: List<User>? = null,
-    var friends: List<UserModel>? = null
+    var friendRequests: List<FriendRequest>? = emptyList(),
+    var friendRequestUsers: List<User>? = emptyList(),
+    var friends: List<UserModel>? = emptyList()
 ) : Serializable
