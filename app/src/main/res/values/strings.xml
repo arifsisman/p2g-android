@@ -16,7 +16,7 @@
 
     <!--Eng. Hints-->
     <string name="placeholder_room_name">Room Name</string>
-    <string name="placeholder_room_name_expanded">Room Name: </string>
+    <string name="placeholder_room_name_expanded">Room:</string>
     <string name="hint_room_password_optional">Room Password (Optional)</string>
     <string name="hint_room_password_required">Room Password</string>
 
@@ -36,7 +36,7 @@
     <string name="placeholder_join_room">Join Room</string>
     <string name="placeholder_an_error_occurred">An error occurred</string>
     <string name="placeholder_empty_list"> </string>
-    <string name="placeholder_email">Email: </string>
+    <string name="placeholder_email">Email:</string>
     <string name="placeholder_room_owner">Room Owner:</string>
     <string name="placeholder_room_now_playing_song">Now Playing:</string>
     <string name="placeholder_room_paused_song">Paused:</string>
@@ -54,7 +54,7 @@
     <string name="placeholder_set_anthem">Set Anthem</string>
     <string name="placeholder_app_description">Listen to Spotify with your friends</string>
     <string name="placeholder_room_inviter">Inviter: </string>
-    <string name="description_reject_button">Reject Button</string>
     <string name="description_accept_button">Accept Button</string>
+    <string name="description_reject_button">Reject Button</string>
 
 </resources>

@@ -22,7 +22,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesFragment : Fragment(), RoomInvitesAdapter.OnItemClickListener {
+class RoomInvitesFragment : Fragment() {
 
     private lateinit var viewModel: RoomInvitesViewModel
     private lateinit var adapter: RoomInvitesAdapter
@@ -67,7 +67,7 @@ class RoomInvitesFragment : Fragment(), RoomInvitesAdapter.OnItemClickListener {
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: RoomInviteModel(), this)
+        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: RoomInviteModel())
         recyclerView.adapter = adapter
     }
 
@@ -141,12 +141,6 @@ class RoomInvitesFragment : Fragment(), RoomInvitesAdapter.OnItemClickListener {
 //            }
 //        })
     }
-
-
-    override fun onItemClicked(roomInviteModel: RoomInviteModel) {
-        Log.d(GeneralConstants.LOG_TAG, "Click " + roomInviteModel.roomInvites)
-    }
-
 
     private fun setItemsVisibility(
         menu: Menu,

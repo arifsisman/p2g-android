@@ -25,7 +25,7 @@ class HomeAdapter(
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomName: TextView = itemView.findViewById(R.id.room_name)
         val owner: TextView = itemView.findViewById(R.id.room_owner)
-        val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
+        val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
         val lock: ImageView = itemView.findViewById(R.id.lock_view)
         val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
 
@@ -51,12 +51,6 @@ class HomeAdapter(
 
         val roomOwnerPlaceholder =
             view.resources.getString(R.string.placeholder_room_owner) + " " + roomModel.owner.name
-        val roomNowPlayingPlaceholder =
-            view.resources.getString(R.string.placeholder_room_now_playing_song)
-        val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
-        val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
-        val roomSongNotFoundPlaceholder =
-            view.resources.getString(R.string.placeholder_room_song_not_found)
 
         holder.roomName.text = roomModel.room.name
         holder.owner.text = roomOwnerPlaceholder
@@ -68,8 +62,14 @@ class HomeAdapter(
         }
 
         if (roomModel.songList.isNullOrEmpty()) {
-            holder.roomSongStatus.text = roomSongNotFoundPlaceholder
+            holder.roomSongStatus.text = view.resources.getString(R.string.placeholder_room_song_not_found)
         } else {
+            val roomNowPlayingPlaceholder =
+                view.resources.getString(R.string.placeholder_room_now_playing_song)
+            val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
+            val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
+
+
             roomModel.songList?.forEach {
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {

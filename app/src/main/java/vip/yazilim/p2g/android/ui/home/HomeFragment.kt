@@ -165,9 +165,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         })
     }
 
-
     override fun onItemClicked(roomModel: RoomModel) {
-        Log.d(LOG_TAG, "Click " + roomModel.room.name)
         val room: Room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)

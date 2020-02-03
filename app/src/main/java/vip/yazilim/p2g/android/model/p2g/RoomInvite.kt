@@ -10,6 +10,7 @@ import java.io.Serializable
 data class RoomInvite(
     var id: Long,
     var roomId: Long,
+    var inviterId: String,
     var userId: String,
     var invitationDate: LocalDateTime,
     var acceptedFlag: Boolean
