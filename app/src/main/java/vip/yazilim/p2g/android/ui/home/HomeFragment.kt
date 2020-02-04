@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.SearchView
 import androidx.lifecycle.Observer
@@ -30,9 +33,11 @@ import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
-
-class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListener {
-
+/**
+ * @author mustafaarifsisman - 04.02.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
+class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home), HomeAdapter.OnItemClickListener {
     private lateinit var adapter: HomeAdapter
     private lateinit var viewModel: HomeViewModel
 
@@ -41,20 +46,9 @@ class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListe
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        super.onCreate(savedInstanceState)
-        root = inflater.inflate(R.layout.fragment_home, container, false)
-
-        if (container != null) {
-            this.container = container
-        }
-
-        setupViewModel()
-        setupUI()
-
-        return root
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadRooms()
     }
 
     override fun setupViewModel() {
@@ -62,13 +56,10 @@ class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListe
         viewModel.roomModels.observe(this, renderRoomModels)
     }
 
-
     override fun setupUI() {
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
-
         recyclerView.layoutManager = LinearLayoutManager(activity)
-
         adapter = HomeAdapter(viewModel.roomModels.value ?: emptyList(), this)
         recyclerView.adapter = adapter
 
@@ -78,7 +69,7 @@ class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListe
         }
     }
 
-    //observers
+    // Observer
     private val renderRoomModels = Observer<List<RoomModel>> {
         Log.v(LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
@@ -268,10 +259,4 @@ class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListe
             closeKeyboard()
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadRooms()
-    }
-
 }

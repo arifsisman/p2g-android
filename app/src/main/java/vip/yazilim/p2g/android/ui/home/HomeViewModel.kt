@@ -8,7 +8,10 @@ import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 
-
+/**
+ * @author mustafaarifsisman - 04.02.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
 class HomeViewModel : ViewModelBase() {
 
     private val _roomModels = MutableLiveData<List<RoomModel>>()

@@ -1,11 +1,9 @@
 package vip.yazilim.p2g.android.ui
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,20 +17,41 @@ import vip.yazilim.p2g.android.constant.GeneralConstants
  * @author mustafaarifsisman - 04.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-abstract class FragmentBase(var viewModelBase: ViewModelBase) : Fragment(), ViewModelProvider.Factory {
+abstract class FragmentBase(private var viewModelBase: ViewModelBase, var layout: Int) : Fragment(),
+    ViewModelProvider.Factory {
     lateinit var root: View
     lateinit var container: ViewGroup
 
-    // ViewModelProvider.Factory
+    // ViewModelProvider.Factory create override which creates viewModel
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return viewModelBase as T
     }
 
+    // Inflate view with container and setupViewModel and setupUI
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreate(savedInstanceState)
+        root = inflater.inflate(layout, container, false)
+
+        if (container != null) {
+            this.container = container
+        }
+
+        setupViewModel()
+        setupUI()
+
+        return root
+    }
+
     abstract fun setupUI()
     abstract fun setupViewModel()
 
-    fun setupViewModelBase():ViewModelBase{
+    // Default ViewModelBase setup
+    fun setupViewModelBase(): ViewModelBase {
         viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
         viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
         viewModelBase.isEmptyList.observe(this, emptyListObserver)
@@ -40,6 +59,7 @@ abstract class FragmentBase(var viewModelBase: ViewModelBase) : Fragment(), View
         return ViewModelProvider(this, this).get(viewModelBase::class.java)
     }
 
+    // Default Observers
     private val isViewLoadingObserver = Observer<Boolean> {
         Log.v(GeneralConstants.LOG_TAG, "isViewLoading $it")
         val visibility = if (it) View.VISIBLE else View.GONE
@@ -59,6 +79,7 @@ abstract class FragmentBase(var viewModelBase: ViewModelBase) : Fragment(), View
         layoutError.visibility = View.GONE
     }
 
+    // Custom functions using in fragments
     fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
@@ -77,7 +98,5 @@ abstract class FragmentBase(var viewModelBase: ViewModelBase) : Fragment(), View
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
-
-
 
 }

@@ -2,29 +2,24 @@ package vip.yazilim.p2g.android.ui.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
+import vip.yazilim.p2g.android.ui.ViewModelBase
 
-class ProfileViewModel : ViewModel() {
+/**
+ * @author mustafaarifsisman - 04.02.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
+class ProfileViewModel : ViewModelBase() {
 
     private val _userModel = MutableLiveData<UserModel>()
     val userModel: LiveData<UserModel> = _userModel
 
     private val _friendRequestModel = MutableLiveData<FriendRequestModel>()
     val friendRequestModel: LiveData<FriendRequestModel> = _friendRequestModel
-
-    private val _isViewLoading = MutableLiveData<Boolean>()
-    val isViewLoading: LiveData<Boolean> = _isViewLoading
-
-    private val _onMessageError = MutableLiveData<Any>()
-    val onMessageError: LiveData<Any> = _onMessageError
-
-    private val _isEmptyList = MutableLiveData<Boolean>()
-    val isEmptyList: LiveData<Boolean> = _isEmptyList
 
     fun loadUserModel() {
         _isViewLoading.postValue(true)

@@ -13,7 +13,10 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 
-
+/**
+ * @author mustafaarifsisman - 04.02.2020
+ * @contact mustafaarifsisman@gmail.com
+ */
 class HomeAdapter(
     var roomModels: List<RoomModel>,
     private val itemClickListener: OnItemClickListener
