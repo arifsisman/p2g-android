@@ -35,7 +35,7 @@
     <string name="placeholder_create_room">Create New Room</string>
     <string name="placeholder_join_room">Join Room</string>
     <string name="placeholder_an_error_occurred">An error occurred</string>
-    <string name="placeholder_empty_list"> </string>
+    <string name="placeholder_empty_list">Nothing found here…</string>
     <string name="placeholder_email">Email:</string>
     <string name="placeholder_room_owner">Room Owner:</string>
     <string name="placeholder_room_now_playing_song">Now Playing:</string>
