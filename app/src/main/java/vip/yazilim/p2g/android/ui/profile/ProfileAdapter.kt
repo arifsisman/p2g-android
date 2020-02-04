@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
@@ -27,12 +28,11 @@ class ProfileAdapter(
     private lateinit var view: View
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val cardView: CardView = itemView.findViewById(R.id.profile_me_card_view)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
         val email: TextView = itemView.findViewById(R.id.email_text_view)
         val statusOnline: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
-        val statusOffline: ImageView = itemView.findViewById(R.id.online_status_offline_image_view)
-        val statusAway: ImageView = itemView.findViewById(R.id.online_status_offline_image_view)
         val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
         val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
@@ -112,15 +112,20 @@ class ProfileAdapter(
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
+                    holder.statusOnline.setImageResource(android.R.drawable.presence_online)
                     holder.statusOnline.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    holder.statusOffline.visibility = View.VISIBLE
+                    holder.statusOnline.setImageResource(android.R.drawable.presence_offline)
+                    holder.statusOnline.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    holder.statusAway.visibility = View.VISIBLE
+                    holder.statusOnline.setImageResource(android.R.drawable.presence_away)
+                    holder.statusOnline.visibility = View.VISIBLE
                 }
             }
+
+            holder.cardView.visibility = View.VISIBLE
         }
 
         if (friendRequestModel.friends != null) {

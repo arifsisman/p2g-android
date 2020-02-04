@@ -7,6 +7,8 @@
     app:cardCornerRadius="4dp"
     app:cardElevation="0dp"
     android:fitsSystemWindows="true"
+    android:id="@+id/profile_me_card_view"
+    android:visibility="invisible"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -138,32 +140,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
             app:srcCompat="@android:drawable/presence_online" />
-
-        <ImageView
-            android:id="@+id/online_status_offline_image_view"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_marginTop="18dp"
-            android:contentDescription="@string/description_online_status"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/user_name_text_view"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
-            app:srcCompat="@android:drawable/presence_invisible" />
-
-        <ImageView
-            android:id="@+id/online_status_away_image_view"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_marginTop="18dp"
-            android:contentDescription="@string/description_online_status"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/user_name_text_view"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
-            app:srcCompat="@android:drawable/presence_away" />
 
         <com.haipq.android.flagkit.FlagImageView
             android:id="@+id/country_flag_image_view"

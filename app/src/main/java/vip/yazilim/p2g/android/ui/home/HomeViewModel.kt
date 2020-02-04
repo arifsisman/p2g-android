@@ -11,7 +11,7 @@ import vip.yazilim.p2g.android.ui.ViewModelBase
 
 class HomeViewModel : ViewModelBase() {
 
-    private val _roomModels = MutableLiveData<List<RoomModel>>().apply { value = emptyList() }
+    private val _roomModels = MutableLiveData<List<RoomModel>>()
     val roomModels: LiveData<List<RoomModel>> = _roomModels
 
     fun loadRooms() {
