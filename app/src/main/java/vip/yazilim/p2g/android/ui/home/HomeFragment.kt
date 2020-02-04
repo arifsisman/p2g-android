@@ -10,7 +10,6 @@ import android.view.*
 import android.widget.Button
 import android.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,17 +32,10 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 
-class HomeFragment : FragmentBase(), HomeAdapter.OnItemClickListener {
+class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListener {
 
-    private lateinit var viewModel: HomeViewModel
     private lateinit var adapter: HomeAdapter
-
-    class ViewModelFactory : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return HomeViewModel() as T
-        }
-    }
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,11 +59,11 @@ class HomeFragment : FragmentBase(), HomeAdapter.OnItemClickListener {
     }
 
     override fun setupViewModel() {
-        viewModel = ViewModelProvider(this, ViewModelFactory()).get(HomeViewModel::class.java)
+        super.setupViewModelBase()
+        viewModelBase = ViewModelProvider(this, this).get(HomeViewModel::class.java)
+        viewModel = (viewModelBase as HomeViewModel)
+
         viewModel.roomModels.observe(this, renderRoomModels)
-        viewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        viewModel.onMessageError.observe(this, onMessageErrorObserver)
-        viewModel.isEmptyList.observe(this, emptyListObserver)
     }
 
 
