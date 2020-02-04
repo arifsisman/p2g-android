@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="4dp"
     app:cardCornerRadius="4dp"
-    app:cardElevation="4dp"
+    app:cardElevation="0dp"
     android:fitsSystemWindows="true"
     >
 
@@ -53,8 +52,9 @@
             android:id="@+id/separator1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="16dp"
             android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@+id/country_flag_image_view"
+            app:layout_constraintTop_toBottomOf="@+id/friend_counts_text_view"
             tools:layout_editor_absoluteX="0dp" />
 
         <ImageView
@@ -122,6 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/placeholder_country"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spotify_id_text_view" />
 
@@ -166,15 +167,16 @@
 
         <com.haipq.android.flagkit.FlagImageView
             android:id="@+id/country_flag_image_view"
-            android:layout_width="22dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
             android:contentDescription="@string/description_country_flag_image"
             android:paddingTop="4dp"
             android:paddingBottom="8dp"
             app:countryCode="FR"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friend_counts_text_view"
+            app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/flag_de" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

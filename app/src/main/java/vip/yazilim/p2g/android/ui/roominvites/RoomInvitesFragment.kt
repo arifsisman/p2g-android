@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -67,16 +66,16 @@ class RoomInvitesFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: RoomInviteModel())
+        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: emptyList())
         recyclerView.adapter = adapter
     }
 
     //observers
-    private val renderRoomInviteModel = Observer<RoomInviteModel> {
+    private val renderRoomInviteModel = Observer<List<RoomInviteModel>> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
-        adapter.roomInviteModelFull = it
+        adapter.roomInviteModelsFull = it
         adapter.update(it)
     }
 
@@ -99,13 +98,13 @@ class RoomInvitesFragment : Fragment() {
         layoutError.visibility = View.GONE
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        val searchItem: MenuItem? = menu.findItem(R.id.action_search)
-        val searchView: SearchView = searchItem?.actionView as SearchView
-
-        searchView.queryHint = "Search Room Invites"
-
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+//        val searchItem: MenuItem? = menu.findItem(R.id.action_search)
+//        val searchView: SearchView = searchItem?.actionView as SearchView
+//
+//        searchView.queryHint = "Search Room Invites"
+//
 //        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 //            override fun onQueryTextSubmit(query: String): Boolean {
 //                Log.d("queryText", query)
@@ -118,7 +117,7 @@ class RoomInvitesFragment : Fragment() {
 //                return true
 //            }
 //        })
-
+//
 //        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
 //            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
 //                searchView.requestFocus()
@@ -140,7 +139,7 @@ class RoomInvitesFragment : Fragment() {
 //                return true
 //            }
 //        })
-    }
+//    }
 
     private fun setItemsVisibility(
         menu: Menu,

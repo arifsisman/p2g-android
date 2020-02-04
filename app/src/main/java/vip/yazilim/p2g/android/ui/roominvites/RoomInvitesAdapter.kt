@@ -18,12 +18,10 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @author mustafaarifsisman - 03.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesAdapter(
-    var roomInviteModel: RoomInviteModel
-) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>() {
+class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>() {
 
     private lateinit var view: View
-    var roomInviteModelFull: RoomInviteModel = RoomInviteModel()
+    var roomInviteModelsFull: List<RoomInviteModel> = emptyList()
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
@@ -40,59 +38,62 @@ class RoomInvitesAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        val roomInvite = roomInviteModel.roomInvites?.get(position)
-        val roomModel = roomInviteModel.roomModels?.get(position)
+        val roomInviteModel = roomInviteModels[position]
+        val roomInvite = roomInviteModel.roomInvite
+        val roomModel = roomInviteModel.roomModel
         var inviter: User? = User()
 
-        if (roomInvite != null && roomModel != null) {
-            roomModel.userList.forEach {
-                if (it.id == roomInvite.inviterId) {
-                    inviter = it
-                }
+        roomModel.userList.forEach {
+            if (it.id == roomInvite.inviterId) {
+                inviter = it
             }
+        }
 
-            if (inviter!!.imageUrl != null) {
-                GlideApp.with(view)
-                    .load(inviter!!.imageUrl)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(holder.profileImage)
-            }
+        if (inviter!!.imageUrl != null) {
+            GlideApp.with(view)
+                .load(inviter!!.imageUrl)
+                .apply(RequestOptions.circleCropTransform())
+                .into(holder.profileImage)
+        }
 
-            val roomInviterPlaceholder =
-                view.resources.getString(R.string.placeholder_room_inviter) + " " + inviter!!.name
-            holder.roomInviter.text = roomInviterPlaceholder
+        val roomInviterPlaceholder =
+            view.resources.getString(R.string.placeholder_room_inviter) + " " + inviter!!.name
+        holder.roomInviter.text = roomInviterPlaceholder
 
-            val roomNamePlaceholder = view.resources.getString(R.string.placeholder_room_name_expanded) + " " + roomModel.room.name
-            holder.roomName.text = roomNamePlaceholder
+        val roomNamePlaceholder =
+            view.resources.getString(R.string.placeholder_room_name_expanded) + " " + roomModel.room.name
+        holder.roomName.text = roomNamePlaceholder
 
-            if (roomModel.songList.isNullOrEmpty()) {
-                holder.roomSongStatus.text = view.resources.getString(R.string.placeholder_room_song_not_found)
-            } else {
-                val roomNowPlayingPlaceholder =
-                    view.resources.getString(R.string.placeholder_room_now_playing_song)
-                val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
-                val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
+        if (roomModel.songList.isNullOrEmpty()) {
+            holder.roomSongStatus.text =
+                view.resources.getString(R.string.placeholder_room_song_not_found)
+        } else {
+            val roomNowPlayingPlaceholder =
+                view.resources.getString(R.string.placeholder_room_now_playing_song)
+            val roomPausedPlaceholder =
+                view.resources.getString(R.string.placeholder_room_paused_song)
+            val roomNextSongPlaceholder =
+                view.resources.getString(R.string.placeholder_room_next_song)
 
-                roomModel.songList?.forEach {
-                    when (it.songStatus) {
-                        SongStatus.PLAYING.songStatus -> {
-                            val roomSongStatus =
-                                roomNowPlayingPlaceholder + " " + it.songName + " - " + it.artistNames[0]
-                            holder.roomSongStatus.text = roomSongStatus
-                            return
-                        }
-                        SongStatus.PAUSED.songStatus -> {
-                            val roomSongStatus =
-                                roomPausedPlaceholder + " " + it.songName + " - " + it.artistNames[0]
-                            holder.roomSongStatus.text = roomSongStatus
-                            return
-                        }
-                        SongStatus.NEXT.songStatus -> {
-                            val roomSongStatus =
-                                roomNextSongPlaceholder + " " + it.songName + " - " + it.artistNames[0]
-                            holder.roomSongStatus.text = roomSongStatus
-                            return
-                        }
+            roomModel.songList?.forEach {
+                when (it.songStatus) {
+                    SongStatus.PLAYING.songStatus -> {
+                        val roomSongStatus =
+                            roomNowPlayingPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                        holder.roomSongStatus.text = roomSongStatus
+                        return
+                    }
+                    SongStatus.PAUSED.songStatus -> {
+                        val roomSongStatus =
+                            roomPausedPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                        holder.roomSongStatus.text = roomSongStatus
+                        return
+                    }
+                    SongStatus.NEXT.songStatus -> {
+                        val roomSongStatus =
+                            roomNextSongPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                        holder.roomSongStatus.text = roomSongStatus
+                        return
                     }
                 }
             }
@@ -101,11 +102,11 @@ class RoomInvitesAdapter(
     }
 
     override fun getItemCount(): Int {
-        return roomInviteModel.roomInvites?.size!!
+        return roomInviteModels.size
     }
 
-    fun update(data: RoomInviteModel) {
-        roomInviteModel = data
+    fun update(data: List<RoomInviteModel>) {
+        roomInviteModels = data
         notifyDataSetChanged()
     }
 
@@ -113,30 +114,35 @@ class RoomInvitesAdapter(
 //        return object : Filter() {
 //
 //            override fun performFiltering(constraint: CharSequence?): FilterResults? {
-//                val filteredList: MutableList<RoomModel> = mutableListOf()
+////                val filteredRoomInvites: MutableList<RoomInvite> = mutableListOf()
+////                val filteredRoomModels: MutableList<RoomModel> = mutableListOf()
+//                var filteredModel = RoomInviteModel(roomInviteModel.roomInvites, roomInviteModel.roomModels)
 //                val charString = constraint.toString()
 //
 //                if (constraint == null || charString.isEmpty()) {
-//                    filteredList.addAll(roomModelsFull)
+//                    filteredModel = roomInviteModelFull
+////                    roomInviteModelFull.roomInvites?.let { filteredRoomInvites.addAll(it) }
+////                    roomInviteModelFull.roomModels?.let { filteredRoomModels.addAll(it) }
 //                } else {
 //                    val filter = constraint.toString().trim()
 //
-//                    roomModelsFull.forEach {
+//                    roomInviteModelFull.roomModels?.forEach {
 //                        if (it.room.name.contains(filter, true)
-//                            || it.owner.name.contains(filter, true)
 //                        ) {
-//                            filteredList.add(it)
+////                            filteredList.add(it)
+//                            roomInviteModelFull.roomInvites?.let { filteredRoomInvites.addAll(it) }
+//                            roomInviteModelFull.roomModels?.let { filteredRoomModels.addAll(it) }
 //                        }
 //                    }
 //                }
 //
 //                val results = FilterResults()
-//                results.values = filteredList
+//                results.values = filteredModel
 //                return results
 //            }
 //
 //            override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-//                update(filterResults.values as List<RoomModel>)
+//                update(filterResults.values as RoomInviteModel)
 //            }
 //        }
 //    }

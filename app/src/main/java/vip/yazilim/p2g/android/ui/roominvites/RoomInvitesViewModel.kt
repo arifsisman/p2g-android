@@ -14,8 +14,8 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
  */
 class RoomInvitesViewModel : ViewModel() {
 
-    private val _roomInviteModel = MutableLiveData<RoomInviteModel>()
-    val roomInviteModel: LiveData<RoomInviteModel> = _roomInviteModel
+    private val _roomInviteModel = MutableLiveData<List<RoomInviteModel>>()
+    val roomInviteModel: LiveData<List<RoomInviteModel>> = _roomInviteModel
 
     private val _isViewLoading = MutableLiveData<Boolean>()
     val isViewLoading: LiveData<Boolean> = _isViewLoading
@@ -30,17 +30,17 @@ class RoomInvitesViewModel : ViewModel() {
         _isViewLoading.postValue(true)
 
         P2GRequest.build(
-            ApiClient.build().getRoomInviteModel(),
-            object : Callback<RoomInviteModel> {
+            ApiClient.build().getRoomInviteModels(),
+            object : Callback<List<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
 
-                override fun onSuccess(obj: RoomInviteModel) {
+                override fun onSuccess(obj: List<RoomInviteModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.roomInvites.isNullOrEmpty()) {
+                    if (obj.isNullOrEmpty()) {
                         _isEmptyList.postValue(true)
                     } else {
                         _roomInviteModel.value = obj

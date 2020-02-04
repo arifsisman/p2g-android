@@ -53,7 +53,7 @@
     <string name="placeholder_settings">Settings</string>
     <string name="placeholder_set_anthem">Set Anthem</string>
     <string name="placeholder_app_description">Listen to Spotify with your friends</string>
-    <string name="placeholder_room_inviter">Inviter: </string>
+    <string name="placeholder_room_inviter">From</string>
     <string name="description_accept_button">Accept Button</string>
     <string name="description_reject_button">Reject Button</string>
 

@@ -7,6 +7,6 @@ import java.io.Serializable
  * @contact mustafaarifsisman@gmail.com
  */
 data class RoomInviteModel(
-    var roomInvites: List<RoomInvite>? = emptyList(),
-    var roomModels: List<RoomModel>? = emptyList()
+    var roomInvite: RoomInvite,
+    var roomModel: RoomModel
 ) : Serializable

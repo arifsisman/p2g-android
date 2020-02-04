@@ -73,7 +73,7 @@ interface Play2GetherWebApi {
     fun demoteUser(@Path("id") roomId: String): Call<P2GResponse<RoomUser>>
 
     @GET("/api/room/invite/model")
-    fun getRoomInviteModel(): Call<P2GResponse<RoomInviteModel>>
+    fun getRoomInviteModels(): Call<P2GResponse<List<RoomInviteModel>>>
 
 
 
@@ -82,7 +82,7 @@ interface Play2GetherWebApi {
     fun getSong(@Path("id") songId: Long): Call<P2GResponse<Song>>
 
     @GET("/api/song/{roomId}/list")
-    fun getRoomSongList(@Path("roomId") roomId: Long): Call<P2GResponse<List<Song>>>
+    fun getRoomSongs(@Path("roomId") roomId: Long): Call<P2GResponse<List<Song>>>
 
     @POST("/api/song/{roomId}")
     fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<P2GResponse<List<Song>>>
