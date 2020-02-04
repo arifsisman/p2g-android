@@ -10,7 +10,6 @@ import android.view.*
 import android.widget.Button
 import android.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
@@ -59,10 +58,7 @@ class HomeFragment : FragmentBase(HomeViewModel()), HomeAdapter.OnItemClickListe
     }
 
     override fun setupViewModel() {
-        super.setupViewModelBase()
-        viewModelBase = ViewModelProvider(this, this).get(HomeViewModel::class.java)
-        viewModel = (viewModelBase as HomeViewModel)
-
+        viewModel = super.setupViewModelBase() as HomeViewModel
         viewModel.roomModels.observe(this, renderRoomModels)
     }
 

@@ -38,8 +38,8 @@ class ProfileViewModel : ViewModel() {
                 }
 
                 override fun onSuccess(obj: UserModel) {
-                    _isViewLoading.postValue(false)
                     _userModel.value = obj
+                    _isViewLoading.postValue(false)
                 }
             })
     }

@@ -23,6 +23,23 @@ abstract class FragmentBase(var viewModelBase: ViewModelBase) : Fragment(), View
     lateinit var root: View
     lateinit var container: ViewGroup
 
+    // ViewModelProvider.Factory
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return viewModelBase as T
+    }
+
+    abstract fun setupUI()
+    abstract fun setupViewModel()
+
+    fun setupViewModelBase():ViewModelBase{
+        viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
+        viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
+        viewModelBase.isEmptyList.observe(this, emptyListObserver)
+
+        return ViewModelProvider(this, this).get(viewModelBase::class.java)
+    }
+
     private val isViewLoadingObserver = Observer<Boolean> {
         Log.v(GeneralConstants.LOG_TAG, "isViewLoading $it")
         val visibility = if (it) View.VISIBLE else View.GONE
@@ -40,21 +57,6 @@ abstract class FragmentBase(var viewModelBase: ViewModelBase) : Fragment(), View
         Log.v(GeneralConstants.LOG_TAG, "emptyListObserver $it")
         layoutEmpty.visibility = View.VISIBLE
         layoutError.visibility = View.GONE
-    }
-
-    // ViewModelProvider.Factory
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return viewModelBase as T
-    }
-
-    abstract fun setupUI()
-    abstract fun setupViewModel()
-
-    fun setupViewModelBase(){
-        viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
-        viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
-        viewModelBase.isEmptyList.observe(this, emptyListObserver)
     }
 
     fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
