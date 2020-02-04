@@ -1,17 +1,14 @@
 package vip.yazilim.p2g.android.ui.home
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +19,6 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_butt
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
@@ -33,15 +29,21 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
+import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 
-class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
+class HomeFragment : FragmentBase(), HomeAdapter.OnItemClickListener {
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var adapter: HomeAdapter
-    private lateinit var root: View
-    private lateinit var container: ViewGroup
+
+    class ViewModelFactory : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return HomeViewModel() as T
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +66,8 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         return root
     }
 
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, HomeViewModelFactory()).get(HomeViewModel::class.java)
-
+    override fun setupViewModel() {
+        viewModel = ViewModelProvider(this, ViewModelFactory()).get(HomeViewModel::class.java)
         viewModel.roomModels.observe(this, renderRoomModels)
         viewModel.isViewLoading.observe(this, isViewLoadingObserver)
         viewModel.onMessageError.observe(this, onMessageErrorObserver)
@@ -74,7 +75,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
     }
 
 
-    private fun setupUI() {
+    override fun setupUI() {
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
 
@@ -96,25 +97,6 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         layoutEmpty.visibility = View.GONE
         adapter.roomModelsFull = it
         adapter.update(it)
-    }
-
-    private val isViewLoadingObserver = Observer<Boolean> {
-        Log.v(LOG_TAG, "isViewLoading $it")
-        val visibility = if (it) View.VISIBLE else View.GONE
-        progressBar.visibility = visibility
-    }
-
-    private val onMessageErrorObserver = Observer<Any> {
-        Log.v(LOG_TAG, "onMessageError $it")
-        layoutError.visibility = View.VISIBLE
-        layoutEmpty.visibility = View.GONE
-        textViewError.text = it?.toString()
-    }
-
-    private val emptyListObserver = Observer<Boolean> {
-        Log.v(LOG_TAG, "emptyListObserver $it")
-        layoutEmpty.visibility = View.VISIBLE
-        layoutError.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -299,38 +281,9 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         }
     }
 
-    private fun setItemsVisibility(
-        menu: Menu,
-        exception: MenuItem,
-        visible: Boolean
-    ) {
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            if (item !== exception) item.isVisible = visible
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         viewModel.loadRooms()
     }
 
-    private fun showKeyboard() {
-        val inputMethodManager =
-            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-    }
-
-    private fun closeKeyboard() {
-        val inputMethodManager =
-            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-    }
-
-    class HomeViewModelFactory :ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return HomeViewModel() as T
-        }
-    }
 }

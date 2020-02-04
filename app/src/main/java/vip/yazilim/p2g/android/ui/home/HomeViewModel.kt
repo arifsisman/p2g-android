@@ -2,26 +2,17 @@ package vip.yazilim.p2g.android.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.ui.ViewModelBase
 
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel : ViewModelBase() {
 
     private val _roomModels = MutableLiveData<List<RoomModel>>().apply { value = emptyList() }
     val roomModels: LiveData<List<RoomModel>> = _roomModels
-
-    private val _isViewLoading = MutableLiveData<Boolean>()
-    val isViewLoading: LiveData<Boolean> = _isViewLoading
-
-    private val _onMessageError = MutableLiveData<Any>()
-    val onMessageError: LiveData<Any> = _onMessageError
-
-    private val _isEmptyList = MutableLiveData<Boolean>()
-    val isEmptyList: LiveData<Boolean> = _isEmptyList
 
     fun loadRooms() {
         _isViewLoading.postValue(true)
