@@ -20,7 +20,7 @@ class HomeAdapter(
 ) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
     private lateinit var view: View
-    var roomModelsFull: MutableList<RoomModel> = mutableListOf()
+    var roomModelsFull: List<RoomModel> = mutableListOf()
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomName: TextView = itemView.findViewById(R.id.room_name)

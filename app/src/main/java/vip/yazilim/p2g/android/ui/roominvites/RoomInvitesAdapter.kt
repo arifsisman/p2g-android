@@ -3,9 +3,7 @@ package vip.yazilim.p2g.android.ui.roominvites
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
@@ -18,10 +16,11 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @author mustafaarifsisman - 03.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>() {
+class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
+    Filterable {
 
     private lateinit var view: View
-    var roomInviteModelsFull: List<RoomInviteModel> = emptyList()
+    var roomInviteModelsFull: List<RoomInviteModel> = mutableListOf()
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
@@ -110,41 +109,34 @@ class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : 
         notifyDataSetChanged()
     }
 
-//    override fun getFilter(): Filter {
-//        return object : Filter() {
-//
-//            override fun performFiltering(constraint: CharSequence?): FilterResults? {
-////                val filteredRoomInvites: MutableList<RoomInvite> = mutableListOf()
-////                val filteredRoomModels: MutableList<RoomModel> = mutableListOf()
-//                var filteredModel = RoomInviteModel(roomInviteModel.roomInvites, roomInviteModel.roomModels)
-//                val charString = constraint.toString()
-//
-//                if (constraint == null || charString.isEmpty()) {
-//                    filteredModel = roomInviteModelFull
-////                    roomInviteModelFull.roomInvites?.let { filteredRoomInvites.addAll(it) }
-////                    roomInviteModelFull.roomModels?.let { filteredRoomModels.addAll(it) }
-//                } else {
-//                    val filter = constraint.toString().trim()
-//
-//                    roomInviteModelFull.roomModels?.forEach {
-//                        if (it.room.name.contains(filter, true)
-//                        ) {
-////                            filteredList.add(it)
-//                            roomInviteModelFull.roomInvites?.let { filteredRoomInvites.addAll(it) }
-//                            roomInviteModelFull.roomModels?.let { filteredRoomModels.addAll(it) }
-//                        }
-//                    }
-//                }
-//
-//                val results = FilterResults()
-//                results.values = filteredModel
-//                return results
-//            }
-//
-//            override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-//                update(filterResults.values as RoomInviteModel)
-//            }
-//        }
-//    }
+    override fun getFilter(): Filter {
+        return object : Filter() {
+
+            override fun performFiltering(constraint: CharSequence?): FilterResults? {
+                val filteredList: MutableList<RoomInviteModel> = mutableListOf()
+                val charString = constraint.toString()
+
+                if (constraint == null || charString.isEmpty()) {
+                    filteredList.addAll(roomInviteModelsFull)
+                } else {
+                    val filter = constraint.toString().trim()
+                    roomInviteModelsFull.forEach {
+                        if (it.roomModel.room.name.contains(filter, true)
+                        ) {
+                            filteredList.add(it)
+                        }
+                    }
+                }
+
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
+                update(filterResults.values as List<RoomInviteModel>)
+            }
+        }
+    }
 
 }

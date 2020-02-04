@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -33,7 +34,11 @@ class RoomInvitesFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreate(savedInstanceState)
         root = inflater.inflate(R.layout.fragment_room_invites, container, false)
 
@@ -98,54 +103,50 @@ class RoomInvitesFragment : Fragment() {
         layoutError.visibility = View.GONE
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        val searchItem: MenuItem? = menu.findItem(R.id.action_search)
-//        val searchView: SearchView = searchItem?.actionView as SearchView
-//
-//        searchView.queryHint = "Search Room Invites"
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                Log.d("queryText", query)
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                adapter.filter.filter(newText)
-//                Log.d("queryText", newText)
-//                return true
-//            }
-//        })
-//
-//        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-//            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-//                searchView.requestFocus()
-//                searchView.isIconified = false
-//                searchView.isIconifiedByDefault = false
-//                searchView.visibility = View.VISIBLE
-//                setItemsVisibility(menu, searchItem, false)
-//                return true
-//            }
-//
-//            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-//                searchView.clearFocus()
-//                searchView.setQuery("", false)
-//                adapter.filter.filter("")
-//                searchView.isIconified = true
-//                searchView.isIconifiedByDefault = true
-//                searchView.visibility = View.VISIBLE
-//                setItemsVisibility(menu, searchItem, true)
-//                return true
-//            }
-//        })
-//    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        val searchItem: MenuItem? = menu.findItem(R.id.action_search)
+        val searchView: SearchView = searchItem?.actionView as SearchView
 
-    private fun setItemsVisibility(
-        menu: Menu,
-        exception: MenuItem,
-        visible: Boolean
-    ) {
+        searchView.queryHint = "Search Room Invites"
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                Log.d("queryText", query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                adapter.filter.filter(newText)
+                Log.d("queryText", newText)
+                return true
+            }
+        })
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                searchView.requestFocus()
+                searchView.isIconified = false
+                searchView.isIconifiedByDefault = false
+                searchView.visibility = View.VISIBLE
+                setItemsVisibility(menu, searchItem, false)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                searchView.clearFocus()
+                searchView.setQuery("", false)
+                adapter.filter.filter("")
+                searchView.isIconified = true
+                searchView.isIconifiedByDefault = true
+                searchView.visibility = View.VISIBLE
+                setItemsVisibility(menu, searchItem, true)
+                return true
+            }
+        })
+    }
+
+    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
             if (item !== exception) item.isVisible = visible

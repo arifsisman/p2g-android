@@ -38,7 +38,6 @@ import vip.yazilim.p2g.android.util.helper.UIHelper
 
 class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
 
-    //    private val db by lazy { activity?.let { DBHelper(it) } }
     private lateinit var viewModel: HomeViewModel
     private lateinit var adapter: HomeAdapter
     private lateinit var root: View
@@ -95,12 +94,8 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         Log.v(LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
+        adapter.roomModelsFull = it
         adapter.update(it)
-
-        if (it.isNotEmpty()) {
-            adapter.roomModelsFull = it as MutableList<RoomModel>
-
-        }
     }
 
     private val isViewLoadingObserver = Observer<Boolean> {
