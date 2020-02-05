@@ -12,9 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.layout_recycler_view_base.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.UIHelper
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -46,7 +50,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: emptyList(), this)
+        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
     }
 
@@ -55,7 +59,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         Log.v(LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
-        adapter.roomInviteModelsFull = it
+        adapter.roomInviteModelsFull = it as MutableList<RoomInviteModel>
         adapter.update(it)
     }
 
@@ -107,6 +111,17 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
     }
 
     override fun onRejectClicked(roomInviteModel: RoomInviteModel) {
-        Log.v(LOG_TAG, "REJECT - roomInviteModel ID: " + roomInviteModel.roomInvite.id.toString())
+        P2GRequest.build(
+            ApiClient.build().rejectInvite(roomInviteModel.roomInvite.id),
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showToastLong(context, msg)
+                }
+
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(roomInviteModel)
+                }
+            })
     }
 }

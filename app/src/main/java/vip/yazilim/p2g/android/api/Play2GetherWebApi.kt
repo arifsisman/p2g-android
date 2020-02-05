@@ -73,7 +73,7 @@ interface Play2GetherWebApi {
     fun demoteUser(@Path("id") roomId: String): Call<P2GResponse<RoomUser>>
 
     @GET("/api/room/invite/model")
-    fun getRoomInviteModels(): Call<P2GResponse<List<RoomInviteModel>>>
+    fun getRoomInviteModels(): Call<P2GResponse<MutableList<RoomInviteModel>>>
 
 
 

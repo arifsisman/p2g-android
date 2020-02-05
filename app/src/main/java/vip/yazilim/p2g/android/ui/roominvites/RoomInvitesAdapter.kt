@@ -18,13 +18,13 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomInvitesAdapter(
-    private var roomInviteModels: List<RoomInviteModel>,
+    var roomInviteModels: MutableList<RoomInviteModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
     Filterable {
 
     private lateinit var view: View
-    var roomInviteModelsFull: List<RoomInviteModel> = mutableListOf()
+    var roomInviteModelsFull: MutableList<RoomInviteModel> = mutableListOf()
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
@@ -119,8 +119,14 @@ class RoomInvitesAdapter(
         return roomInviteModels.size
     }
 
-    fun update(data: List<RoomInviteModel>) {
+    fun update(data: MutableList<RoomInviteModel>) {
         roomInviteModels = data
+        notifyDataSetChanged()
+    }
+
+    fun remove(data: RoomInviteModel) {
+        roomInviteModels.remove(data)
+        roomInviteModelsFull.remove(data)
         notifyDataSetChanged()
     }
 
@@ -150,7 +156,7 @@ class RoomInvitesAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                update(filterResults.values as List<RoomInviteModel>)
+                update(filterResults.values as MutableList<RoomInviteModel>)
             }
         }
     }
