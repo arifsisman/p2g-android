@@ -14,6 +14,7 @@ import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterFull
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -29,6 +30,7 @@ class ProfileAdapter(
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardView: CardView = itemView.findViewById(R.id.profile_me_card_view)
+        val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
         val email: TextView = itemView.findViewById(R.id.email_text_view)
@@ -65,6 +67,8 @@ class ProfileAdapter(
 
         if (user != null) {
             val profileNamePlaceholder = user.name
+            val memberSincePlaceholder =
+                view.resources.getString(R.string.placeholder_member_since) + " " + user.creationDate.format(dateTimeFormatterFull)
             val profileEmailPlaceholder =
                 view.resources.getString(R.string.placeholder_email) + " " + user.email
             val profileSongAndRoomStatusPlaceholder =
@@ -90,8 +94,9 @@ class ProfileAdapter(
             }
 
             holder.userName.text = profileNamePlaceholder
-            holder.country.text = profileCountryPlaceholder
+            holder.memberSince.text = memberSincePlaceholder
             holder.email.text = profileEmailPlaceholder
+            holder.country.text = profileCountryPlaceholder
 
             if (user.anthem == null) {
                 holder.anthem.visibility = View.INVISIBLE

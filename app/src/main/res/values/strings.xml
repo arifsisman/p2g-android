@@ -56,5 +56,6 @@
     <string name="placeholder_room_inviter">From</string>
     <string name="description_accept_button">Accept Button</string>
     <string name="description_reject_button">Reject Button</string>
+    <string name="placeholder_member_since">Member since</string>
 
 </resources>
