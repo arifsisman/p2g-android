@@ -145,6 +145,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                     Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
 
                     val intent = Intent(activity, RoomActivity::class.java)
+                    //TODO: add intent roomModel and roomUser
                     startActivity(intent)
                 }
             })

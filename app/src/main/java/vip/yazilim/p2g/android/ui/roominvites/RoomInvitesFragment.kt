@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.ui.roominvites
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -12,11 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.layout_recycler_view_base.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
+import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
@@ -107,7 +110,22 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
     }
 
     override fun onAcceptClicked(roomInviteModel: RoomInviteModel) {
-        Log.v(LOG_TAG, "ACCEPT - roomInviteModel ID: " + roomInviteModel.roomInvite.id.toString())
+        P2GRequest.build(
+            ApiClient.build().acceptInvite(roomInviteModel.roomInvite),
+            object : Callback<RoomUser> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showToastLong(context, msg)
+                }
+
+                override fun onSuccess(obj: RoomUser) {
+                    Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+
+                    val intent = Intent(activity, RoomActivity::class.java)
+                    //TODO: add intent roomModel and roomUser
+                    startActivity(intent)
+                }
+            })
     }
 
     override fun onRejectClicked(roomInviteModel: RoomInviteModel) {
