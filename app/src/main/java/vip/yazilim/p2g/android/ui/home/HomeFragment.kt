@@ -37,7 +37,8 @@ import vip.yazilim.p2g.android.util.helper.UIHelper
  * @author mustafaarifsisman - 04.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home), HomeAdapter.OnItemClickListener {
+class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
+    HomeAdapter.OnItemClickListener {
     private lateinit var adapter: HomeAdapter
     private lateinit var viewModel: HomeViewModel
 
@@ -64,9 +65,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home), Home
         recyclerView.adapter = adapter
 
         val createRoomButton: Button = root.findViewById(R.id.button_create_room)
-        createRoomButton.setOnClickListener {
-            createRoomButtonEvent()
-        }
+        createRoomButton.setOnClickListener { createRoomButtonEvent() }
     }
 
     // Observer
@@ -124,78 +123,77 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home), Home
     override fun onItemClicked(roomModel: RoomModel) {
         val room: Room = roomModel.room
 
-        val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
-
-        val joinButton = mDialogView.dialog_join_room_button
-        val roomPasswordEditText = mDialogView.dialog_room_password
-
-        val mAlertDialog: AlertDialog
-
         if (room.password.isNotEmpty()) {
-            mAlertDialog = mBuilder.show()
+            joinPrivateRoomEvent(room)
+        } else {
+            joinRoomEvent(room)
+        }
 
-            roomPasswordEditText.requestFocus()
-            showKeyboard()
+    }
 
-            // For disable create button if password is empty
-            roomPasswordEditText.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable) {}
-                override fun beforeTextChanged(
-                    s: CharSequence,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
+    private fun joinRoomEvent(room: Room) {
+        P2GRequest.build(
+            ApiClient.build().joinRoom(room.id, UNDEFINED),
+            object : Callback<RoomUser> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showToastLong(context, msg)
+//                        UIHelper.showSnackBarLong(root, msg)
                 }
 
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    joinButton.isEnabled = s.isNotEmpty()
+                override fun onSuccess(obj: RoomUser) {
+                    Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+
+                    val intent = Intent(activity, RoomActivity::class.java)
+                    startActivity(intent)
                 }
             })
+    }
 
-            // Click join
-            joinButton.setOnClickListener {
-                val roomPassword = roomPasswordEditText.text.toString()
+    private fun joinPrivateRoomEvent(room: Room) {
+        val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
+        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val joinButton = mDialogView.dialog_join_room_button
+        val roomPasswordEditText = mDialogView.dialog_room_password
+        val mAlertDialog: AlertDialog
+        mAlertDialog = mBuilder.show()
 
-                P2GRequest.build(
-                    ApiClient.build().joinRoom(room.id, roomPassword),
-                    object : Callback<RoomUser> {
-                        override fun onError(msg: String) {
-                            Log.d(LOG_TAG, msg)
-                            UIHelper.showToastLong(context, msg)
-//                            UIHelper.showSnackBarLong(root, msg)
-                        }
+        roomPasswordEditText.requestFocus()
+        showKeyboard()
 
-                        override fun onSuccess(obj: RoomUser) {
-                            Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
-                            mAlertDialog.dismiss()
-                            closeKeyboard()
-
-                            val intent = Intent(activity, RoomActivity::class.java)
-                            startActivity(intent)
-                        }
-                    })
+        // For disable create button if password is empty
+        roomPasswordEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(
+                s: CharSequence,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
             }
 
-            // Click cancel
-            mDialogView.dialog_cancel_button.setOnClickListener {
-                mAlertDialog.cancel()
-                roomPasswordEditText.clearFocus()
-                closeKeyboard()
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                joinButton.isEnabled = s.isNotEmpty()
             }
-        } else {
+        })
+
+        // Click join
+        joinButton.setOnClickListener {
+            val roomPassword = roomPasswordEditText.text.toString()
+
             P2GRequest.build(
-                ApiClient.build().joinRoom(room.id, UNDEFINED),
+                ApiClient.build().joinRoom(room.id, roomPassword),
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, msg)
                         UIHelper.showToastLong(context, msg)
-//                        UIHelper.showSnackBarLong(root, msg)
+//                            UIHelper.showSnackBarLong(root, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                        mAlertDialog.dismiss()
+                        closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
                         startActivity(intent)
@@ -203,6 +201,12 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home), Home
                 })
         }
 
+        // Click cancel
+        mDialogView.dialog_cancel_button.setOnClickListener {
+            mAlertDialog.cancel()
+            roomPasswordEditText.clearFocus()
+            closeKeyboard()
+        }
     }
 
     private fun createRoomButtonEvent() {

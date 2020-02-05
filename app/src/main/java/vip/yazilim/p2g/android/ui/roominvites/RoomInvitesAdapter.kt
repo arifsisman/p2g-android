@@ -12,11 +12,15 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.util.glide.GlideApp
 
+
 /**
  * @author mustafaarifsisman - 03.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
+class RoomInvitesAdapter(
+    private var roomInviteModels: List<RoomInviteModel>,
+    private val itemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
     Filterable {
 
     private lateinit var view: View
@@ -27,8 +31,18 @@ class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : 
         val roomName: TextView = itemView.findViewById(R.id.room_name)
         val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
-        val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
-        val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
+        private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
+        private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
+
+        fun bind(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
+            acceptButton.setOnClickListener { clickListener.onAcceptClicked(roomInviteModel) }
+            rejectButton.setOnClickListener { clickListener.onRejectClicked(roomInviteModel) }
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onAcceptClicked(roomInviteModel: RoomInviteModel)
+        fun onRejectClicked(roomInviteModel: RoomInviteModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
@@ -37,10 +51,11 @@ class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : 
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
+        holder.bind(roomInviteModels[position], itemClickListener)
         val roomInviteModel = roomInviteModels[position]
         val roomInvite = roomInviteModel.roomInvite
         val roomModel = roomInviteModel.roomModel
-        var inviter: User? = User()
+        var inviter = User()
 
         roomModel.userList.forEach {
             if (it.id == roomInvite.inviterId) {
@@ -48,15 +63,15 @@ class RoomInvitesAdapter(private var roomInviteModels: List<RoomInviteModel>) : 
             }
         }
 
-        if (inviter!!.imageUrl != null) {
+        if (inviter.imageUrl != null) {
             GlideApp.with(view)
-                .load(inviter!!.imageUrl)
+                .load(inviter.imageUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.profileImage)
         }
 
         val roomInviterPlaceholder =
-            view.resources.getString(R.string.placeholder_room_inviter) + " " + inviter!!.name
+            view.resources.getString(R.string.placeholder_room_inviter) + " " + inviter.name
         holder.roomInviter.text = roomInviterPlaceholder
 
         val roomNamePlaceholder =
