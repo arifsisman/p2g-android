@@ -127,7 +127,7 @@ class HomeAdapter(
 
                     roomModelsFull.forEach {
                         if (it.room.name.contains(filter, true)
-                            || it.owner.name.contains(filter, true)
+                            || it.owner.name?.contains(filter, true) == true
                         ) {
                             filteredList.add(it)
                         }
