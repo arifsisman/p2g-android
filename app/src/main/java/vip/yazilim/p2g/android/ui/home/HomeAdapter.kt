@@ -139,6 +139,7 @@ class HomeAdapter(
                 return results
             }
 
+            @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
                 update(filterResults.values as List<RoomModel>)
             }

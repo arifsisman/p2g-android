@@ -103,7 +103,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 searchView.isIconified = false
                 searchView.isIconifiedByDefault = false
                 searchView.visibility = View.VISIBLE
-                setItemsVisibility(menu, searchItem, false)
+                setMenuItemsVisibility(menu, searchItem, false)
                 return true
             }
 
@@ -114,7 +114,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 searchView.isIconified = true
                 searchView.isIconifiedByDefault = true
                 searchView.visibility = View.VISIBLE
-                setItemsVisibility(menu, searchItem, true)
+                setMenuItemsVisibility(menu, searchItem, true)
                 return true
             }
         })

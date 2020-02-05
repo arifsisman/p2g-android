@@ -80,7 +80,7 @@ abstract class FragmentBase(private var viewModelBase: ViewModelBase, var layout
     }
 
     // Custom functions using in fragments
-    fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+    fun setMenuItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
             if (item !== exception) item.isVisible = visible

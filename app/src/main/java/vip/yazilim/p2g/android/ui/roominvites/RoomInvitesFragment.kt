@@ -85,7 +85,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
                 searchView.isIconified = false
                 searchView.isIconifiedByDefault = false
                 searchView.visibility = View.VISIBLE
-                setItemsVisibility(menu, searchItem, false)
+                setMenuItemsVisibility(menu, searchItem, false)
                 return true
             }
 
@@ -96,7 +96,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
                 searchView.isIconified = true
                 searchView.isIconifiedByDefault = true
                 searchView.visibility = View.VISIBLE
-                setItemsVisibility(menu, searchItem, true)
+                setMenuItemsVisibility(menu, searchItem, true)
                 return true
             }
         })
