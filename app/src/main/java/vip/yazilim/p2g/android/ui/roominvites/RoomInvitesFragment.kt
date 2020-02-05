@@ -111,7 +111,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
     override fun onAcceptClicked(roomInviteModel: RoomInviteModel) {
         P2GRequest.build(
-            ApiClient.build().acceptInvite(roomInviteModel.roomInvite),
+            roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
@@ -122,7 +122,8 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
                     Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
 
                     val intent = Intent(activity, RoomActivity::class.java)
-                    //TODO: add intent roomModel and roomUser
+                    intent.putExtra("roomModel", roomInviteModel.roomModel)
+                    intent.putExtra("roomUser", obj)
                     startActivity(intent)
                 }
             })
@@ -130,7 +131,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
     override fun onRejectClicked(roomInviteModel: RoomInviteModel) {
         P2GRequest.build(
-            ApiClient.build().rejectInvite(roomInviteModel.roomInvite.id),
+            roomInviteModel.roomInvite?.id?.let { ApiClient.build().rejectInvite(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)

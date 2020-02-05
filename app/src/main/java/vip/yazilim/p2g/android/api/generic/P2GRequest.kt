@@ -11,8 +11,8 @@ import vip.yazilim.p2g.android.constant.GeneralConstants
  */
 abstract class P2GRequest {
     companion object {
-        fun <T> build(call: Call<P2GResponse<T>>, callback: Callback<T>) {
-            call.enqueue { result ->
+        fun <T> build(call: Call<P2GResponse<T>>?, callback: Callback<T>) {
+            call?.enqueue { result ->
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {

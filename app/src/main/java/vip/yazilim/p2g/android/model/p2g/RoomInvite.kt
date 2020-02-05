@@ -1,7 +1,8 @@
 package vip.yazilim.p2g.android.model.p2g
 
+import android.os.Parcel
+import android.os.Parcelable
 import org.threeten.bp.LocalDateTime
-import java.io.Serializable
 
 /**
  * @author mustafaarifsisman - 26.01.2020
@@ -10,8 +11,40 @@ import java.io.Serializable
 data class RoomInvite(
     var id: Long,
     var roomId: Long,
-    var inviterId: String,
-    var userId: String,
+    var inviterId: String?,
+    var userId: String?,
     var invitationDate: LocalDateTime,
     var acceptedFlag: Boolean
-) : Serializable
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readSerializable() as LocalDateTime,
+        parcel.readByte() != 0.toByte()
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(id)
+        parcel.writeLong(roomId)
+        parcel.writeString(inviterId)
+        parcel.writeString(userId)
+        parcel.writeSerializable(invitationDate)
+        parcel.writeByte(if (acceptedFlag) 1 else 0)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<RoomInvite> {
+        override fun createFromParcel(parcel: Parcel): RoomInvite {
+            return RoomInvite(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RoomInvite?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

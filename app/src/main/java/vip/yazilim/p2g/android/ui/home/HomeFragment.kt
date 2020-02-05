@@ -121,19 +121,20 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     override fun onItemClicked(roomModel: RoomModel) {
-        val room: Room = roomModel.room
+        val room: Room? = roomModel.room
 
-        if (room.password.isNotEmpty()) {
-            joinPrivateRoomEvent(room)
+        if (room?.password?.isNotEmpty()!!) {
+            joinPrivateRoomEvent(roomModel)
         } else {
-            joinRoomEvent(room)
+            joinRoomEvent(roomModel)
         }
 
     }
 
-    private fun joinRoomEvent(room: Room) {
+    private fun joinRoomEvent(roomModel: RoomModel) {
+        val room = roomModel.room
         P2GRequest.build(
-            ApiClient.build().joinRoom(room.id, UNDEFINED),
+            room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
@@ -145,13 +146,16 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                     Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
 
                     val intent = Intent(activity, RoomActivity::class.java)
-                    //TODO: add intent roomModel and roomUser
+                    intent.putExtra("roomModel", roomModel)
+                    intent.putExtra("roomUser", obj)
                     startActivity(intent)
                 }
             })
     }
 
-    private fun joinPrivateRoomEvent(room: Room) {
+    private fun joinPrivateRoomEvent(roomModel: RoomModel) {
+        val room = roomModel.room
+
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
         val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
         val joinButton = mDialogView.dialog_join_room_button
@@ -183,7 +187,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             val roomPassword = roomPasswordEditText.text.toString()
 
             P2GRequest.build(
-                ApiClient.build().joinRoom(room.id, roomPassword),
+                room?.id?.let { it1 -> ApiClient.build().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, msg)

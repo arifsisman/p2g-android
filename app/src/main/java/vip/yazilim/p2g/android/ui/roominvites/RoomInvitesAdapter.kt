@@ -57,8 +57,8 @@ class RoomInvitesAdapter(
         val roomModel = roomInviteModel.roomModel
         var inviter = User()
 
-        roomModel.userList.forEach {
-            if (it.id == roomInvite.inviterId) {
+        roomModel?.userList?.forEach {
+            if (it.id == roomInvite?.inviterId) {
                 inviter = it
             }
         }
@@ -75,10 +75,10 @@ class RoomInvitesAdapter(
         holder.roomInviter.text = roomInviterPlaceholder
 
         val roomNamePlaceholder =
-            view.resources.getString(R.string.placeholder_room_name_expanded) + " " + roomModel.room.name
+            view.resources.getString(R.string.placeholder_room_name_expanded) + " " + (roomModel?.room?.name ?: "")
         holder.roomName.text = roomNamePlaceholder
 
-        if (roomModel.songList.isNullOrEmpty()) {
+        if (roomModel?.songList.isNullOrEmpty()) {
             holder.roomSongStatus.text =
                 view.resources.getString(R.string.placeholder_room_song_not_found)
         } else {
@@ -89,23 +89,23 @@ class RoomInvitesAdapter(
             val roomNextSongPlaceholder =
                 view.resources.getString(R.string.placeholder_room_next_song)
 
-            roomModel.songList?.forEach {
+            roomModel?.songList?.forEach {
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         val roomSongStatus =
-                            roomNowPlayingPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                            roomNowPlayingPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.PAUSED.songStatus -> {
                         val roomSongStatus =
-                            roomPausedPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                            roomPausedPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.NEXT.songStatus -> {
                         val roomSongStatus =
-                            roomNextSongPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                            roomNextSongPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
@@ -142,7 +142,7 @@ class RoomInvitesAdapter(
                 } else {
                     val filter = constraint.toString().trim()
                     roomInviteModelsFull.forEach {
-                        if (it.roomModel.room.name.contains(filter, true)
+                        if (it.roomModel?.room?.name?.contains(filter, true)!!
                         ) {
                             filteredList.add(it)
                         }

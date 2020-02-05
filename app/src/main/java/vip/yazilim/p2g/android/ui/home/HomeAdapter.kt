@@ -53,12 +53,12 @@ class HomeAdapter(
         val roomModel = roomModels[position]
 
         val roomOwnerPlaceholder =
-            view.resources.getString(R.string.placeholder_room_owner) + " " + roomModel.owner.name
+            view.resources.getString(R.string.placeholder_room_owner) + " " + (roomModel.owner?.name ?: "")
 
-        holder.roomName.text = roomModel.room.name
+        holder.roomName.text = roomModel.room?.name ?: ""
         holder.owner.text = roomOwnerPlaceholder
 
-        if (roomModel.room.privateFlag) {
+        if (roomModel.room?.privateFlag!!) {
             holder.lock.visibility = View.VISIBLE
         } else {
             holder.lock.visibility = View.INVISIBLE
@@ -77,19 +77,19 @@ class HomeAdapter(
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         val roomSongStatus =
-                            roomNowPlayingPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                            roomNowPlayingPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.PAUSED.songStatus -> {
                         val roomSongStatus =
-                            roomPausedPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                            roomPausedPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.NEXT.songStatus -> {
                         val roomSongStatus =
-                            roomNextSongPlaceholder + " " + it.songName + " - " + it.artistNames[0]
+                            roomNextSongPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
@@ -98,7 +98,7 @@ class HomeAdapter(
         }
 
         try {
-            holder.flagImage.countryCode = roomModel.owner.countryCode
+            holder.flagImage.countryCode = roomModel.owner?.countryCode ?: ""
         } catch (exception: Exception) {
             holder.flagImage.visibility = View.INVISIBLE
         }
@@ -126,8 +126,8 @@ class HomeAdapter(
                     val filter = constraint.toString().trim()
 
                     roomModelsFull.forEach {
-                        if (it.room.name.contains(filter, true)
-                            || it.owner.name?.contains(filter, true) == true
+                        if (it.room?.name?.contains(filter, true) == true
+                            || it.owner?.name?.contains(filter, true) == true
                         ) {
                             filteredList.add(it)
                         }

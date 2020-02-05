@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.model.p2g
 
-import java.io.Serializable
+import android.os.Parcel
+import android.os.Parcelable
 
 /**
  * @author mustafaarifsisman - 02.02.2020
@@ -10,4 +11,30 @@ data class FriendRequestModel(
     var friendRequests: List<FriendRequest>? = emptyList(),
     var friendRequestUsers: List<User>? = emptyList(),
     var friends: List<UserModel>? = emptyList()
-) : Serializable
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.createTypedArrayList(FriendRequest),
+        parcel.createTypedArrayList(User),
+        parcel.createTypedArrayList(UserModel)
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeTypedList(friendRequests)
+        parcel.writeTypedList(friendRequestUsers)
+        parcel.writeTypedList(friends)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<FriendRequestModel> {
+        override fun createFromParcel(parcel: Parcel): FriendRequestModel {
+            return FriendRequestModel(parcel)
+        }
+
+        override fun newArray(size: Int): Array<FriendRequestModel?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
