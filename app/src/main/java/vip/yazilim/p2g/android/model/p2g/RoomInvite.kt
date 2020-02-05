@@ -13,16 +13,14 @@ data class RoomInvite(
     var roomId: Long,
     var inviterId: String?,
     var userId: String?,
-    var invitationDate: LocalDateTime,
-    var acceptedFlag: Boolean
+    var invitationDate: LocalDateTime
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readSerializable() as LocalDateTime,
-        parcel.readByte() != 0.toByte()
+        parcel.readSerializable() as LocalDateTime
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -31,7 +29,6 @@ data class RoomInvite(
         parcel.writeString(inviterId)
         parcel.writeString(userId)
         parcel.writeSerializable(invitationDate)
-        parcel.writeByte(if (acceptedFlag) 1 else 0)
     }
 
     override fun describeContents(): Int {
