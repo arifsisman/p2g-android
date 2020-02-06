@@ -11,7 +11,10 @@ import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.layout_recycler_view_base.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutEmpty
+import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
@@ -55,6 +58,9 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
+
+        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        swipeContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
     }
 
     // Observers
@@ -140,6 +146,24 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(roomInviteModel)
+                }
+            })
+    }
+
+    private fun refreshRoomInvitesEvent() {
+        P2GRequest.build(
+            ApiClient.build().getRoomInviteModels(),
+            object : Callback<MutableList<RoomInviteModel>> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, "Rooms Invites cannot refreshed")
+                    swipeContainer.isRefreshing = false
+                }
+
+                override fun onSuccess(obj: MutableList<RoomInviteModel>) {
+                    adapter.update(obj)
+                    adapter.roomInviteModelsFull = obj
+                    swipeContainer.isRefreshing = false
                 }
             })
     }
