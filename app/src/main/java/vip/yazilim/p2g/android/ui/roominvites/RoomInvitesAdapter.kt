@@ -34,7 +34,7 @@ class RoomInvitesAdapter(
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
 
-        fun bind(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
+        fun bindEvent(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(roomInviteModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(roomInviteModel) }
         }
@@ -45,13 +45,13 @@ class RoomInvitesAdapter(
         fun onRejectClicked(roomInviteModel: RoomInviteModel)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_invites, parent, false)
         return MViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bind(roomInviteModels[position], itemClickListener)
+        holder.bindEvent(roomInviteModels[position], itemClickListener)
         val roomInviteModel = roomInviteModels[position]
         val roomInvite = roomInviteModel.roomInvite
         val roomModel = roomInviteModel.roomModel

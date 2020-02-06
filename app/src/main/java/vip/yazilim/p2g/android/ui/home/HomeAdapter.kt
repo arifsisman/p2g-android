@@ -32,7 +32,7 @@ class HomeAdapter(
         val lock: ImageView = itemView.findViewById(R.id.lock_view)
         val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
 
-        fun bind(roomModel: RoomModel, clickListener: OnItemClickListener) {
+        fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(roomModel)
             }
@@ -43,13 +43,13 @@ class HomeAdapter(
         fun onItemClicked(roomModel: RoomModel)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
         return MViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bind(roomModels[position], itemClickListener)
+        holder.bindEvent(roomModels[position], itemClickListener)
         val roomModel = roomModels[position]
 
         val roomOwnerPlaceholder =

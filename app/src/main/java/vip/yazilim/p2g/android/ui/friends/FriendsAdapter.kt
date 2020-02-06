@@ -1,13 +1,12 @@
 package vip.yazilim.p2g.android.ui.friends
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
+
 
 /**
  * @author mustafaarifsisman - 06.02.2020
@@ -17,25 +16,47 @@ class FriendsAdapter(
     var friendRequestModels: MutableList<FriendRequestModel>,
     var friends: MutableList<UserModel>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<FriendsAdapter.MViewHolder>(){
+) : RecyclerView.Adapter<FriendsAdapter.BaseViewHolder<*>>(){
 
     private lateinit var view: View
+
+    private var adapterDataList: List<Any> = emptyList()
+
     var friendRequestModelsFull: MutableList<FriendRequestModel> = mutableListOf()
     var friendsFull: MutableList<UserModel> = mutableListOf()
 
-    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
-//        val roomName: TextView = itemView.findViewById(R.id.room_name)
-//        val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
-//        val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+    companion object {
+        private const val TYPE_REQUEST = 0
+        private const val TYPE_FRIEND = 1
+    }
+
+    abstract class BaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        abstract fun bindView(item: T)
+    }
+
+    inner class FriendRequestViewHolder(itemView: View) : BaseViewHolder<FriendRequestModel>(itemView) {
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
         private val ignoreButton: ImageButton = itemView.findViewById(R.id.ignore_button)
 
-        fun bind(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
+        fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
             ignoreButton.setOnClickListener { clickListener.onIgnoreClicked(friendRequestModel) }
+        }
+
+        override fun bindView(item: FriendRequestModel) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+    }
+
+    class FriendViewHolder(itemView: View) : BaseViewHolder<UserModel>(itemView) {
+        fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
+
+        }
+
+        override fun bindView(item: UserModel) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }
 
@@ -45,15 +66,8 @@ class FriendsAdapter(
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_invites, parent, false)
-        return MViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bind(friendRequestModels[position], itemClickListener)
-
-
+    override fun getItemViewType(position: Int): Int {
+        return position % 2 * 2
     }
 
     override fun getItemCount(): Int {
@@ -81,6 +95,7 @@ class FriendsAdapter(
         friendsFull.remove(data)
         notifyDataSetChanged()
     }
+
 
 //    override fun getFilter(): Filter {
 //        return object : Filter() {
