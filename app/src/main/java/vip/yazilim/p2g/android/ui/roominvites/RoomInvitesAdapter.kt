@@ -71,11 +71,11 @@ class RoomInvitesAdapter(
         }
 
         val roomInviterPlaceholder =
-            view.resources.getString(R.string.placeholder_room_inviter) + " " + inviter.name
+            "${view.resources.getString(R.string.placeholder_room_inviter)} ${inviter.name}"
         holder.roomInviter.text = roomInviterPlaceholder
 
         val roomNamePlaceholder =
-            view.resources.getString(R.string.placeholder_room_name_expanded) + " " + (roomModel?.room?.name ?: "")
+            "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel?.room?.name}"
         holder.roomName.text = roomNamePlaceholder
 
         if (roomModel?.songList.isNullOrEmpty()) {
@@ -93,19 +93,19 @@ class RoomInvitesAdapter(
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         val roomSongStatus =
-                            roomNowPlayingPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
+                            "$roomNowPlayingPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.PAUSED.songStatus -> {
                         val roomSongStatus =
-                            roomPausedPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
+                            "$roomPausedPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.NEXT.songStatus -> {
                         val roomSongStatus =
-                            roomNextSongPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
+                            "$roomNextSongPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }

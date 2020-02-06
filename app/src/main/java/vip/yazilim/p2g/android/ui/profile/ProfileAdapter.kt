@@ -68,17 +68,19 @@ class ProfileAdapter(
         if (user != null) {
             val profileNamePlaceholder = user.name
             val memberSincePlaceholder =
-                view.resources.getString(R.string.placeholder_member_since) + " " + user.creationDate.format(dateTimeFormatterFull)
+                "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
+                    dateTimeFormatterFull
+                )}"
             val profileEmailPlaceholder =
-                view.resources.getString(R.string.placeholder_email) + " " + user.email
+                "${view.resources.getString(R.string.placeholder_email)} ${user.email}"
             val profileSongAndRoomStatusPlaceholder =
-                view.resources.getString(R.string.placeholder_song_and_room_status_helper) + " " + userModel.room?.name
+                "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${userModel.room?.name}"
             val profileAnthemPlaceholder =
-                view.resources.getString(R.string.placeholder_anthem) + " " + user.anthem
+                "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
             val profileSpotifyAccountIdPlaceholder =
-                view.resources.getString(R.string.placeholder_spotify_account_id) + " " + user.id
+                "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
             val profileCountryPlaceholder =
-                view.resources.getString(R.string.placeholder_country) + " " + user.countryCode
+                "${view.resources.getString(R.string.placeholder_country)} ${user.countryCode}"
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
@@ -135,7 +137,7 @@ class ProfileAdapter(
 
         if (friendRequestModel.friends != null) {
             val profileFriendCountsPlaceholder =
-                friendRequestModel.friends?.size.toString() + " " + view.resources.getString(R.string.placeholder_friend_counts)
+                "${friendRequestModel.friends?.size.toString()} ${view.resources.getString(R.string.placeholder_friend_counts)}"
             holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         } else {
             val profileFriendCountsPlaceholder =

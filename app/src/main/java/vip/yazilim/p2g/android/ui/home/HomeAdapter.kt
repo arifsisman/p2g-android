@@ -18,12 +18,12 @@ import vip.yazilim.p2g.android.model.p2g.RoomModel
  * @contact mustafaarifsisman@gmail.com
  */
 class HomeAdapter(
-    var roomModels: List<RoomModel>,
+    var roomModels: MutableList<RoomModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
     private lateinit var view: View
-    var roomModelsFull: List<RoomModel> = mutableListOf()
+    var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomName: TextView = itemView.findViewById(R.id.room_name)
@@ -53,9 +53,9 @@ class HomeAdapter(
         val roomModel = roomModels[position]
 
         val roomOwnerPlaceholder =
-            view.resources.getString(R.string.placeholder_room_owner) + " " + (roomModel.owner?.name ?: "")
+            "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
 
-        holder.roomName.text = roomModel.room?.name ?: ""
+        holder.roomName.text = roomModel.room?.name
         holder.owner.text = roomOwnerPlaceholder
 
         if (roomModel.room?.privateFlag!!) {
@@ -64,32 +64,40 @@ class HomeAdapter(
             holder.lock.visibility = View.INVISIBLE
         }
 
+        try {
+            holder.flagImage.countryCode = roomModel.owner?.countryCode
+        } catch (exception: Exception) {
+            holder.flagImage.visibility = View.INVISIBLE
+        }
+
         if (roomModel.songList.isNullOrEmpty()) {
-            holder.roomSongStatus.text = view.resources.getString(R.string.placeholder_room_song_not_found)
+            holder.roomSongStatus.text =
+                view.resources.getString(R.string.placeholder_room_song_not_found)
         } else {
             val roomNowPlayingPlaceholder =
                 view.resources.getString(R.string.placeholder_room_now_playing_song)
-            val roomPausedPlaceholder = view.resources.getString(R.string.placeholder_room_paused_song)
-            val roomNextSongPlaceholder = view.resources.getString(R.string.placeholder_room_next_song)
-
+            val roomPausedPlaceholder =
+                view.resources.getString(R.string.placeholder_room_paused_song)
+            val roomNextSongPlaceholder =
+                view.resources.getString(R.string.placeholder_room_next_song)
 
             roomModel.songList?.forEach {
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         val roomSongStatus =
-                            roomNowPlayingPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
+                            "$roomNowPlayingPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.PAUSED.songStatus -> {
                         val roomSongStatus =
-                            roomPausedPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
+                            "$roomPausedPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
                     SongStatus.NEXT.songStatus -> {
                         val roomSongStatus =
-                            roomNextSongPlaceholder + " " + it.songName + " - " + (it.artistNames?.get(0) ?: "")
+                            "$roomNextSongPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
                         holder.roomSongStatus.text = roomSongStatus
                         return
                     }
@@ -97,19 +105,19 @@ class HomeAdapter(
             }
         }
 
-        try {
-            holder.flagImage.countryCode = roomModel.owner?.countryCode ?: ""
-        } catch (exception: Exception) {
-            holder.flagImage.visibility = View.INVISIBLE
-        }
     }
 
     override fun getItemCount(): Int {
         return roomModels.size
     }
 
-    fun update(data: List<RoomModel>) {
+    fun update(data: MutableList<RoomModel>) {
         roomModels = data
+        notifyDataSetChanged()
+    }
+
+    fun clear() {
+        roomModels.clear()
         notifyDataSetChanged()
     }
 
@@ -126,8 +134,8 @@ class HomeAdapter(
                     val filter = constraint.toString().trim()
 
                     roomModelsFull.forEach {
-                        if (it.room?.name?.contains(filter, true) == true
-                            || it.owner?.name?.contains(filter, true) == true
+                        if (it.room?.name?.contains(filter, true)!!
+                            || it.owner?.name?.contains(filter, true)!!
                         ) {
                             filteredList.add(it)
                         }
@@ -141,7 +149,7 @@ class HomeAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                update(filterResults.values as List<RoomModel>)
+                update(filterResults.values as MutableList<RoomModel>)
             }
         }
     }

@@ -15,6 +15,7 @@ import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
@@ -61,15 +62,18 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = HomeAdapter(viewModel.roomModels.value ?: emptyList(), this)
+        adapter = HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
         val createRoomButton: Button = root.findViewById(R.id.button_create_room)
         createRoomButton.setOnClickListener { createRoomButtonEvent() }
+
+        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        swipeContainer.setOnRefreshListener { refreshRoomsEvent() }
     }
 
     // Observer
-    private val renderRoomModels = Observer<List<RoomModel>> {
+    private val renderRoomModels = Observer<MutableList<RoomModel>> {
         Log.v(LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
@@ -268,4 +272,23 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             closeKeyboard()
         }
     }
+
+    private fun refreshRoomsEvent() {
+        P2GRequest.build(
+            ApiClient.build().getRoomModels(),
+            object : Callback<MutableList<RoomModel>> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, "Rooms cannot refreshed")
+                    swipeContainer.isRefreshing = false
+                }
+
+                override fun onSuccess(obj: MutableList<RoomModel>) {
+                    adapter.update(obj)
+                    adapter.roomModelsFull = obj
+                    swipeContainer.isRefreshing = false
+                }
+            })
+    }
+
 }
