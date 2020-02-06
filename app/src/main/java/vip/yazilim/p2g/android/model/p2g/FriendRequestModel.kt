@@ -9,19 +9,16 @@ import android.os.Parcelable
  */
 data class FriendRequestModel(
     var friendRequests: List<FriendRequest>? = emptyList(),
-    var friendRequestUsers: List<User>? = emptyList(),
-    var friends: List<UserModel>? = emptyList()
+    var friendRequestUsers: List<UserModel>? = emptyList()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.createTypedArrayList(FriendRequest),
-        parcel.createTypedArrayList(User),
         parcel.createTypedArrayList(UserModel)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(friendRequests)
         parcel.writeTypedList(friendRequestUsers)
-        parcel.writeTypedList(friends)
     }
 
     override fun describeContents(): Int {

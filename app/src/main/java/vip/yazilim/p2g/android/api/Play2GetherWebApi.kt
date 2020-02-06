@@ -118,7 +118,16 @@ interface Play2GetherWebApi {
     fun ignore(@Path("id") friendRequestId: Long): Call<P2GResponse<Boolean>>
 
     @GET("/api/friend/requests/model")
-    fun getFriendRequestModel(): Call<P2GResponse<FriendRequestModel>>
+    fun getFriendRequestModel(): Call<P2GResponse<MutableList<FriendRequestModel>>>
+
+    @GET("/api/friend/requests/{userId}/model")
+    fun getFriendRequestModel(@Path("userId") userId: String): Call<P2GResponse<MutableList<FriendRequestModel>>>
+
+    @GET("/api/friend/requests/friends")
+    fun getFriends(): Call<P2GResponse<MutableList<UserModel>>>
+
+    @GET("/api/friend/requests/{userId}/friends")
+    fun getFriends(@Path("userId") userId: String): Call<P2GResponse<MutableList<UserModel>>>
 
 
 

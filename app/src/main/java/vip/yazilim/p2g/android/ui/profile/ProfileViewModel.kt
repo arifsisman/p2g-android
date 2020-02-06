@@ -18,8 +18,8 @@ class ProfileViewModel : ViewModelBase() {
     private val _userModel = MutableLiveData<UserModel>()
     val userModel: LiveData<UserModel> = _userModel
 
-    private val _friendRequestModel = MutableLiveData<FriendRequestModel>()
-    val friendRequestModel: LiveData<FriendRequestModel> = _friendRequestModel
+    private val _friendRequestModels = MutableLiveData<MutableList<FriendRequestModel>>()
+    val friendRequestModel: LiveData<MutableList<FriendRequestModel>> = _friendRequestModels
 
     fun loadUserModel() {
         _isViewLoading.postValue(true)
@@ -42,12 +42,12 @@ class ProfileViewModel : ViewModelBase() {
     fun loadFriendsCount() {
         P2GRequest.build(
             ApiClient.build().getFriendRequestModel(),
-            object : Callback<FriendRequestModel> {
+            object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
                 }
 
-                override fun onSuccess(obj: FriendRequestModel) {
-                    _friendRequestModel.value = obj
+                override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+                    _friendRequestModels.value = obj
                 }
             })
     }

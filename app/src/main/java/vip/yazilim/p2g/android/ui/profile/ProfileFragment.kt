@@ -49,7 +49,7 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = ProfileAdapter(UserModel(), FriendRequestModel())
+        adapter = ProfileAdapter(UserModel(), mutableListOf())
         recyclerView.adapter = adapter
     }
 
@@ -61,7 +61,7 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
         adapter.update(it)
     }
 
-    private val renderFriendsCount = Observer<FriendRequestModel> {
+    private val renderFriendsCount = Observer<MutableList<FriendRequestModel>> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE

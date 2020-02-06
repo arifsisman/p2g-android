@@ -22,7 +22,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatte
  */
 class ProfileAdapter(
     private var userModel: UserModel,
-    private var friendRequestModel: FriendRequestModel
+    private var friendRequestModels: MutableList<FriendRequestModel>
 ) :
     RecyclerView.Adapter<ProfileAdapter.MViewHolder>() {
 
@@ -57,8 +57,8 @@ class ProfileAdapter(
         notifyDataSetChanged()
     }
 
-    fun update(data: FriendRequestModel) {
-        friendRequestModel = data
+    fun update(data: MutableList<FriendRequestModel>) {
+        friendRequestModels = data
         notifyDataSetChanged()
     }
 
@@ -135,9 +135,9 @@ class ProfileAdapter(
             holder.cardView.visibility = View.VISIBLE
         }
 
-        if (friendRequestModel.friends != null) {
+        if (friendRequestModels.isNotEmpty()) {
             val profileFriendCountsPlaceholder =
-                "${friendRequestModel.friends?.size.toString()} ${view.resources.getString(R.string.placeholder_friend_counts)}"
+                "${friendRequestModels.size} ${view.resources.getString(R.string.placeholder_friend_counts)}"
             holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         } else {
             val profileFriendCountsPlaceholder =
