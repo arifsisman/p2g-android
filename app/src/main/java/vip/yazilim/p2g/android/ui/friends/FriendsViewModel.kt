@@ -14,7 +14,8 @@ class FriendsViewModel : ViewModelBase() {
     private val _data = MutableLiveData<MutableList<Any>>()
     val data: LiveData<MutableList<Any>> = _data
 
-    fun loadFriendRequestModel() {
+    // loadFriendRequestModel
+    fun loadData() {
         _isViewLoading.postValue(true)
 
         P2GRequest.build(
@@ -28,6 +29,8 @@ class FriendsViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
                     _isViewLoading.postValue(false)
                     _data.value = obj as MutableList<Any>
+
+                    loadFriends()
                 }
             })
 

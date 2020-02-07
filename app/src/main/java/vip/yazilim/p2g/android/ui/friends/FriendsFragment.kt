@@ -31,8 +31,7 @@ class FriendsFragment : FragmentBase(
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadFriendRequestModel()
-        viewModel.loadFriends()
+        viewModel.loadData()
     }
 
     override fun setupViewModel() {
@@ -46,7 +45,7 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.data.value?: mutableListOf<Any>(), this, this)
+        adapter = FriendsAdapter(viewModel.data.value?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout

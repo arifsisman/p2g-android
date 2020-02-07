@@ -58,15 +58,19 @@ class FriendsAdapter(
             val user = item.friendRequestUser
 
             val inviteDatePlaceholder =
-                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.format(dateTimeFormatterCompact)}"
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.format(
+                    dateTimeFormatterCompact
+                )}"
 
             userName.text = user?.name
             inviteDate.text = inviteDatePlaceholder
 
-            GlideApp.with(view)
-                .load(user?.imageUrl)
-                .apply(RequestOptions.circleCropTransform())
-                .into(profileImage)
+            if (user?.imageUrl != null) {
+                GlideApp.with(view)
+                    .load(user.imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(profileImage)
+            }
         }
     }
 
@@ -95,10 +99,12 @@ class FriendsAdapter(
             userName.text = user?.name
             roomName.text = roomNamePlaceholder
 
-            GlideApp.with(view)
-                .load(user?.imageUrl)
-                .apply(RequestOptions.circleCropTransform())
-                .into(profileImage)
+            if (user?.imageUrl != null) {
+                GlideApp.with(view)
+                    .load(user.imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(profileImage)
+            }
         }
     }
 
