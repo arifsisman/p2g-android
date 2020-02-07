@@ -12,7 +12,7 @@ data class RoomInvite(
     var id: Long,
     var roomId: Long,
     var inviterId: String?,
-    var userId: String?,
+    var receiverId: String?,
     var invitationDate: LocalDateTime
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -27,7 +27,7 @@ data class RoomInvite(
         parcel.writeLong(id)
         parcel.writeLong(roomId)
         parcel.writeString(inviterId)
-        parcel.writeString(userId)
+        parcel.writeString(receiverId)
         parcel.writeSerializable(invitationDate)
     }
 

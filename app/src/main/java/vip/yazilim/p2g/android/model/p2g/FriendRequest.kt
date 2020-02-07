@@ -10,8 +10,8 @@ import org.threeten.bp.LocalDateTime
  */
 data class FriendRequest(
     var id: Long,
-    var userId: String?,
-    var friendId: String?,
+    var senderId: String?,
+    var receiverId: String?,
     var requestStatus: String?,
     var requestDate: LocalDateTime
 ) : Parcelable {
@@ -25,8 +25,8 @@ data class FriendRequest(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(id)
-        parcel.writeString(userId)
-        parcel.writeString(friendId)
+        parcel.writeString(senderId)
+        parcel.writeString(receiverId)
         parcel.writeString(requestStatus)
         parcel.writeSerializable(requestDate)
     }

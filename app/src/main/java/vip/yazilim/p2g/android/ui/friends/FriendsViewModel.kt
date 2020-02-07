@@ -27,12 +27,7 @@ class FriendsViewModel : ViewModelBase() {
 
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
                     _isViewLoading.postValue(false)
-
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _data.value = obj as MutableList<Any>
-                    }
+                    _data.value = obj as MutableList<Any>
                 }
             })
 
@@ -51,12 +46,7 @@ class FriendsViewModel : ViewModelBase() {
 
                 override fun onSuccess(obj: MutableList<UserModel>) {
                     _isViewLoading.postValue(false)
-
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _data.value = obj as MutableList<Any>
-                    }
+                    _data.value = obj as MutableList<Any>
                 }
             })
     }

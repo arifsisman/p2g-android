@@ -12,6 +12,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
+import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
 
 
@@ -23,7 +24,7 @@ class FriendsAdapter(
     private var adapterDataList: MutableList<*>,
     private val requestClickListener: OnItemClickListener,
     private val friendClickListener: OnItemClickListener
-) : RecyclerView.Adapter<FriendsAdapter.BaseViewHolder<*>>() {
+) : RecyclerView.Adapter<ViewHolderBase<*>>() {
 
     private lateinit var view: View
 
@@ -34,12 +35,8 @@ class FriendsAdapter(
         private const val TYPE_FRIEND = 1
     }
 
-    abstract class BaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bindView(item: T)
-    }
-
     inner class FriendRequestViewHolder(itemView: View) :
-        BaseViewHolder<FriendRequestModel>(itemView) {
+        ViewHolderBase<FriendRequestModel>(itemView) {
         private val userName: TextView = itemView.findViewById(R.id.user_name)
         private val inviteDate: TextView = itemView.findViewById(R.id.invite_date)
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
@@ -76,7 +73,7 @@ class FriendsAdapter(
         }
     }
 
-    inner class FriendViewHolder(itemView: View) : BaseViewHolder<UserModel>(itemView) {
+    inner class FriendViewHolder(itemView: View) : ViewHolderBase<UserModel>(itemView) {
         private val userName: TextView = itemView.findViewById(R.id.user_name)
         private val roomName: TextView = itemView.findViewById(R.id.room_name)
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
@@ -116,7 +113,7 @@ class FriendsAdapter(
         fun onDeleteClicked(userModel: UserModel)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderBase<*> {
         return when (viewType) {
             TYPE_REQUEST -> {
                 view = LayoutInflater.from(parent.context)
@@ -132,7 +129,7 @@ class FriendsAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolderBase<*>, position: Int) {
         val element = adapterDataList[position]
         when (holder) {
             is FriendRequestViewHolder -> holder.bindView(element as FriendRequestModel)
