@@ -7,6 +7,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -39,6 +40,8 @@ class FriendsAdapter(
         private val userName: TextView = itemView.findViewById(R.id.user_name)
         private val inviteDate: TextView = itemView.findViewById(R.id.invite_date)
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        private val onlineStatus: ImageView =
+            itemView.findViewById(R.id.online_status_online_image_view)
 
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
@@ -53,7 +56,7 @@ class FriendsAdapter(
 
         override fun bindView(item: FriendRequestModel) {
             bindEvent(item, requestClickListener)
-            val user = item.friendRequestUser
+            val user = item.friendRequestUserModel?.user
 
             val inviteDatePlaceholder =
                 "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.format(
@@ -69,6 +72,21 @@ class FriendsAdapter(
                     .apply(RequestOptions.circleCropTransform())
                     .into(profileImage)
             }
+
+            when (user?.onlineStatus) {
+                OnlineStatus.ONLINE.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_online)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+                OnlineStatus.OFFLINE.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+                OnlineStatus.AWAY.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_away)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+            }
         }
     }
 
@@ -76,6 +94,8 @@ class FriendsAdapter(
         private val userName: TextView = itemView.findViewById(R.id.user_name)
         private val roomName: TextView = itemView.findViewById(R.id.room_name)
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        private val onlineStatus: ImageView =
+            itemView.findViewById(R.id.online_status_online_image_view)
 
         private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
@@ -91,17 +111,37 @@ class FriendsAdapter(
             val user = item.user
             val room = item.room
 
-            val roomNamePlaceholder =
-                "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room?.name}"
+            if (room != null) {
+                val roomNamePlaceholder =
+                    "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
+                roomName.text = roomNamePlaceholder
+            }else{
+                roomName.visibility = View.INVISIBLE
+                joinButton.visibility = View.INVISIBLE
+            }
 
             userName.text = user?.name
-            roomName.text = roomNamePlaceholder
 
             if (user?.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(profileImage)
+            }
+
+            when (user?.onlineStatus) {
+                OnlineStatus.ONLINE.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_online)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+                OnlineStatus.OFFLINE.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+                OnlineStatus.AWAY.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_away)
+                    onlineStatus.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -162,9 +202,9 @@ class FriendsAdapter(
                 } else {
                     val filter = constraint.toString().trim()
                     adapterDataListFull.forEach {
-                        when(it){
+                        when (it) {
                             is FriendRequestModel -> {
-                                if (it.friendRequestUser?.name?.contains(filter, true)!!
+                                if (it.friendRequestUserModel?.user?.name?.contains(filter, true)!!
                                 ) {
                                     filteredList.add(it)
                                 }

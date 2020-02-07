@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.layout_recycler_view_base.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.GeneralConstants
+import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -58,7 +58,7 @@ class FriendsFragment : FragmentBase(
 
     // Observer
     private val renderData = Observer<MutableList<Any>> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        Log.v(LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.adapterDataListFull.addAll(it)
@@ -112,22 +112,21 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.v(LOG_TAG, "Accept - ${friendRequestModel.friendRequestUserModel?.user?.name}")
     }
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.v(LOG_TAG, "Reject - ${friendRequestModel.friendRequestUserModel?.user?.name}")
     }
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onJoinClicked(room: Room?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.v(LOG_TAG, "Join - ${room?.name}")
     }
 
     override fun onDeleteClicked(userModel: UserModel) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.v(LOG_TAG, "Delete - ${userModel.user?.name}")
     }
 }

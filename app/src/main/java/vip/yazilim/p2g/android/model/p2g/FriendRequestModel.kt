@@ -9,16 +9,16 @@ import android.os.Parcelable
  */
 data class FriendRequestModel(
     var friendRequest: FriendRequest?,
-    var friendRequestUser: User?
+    var friendRequestUserModel: UserModel?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(FriendRequest::class.java.classLoader),
-        parcel.readParcelable(User::class.java.classLoader)
+        parcel.readParcelable(UserModel::class.java.classLoader)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(friendRequest, flags)
-        parcel.writeParcelable(friendRequestUser, flags)
+        parcel.writeParcelable(friendRequestUserModel, flags)
     }
 
     override fun describeContents(): Int {
