@@ -29,21 +29,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
             app:layout_constraintTop_toBottomOf="@+id/user_name"
             tools:text="@string/placeholder_room_name_expanded" />
-
-        <TextView
-            android:id="@+id/room_song_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/placeholder_room_now_playing_song"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
-            app:layout_constraintTop_toBottomOf="@+id/room_name"
-            />
 
         <ImageView
             android:id="@+id/profile_photo_image_view"

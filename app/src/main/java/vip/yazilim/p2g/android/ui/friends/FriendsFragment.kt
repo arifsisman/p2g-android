@@ -120,7 +120,7 @@ class FriendsFragment : FragmentBase(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onJoinClicked(room: Room) {
+    override fun onJoinClicked(room: Room?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

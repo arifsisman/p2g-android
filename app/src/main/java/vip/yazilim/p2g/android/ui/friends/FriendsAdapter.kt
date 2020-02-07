@@ -7,10 +7,12 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
+import vip.yazilim.p2g.android.util.glide.GlideApp
 
 
 /**
@@ -21,7 +23,7 @@ class FriendsAdapter(
     private var adapterDataList: MutableList<*>,
     private val requestClickListener: OnItemClickListener,
     private val friendClickListener: OnItemClickListener
-) : RecyclerView.Adapter<FriendsAdapter.BaseViewHolder<*>>(){
+) : RecyclerView.Adapter<FriendsAdapter.BaseViewHolder<*>>() {
 
     private lateinit var view: View
 
@@ -36,16 +38,20 @@ class FriendsAdapter(
         abstract fun bindView(item: T)
     }
 
-    inner class FriendRequestViewHolder(itemView: View) : BaseViewHolder<FriendRequestModel>(itemView) {
-        val userName: TextView = itemView.findViewById(R.id.user_name)
-        val inviteDate: TextView = itemView.findViewById(R.id.invite_date)
-        val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+    inner class FriendRequestViewHolder(itemView: View) :
+        BaseViewHolder<FriendRequestModel>(itemView) {
+        private val userName: TextView = itemView.findViewById(R.id.user_name)
+        private val inviteDate: TextView = itemView.findViewById(R.id.invite_date)
+        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
 
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
         private val ignoreButton: ImageButton = itemView.findViewById(R.id.ignore_button)
 
-        private fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
+        private fun bindEvent(
+            friendRequestModel: FriendRequestModel,
+            clickListener: OnItemClickListener
+        ) {
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
             ignoreButton.setOnClickListener { clickListener.onIgnoreClicked(friendRequestModel) }
@@ -53,26 +59,52 @@ class FriendsAdapter(
 
         override fun bindView(item: FriendRequestModel) {
             bindEvent(item, requestClickListener)
+            val user = item.friendRequestUser
 
             val userNamePlaceholder =
-                "${view.resources.getString(R.string.placeholder_user_name)} ${item.friendRequestUser?.name}"
+                "${view.resources.getString(R.string.placeholder_user_name)} ${user?.name}"
+            val inviteDatePlaceholder =
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate}"
+
+            userName.text = userNamePlaceholder
+            inviteDate.text = inviteDatePlaceholder
+
+            GlideApp.with(view)
+                .load(user?.imageUrl)
+                .apply(RequestOptions.circleCropTransform())
+                .into(profileImage)
         }
     }
 
     inner class FriendViewHolder(itemView: View) : BaseViewHolder<UserModel>(itemView) {
+        private val userName: TextView = itemView.findViewById(R.id.user_name)
+        private val roomName: TextView = itemView.findViewById(R.id.room_name)
+        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+
         private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
 
-        fun bindEvent(room: Room, clickListener: OnItemClickListener) {
-            joinButton.setOnClickListener { clickListener.onJoinClicked(room) }
-        }
-
-        fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
+        private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
             deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
+            joinButton.setOnClickListener { clickListener.onJoinClicked(userModel.room) }
+
         }
 
         override fun bindView(item: UserModel) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            bindEvent(item, friendClickListener)
+            val user = item.user
+            val room = item.room
+
+            val roomNamePlaceholder =
+                "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room?.name}"
+
+            userName.text = user?.name
+            roomName.text = roomNamePlaceholder
+
+            GlideApp.with(view)
+                .load(user?.imageUrl)
+                .apply(RequestOptions.circleCropTransform())
+                .into(profileImage)
         }
     }
 
@@ -80,18 +112,20 @@ class FriendsAdapter(
         fun onAcceptClicked(friendRequestModel: FriendRequestModel)
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
-        fun onJoinClicked(room: Room)
+        fun onJoinClicked(room: Room?)
         fun onDeleteClicked(userModel: UserModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
-        return when(viewType){
+        return when (viewType) {
             TYPE_REQUEST -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.row_friend_request, parent, false)
+                view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.row_friend_request, parent, false)
                 FriendRequestViewHolder(view)
             }
             TYPE_FRIEND -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.row_friend, parent, false)
+                view =
+                    LayoutInflater.from(parent.context).inflate(R.layout.row_friend, parent, false)
                 FriendViewHolder(view)
             }
             else -> throw IllegalArgumentException("Invalid view type")
@@ -100,14 +134,14 @@ class FriendsAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         val element = adapterDataList[position]
-        when(holder){
+        when (holder) {
             is FriendRequestViewHolder -> holder.bindView(element as FriendRequestModel)
             is FriendViewHolder -> holder.bindView(element as UserModel)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(adapterDataList[position]){
+        return when (adapterDataList[position]) {
             is FriendRequestModel -> TYPE_REQUEST
             is UserModel -> TYPE_FRIEND
             else -> throw IllegalArgumentException("Invalid type of data $position")
