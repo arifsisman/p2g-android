@@ -8,6 +8,7 @@ import org.threeten.bp.format.DateTimeFormatter
  */
 class TimeHelper {
     companion object{
-        val dateTimeFormatterFull = DateTimeFormatter.ofPattern("dd MMMM uuuu")
+        val dateTimeFormatterFull: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM uuuu")
+        val dateTimeFormatterCompact: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm")
     }
 }

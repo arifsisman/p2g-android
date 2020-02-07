@@ -54,21 +54,9 @@
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ignore_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_accept_24dp" />
-
-        <ImageButton
-            android:id="@+id/ignore_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="6dp"
-            android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/description_ignore_button"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/reject_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_ignore_24dp" />
+            app:srcCompat="@drawable/ic_accept_24dp" />
 
         <ImageButton
             android:id="@+id/reject_button"

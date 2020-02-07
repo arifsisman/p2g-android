@@ -14,6 +14,7 @@ import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterCompact
 
 
 /**
@@ -21,7 +22,7 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @contact mustafaarifsisman@gmail.com
  */
 class FriendsAdapter(
-    private var adapterDataList: MutableList<*>,
+    private var adapterDataList: MutableList<Any>,
     private val requestClickListener: OnItemClickListener,
     private val friendClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolderBase<*>>() {
@@ -43,7 +44,6 @@ class FriendsAdapter(
 
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
-        private val ignoreButton: ImageButton = itemView.findViewById(R.id.ignore_button)
 
         private fun bindEvent(
             friendRequestModel: FriendRequestModel,
@@ -51,19 +51,16 @@ class FriendsAdapter(
         ) {
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
-            ignoreButton.setOnClickListener { clickListener.onIgnoreClicked(friendRequestModel) }
         }
 
         override fun bindView(item: FriendRequestModel) {
             bindEvent(item, requestClickListener)
             val user = item.friendRequestUser
 
-            val userNamePlaceholder =
-                "${view.resources.getString(R.string.placeholder_user_name)} ${user?.name}"
             val inviteDatePlaceholder =
-                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate}"
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.format(dateTimeFormatterCompact)}"
 
-            userName.text = userNamePlaceholder
+            userName.text = user?.name
             inviteDate.text = inviteDatePlaceholder
 
             GlideApp.with(view)
@@ -181,7 +178,12 @@ class FriendsAdapter(
 //    }
 
     fun update(data: MutableList<Any>) {
-        adapterDataList = data
+        adapterDataList.addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun clear() {
+        adapterDataList.clear()
         notifyDataSetChanged()
     }
 

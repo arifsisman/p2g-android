@@ -60,7 +60,7 @@
     <string name="description_reject_button">Reject Button</string>
     <string name="placeholder_member_since">Member since</string>
     <string name="placeholder_user_name">Username</string>
-    <string name="placeholder_friend_request_date">Date:</string>
+    <string name="placeholder_friend_request_date">Request Date:</string>
 
 
 </resources>
