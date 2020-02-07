@@ -3,9 +3,7 @@ package vip.yazilim.p2g.android.ui.friends
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
@@ -25,7 +23,7 @@ class FriendsAdapter(
     private var adapterDataList: MutableList<Any>,
     private val requestClickListener: OnItemClickListener,
     private val friendClickListener: OnItemClickListener
-) : RecyclerView.Adapter<ViewHolderBase<*>>() {
+) : RecyclerView.Adapter<ViewHolderBase<*>>(), Filterable {
 
     private lateinit var view: View
 
@@ -152,36 +150,47 @@ class FriendsAdapter(
         return adapterDataList.size
     }
 
-//    override fun getFilter(): Filter {
-//        return object : Filter() {
-//
-//            override fun performFiltering(constraint: CharSequence?): FilterResults? {
-//                val filteredList: MutableList<RoomInviteModel> = mutableListOf()
-//                val charString = constraint.toString()
-//
-//                if (constraint == null || charString.isEmpty()) {
-//                    filteredList.addAll(roomInviteModelsFull)
-//                } else {
-//                    val filter = constraint.toString().trim()
-//                    roomInviteModelsFull.forEach {
-//                        if (it.roomModel?.room?.name?.contains(filter, true)!!
-//                        ) {
-//                            filteredList.add(it)
-//                        }
-//                    }
-//                }
-//
-//                val results = FilterResults()
-//                results.values = filteredList
-//                return results
-//            }
-//
-//            @Suppress("UNCHECKED_CAST")
-//            override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-//                update(filterResults.values as MutableList<RoomInviteModel>)
-//            }
-//        }
-//    }
+    override fun getFilter(): Filter {
+        return object : Filter() {
+
+            override fun performFiltering(constraint: CharSequence?): FilterResults? {
+                val filteredList: MutableList<Any> = mutableListOf()
+                val charString = constraint.toString()
+
+                if (constraint == null || charString.isEmpty()) {
+                    filteredList.addAll(adapterDataListFull)
+                } else {
+                    val filter = constraint.toString().trim()
+                    adapterDataListFull.forEach {
+                        when(it){
+                            is FriendRequestModel -> {
+                                if (it.friendRequestUser?.name?.contains(filter, true)!!
+                                ) {
+                                    filteredList.add(it)
+                                }
+                            }
+                            is UserModel -> {
+                                if (it.user?.name?.contains(filter, true)!!
+                                ) {
+                                    filteredList.add(it)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
+                clear()
+                update(filterResults.values as MutableList<Any>)
+            }
+        }
+    }
 
     fun update(data: MutableList<Any>) {
         adapterDataList.addAll(data)

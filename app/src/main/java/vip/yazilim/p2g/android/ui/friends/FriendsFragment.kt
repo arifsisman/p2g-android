@@ -2,7 +2,11 @@ package vip.yazilim.p2g.android.ui.friends
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,52 +61,52 @@ class FriendsFragment : FragmentBase(
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
-        adapter.adapterDataListFull = it
+        adapter.adapterDataListFull.addAll(it)
         adapter.update(it)
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        val searchItem: MenuItem? = menu.findItem(R.id.action_search)
-//        val searchView: SearchView = searchItem?.actionView as SearchView
-//
-//        searchView.queryHint = "Search Friends"
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                Log.d("queryText", query)
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                adapter.filter.filter(newText)
-//                Log.d("queryText", newText)
-//                return true
-//            }
-//        })
-//
-//        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-//            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-//                searchView.requestFocus()
-//                searchView.isIconified = false
-//                searchView.isIconifiedByDefault = false
-//                searchView.visibility = View.VISIBLE
-//                setMenuItemsVisibility(menu, searchItem, false)
-//                return true
-//            }
-//
-//            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-//                searchView.clearFocus()
-//                searchView.setQuery("", false)
-//                adapter.filter.filter("")
-//                searchView.isIconified = true
-//                searchView.isIconifiedByDefault = true
-//                searchView.visibility = View.VISIBLE
-//                setMenuItemsVisibility(menu, searchItem, true)
-//                return true
-//            }
-//        })
-//    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        val searchItem: MenuItem? = menu.findItem(R.id.action_search)
+        val searchView: SearchView = searchItem?.actionView as SearchView
+
+        searchView.queryHint = "Search Friends"
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                Log.d("queryText", query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                adapter.filter.filter(newText)
+                Log.d("queryText", newText)
+                return true
+            }
+        })
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                searchView.requestFocus()
+                searchView.isIconified = false
+                searchView.isIconifiedByDefault = false
+                searchView.visibility = View.VISIBLE
+                setMenuItemsVisibility(menu, searchItem, false)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                searchView.clearFocus()
+                searchView.setQuery("", false)
+                adapter.filter.filter("")
+                searchView.isIconified = true
+                searchView.isIconifiedByDefault = true
+                searchView.visibility = View.VISIBLE
+                setMenuItemsVisibility(menu, searchItem, true)
+                return true
+            }
+        })
+    }
 
     private fun refreshFriendsEvent() {
     }
