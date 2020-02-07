@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants
-import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 
@@ -42,7 +41,7 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
     override fun setupViewModel() {
         viewModel = super.setupViewModelBase() as ProfileViewModel
         viewModel.userModel.observe(this, renderUser)
-        viewModel.friendRequestModel.observe(this, renderFriendsCount)
+        viewModel.friends.observe(this, renderFriendsCount)
     }
 
     override fun setupUI() {
@@ -61,7 +60,7 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
         adapter.update(it)
     }
 
-    private val renderFriendsCount = Observer<MutableList<FriendRequestModel>> {
+    private val renderFriendsCount = Observer<MutableList<UserModel>> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE

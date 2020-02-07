@@ -11,7 +11,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
-import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterFull
@@ -22,7 +21,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatte
  */
 class ProfileAdapter(
     private var userModel: UserModel,
-    private var friendRequestModels: MutableList<FriendRequestModel>
+    private var friends: MutableList<UserModel>
 ) :
     RecyclerView.Adapter<ProfileAdapter.MViewHolder>() {
 
@@ -57,8 +56,8 @@ class ProfileAdapter(
         notifyDataSetChanged()
     }
 
-    fun update(data: MutableList<FriendRequestModel>) {
-        friendRequestModels = data
+    fun update(data: MutableList<UserModel>) {
+        friends = data
         notifyDataSetChanged()
     }
 
@@ -135,9 +134,9 @@ class ProfileAdapter(
             holder.cardView.visibility = View.VISIBLE
         }
 
-        if (friendRequestModels.isNotEmpty()) {
+        if (friends.isNotEmpty()) {
             val profileFriendCountsPlaceholder =
-                "${friendRequestModels.size} ${view.resources.getString(R.string.placeholder_friend_counts)}"
+                "${friends.size} ${view.resources.getString(R.string.placeholder_friend_counts)}"
             holder.friendCountsTextView.text = profileFriendCountsPlaceholder
         } else {
             val profileFriendCountsPlaceholder =
