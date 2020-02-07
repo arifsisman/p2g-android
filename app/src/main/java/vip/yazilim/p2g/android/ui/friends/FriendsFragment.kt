@@ -46,7 +46,7 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.data.value!!, this, this)
+        adapter = FriendsAdapter(viewModel.data.value?: mutableListOf<Any>(), this, this)
         recyclerView.adapter = adapter
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout

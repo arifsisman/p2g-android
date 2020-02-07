@@ -79,7 +79,7 @@ class FriendsAdapter(
             }
             TYPE_FRIEND -> {
                 view = LayoutInflater.from(parent.context).inflate(R.layout.row_friend, parent, false)
-                FriendRequestViewHolder(view)
+                FriendViewHolder(view)
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
