@@ -43,6 +43,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
     override fun onResume() {
         super.onResume()
+        adapter.clear()
         viewModel.loadRoomInviteModel()
     }
 

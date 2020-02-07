@@ -11,13 +11,19 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlinx.android.synthetic.main.layout_recycler_view_base.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutEmpty
+import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.UIHelper
 
 class FriendsFragment : FragmentBase(
     FriendsViewModel(),
@@ -35,7 +41,9 @@ class FriendsFragment : FragmentBase(
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadData()
+        adapter.clear()
+        viewModel.loadFriendRequestModel()
+        viewModel.loadFriends()
     }
 
     override fun setupViewModel() {
@@ -53,7 +61,11 @@ class FriendsFragment : FragmentBase(
         recyclerView.adapter = adapter
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
-        swipeContainer.setOnRefreshListener { refreshFriendsEvent() }
+        swipeContainer.setOnRefreshListener {
+            adapter.clear()
+            loadFriendRequestModel()
+            loadFriends()
+        }
     }
 
     // Observer
@@ -62,7 +74,7 @@ class FriendsFragment : FragmentBase(
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.adapterDataListFull.addAll(it)
-        adapter.update(it)
+        adapter.addAll(it)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -108,9 +120,6 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    private fun refreshFriendsEvent() {
-    }
-
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
         Log.v(LOG_TAG, "Accept - ${friendRequestModel.friendRequestUserModel?.user?.name}")
     }
@@ -128,5 +137,43 @@ class FriendsFragment : FragmentBase(
 
     override fun onDeleteClicked(userModel: UserModel) {
         Log.v(LOG_TAG, "Delete - ${userModel.user?.name}")
+    }
+
+    private fun loadFriendRequestModel() {
+        P2GRequest.build(
+            ApiClient.build().getFriendRequestModel(),
+            object : Callback<MutableList<FriendRequestModel>> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, "Friend requests cannot refreshed")
+                    swipeContainer.isRefreshing = false
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+                    adapter.addAll(obj as MutableList<Any>)
+                    adapter.adapterDataListFull.addAll(obj)
+                }
+            })
+
+    }
+
+    private fun loadFriends() {
+        P2GRequest.build(
+            ApiClient.build().getFriends(),
+            object : Callback<MutableList<UserModel>> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, "Friends cannot refreshed")
+                    swipeContainer.isRefreshing = false
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: MutableList<UserModel>) {
+                    adapter.addAll(obj as MutableList<Any>)
+                    adapter.adapterDataListFull.addAll(obj)
+                    swipeContainer.isRefreshing = false
+                }
+            })
     }
 }

@@ -130,6 +130,11 @@ class RoomInvitesAdapter(
         notifyDataSetChanged()
     }
 
+    fun clear(){
+        roomInviteModels.clear()
+        roomInviteModelsFull.clear()
+    }
+
     override fun getFilter(): Filter {
         return object : Filter() {
 

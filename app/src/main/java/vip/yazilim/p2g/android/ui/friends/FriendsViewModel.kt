@@ -14,8 +14,7 @@ class FriendsViewModel : ViewModelBase() {
     private val _data = MutableLiveData<MutableList<Any>>()
     val data: LiveData<MutableList<Any>> = _data
 
-    // loadFriendRequestModel
-    fun loadData() {
+    fun loadFriendRequestModel() {
         _isViewLoading.postValue(true)
 
         P2GRequest.build(
@@ -26,11 +25,10 @@ class FriendsViewModel : ViewModelBase() {
                     _onMessageError.postValue(msg)
                 }
 
+                @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
                     _isViewLoading.postValue(false)
                     _data.value = obj as MutableList<Any>
-
-                    loadFriends()
                 }
             })
 
@@ -47,6 +45,7 @@ class FriendsViewModel : ViewModelBase() {
                     _onMessageError.postValue(msg)
                 }
 
+                @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: MutableList<UserModel>) {
                     _isViewLoading.postValue(false)
                     _data.value = obj as MutableList<Any>

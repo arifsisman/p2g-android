@@ -227,18 +227,20 @@ class FriendsAdapter(
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
                 clear()
-                update(filterResults.values as MutableList<Any>)
+                addAll(filterResults.values as MutableList<Any>)
             }
         }
     }
 
-    fun update(data: MutableList<Any>) {
+    fun addAll(data: MutableList<Any>) {
         adapterDataList.addAll(data)
+        adapterDataList.sortBy { it is UserModel }
         notifyDataSetChanged()
     }
 
     fun clear() {
         adapterDataList.clear()
+        adapterDataListFull.clear()
         notifyDataSetChanged()
     }
 

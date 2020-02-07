@@ -118,6 +118,7 @@ class HomeAdapter(
 
     fun clear() {
         roomModels.clear()
+        roomModelsFull.clear()
         notifyDataSetChanged()
     }
 
