@@ -25,7 +25,7 @@ class HomeAdapter(
     private lateinit var view: View
     var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
-    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomName: TextView = itemView.findViewById(R.id.room_name)
         val owner: TextView = itemView.findViewById(R.id.room_owner)
         val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)

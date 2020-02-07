@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@string/placeholder_friend_request_name"
+            android:text="@string/placeholder_user_name"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
             app:layout_constraintTop_toTopOf="parent" />

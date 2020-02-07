@@ -18,7 +18,7 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomInvitesAdapter(
-    var roomInviteModels: MutableList<RoomInviteModel>,
+    private var roomInviteModels: MutableList<RoomInviteModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
     Filterable {
@@ -26,7 +26,7 @@ class RoomInvitesAdapter(
     private lateinit var view: View
     var roomInviteModelsFull: MutableList<RoomInviteModel> = mutableListOf()
 
-    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
         val roomName: TextView = itemView.findViewById(R.id.room_name)
         val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)

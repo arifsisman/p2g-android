@@ -27,7 +27,7 @@ class ProfileAdapter(
 
     private lateinit var view: View
 
-    class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardView: CardView = itemView.findViewById(R.id.profile_me_card_view)
         val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)

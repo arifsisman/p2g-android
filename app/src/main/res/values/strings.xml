@@ -28,6 +28,8 @@
     <string name="description_error_image">Error Image</string>
     <string name="description_logo_of_play2gether">Logo of Play2Gether</string>
     <string name="description_country_flag_image">Country Flag Image</string>
+    <string name="description_join_button">Join Button</string>
+    <string name="description_ignore_button">Ignore Button</string>
 
     <!--Eng. Placeholders-->
     <string name="placeholder_cancel">Cancel</string>
@@ -57,9 +59,8 @@
     <string name="description_accept_button">Accept Button</string>
     <string name="description_reject_button">Reject Button</string>
     <string name="placeholder_member_since">Member since</string>
-    <string name="placeholder_friend_request_name">Username</string>
+    <string name="placeholder_user_name">Username</string>
     <string name="placeholder_friend_request_date">Date:</string>
-    <string name="description_join_button">Join Button</string>
-    <string name="description_ignore_button">Ignore Button</string>
+
 
 </resources>

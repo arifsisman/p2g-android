@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
@@ -35,27 +37,38 @@ class FriendsAdapter(
     }
 
     inner class FriendRequestViewHolder(itemView: View) : BaseViewHolder<FriendRequestModel>(itemView) {
+        val userName: TextView = itemView.findViewById(R.id.user_name)
+        val inviteDate: TextView = itemView.findViewById(R.id.invite_date)
+        val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
         private val ignoreButton: ImageButton = itemView.findViewById(R.id.ignore_button)
 
-        fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
+        private fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
             ignoreButton.setOnClickListener { clickListener.onIgnoreClicked(friendRequestModel) }
         }
 
         override fun bindView(item: FriendRequestModel) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            bindEvent(item, requestClickListener)
+
+            val userNamePlaceholder =
+                "${view.resources.getString(R.string.placeholder_user_name)} ${item.friendRequestUser?.name}"
         }
     }
 
     inner class FriendViewHolder(itemView: View) : BaseViewHolder<UserModel>(itemView) {
         private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
-        fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
-//            joinButton.setOnClickListener { clickListener.onJoinClicked() }
-//            deleteButton.setOnClickListener { clickListener.onDeleteClicked() }
+
+        fun bindEvent(room: Room, clickListener: OnItemClickListener) {
+            joinButton.setOnClickListener { clickListener.onJoinClicked(room) }
+        }
+
+        fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
+            deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
         }
 
         override fun bindView(item: UserModel) {
