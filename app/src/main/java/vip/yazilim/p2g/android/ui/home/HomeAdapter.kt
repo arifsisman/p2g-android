@@ -18,7 +18,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomModel
  * @contact mustafaarifsisman@gmail.com
  */
 class HomeAdapter(
-    var roomModels: MutableList<RoomModel>,
+    private var roomModels: MutableList<RoomModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 

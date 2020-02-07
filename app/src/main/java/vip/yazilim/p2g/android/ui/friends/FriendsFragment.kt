@@ -7,11 +7,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_recycler_view_base.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 
@@ -37,8 +37,7 @@ class FriendsFragment : FragmentBase(
 
     override fun setupViewModel() {
         viewModel = super.setupViewModelBase() as FriendsViewModel
-        viewModel.friendRequestModels.observe(this, renderFriendRequestModels)
-        viewModel.friends.observe(this, renderFriends)
+        viewModel.data.observe(this, renderData)
     }
 
 
@@ -47,32 +46,20 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(
-            viewModel.friendRequestModels.value ?: mutableListOf(),
-            viewModel.friends.value ?: mutableListOf(),
-            this
-        )
+        adapter = FriendsAdapter(viewModel.data.value!!, this, this)
         recyclerView.adapter = adapter
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener { refreshFriendsEvent() }
     }
 
-    // Observers
-    private val renderFriendRequestModels = Observer<MutableList<FriendRequestModel>> {
+    // Observer
+    private val renderData = Observer<MutableList<Any>> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
-        adapter.friendRequestModels = it as MutableList<FriendRequestModel>
-        adapter.updateFriendRequestModels(it)
-    }
-
-    private val renderFriends = Observer<MutableList<UserModel>> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
-        layoutError.visibility = View.GONE
-        layoutEmpty.visibility = View.GONE
-        adapter.friends = it as MutableList<UserModel>
-        adapter.updateFriends(it)
+        adapter.adapterDataListFull = it
+        adapter.update(it)
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -130,6 +117,14 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onJoinClicked(room: Room) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onDeleteClicked(userModel: UserModel) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

@@ -1,10 +1,13 @@
 package vip.yazilim.p2g.android.ui.friends
 
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 
 
@@ -13,17 +16,14 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
  * @contact mustafaarifsisman@gmail.com
  */
 class FriendsAdapter(
-    var friendRequestModels: MutableList<FriendRequestModel>,
-    var friends: MutableList<UserModel>,
-    private val itemClickListener: OnItemClickListener
+    private var adapterDataList: MutableList<*>,
+    private val requestClickListener: OnItemClickListener,
+    private val friendClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<FriendsAdapter.BaseViewHolder<*>>(){
 
     private lateinit var view: View
 
-    private var adapterDataList: List<Any> = emptyList()
-
-    var friendRequestModelsFull: MutableList<FriendRequestModel> = mutableListOf()
-    var friendsFull: MutableList<UserModel> = mutableListOf()
+    var adapterDataListFull: MutableList<Any> = mutableListOf()
 
     companion object {
         private const val TYPE_REQUEST = 0
@@ -50,9 +50,12 @@ class FriendsAdapter(
         }
     }
 
-    class FriendViewHolder(itemView: View) : BaseViewHolder<UserModel>(itemView) {
+    inner class FriendViewHolder(itemView: View) : BaseViewHolder<UserModel>(itemView) {
+        private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
         fun bindEvent(friendRequestModel: FriendRequestModel, clickListener: OnItemClickListener) {
-
+//            joinButton.setOnClickListener { clickListener.onJoinClicked() }
+//            deleteButton.setOnClickListener { clickListener.onDeleteClicked() }
         }
 
         override fun bindView(item: UserModel) {
@@ -64,38 +67,43 @@ class FriendsAdapter(
         fun onAcceptClicked(friendRequestModel: FriendRequestModel)
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
+        fun onJoinClicked(room: Room)
+        fun onDeleteClicked(userModel: UserModel)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
+        return when(viewType){
+            TYPE_REQUEST -> {
+                view = LayoutInflater.from(parent.context).inflate(R.layout.row_friend_request, parent, false)
+                FriendRequestViewHolder(view)
+            }
+            TYPE_FRIEND -> {
+                view = LayoutInflater.from(parent.context).inflate(R.layout.row_friend, parent, false)
+                FriendRequestViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
+        val element = adapterDataList[position]
+        when(holder){
+            is FriendRequestViewHolder -> holder.bindView(element as FriendRequestModel)
+            is FriendViewHolder -> holder.bindView(element as UserModel)
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return position % 2 * 2
+        return when(adapterDataList[position]){
+            is FriendRequestModel -> TYPE_REQUEST
+            is UserModel -> TYPE_FRIEND
+            else -> throw IllegalArgumentException("Invalid type of data $position")
+        }
     }
 
     override fun getItemCount(): Int {
-        return friendRequestModels.size + friends.size
+        return adapterDataList.size
     }
-
-    fun updateFriendRequestModels(data: MutableList<FriendRequestModel>) {
-        friendRequestModels = data
-        notifyDataSetChanged()
-    }
-
-    fun updateFriends(data: MutableList<UserModel>) {
-        friends = data
-        notifyDataSetChanged()
-    }
-
-    fun removeFriendRequestModel(data: FriendRequestModel) {
-        friendRequestModels.remove(data)
-        friendRequestModelsFull.remove(data)
-        notifyDataSetChanged()
-    }
-
-    fun removeFriend(data: UserModel) {
-        friends.remove(data)
-        friendsFull.remove(data)
-        notifyDataSetChanged()
-    }
-
 
 //    override fun getFilter(): Filter {
 //        return object : Filter() {
@@ -127,5 +135,16 @@ class FriendsAdapter(
 //            }
 //        }
 //    }
+
+    fun update(data: MutableList<Any>) {
+        adapterDataList = data
+        notifyDataSetChanged()
+    }
+
+    fun remove(data: Any) {
+        adapterDataList.remove(data)
+        adapterDataListFull.remove(data)
+        notifyDataSetChanged()
+    }
 
 }
