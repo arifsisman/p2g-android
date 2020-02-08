@@ -7,6 +7,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.User
@@ -31,6 +32,7 @@ class RoomInvitesAdapter(
         val roomName: TextView = itemView.findViewById(R.id.room_name)
         val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        val onlineStatus: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
 
@@ -55,28 +57,44 @@ class RoomInvitesAdapter(
         val roomInviteModel = roomInviteModels[position]
         val roomInvite = roomInviteModel.roomInvite
         val roomModel = roomInviteModel.roomModel
-        var inviter = User()
+
+        var user = User()
 
         roomModel?.userList?.forEach {
             if (it.id == roomInvite?.inviterId) {
-                inviter = it
+                user = it
             }
         }
 
-        if (inviter.imageUrl != null) {
+        if (user.imageUrl != null) {
             GlideApp.with(view)
-                .load(inviter.imageUrl)
+                .load(user.imageUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.profileImage)
         }
 
         val roomInviterPlaceholder =
-            "${view.resources.getString(R.string.placeholder_room_inviter)} ${inviter.name}"
+            "${view.resources.getString(R.string.placeholder_room_inviter)} ${user.name}"
         holder.roomInviter.text = roomInviterPlaceholder
 
         val roomNamePlaceholder =
             "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel?.room?.name}"
         holder.roomName.text = roomNamePlaceholder
+
+        when (user.onlineStatus) {
+            OnlineStatus.ONLINE.onlineStatus -> {
+                holder.onlineStatus.setImageResource(android.R.drawable.presence_online)
+                holder.onlineStatus.visibility = View.VISIBLE
+            }
+            OnlineStatus.OFFLINE.onlineStatus -> {
+                holder.onlineStatus.setImageResource(android.R.drawable.presence_offline)
+                holder.onlineStatus.visibility = View.VISIBLE
+            }
+            OnlineStatus.AWAY.onlineStatus -> {
+                holder.onlineStatus.setImageResource(android.R.drawable.presence_away)
+                holder.onlineStatus.visibility = View.VISIBLE
+            }
+        }
 
         if (roomModel?.songList.isNullOrEmpty()) {
             holder.roomSongStatus.text =

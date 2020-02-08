@@ -41,7 +41,8 @@ class FriendsFragment : FragmentBase(
 
     override fun onResume() {
         super.onResume()
-        adapter.clear()
+        adapter.clearDataList()
+        adapter.clearDataListFull()
         viewModel.loadFriendRequestModel()
         viewModel.loadFriends()
     }
@@ -62,7 +63,8 @@ class FriendsFragment : FragmentBase(
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener {
-            adapter.clear()
+            adapter.clearDataList()
+            adapter.clearDataListFull()
             loadFriendRequestModel()
             loadFriends()
         }
@@ -122,6 +124,22 @@ class FriendsFragment : FragmentBase(
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
         Log.v(LOG_TAG, "Accept - ${friendRequestModel.friendRequestUserModel?.user?.name}")
+        P2GRequest.build(
+            friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, "Request cannot accepted")
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
+                    friendRequestModel.friendRequestUserModel?.let { adapter.add(it) }
+                    friendRequestModel.friendRequestUserModel?.let { adapter.adapterDataListFull.add(it)
+                    }
+                }
+            })
     }
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) {

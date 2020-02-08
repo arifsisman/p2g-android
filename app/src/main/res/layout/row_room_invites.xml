@@ -80,5 +80,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_reject_24dp" />
 
+        <ImageView
+            android:id="@+id/online_status_online_image_view"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/description_online_status"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/presence_online" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -115,7 +115,7 @@ class FriendsAdapter(
                 val roomNamePlaceholder =
                     "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
                 roomName.text = roomNamePlaceholder
-            }else{
+            } else {
                 roomName.visibility = View.INVISIBLE
                 joinButton.visibility = View.INVISIBLE
             }
@@ -226,10 +226,16 @@ class FriendsAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                clear()
+                clearDataList()
                 addAll(filterResults.values as MutableList<Any>)
             }
         }
+    }
+
+    fun add(data: Any) {
+        adapterDataList.add(data)
+        adapterDataList.sortBy { it is UserModel }
+        notifyDataSetChanged()
     }
 
     fun addAll(data: MutableList<Any>) {
@@ -238,8 +244,12 @@ class FriendsAdapter(
         notifyDataSetChanged()
     }
 
-    fun clear() {
+    fun clearDataList() {
         adapterDataList.clear()
+        notifyDataSetChanged()
+    }
+
+    fun clearDataListFull() {
         adapterDataListFull.clear()
         notifyDataSetChanged()
     }
