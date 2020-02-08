@@ -1,5 +1,7 @@
 package vip.yazilim.p2g.android.ui.friends
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -58,7 +60,7 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.data.value?: mutableListOf(), this, this)
+        adapter = FriendsAdapter(viewModel.data.value ?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
@@ -123,30 +125,55 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
-        Log.v(LOG_TAG, "Accept - ${friendRequestModel.friendRequestUserModel?.user?.name}")
         P2GRequest.build(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, "Request cannot accepted")
+                    UIHelper.showSnackBarLong(root, msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
                     friendRequestModel.friendRequestUserModel?.let { adapter.add(it) }
-                    friendRequestModel.friendRequestUserModel?.let { adapter.adapterDataListFull.add(it)
+                    friendRequestModel.friendRequestUserModel?.let {
+                        adapter.adapterDataListFull.add(it)
                     }
                 }
             })
     }
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
-        Log.v(LOG_TAG, "Reject - ${friendRequestModel.friendRequestUserModel?.user?.name}")
+        P2GRequest.build(
+            friendRequestModel.friendRequest?.id?.let { ApiClient.build().reject(it) },
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, msg)
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
+                }
+            })
     }
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
+        P2GRequest.build(
+            friendRequestModel.friendRequest?.id?.let { ApiClient.build().ignore(it) },
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    Log.d(LOG_TAG, msg)
+                    UIHelper.showSnackBarLong(root, msg)
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
+                }
+            })
     }
 
     override fun onJoinClicked(room: Room?) {
@@ -154,7 +181,32 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onDeleteClicked(userModel: UserModel) {
-        Log.v(LOG_TAG, "Delete - ${userModel.user?.name}")
+        val dialogClickListener =
+            DialogInterface.OnClickListener { dialog, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        P2GRequest.build(
+                            userModel.user?.id?.let { ApiClient.build().deleteFriend(it) },
+                            object : Callback<Boolean> {
+                                override fun onError(msg: String) {
+                                    Log.d(LOG_TAG, msg)
+                                    UIHelper.showSnackBarLong(root, msg)
+                                }
+
+                                @Suppress("UNCHECKED_CAST")
+                                override fun onSuccess(obj: Boolean) {
+                                    adapter.remove(userModel)
+                                }
+                            })
+                    }
+                }
+            }
+
+        AlertDialog.Builder(context)
+            .setMessage("Are you sure you want to delete friend ?")
+            .setPositiveButton("Yes", dialogClickListener)
+            .setNegativeButton("No", dialogClickListener)
+            .show()
     }
 
     private fun loadFriendRequestModel() {
@@ -163,7 +215,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, "Friend requests cannot refreshed")
+                    UIHelper.showSnackBarLong(root, msg)
                     swipeContainer.isRefreshing = false
                 }
 
@@ -173,7 +225,6 @@ class FriendsFragment : FragmentBase(
                     adapter.adapterDataListFull.addAll(obj)
                 }
             })
-
     }
 
     private fun loadFriends() {
@@ -182,7 +233,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<MutableList<UserModel>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, "Friends cannot refreshed")
+                    UIHelper.showSnackBarLong(root, msg)
                     swipeContainer.isRefreshing = false
                 }
 

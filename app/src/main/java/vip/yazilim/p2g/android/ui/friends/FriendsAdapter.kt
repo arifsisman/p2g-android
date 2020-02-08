@@ -71,6 +71,8 @@ class FriendsAdapter(
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(profileImage)
+            }else{
+                profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user?.onlineStatus) {
@@ -96,6 +98,7 @@ class FriendsAdapter(
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         private val onlineStatus: ImageView =
             itemView.findViewById(R.id.online_status_online_image_view)
+        private val lock: ImageView = itemView.findViewById(R.id.lock_view)
 
         private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
@@ -111,14 +114,7 @@ class FriendsAdapter(
             val user = item.user
             val room = item.room
 
-            if (room != null) {
-                val roomNamePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
-                roomName.text = roomNamePlaceholder
-            } else {
-                roomName.visibility = View.INVISIBLE
-                joinButton.visibility = View.INVISIBLE
-            }
+
 
             userName.text = user?.name
 
@@ -127,6 +123,8 @@ class FriendsAdapter(
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(profileImage)
+            }else{
+                profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user?.onlineStatus) {
@@ -143,6 +141,24 @@ class FriendsAdapter(
                     onlineStatus.visibility = View.VISIBLE
                 }
             }
+
+            if (room != null) {
+                val roomNamePlaceholder =
+                    "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
+                roomName.text = roomNamePlaceholder
+                if (room.privateFlag) {
+                    lock.visibility = View.VISIBLE
+                    joinButton.visibility = View.INVISIBLE
+                } else {
+                    lock.visibility = View.INVISIBLE
+                    joinButton.visibility = View.VISIBLE
+                }
+            } else {
+                roomName.visibility = View.INVISIBLE
+                lock.visibility = View.INVISIBLE
+                joinButton.visibility = View.INVISIBLE
+            }
+
         }
     }
 

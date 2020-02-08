@@ -71,6 +71,8 @@ class RoomInvitesAdapter(
                 .load(user.imageUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.profileImage)
+        }else{
+            holder.profileImage.setImageResource(R.drawable.ic_profile_image)
         }
 
         val roomInviterPlaceholder =

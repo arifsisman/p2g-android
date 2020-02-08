@@ -105,8 +105,11 @@ interface Play2GetherWebApi {
     @GET("/api/friend/requests/{id}")
     fun getRequestById(@Path("id") friendRequestId: Long): Call<P2GResponse<List<User>>>
 
-    @POST("/api/friend/requests/{userId}/send")
-    fun send(@Path("userId") userId: String): Call<P2GResponse<Boolean>>
+    @POST("/api/friend/requests/{userId}/add")
+    fun addFriend(@Path("userId") userId: String): Call<P2GResponse<Boolean>>
+
+    @DELETE("/api/friend/requests/{userId}/delete")
+    fun deleteFriend(@Path("userId") userId: String): Call<P2GResponse<Boolean>>
 
     @PUT("/api/friend/requests/{id}/accept")
     fun accept(@Path("id") friendRequestId: Long): Call<P2GResponse<Boolean>>
