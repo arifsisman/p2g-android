@@ -50,6 +50,7 @@ class FriendsAdapter(
             friendRequestModel: FriendRequestModel,
             clickListener: OnItemClickListener
         ) {
+            itemView.setOnClickListener{ clickListener.onRowClicked(friendRequestModel.friendRequestUserModel) }
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
         }
@@ -71,7 +72,7 @@ class FriendsAdapter(
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(profileImage)
-            }else{
+            } else {
                 profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
@@ -104,9 +105,9 @@ class FriendsAdapter(
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
 
         private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener{ clickListener.onRowClicked(userModel) }
             deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
             joinButton.setOnClickListener { clickListener.onJoinClicked(userModel.room) }
-
         }
 
         override fun bindView(item: UserModel) {
@@ -123,7 +124,7 @@ class FriendsAdapter(
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(profileImage)
-            }else{
+            } else {
                 profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
@@ -168,6 +169,7 @@ class FriendsAdapter(
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
         fun onJoinClicked(room: Room?)
         fun onDeleteClicked(userModel: UserModel)
+        fun onRowClicked(userModel: UserModel?)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderBase<*> {

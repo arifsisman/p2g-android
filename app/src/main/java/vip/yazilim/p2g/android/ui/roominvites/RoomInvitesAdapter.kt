@@ -37,6 +37,7 @@ class RoomInvitesAdapter(
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
 
         fun bindEvent(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener{ clickListener.onRowClicked(roomInviteModel) }
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(roomInviteModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(roomInviteModel) }
         }
@@ -45,6 +46,7 @@ class RoomInvitesAdapter(
     interface OnItemClickListener {
         fun onAcceptClicked(roomInviteModel: RoomInviteModel)
         fun onRejectClicked(roomInviteModel: RoomInviteModel)
+        fun onRowClicked(roomInviteModel: RoomInviteModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {

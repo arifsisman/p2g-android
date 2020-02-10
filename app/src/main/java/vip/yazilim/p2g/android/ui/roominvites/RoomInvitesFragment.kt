@@ -23,6 +23,7 @@ import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
+import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
@@ -149,6 +150,19 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
                     adapter.remove(roomInviteModel)
                 }
             })
+    }
+
+    override fun onRowClicked(roomInviteModel: RoomInviteModel) {
+        val inviterId = roomInviteModel.roomInvite?.inviterId
+        lateinit var inviter: User
+        roomInviteModel.roomModel?.userList?.forEach {
+            if (it.id.equals(inviterId)) {
+                inviter = it
+            }
+        }
+
+        Log.v(LOG_TAG, inviter.name.toString())
+        //TODO implement!!
     }
 
     private fun refreshRoomInvitesEvent() {

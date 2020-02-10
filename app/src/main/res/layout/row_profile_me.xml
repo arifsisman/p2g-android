@@ -131,6 +131,7 @@
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_marginTop="18dp"
+            android:layout_marginEnd="4dp"
             android:contentDescription="@string/description_online_status"
             android:visibility="invisible"
             app:layout_constraintEnd_toStartOf="@+id/user_name_text_view"
@@ -143,14 +144,13 @@
             android:id="@+id/country_flag_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="78dp"
             android:contentDescription="@string/description_country_flag_image"
             android:paddingTop="4dp"
             android:paddingBottom="8dp"
             app:countryCode="FR"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
+            app:layout_constraintTop_toTopOf="@+id/profile_photo_image_view"
             tools:src="@drawable/flag_de" />
 
         <TextView

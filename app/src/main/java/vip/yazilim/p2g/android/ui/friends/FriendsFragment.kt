@@ -209,6 +209,11 @@ class FriendsFragment : FragmentBase(
             .show()
     }
 
+    override fun onRowClicked(userModel: UserModel?) {
+        Log.v(LOG_TAG, userModel?.user?.name.toString())
+        //TODO implement!!
+    }
+
     private fun loadFriendRequestModel() {
         P2GRequest.build(
             ApiClient.build().getFriendRequestModel(),
