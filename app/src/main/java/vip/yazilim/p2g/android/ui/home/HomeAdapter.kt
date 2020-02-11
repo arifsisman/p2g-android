@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -74,35 +74,8 @@ class HomeAdapter(
             holder.roomSongStatus.text =
                 view.resources.getString(R.string.placeholder_room_song_not_found)
         } else {
-            val roomNowPlayingPlaceholder =
-                view.resources.getString(R.string.placeholder_room_now_playing_song)
-            val roomPausedPlaceholder =
-                view.resources.getString(R.string.placeholder_room_paused_song)
-            val roomNextSongPlaceholder =
-                view.resources.getString(R.string.placeholder_room_next_song)
-
-            roomModel.songList?.forEach {
-                when (it.songStatus) {
-                    SongStatus.PLAYING.songStatus -> {
-                        val roomSongStatus =
-                            "$roomNowPlayingPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
-                        holder.roomSongStatus.text = roomSongStatus
-                        return
-                    }
-                    SongStatus.PAUSED.songStatus -> {
-                        val roomSongStatus =
-                            "$roomPausedPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
-                        holder.roomSongStatus.text = roomSongStatus
-                        return
-                    }
-                    SongStatus.NEXT.songStatus -> {
-                        val roomSongStatus =
-                            "$roomNextSongPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
-                        holder.roomSongStatus.text = roomSongStatus
-                        return
-                    }
-                }
-            }
+            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.songList)
+            holder.roomSongStatus.text = songStatus
         }
 
     }

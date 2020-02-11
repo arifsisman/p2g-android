@@ -47,7 +47,7 @@ class TokenAuthenticator : Authenticator {
                     override fun onSuccess(obj: TokenModel) {
                         SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                         SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
-                        updateAccessTokenOnPlay2Gether(obj.access_token)
+                        obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
                         Log.d(LOG_TAG, "Token refreshed")
                     }
                 })

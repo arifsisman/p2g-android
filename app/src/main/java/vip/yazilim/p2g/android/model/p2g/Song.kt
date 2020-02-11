@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.model.p2g
 import android.os.Parcel
 import android.os.Parcelable
 import org.threeten.bp.LocalDateTime
-import java.util.*
 
 /**
  * @author mustafaarifsisman - 26.01.2020

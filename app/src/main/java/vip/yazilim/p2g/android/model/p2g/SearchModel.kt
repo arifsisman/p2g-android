@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.model.p2g
 import android.os.Parcel
 import android.os.Parcelable
 import vip.yazilim.p2g.android.constant.enums.SearchType
-import java.util.*
 
 /**
  * @author mustafaarifsisman - 26.01.2020

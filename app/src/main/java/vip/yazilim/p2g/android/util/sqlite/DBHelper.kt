@@ -151,25 +151,25 @@ class DBHelper(context: Context) :
         sqliteDB.insert(TOKEN_TABLE_NAME, null, contentValues)
     }
 
-    fun readTokenModel(): TokenModel {
-        val tokenModelList = mutableListOf<TokenModel>()
-        val sqliteDB = this.readableDatabase
-        val query = "SELECT * FROM $TOKEN_TABLE_NAME"
-        val result = sqliteDB.rawQuery(query, null)
-        if (result.moveToFirst()) {
-            do {
-                val refreshToken = result.getString(result.getColumnIndex(COL_REFRESH_TOKEN))
-                val accessToken = result.getString(result.getColumnIndex(COL_ACCESS_TOKEN))
-
-                val tokenModel = TokenModel(accessToken, refreshToken)
-
-                tokenModelList.add(tokenModel)
-            } while (result.moveToNext())
-        }
-        result.close()
-        sqliteDB.close()
-        return tokenModelList.last()
-    }
+//    fun readTokenModel(): TokenModel {
+//        val tokenModelList = mutableListOf<TokenModel>()
+//        val sqliteDB = this.readableDatabase
+//        val query = "SELECT * FROM $TOKEN_TABLE_NAME"
+//        val result = sqliteDB.rawQuery(query, null)
+//        if (result.moveToFirst()) {
+//            do {
+//                val refreshToken = result.getString(result.getColumnIndex(COL_REFRESH_TOKEN))
+//                val accessToken = result.getString(result.getColumnIndex(COL_ACCESS_TOKEN))
+//
+//                val tokenModel = TokenModel(accessToken, refreshToken)
+//
+//                tokenModelList.add(tokenModel)
+//            } while (result.moveToNext())
+//        }
+//        result.close()
+//        sqliteDB.close()
+//        return tokenModelList.last()
+//    }
 
     fun deleteAllData() {
         val sqliteDB = this.writableDatabase
