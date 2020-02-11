@@ -28,18 +28,15 @@ class UserAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardView: CardView = itemView.findViewById(R.id.profile_me_card_view)
+        val cardView: CardView = itemView.findViewById(R.id.user_card_view)
         val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
-        val email: TextView = itemView.findViewById(R.id.email_text_view)
         val onlineStatus: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
         val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
         val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
-        val country: TextView = itemView.findViewById(R.id.country_text_view)
         val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
-        val spotifyId: TextView = itemView.findViewById(R.id.spotify_id_text_view)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
@@ -70,16 +67,10 @@ class UserAdapter(
                 "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
                     TimeHelper.dateTimeFormatterFull
                 )}"
-            val profileEmailPlaceholder =
-                "${view.resources.getString(R.string.placeholder_email)} ${user.email}"
             val profileSongAndRoomStatusPlaceholder =
                 "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${userModel.room?.name}"
             val profileAnthemPlaceholder =
                 "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
-            val profileSpotifyAccountIdPlaceholder =
-                "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
-            val profileCountryPlaceholder =
-                "${view.resources.getString(R.string.placeholder_country)} ${user.countryCode}"
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
@@ -98,8 +89,6 @@ class UserAdapter(
 
             holder.userName.text = profileNamePlaceholder
             holder.memberSince.text = memberSincePlaceholder
-            holder.email.text = profileEmailPlaceholder
-            holder.country.text = profileCountryPlaceholder
 
             if (user.anthem == null) {
                 holder.anthem.visibility = View.INVISIBLE
@@ -107,8 +96,6 @@ class UserAdapter(
                 holder.anthem.visibility = View.VISIBLE
                 holder.anthem.text = profileAnthemPlaceholder
             }
-
-            holder.spotifyId.text = profileSpotifyAccountIdPlaceholder
 
             if (userModel.room != null) {
                 holder.songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder

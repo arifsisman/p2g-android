@@ -7,7 +7,7 @@
     app:cardCornerRadius="4dp"
     app:cardElevation="0dp"
     android:fitsSystemWindows="true"
-    android:id="@+id/profile_me_card_view"
+    android:id="@+id/profile_card_view"
     android:visibility="invisible"
     >
 

@@ -28,7 +28,7 @@ class ProfileAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardView: CardView = itemView.findViewById(R.id.profile_me_card_view)
+        val cardView: CardView = itemView.findViewById(R.id.profile_card_view)
         val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
         val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
@@ -43,7 +43,7 @@ class ProfileAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_profile_me, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_profile, parent, false)
         return MViewHolder(view)
     }
 

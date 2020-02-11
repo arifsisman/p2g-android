@@ -21,19 +21,21 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
 
     private lateinit var viewModel: UserViewModel
     private lateinit var adapter: UserAdapter
+    private lateinit var userModel: UserModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        val bundle = this.arguments
+        if (bundle != null) {
+            userModel = bundle.getParcelable("userModel")!!
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        val bundle = this.arguments
-        if (bundle != null) {
-            val userModel = bundle.getParcelable<UserModel>("userModel")
-            userModel?.user?.id?.let { viewModel.loadFriendsCount(it) }
-        }
+        userModel.user?.id?.let { viewModel.loadFriendsCount(it) }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -50,7 +52,7 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = UserAdapter(UserModel(), mutableListOf())
+        adapter = UserAdapter(userModel, mutableListOf())
         recyclerView.adapter = adapter
     }
 
