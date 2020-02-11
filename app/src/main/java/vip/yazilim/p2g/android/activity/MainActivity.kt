@@ -75,6 +75,18 @@ class MainActivity : AppCompatActivity() {
         connectRoomWebSocket(1)
     }
 
+    override fun onBackPressed() {
+        when (supportFragmentManager.fragments[0].javaClass.simpleName) {
+            "FriendsFragment" -> {
+                Log.v(LOG_TAG, "back from friends")
+            }
+            "RoomInvitesFragment" -> {
+                Log.v(LOG_TAG, "back from room invites")
+            }
+            else -> supportFragmentManager.popBackStack()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         return true
