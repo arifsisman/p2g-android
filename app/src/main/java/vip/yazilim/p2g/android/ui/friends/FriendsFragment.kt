@@ -25,7 +25,7 @@ import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
-import vip.yazilim.p2g.android.ui.profile.ProfileFragment
+import vip.yazilim.p2g.android.ui.user.UserFragment
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 
@@ -212,9 +212,15 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onRowClicked(userModel: UserModel?) {
+        val bundle = Bundle()
+        bundle.putParcelable("userModel", userModel)
+
+        val userFragment = UserFragment()
+        userFragment.arguments = bundle
+
         parentFragmentManager
             .beginTransaction()
-            .replace(container.id, ProfileFragment())
+            .replace(container.id, userFragment)
             .addToBackStack("FriendsFragment")
             .commit()
     }
