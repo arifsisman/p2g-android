@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -76,14 +77,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        when (supportFragmentManager.fragments[0].javaClass.simpleName) {
-            "FriendsFragment" -> {
-                Log.v(LOG_TAG, "back from friends")
-            }
-            "RoomInvitesFragment" -> {
-                Log.v(LOG_TAG, "back from room invites")
-            }
-            else -> supportFragmentManager.popBackStack()
+        val fm: FragmentManager = supportFragmentManager
+        if (fm.backStackEntryCount > 0) {
+            Log.i("MainActivity", "popping backstack")
+            fm.popBackStackImmediate()
+        } else {
+            Log.i("MainActivity", "nothing on backstack, calling super")
+            super.onBackPressed()
         }
     }
 
@@ -99,8 +99,15 @@ class MainActivity : AppCompatActivity() {
                 val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(loginIntent)
             }
+            R.id.home -> {
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    supportFragmentManager.popBackStack()
+                } else {
+                    super.onBackPressed()
+                }
+            }
         }
-        return false
+        return true
     }
 
     override fun onDestroy() {

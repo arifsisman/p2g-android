@@ -10,14 +10,14 @@ import android.os.Parcelable
 data class TokenModel(
     val access_token: String?,
     val token_type: String?,
-    val expires_in: Int?,
+    val expires_in: Int,
     val refresh_token: String?,
     val scope: String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
-        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString()
     )
@@ -25,7 +25,7 @@ data class TokenModel(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(access_token)
         parcel.writeString(token_type)
-        parcel.writeValue(expires_in)
+        parcel.writeInt(expires_in)
         parcel.writeString(refresh_token)
         parcel.writeString(scope)
     }
