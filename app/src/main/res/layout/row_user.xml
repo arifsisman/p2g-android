@@ -2,14 +2,13 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_card_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="0dp"
     android:fitsSystemWindows="true"
-    android:id="@+id/user_card_view"
     android:visibility="invisible"
-    >
+    app:cardCornerRadius="4dp"
+    app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -113,15 +112,16 @@
 
         <com.haipq.android.flagkit.FlagImageView
             android:id="@+id/country_flag_image_view"
-            android:layout_width="wrap_content"
+            android:layout_width="22dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="78dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="18dp"
             android:contentDescription="@string/description_country_flag_image"
-            android:paddingTop="4dp"
-            android:paddingBottom="8dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
             app:countryCode="FR"
-            app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
-            app:layout_constraintTop_toTopOf="@+id/profile_photo_image_view"
+            app:layout_constraintStart_toEndOf="@+id/user_name_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
             tools:src="@drawable/flag_de" />
 
         <TextView

@@ -9,7 +9,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,11 +45,6 @@ class FriendsFragment : FragmentBase(
 
     override fun onResume() {
         super.onResume()
-
-        val actionBar = (activity as AppCompatActivity?)!!.supportActionBar
-        actionBar?.title = view?.resources?.getString(R.string.title_friends)
-        actionBar?.setDisplayHomeAsUpEnabled(false)
-
         adapter.clearDataList()
         adapter.clearDataListFull()
         viewModel.loadFriendRequestModel()

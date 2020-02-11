@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.ui.user
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper
 
 /**
@@ -21,6 +24,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
  */
 class UserAdapter(
     private var userModel: UserModel,
+    private var roomModel: RoomModel?,
     private var friends: MutableList<UserModel>
 ) :
     RecyclerView.Adapter<UserAdapter.MViewHolder>() {
@@ -48,8 +52,8 @@ class UserAdapter(
         return 1
     }
 
-    fun update(data: UserModel) {
-        userModel = data
+    fun update(data: RoomModel) {
+        roomModel = data
         notifyDataSetChanged()
     }
 
@@ -58,26 +62,26 @@ class UserAdapter(
         notifyDataSetChanged()
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         val user = userModel.user
+        val room = userModel.room
 
         if (user != null) {
             val profileNamePlaceholder = user.name
+            val profileSongAndRoomStatusPlaceholder = "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room?.name}"
+            val profileAnthemPlaceholder = "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
             val memberSincePlaceholder =
                 "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
                     TimeHelper.dateTimeFormatterFull
                 )}"
-            val profileSongAndRoomStatusPlaceholder =
-                "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${userModel.room?.name}"
-            val profileAnthemPlaceholder =
-                "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
                     .into(holder.profileImage)
-            }else{
+            } else {
                 holder.profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
@@ -97,12 +101,22 @@ class UserAdapter(
                 holder.anthem.text = profileAnthemPlaceholder
             }
 
-            if (userModel.room != null) {
-                holder.songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
-            } else {
-                val songAndRoomStatusString =
-                    view.resources.getString(R.string.placeholder_room_user_not_found)
-                holder.songAndRoomStatus.text = songAndRoomStatusString
+
+            when {
+                roomModel == null -> {
+                    holder.songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
+                }
+                room == null -> {
+                    val songAndRoomStatusString = view.resources.getString(R.string.placeholder_room_user_not_found)
+                    holder.songAndRoomStatus.text = songAndRoomStatusString
+                }
+                roomModel != null -> {
+                    holder.songAndRoomStatus.text =
+                        "$profileSongAndRoomStatusPlaceholder " + RoomHelper.getRoomSongStatus(
+                            view,
+                            roomModel?.songList
+                        )
+                }
             }
 
             when (user.onlineStatus) {

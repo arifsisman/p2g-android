@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -71,20 +70,24 @@ class MainActivity : AppCompatActivity() {
 //        overridePendingTransition(R.anim.from_right_out, R.anim.from_left_in)
 //    }
 
-    override fun onResume() {
-        super.onResume()
-        connectRoomWebSocket(1)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        connectRoomWebSocket(1)
+//    }
 
     override fun onBackPressed() {
-        val fm: FragmentManager = supportFragmentManager
-        if (fm.backStackEntryCount > 0) {
-            Log.i("MainActivity", "popping backstack")
-            fm.popBackStackImmediate()
-        } else {
-            Log.i("MainActivity", "nothing on backstack, calling super")
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 0) {
             super.onBackPressed()
+        } else {
+            supportFragmentManager.popBackStack()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        super.onSupportNavigateUp()
+        onBackPressed()
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -98,13 +101,6 @@ class MainActivity : AppCompatActivity() {
                 db.deleteAllData()
                 val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(loginIntent)
-            }
-            R.id.home -> {
-                if (supportFragmentManager.backStackEntryCount > 0) {
-                    supportFragmentManager.popBackStack()
-                } else {
-                    super.onBackPressed()
-                }
             }
         }
         return true
