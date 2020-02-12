@@ -251,6 +251,9 @@ class FriendsAdapter(
     fun add(data: Any) {
         adapterDataList.add(data)
         adapterDataList.sortBy { it is UserModel }
+        if (data is UserModel) {
+            adapterDataList.sortBy { data.user?.onlineStatus }
+        }
         notifyDataSetChanged()
     }
 

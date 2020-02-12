@@ -77,9 +77,7 @@ class RoomInvitesAdapter(
             holder.profileImage.setImageResource(R.drawable.ic_profile_image)
         }
 
-        val roomInviterPlaceholder =
-            "${view.resources.getString(R.string.placeholder_room_inviter)} ${user.name}"
-        holder.roomInviter.text = roomInviterPlaceholder
+        holder.roomInviter.text = user.name
 
         val roomNamePlaceholder =
             "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel?.room?.name}"

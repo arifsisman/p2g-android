@@ -17,13 +17,14 @@ import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutEmpty
 import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
-import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
@@ -154,15 +155,19 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) {
         val inviterId = roomInviteModel.roomInvite?.inviterId
-        lateinit var inviter: User
-        roomInviteModel.roomModel?.userList?.forEach {
-            if (it.id.equals(inviterId)) {
-                inviter = it
-            }
-        }
 
-        Log.v(LOG_TAG, inviter.name.toString())
-        //TODO implement!!
+        P2GRequest.build(
+            inviterId?.let { ApiClient.build().getUserModel(it) },
+            object : Callback<UserModel> {
+                override fun onError(msg: String) {
+                }
+
+                override fun onSuccess(obj: UserModel) {
+                    val intent = Intent(activity, UserActivity::class.java)
+                    intent.putExtra("userModel", obj)
+                    startActivity(intent)
+                }
+            })
     }
 
     private fun refreshRoomInvitesEvent() {
