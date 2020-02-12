@@ -18,7 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".activity.UserActivity" />
+        <activity
+            android:name=".activity.UserActivity"
+        />
 
         <activity
             android:name=".activity.LoginActivity"

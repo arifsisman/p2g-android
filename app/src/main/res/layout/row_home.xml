@@ -73,11 +73,11 @@
             android:layout_width="22dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
             android:contentDescription="@string/description_country_flag_image"
             app:countryCode="TR"
+            app:layout_constraintBottom_toBottomOf="@+id/room_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/room_name"
             tools:src="@drawable/flag_de" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

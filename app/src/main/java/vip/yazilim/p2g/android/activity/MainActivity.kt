@@ -75,21 +75,6 @@ class MainActivity : AppCompatActivity() {
 //        connectRoomWebSocket(1)
 //    }
 
-    override fun onBackPressed() {
-        val count = supportFragmentManager.backStackEntryCount
-        if (count == 0) {
-            super.onBackPressed()
-        } else {
-            supportFragmentManager.popBackStack()
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        super.onSupportNavigateUp()
-        onBackPressed()
-        return true
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         return true

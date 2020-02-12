@@ -213,18 +213,6 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onRowClicked(userModel: UserModel?) {
-//        val bundle = Bundle()
-//        bundle.putParcelable("userModel", userModel)
-//
-//        val userFragment = UserFragment()
-//        userFragment.arguments = bundle
-//
-//        parentFragmentManager
-//            .beginTransaction()
-//            .replace(container.id, userFragment)
-//            .addToBackStack("FriendsFragment")
-//            .commit()
-
         val intent = Intent(activity, UserActivity::class.java)
         intent.putExtra("userModel", userModel)
         startActivity(intent)
@@ -266,11 +254,5 @@ class FriendsFragment : FragmentBase(
                 }
             })
     }
-
-//    private fun startMainActivity(userModel: UserModel) {
-//        val startMainIntent = Intent(activity, UserActivity::class.java)
-//        startMainIntent.putExtra("userModel", userModel)
-//        startActivity(startMainIntent)
-//    }
 
 }

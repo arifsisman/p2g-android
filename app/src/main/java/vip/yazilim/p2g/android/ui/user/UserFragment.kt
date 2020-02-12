@@ -2,7 +2,6 @@ package vip.yazilim.p2g.android.ui.user
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
 import androidx.lifecycle.Observer
@@ -32,31 +31,12 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
         setHasOptionsMenu(true)
 
         userModel = (activity as UserActivity).userModel
-//        val bundle = this.arguments
-//        if (bundle != null) {
-//            userModel = bundle.getParcelable("userModel")!!
-//        }
-
     }
 
     override fun onResume() {
         super.onResume()
         userModel?.user?.id?.let { viewModel.loadFriendsCount(it) }
         userModel?.room?.id?.let { viewModel.loadRoomModel(it) }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
-        view.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                parentFragmentManager.popBackStack()
-                return@OnKeyListener true
-            }
-            false
-        })
     }
 
 
