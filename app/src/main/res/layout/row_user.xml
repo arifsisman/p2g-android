@@ -51,12 +51,18 @@
 
         <View
             android:id="@+id/separator1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
+            style="@style/Divider.Horizontal"
             android:layout_marginTop="16dp"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@+id/friend_counts_text_view"
-            tools:layout_editor_absoluteX="0dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/friend_counts_text_view" />
+
+        <View
+            android:id="@+id/separator2"
+            style="@style/Divider.Horizontal"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/song_room_status_text_view" />
 
         <ImageView
             android:id="@+id/music_note_image_view"
@@ -77,15 +83,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator1" />
-
-        <View
-            android:id="@+id/separator2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@+id/song_room_status_text_view"
-            tools:layout_editor_absoluteX="0dp" />
 
         <TextView
             android:id="@+id/anthem_text_view"

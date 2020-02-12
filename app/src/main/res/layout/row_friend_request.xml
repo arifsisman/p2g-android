@@ -41,11 +41,12 @@
             android:id="@+id/profile_photo_image_view"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:contentDescription="@string/description_profile_image"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.555"
             app:srcCompat="@drawable/ic_profile_image" />
 
         <ImageButton
@@ -81,6 +82,26 @@
             app:layout_constraintBottom_toBottomOf="@+id/profile_photo_image_view"
             app:layout_constraintEnd_toEndOf="@+id/profile_photo_image_view"
             app:srcCompat="@android:drawable/presence_online" />
+
+        <View
+            android:id="@+id/view"
+            style="@style/Divider.Vertical"
+            android:layout_height="53dp"
+            android:layout_marginStart="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/friend_request_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/friend_request_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="2dp"
+            android:contentDescription="@string/description_friend_request_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_person_add_black_24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

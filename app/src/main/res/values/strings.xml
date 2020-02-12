@@ -60,6 +60,7 @@
     <string name="placeholder_member_since">Member since</string>
     <string name="placeholder_user_name">Username</string>
     <string name="placeholder_friend_request_date">Request Date:</string>
+    <string name="description_friend_request_icon">Friend Request Icon</string>
 
 
 </resources>
