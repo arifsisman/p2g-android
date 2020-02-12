@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -24,23 +25,24 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
 
     private lateinit var viewModel: UserViewModel
     private lateinit var adapter: UserAdapter
-    private lateinit var userModel: UserModel
+    private var userModel: UserModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        val bundle = this.arguments
-        if (bundle != null) {
-            userModel = bundle.getParcelable("userModel")!!
-        }
+        userModel = (activity as UserActivity).userModel
+//        val bundle = this.arguments
+//        if (bundle != null) {
+//            userModel = bundle.getParcelable("userModel")!!
+//        }
 
     }
 
     override fun onResume() {
         super.onResume()
-        userModel.user?.id?.let { viewModel.loadFriendsCount(it) }
-        userModel.room?.id?.let { viewModel.loadRoomModel(it) }
+        userModel?.user?.id?.let { viewModel.loadFriendsCount(it) }
+        userModel?.room?.id?.let { viewModel.loadRoomModel(it) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

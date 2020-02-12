@@ -23,7 +23,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class UserAdapter(
-    private var userModel: UserModel,
+    private var userModel: UserModel?,
     private var roomModel: RoomModel?,
     private var friends: MutableList<UserModel>
 ) :
@@ -64,8 +64,8 @@ class UserAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        val user = userModel.user
-        val room = userModel.room
+        val user = userModel?.user
+        val room = userModel?.room
 
         if (user != null) {
             val profileNamePlaceholder = user.name

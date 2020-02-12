@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.ui.friends
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutEmpty
 import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
@@ -25,7 +27,6 @@ import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
-import vip.yazilim.p2g.android.ui.user.UserFragment
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 
@@ -212,17 +213,21 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onRowClicked(userModel: UserModel?) {
-        val bundle = Bundle()
-        bundle.putParcelable("userModel", userModel)
+//        val bundle = Bundle()
+//        bundle.putParcelable("userModel", userModel)
+//
+//        val userFragment = UserFragment()
+//        userFragment.arguments = bundle
+//
+//        parentFragmentManager
+//            .beginTransaction()
+//            .replace(container.id, userFragment)
+//            .addToBackStack("FriendsFragment")
+//            .commit()
 
-        val userFragment = UserFragment()
-        userFragment.arguments = bundle
-
-        parentFragmentManager
-            .beginTransaction()
-            .replace(container.id, userFragment)
-            .addToBackStack("FriendsFragment")
-            .commit()
+        val intent = Intent(activity, UserActivity::class.java)
+        intent.putExtra("userModel", userModel)
+        startActivity(intent)
     }
 
     private fun loadFriendRequestModel() {
@@ -261,5 +266,11 @@ class FriendsFragment : FragmentBase(
                 }
             })
     }
+
+//    private fun startMainActivity(userModel: UserModel) {
+//        val startMainIntent = Intent(activity, UserActivity::class.java)
+//        startMainIntent.putExtra("userModel", userModel)
+//        startActivity(startMainIntent)
+//    }
 
 }
