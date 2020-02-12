@@ -50,7 +50,7 @@ class FriendsAdapter(
             friendRequestModel: FriendRequestModel,
             clickListener: OnItemClickListener
         ) {
-            itemView.setOnClickListener{ clickListener.onRowClicked(friendRequestModel.friendRequestUserModel) }
+            itemView.setOnClickListener { clickListener.onRowClicked(friendRequestModel.friendRequestUserModel) }
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
         }
@@ -105,7 +105,7 @@ class FriendsAdapter(
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
 
         private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener{ clickListener.onRowClicked(userModel) }
+            itemView.setOnClickListener { clickListener.onRowClicked(userModel) }
             deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
             joinButton.setOnClickListener { clickListener.onJoinClicked(userModel.room) }
         }
@@ -149,10 +149,8 @@ class FriendsAdapter(
                 roomName.text = roomNamePlaceholder
                 if (room.privateFlag) {
                     lock.visibility = View.VISIBLE
-                    joinButton.visibility = View.INVISIBLE
                 } else {
                     lock.visibility = View.INVISIBLE
-                    joinButton.visibility = View.VISIBLE
                 }
             } else {
                 roomName.visibility = View.INVISIBLE

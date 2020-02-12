@@ -102,10 +102,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/placeholder_anthem"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/country_text_view"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/spotify_id_text_view" />
 
         <TextView
             android:id="@+id/spotify_id_text_view"
@@ -115,15 +113,6 @@
             android:text="@string/placeholder_spotify_account_id"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/email_text_view" />
-
-        <TextView
-            android:id="@+id/country_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/placeholder_country"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spotify_id_text_view" />
 
         <ImageView
             android:id="@+id/online_status_online_image_view"

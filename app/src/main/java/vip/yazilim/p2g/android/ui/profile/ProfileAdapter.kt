@@ -37,7 +37,6 @@ class ProfileAdapter(
         val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
         val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
-        val country: TextView = itemView.findViewById(R.id.country_text_view)
         val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
         val spotifyId: TextView = itemView.findViewById(R.id.spotify_id_text_view)
     }
@@ -78,8 +77,6 @@ class ProfileAdapter(
                 "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
             val profileSpotifyAccountIdPlaceholder =
                 "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
-            val profileCountryPlaceholder =
-                "${view.resources.getString(R.string.placeholder_country)} ${user.countryCode}"
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
@@ -99,7 +96,6 @@ class ProfileAdapter(
             holder.userName.text = profileNamePlaceholder
             holder.memberSince.text = memberSincePlaceholder
             holder.email.text = profileEmailPlaceholder
-            holder.country.text = profileCountryPlaceholder
 
             if (user.anthem == null) {
                 holder.anthem.visibility = View.INVISIBLE
