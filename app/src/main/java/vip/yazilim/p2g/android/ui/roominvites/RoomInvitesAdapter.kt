@@ -144,6 +144,12 @@ class RoomInvitesAdapter(
         notifyDataSetChanged()
     }
 
+    fun add(data: RoomInviteModel){
+        roomInviteModels.add(data)
+        roomInviteModelsFull.add(data)
+        notifyDataSetChanged()
+    }
+
     fun remove(data: RoomInviteModel) {
         roomInviteModels.remove(data)
         roomInviteModelsFull.remove(data)
