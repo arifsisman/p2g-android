@@ -21,6 +21,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.websocket.ChatMessage
+import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter.registerLocalDateTime
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient.Companion.getRoomWebSocketClient
@@ -55,9 +56,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // custom code
-//        user = db.readUser()
 //        connectRoomWebSocket(1)
+
+        val user = intent.getParcelableExtra<User>("user")
+        user?.id?.let { startUserWebSocket(it) }
     }
 
 //    override fun startActivity(intent: Intent?) {
@@ -96,6 +98,12 @@ class MainActivity : AppCompatActivity() {
         if (this::roomWSClient.isInitialized) {
             roomWSClient.disconnect()
         }
+    }
+
+    private fun startUserWebSocket(userId: String) {
+        val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
+        intent.putExtra("userId", userId)
+        startService(intent)
     }
 
     @SuppressLint("CheckResult")

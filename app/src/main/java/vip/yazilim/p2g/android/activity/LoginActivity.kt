@@ -26,7 +26,6 @@ import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
-import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 
 /**
@@ -36,7 +35,7 @@ import vip.yazilim.p2g.android.util.sqlite.DBHelper
 class LoginActivity : AppCompatActivity() {
 
     private var mCall: Call? = null
-    private val db by lazy { DBHelper(this) }
+//    private val db by lazy { DBHelper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
                 override fun onSuccess(obj: TokenModel) {
                     SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                     SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
-                    db.insertData(obj)
+//                    db.insertData(obj)
                     loginToPlay2Gether(obj)
                 }
             }
@@ -151,7 +150,7 @@ class LoginActivity : AppCompatActivity() {
 //                        UIHelper.showSnackBarLong(findViewById(android.R.id.content), SPOTIFY_PRODUCT_TYPE_ERROR)
 
                     } else {
-                        db.insertData(obj)
+//                        db.insertData(obj)
                         UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
 //                        UIHelper.showSnackBarLong(findViewById(android.R.id.content), "Logged in as ${obj.name}")
                         startMainActivity(obj, tokenModel)

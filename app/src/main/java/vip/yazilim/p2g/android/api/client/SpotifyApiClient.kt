@@ -15,7 +15,7 @@ object SpotifyApiClient {
 
     fun build(): SpotifyWebApi {
         val httpClient = OkHttpClient.Builder()
-        httpClient.addInterceptor(interceptor())
+        httpClient.addInterceptor(loggingInterceptor())
 
         val builder: Retrofit.Builder = Retrofit.Builder()
             .baseUrl(ApiConstants.SPOTIFY_BASE_URL)
@@ -25,7 +25,7 @@ object SpotifyApiClient {
         return retrofit.create(SpotifyWebApi::class.java) as SpotifyWebApi
     }
 
-    private fun interceptor(): HttpLoggingInterceptor {
+    private fun loggingInterceptor(): HttpLoggingInterceptor {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return httpLoggingInterceptor
