@@ -46,8 +46,8 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         override fun onReceive(context: Context?, intent: Intent?) {
             val roomInviteModel = intent?.getParcelableExtra<RoomInviteModel>("roomInviteModel")
             roomInviteModel?.let {
-                adapter.roomInviteModelsFull.add(it)
                 adapter.add(it)
+                adapter.roomInviteModelsFull.add(it)
             }
         }
     }
@@ -87,11 +87,11 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
     }
 
     // Observers
-    private val renderRoomInviteModel = Observer<List<RoomInviteModel>> {
+    private val renderRoomInviteModel = Observer<MutableList<RoomInviteModel>> {
         Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
-        adapter.roomInviteModelsFull = it as MutableList<RoomInviteModel>
+        adapter.roomInviteModelsFull.addAll(it)
         adapter.update(it)
     }
 
@@ -202,7 +202,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
                 override fun onSuccess(obj: MutableList<RoomInviteModel>) {
                     adapter.update(obj)
-                    adapter.roomInviteModelsFull = obj
+                    adapter.roomInviteModelsFull.addAll(obj)
                     swipeContainer.isRefreshing = false
                 }
             })

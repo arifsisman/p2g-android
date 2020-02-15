@@ -44,17 +44,18 @@ class UserWebSocketService : Service() {
     private val serviceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Log.v(TAG, "Sending broadcast to activity")
-            sendBroadcastRoomInvite()
+            sendBroadcast()
         }
     }
 
-    private fun sendBroadcastRoomInvite() {
+    private fun sendBroadcast() {
         val intent = Intent()
         intent.action = ACTION_STRING_ACTIVITY
         sendBroadcast(intent)
     }
 
     private fun sendBroadcastRoomInvite(roomInviteModel: RoomInviteModel) {
+        Log.v(TAG, "Sending broadcastRoomInvite to fragment")
         val intent = Intent()
         intent.action = ACTION_ROOM_INVITE
         intent.putExtra("roomInviteModel", roomInviteModel)
