@@ -1,10 +1,7 @@
 package vip.yazilim.p2g.android.activity
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -40,16 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var roomWSClient: StompClient
 
     companion object {
-        private val TAG = MainActivity::class.simpleName
-        private const val ACTION_STRING_SERVICE = "ToService"
-        private const val ACTION_STRING_ACTIVITY = "ToActivity"
-    }
-
-    private val activityReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-//            Toast.makeText(applicationContext, "received message in activity..!", Toast.LENGTH_SHORT).show()
-            Log.v(TAG, "received message in activity..!")
-        }
+        private val TAG = this::class.simpleName
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,49 +59,20 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val intentFilter = IntentFilter(ACTION_STRING_ACTIVITY)
-        //Map the intent filter to the receiver
-        registerReceiver(activityReceiver, intentFilter)
-
         val user = intent.getParcelableExtra<User>("user")
-        user?.id?.let { startUserWebSocket(it) }
-        sendBroadcast()
+        user?.id?.let {
+            val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
+            intent.putExtra("userId", it)
+            startService(intent)
+        }
     }
 
-//    /** Called when the activity is first created.  */
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.main)
-//        //STEP2: register the receiver
-//        if (activityReceiver != null) { //Create an intent filter to listen to the broadcast sent with the action "ACTION_STRING_ACTIVITY"
-//            val intentFilter = IntentFilter(ACTION_STRING_ACTIVITY)
-//            //Map the intent filter to the receiver
-//            registerReceiver(activityReceiver, intentFilter)
-//        }
-//        //Start the service on launching the application
-//        startService(Intent(this, MyService::class.java))
-//        findViewById<View>(R.id.button).setOnClickListener(object : OnClickListener() {
-//            fun onClick(v: View?) {
-//                Log.d("SampleActivity", "Sending broadcast to service")
-//                sendBroadcast()
-//            }
-//        })
-//    }
-
-//    override fun startActivity(intent: Intent?) {
-//        super.startActivity(intent)
-//        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out)
-//    }
-//
-//    override fun finish() {
-//        super.finish()
-//        overridePendingTransition(R.anim.from_right_out, R.anim.from_left_in)
-//    }
-
-//    override fun onResume() {
-//        super.onResume()
-//        connectRoomWebSocket(1)
-//    }
+    override fun onDestroy() {
+        super.onDestroy()
+        if (this::roomWSClient.isInitialized) {
+            roomWSClient.disconnect()
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
@@ -129,19 +88,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return true
-    }
-
-    private fun startUserWebSocket(userId: String) {
-        val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
-        intent.putExtra("userId", userId)
-        startService(intent)
-    }
-
-    //send broadcast from activity to all receivers listening to the action "ACTION_STRING_SERVICE"
-    private fun sendBroadcast() {
-        val intent = Intent()
-        intent.action = ACTION_STRING_SERVICE
-        sendBroadcast(intent)
     }
 
     @SuppressLint("CheckResult")
@@ -192,10 +138,4 @@ class MainActivity : AppCompatActivity() {
         roomWSClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (this::roomWSClient.isInitialized) {
-            roomWSClient.disconnect()
-        }
-    }
 }

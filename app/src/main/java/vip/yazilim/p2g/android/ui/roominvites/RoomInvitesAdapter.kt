@@ -13,7 +13,6 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.util.glide.GlideApp
 
-
 /**
  * @author mustafaarifsisman - 03.02.2020
  * @contact mustafaarifsisman@gmail.com
@@ -146,7 +145,6 @@ class RoomInvitesAdapter(
 
     fun add(data: RoomInviteModel){
         roomInviteModels.add(data)
-        roomInviteModelsFull.add(data)
         notifyDataSetChanged()
     }
 
@@ -191,5 +189,4 @@ class RoomInvitesAdapter(
             }
         }
     }
-
 }

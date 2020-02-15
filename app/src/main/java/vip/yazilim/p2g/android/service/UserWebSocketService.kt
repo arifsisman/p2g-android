@@ -16,8 +16,8 @@ import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
-import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.RoomInvite
+import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 
@@ -31,9 +31,10 @@ class UserWebSocketService : Service() {
     private lateinit var userWSClient: StompClient
 
     companion object {
-        private val TAG = UserWebSocketService::class.simpleName
+        private val TAG = this::class.simpleName
         private const val ACTION_STRING_SERVICE = "ToService"
         private const val ACTION_STRING_ACTIVITY = "ToActivity"
+        private const val ACTION_ROOM_INVITE = "RoomInvite"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -42,22 +43,31 @@ class UserWebSocketService : Service() {
 
     private val serviceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-//            Toast.makeText(applicationContext, "received message in service..!", Toast.LENGTH_SHORT).show()
             Log.v(TAG, "Sending broadcast to activity")
-            sendBroadcast()
+            sendBroadcastRoomInvite()
         }
     }
 
-//    override fun onCreate() {
-//        super.onCreate()
-//        Log.v(TAG, "onCreate")
-//        //STEP2: register the receiver
-//
-//        //Create an intent filter to listen to the broadcast sent with the action "ACTION_STRING_SERVICE"
-//        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
-//        //Map the intent filter to the receiver
-//        registerReceiver(serviceReceiver, intentFilter)
-//    }
+    private fun sendBroadcastRoomInvite() {
+        val intent = Intent()
+        intent.action = ACTION_STRING_ACTIVITY
+        sendBroadcast(intent)
+    }
+
+    private fun sendBroadcastRoomInvite(roomInviteModel: RoomInviteModel) {
+        val intent = Intent()
+        intent.action = ACTION_ROOM_INVITE
+        intent.putExtra("roomInviteModel", roomInviteModel)
+        sendBroadcast(intent)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.v(TAG, "onCreate")
+
+        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
+        registerReceiver(serviceReceiver, intentFilter)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -71,11 +81,6 @@ class UserWebSocketService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //Create an intent filter to listen to the broadcast sent with the action "ACTION_STRING_SERVICE"
-        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
-        //Map the intent filter to the receiver
-        registerReceiver(serviceReceiver, intentFilter)
-
         userId = intent?.getStringExtra("userId")
         userId?.run {
             connectWebSocket(this)
@@ -114,24 +119,18 @@ class UserWebSocketService : Service() {
         userWSClient.run {
             topic(destinationPath)
                 .subscribe({
-                    Log.v(GeneralConstants.LOG_TAG, it.payload)
+                    Log.v(TAG, it.payload)
 
                     val gsonBuilder = GsonBuilder()
                     val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
 
-                    val roomInvite = gson.fromJson(it.payload, RoomInvite::class.java)
+                    val roomInviteModel = gson.fromJson(it.payload, RoomInviteModel::class.java)
 
-                    sendBroadcast()
+                    sendBroadcastRoomInvite(roomInviteModel)
 
-                    showInviteNotification(roomInvite)
-                }, { t: Throwable? -> Log.v(GeneralConstants.LOG_TAG, t?.message.toString()) })
+                    roomInviteModel.roomInvite?.let { it1 -> showInviteNotification(it1) }
+                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }
-    }
-
-    private fun sendBroadcast() {
-        val intent = Intent()
-        intent.action = ACTION_STRING_ACTIVITY
-        sendBroadcast(intent)
     }
 
     private fun showInviteNotification(roomInvite: RoomInvite) {

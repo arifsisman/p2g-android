@@ -1,6 +1,9 @@
 package vip.yazilim.p2g.android.ui.roominvites
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -21,7 +24,6 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
-import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -35,12 +37,30 @@ import vip.yazilim.p2g.android.util.helper.UIHelper
 class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragment_room_invites),
     RoomInvitesAdapter.OnItemClickListener {
 
+    companion object {
+        private val TAG = this::class.simpleName
+        private const val ACTION_ROOM_INVITE = "RoomInvite"
+    }
+
+    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val roomInviteModel = intent?.getParcelableExtra<RoomInviteModel>("roomInviteModel")
+            roomInviteModel?.let {
+                adapter.roomInviteModelsFull.add(it)
+                adapter.add(it)
+            }
+        }
+    }
+
     private lateinit var viewModel: RoomInvitesViewModel
     private lateinit var adapter: RoomInvitesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        val intentFilter = IntentFilter(ACTION_ROOM_INVITE)
+        activity?.registerReceiver(broadcastReceiver, intentFilter)
     }
 
     override fun onResume() {
@@ -68,7 +88,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
     // Observers
     private val renderRoomInviteModel = Observer<List<RoomInviteModel>> {
-        Log.v(LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.roomInviteModelsFull = it as MutableList<RoomInviteModel>
@@ -123,12 +143,12 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
+                    Log.d(TAG, msg)
                     UIHelper.showToastLong(context, msg)
                 }
 
                 override fun onSuccess(obj: RoomUser) {
-                    Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                     val intent = Intent(activity, RoomActivity::class.java)
                     intent.putExtra("roomModel", roomInviteModel.roomModel)
@@ -143,7 +163,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             roomInviteModel.roomInvite?.id?.let { ApiClient.build().rejectInvite(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
+                    Log.d(TAG, msg)
                     UIHelper.showToastLong(context, msg)
                 }
 
@@ -175,7 +195,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             ApiClient.build().getRoomInviteModels(),
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
+                    Log.d(TAG, msg)
                     UIHelper.showSnackBarLong(root, "Rooms Invites cannot refreshed")
                     swipeContainer.isRefreshing = false
                 }
