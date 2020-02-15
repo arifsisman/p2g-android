@@ -139,7 +139,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
@@ -159,7 +159,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
@@ -175,7 +175,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
@@ -203,7 +203,7 @@ class FriendsFragment : FragmentBase(
                             object : Callback<Boolean> {
                                 override fun onError(msg: String) {
                                     Log.d(LOG_TAG, msg)
-                                    UIHelper.showSnackBarLong(root, msg)
+                                    UIHelper.showSnackBarShort(root, msg)
                                 }
 
                                 @Suppress("UNCHECKED_CAST")
@@ -234,7 +234,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                     swipeContainer.isRefreshing = false
                 }
 
@@ -252,7 +252,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<MutableList<UserModel>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                     swipeContainer.isRefreshing = false
                 }
 
@@ -271,8 +271,7 @@ class FriendsFragment : FragmentBase(
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showToastLong(context, msg)
-//                        UIHelper.showSnackBarLong(root, msg)
+                        UIHelper.showSnackBarShort(root, msg)
                 }
 
                 override fun onSuccess(obj: RoomUser) {
@@ -321,8 +320,7 @@ class FriendsFragment : FragmentBase(
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, msg)
-                        UIHelper.showToastLong(context, msg)
-//                            UIHelper.showSnackBarLong(root, msg)
+                            UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {

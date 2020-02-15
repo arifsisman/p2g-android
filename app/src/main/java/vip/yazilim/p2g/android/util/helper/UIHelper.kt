@@ -40,18 +40,14 @@ class UIHelper{
         }
 
 
-        fun showSnackBarLong(view: View, message: String){
-            Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        fun showSnackBarLong(view: View?, message: String){
+            view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG).setAction("Action", null).show() }
         }
 
-        fun showSnackBarShort(view: View, message: String){
-            Snackbar.make(view, message, Snackbar.LENGTH_SHORT).setAction("Action", null).show()
+        fun showSnackBarShort(view: View?, message: String){
+            view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT).setAction("Action", null).show() }
         }
 
-//    fun showSnackBarLong(activity: Activity, message: String) {
-//        val rootView = activity.window.decorView.findViewById<View>(R.id.content)
-//        Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show()
-//    }
     }
 }
 

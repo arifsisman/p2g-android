@@ -6,6 +6,8 @@ package vip.yazilim.p2g.android.constant
  */
 object GeneralConstants {
     const val LOG_TAG = "Play2Gether"
+    const val REQUEST_TAG = "P2GRequest"
+    const val SPOTIFY_REQUEST_TAG = "SpotifyRequest"
     const val PREMIUM_PRODUCT_TYPE = "premium"
     const val UNDEFINED = "undefined"
 }

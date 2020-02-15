@@ -143,8 +143,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showToastLong(context, msg)
-//                        UIHelper.showSnackBarLong(root, msg)
+                        UIHelper.showSnackBarShort(root, "Can not join room")
                 }
 
                 override fun onSuccess(obj: RoomUser) {
@@ -196,8 +195,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, msg)
-                        UIHelper.showToastLong(context, msg)
-//                            UIHelper.showSnackBarLong(root, msg)
+                            UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
@@ -251,8 +249,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 object : Callback<Room> {
                     override fun onError(msg: String) {
                         Log.d(LOG_TAG, "Room can not created")
-                        UIHelper.showToastLong(context, msg)
-//                        UIHelper.showSnackBarLong(root, msg)
+                        UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: Room) {
@@ -280,7 +277,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
-                    UIHelper.showSnackBarLong(root, "Rooms cannot refreshed")
+                    UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
                     swipeContainer.isRefreshing = false
                 }
 

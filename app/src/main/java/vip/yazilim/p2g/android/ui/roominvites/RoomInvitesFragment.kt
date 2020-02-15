@@ -144,7 +144,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     Log.d(TAG, msg)
-                    UIHelper.showToastLong(context, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                 }
 
                 override fun onSuccess(obj: RoomUser) {
@@ -164,7 +164,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(TAG, msg)
-                    UIHelper.showToastLong(context, msg)
+                    UIHelper.showSnackBarShort(root, msg)
                 }
 
                 override fun onSuccess(obj: Boolean) {
@@ -196,7 +196,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     Log.d(TAG, msg)
-                    UIHelper.showSnackBarLong(root, "Rooms Invites cannot refreshed")
+                    UIHelper.showSnackBarShort(root, "Rooms Invites cannot refreshed")
                     swipeContainer.isRefreshing = false
                 }
 

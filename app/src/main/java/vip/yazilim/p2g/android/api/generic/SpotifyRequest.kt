@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.api.generic
 
 import android.util.Log
 import retrofit2.Call
-import vip.yazilim.p2g.android.constant.GeneralConstants
+import vip.yazilim.p2g.android.constant.GeneralConstants.SPOTIFY_REQUEST_TAG
 
 /**
  * @author mustafaarifsisman - 29.01.2020
@@ -16,7 +16,7 @@ abstract class SpotifyRequest {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val data = result.response.body()
-                            Log.v(GeneralConstants.LOG_TAG, "Response Data -> $data")
+                            Log.v(SPOTIFY_REQUEST_TAG, "Response Data -> $data")
                             callback.onSuccess(data as T)
                         } else {
                             callback.onError(result.response.message())

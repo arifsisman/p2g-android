@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.api.generic
 
 import android.util.Log
 import retrofit2.Call
-import vip.yazilim.p2g.android.constant.GeneralConstants
+import vip.yazilim.p2g.android.constant.GeneralConstants.REQUEST_TAG
 
 
 /**
@@ -17,7 +17,7 @@ abstract class P2GRequest {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
                             val data = result.response.body()?.data
-                            Log.v(GeneralConstants.LOG_TAG, "Response Data -> $data")
+                            Log.v(REQUEST_TAG, "Response Data -> $data")
                             callback.onSuccess(data!!)
                         } else {
                             callback.onError(result.response.errorBody()!!.string())
