@@ -1,7 +1,10 @@
 package vip.yazilim.p2g.android.service
 
 import android.app.*
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
@@ -29,13 +32,50 @@ class UserWebSocketService : Service() {
 
     companion object {
         private val TAG = UserWebSocketService::class.simpleName
+        private const val ACTION_STRING_SERVICE = "ToService"
+        private const val ACTION_STRING_ACTIVITY = "ToActivity"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
+    private val serviceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+//            Toast.makeText(applicationContext, "received message in service..!", Toast.LENGTH_SHORT).show()
+            Log.v(TAG, "Sending broadcast to activity")
+            sendBroadcast()
+        }
+    }
+
+//    override fun onCreate() {
+//        super.onCreate()
+//        Log.v(TAG, "onCreate")
+//        //STEP2: register the receiver
+//
+//        //Create an intent filter to listen to the broadcast sent with the action "ACTION_STRING_SERVICE"
+//        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
+//        //Map the intent filter to the receiver
+//        registerReceiver(serviceReceiver, intentFilter)
+//    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.v(TAG, "onDestroy")
+        //STEP3: Unregister the receiver
+        unregisterReceiver(serviceReceiver)
+
+        if (this::userWSClient.isInitialized) {
+            userWSClient.disconnect()
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        //Create an intent filter to listen to the broadcast sent with the action "ACTION_STRING_SERVICE"
+        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
+        //Map the intent filter to the receiver
+        registerReceiver(serviceReceiver, intentFilter)
+
         userId = intent?.getStringExtra("userId")
         userId?.run {
             connectWebSocket(this)
@@ -65,7 +105,7 @@ class UserWebSocketService : Service() {
                         else -> Log.i(TAG, it.toString())
                     }
                 }, { t: Throwable? ->
-                    Log.d(TAG, t?.message.toString())
+                    Log.v(TAG, t?.message.toString())
                 })
         }
     }
@@ -74,22 +114,24 @@ class UserWebSocketService : Service() {
         userWSClient.run {
             topic(destinationPath)
                 .subscribe({
-                    Log.d(GeneralConstants.LOG_TAG, it.payload)
+                    Log.v(GeneralConstants.LOG_TAG, it.payload)
 
                     val gsonBuilder = GsonBuilder()
                     val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
 
                     val roomInvite = gson.fromJson(it.payload, RoomInvite::class.java)
 
+                    sendBroadcast()
+
                     showInviteNotification(roomInvite)
-                }, { t: Throwable? -> Log.d(GeneralConstants.LOG_TAG, t?.message.toString()) })
+                }, { t: Throwable? -> Log.v(GeneralConstants.LOG_TAG, t?.message.toString()) })
         }
     }
 
-    private fun disconnect() {
-        if (this::userWSClient.isInitialized) {
-            userWSClient.disconnect()
-        }
+    private fun sendBroadcast() {
+        val intent = Intent()
+        intent.action = ACTION_STRING_ACTIVITY
+        sendBroadcast(intent)
     }
 
     private fun showInviteNotification(roomInvite: RoomInvite) {
