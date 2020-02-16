@@ -115,8 +115,6 @@ class FriendsAdapter(
             val user = item.user
             val room = item.room
 
-
-
             userName.text = user?.name
 
             if (user?.imageUrl != null) {

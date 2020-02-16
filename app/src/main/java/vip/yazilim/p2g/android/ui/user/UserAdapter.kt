@@ -12,7 +12,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -32,15 +34,104 @@ class UserAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardView: CardView = itemView.findViewById(R.id.user_card_view)
-        val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
-        val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
-        val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
-        val onlineStatus: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
-        val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
-        val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
-        val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
-        val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
+        private val cardView: CardView = itemView.findViewById(R.id.user_card_view)
+        private val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
+        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        private val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
+        private val onlineStatus: ImageView =
+            itemView.findViewById(R.id.online_status_online_image_view)
+        private val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
+        private val friendCountsTextView: TextView =
+            itemView.findViewById(R.id.friend_counts_text_view)
+        private val songAndRoomStatus: TextView =
+            itemView.findViewById(R.id.song_room_status_text_view)
+        private val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
+
+        fun bindView(user: User?, room: Room?) {
+            if (user != null) {
+                val profileNamePlaceholder = user.name
+                val profileSongAndRoomStatusPlaceholder =
+                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room?.name}"
+                val profileAnthemPlaceholder =
+                    "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
+                val memberSincePlaceholder =
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
+                        TimeHelper.dateTimeFormatterFull
+                    )}"
+
+                if (user.imageUrl != null) {
+                    GlideApp.with(view)
+                        .load(user.imageUrl)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(profileImage)
+                } else {
+                    profileImage.setImageResource(R.drawable.ic_profile_image)
+                }
+
+                try {
+                    flagImage.countryCode = user.countryCode
+                } catch (exception: Exception) {
+                    flagImage.visibility = View.INVISIBLE
+                }
+
+                userName.text = profileNamePlaceholder
+                memberSince.text = memberSincePlaceholder
+
+                if (user.anthem == null) {
+                    anthem.visibility = View.INVISIBLE
+                } else {
+                    anthem.visibility = View.VISIBLE
+                    anthem.text = profileAnthemPlaceholder
+                }
+
+
+                when {
+                    roomModel == null -> {
+                        songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
+                    }
+                    room == null -> {
+                        val songAndRoomStatusString =
+                            view.resources.getString(R.string.placeholder_room_user_not_found)
+                        songAndRoomStatus.text = songAndRoomStatusString
+                    }
+                    roomModel != null -> {
+                        val tempText =
+                            "$profileSongAndRoomStatusPlaceholder " + RoomHelper.getRoomSongStatus(
+                                view,
+                                roomModel?.songList
+                            )
+                        songAndRoomStatus.text = tempText
+                    }
+                }
+
+                when (user.onlineStatus) {
+                    OnlineStatus.ONLINE.onlineStatus -> {
+                        onlineStatus.setImageResource(android.R.drawable.presence_online)
+                        onlineStatus.visibility = View.VISIBLE
+                    }
+                    OnlineStatus.OFFLINE.onlineStatus -> {
+                        onlineStatus.setImageResource(android.R.drawable.presence_offline)
+                        onlineStatus.visibility = View.VISIBLE
+                    }
+                    OnlineStatus.AWAY.onlineStatus -> {
+                        onlineStatus.setImageResource(android.R.drawable.presence_away)
+                        onlineStatus.visibility = View.VISIBLE
+                    }
+                }
+
+                cardView.visibility = View.VISIBLE
+            }
+
+            if (friends.isNotEmpty()) {
+                val profileFriendCountsPlaceholder =
+                    "${friends.size} ${view.resources.getString(R.string.placeholder_friend_counts)}"
+                friendCountsTextView.text = profileFriendCountsPlaceholder
+            } else {
+                val profileFriendCountsPlaceholder =
+                    "0 " + view.resources.getString(R.string.placeholder_friend_counts)
+                friendCountsTextView.text = profileFriendCountsPlaceholder
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
@@ -64,88 +155,7 @@ class UserAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        val user = userModel?.user
-        val room = userModel?.room
-
-        if (user != null) {
-            val profileNamePlaceholder = user.name
-            val profileSongAndRoomStatusPlaceholder = "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room?.name}"
-            val profileAnthemPlaceholder = "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
-            val memberSincePlaceholder =
-                "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
-                    TimeHelper.dateTimeFormatterFull
-                )}"
-
-            if (user.imageUrl != null) {
-                GlideApp.with(view)
-                    .load(user.imageUrl)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(holder.profileImage)
-            } else {
-                holder.profileImage.setImageResource(R.drawable.ic_profile_image)
-            }
-
-            try {
-                holder.flagImage.countryCode = user.countryCode
-            } catch (exception: Exception) {
-                holder.flagImage.visibility = View.INVISIBLE
-            }
-
-            holder.userName.text = profileNamePlaceholder
-            holder.memberSince.text = memberSincePlaceholder
-
-            if (user.anthem == null) {
-                holder.anthem.visibility = View.INVISIBLE
-            } else {
-                holder.anthem.visibility = View.VISIBLE
-                holder.anthem.text = profileAnthemPlaceholder
-            }
-
-
-            when {
-                roomModel == null -> {
-                    holder.songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
-                }
-                room == null -> {
-                    val songAndRoomStatusString = view.resources.getString(R.string.placeholder_room_user_not_found)
-                    holder.songAndRoomStatus.text = songAndRoomStatusString
-                }
-                roomModel != null -> {
-                    holder.songAndRoomStatus.text =
-                        "$profileSongAndRoomStatusPlaceholder " + RoomHelper.getRoomSongStatus(
-                            view,
-                            roomModel?.songList
-                        )
-                }
-            }
-
-            when (user.onlineStatus) {
-                OnlineStatus.ONLINE.onlineStatus -> {
-                    holder.onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    holder.onlineStatus.visibility = View.VISIBLE
-                }
-                OnlineStatus.OFFLINE.onlineStatus -> {
-                    holder.onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    holder.onlineStatus.visibility = View.VISIBLE
-                }
-                OnlineStatus.AWAY.onlineStatus -> {
-                    holder.onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    holder.onlineStatus.visibility = View.VISIBLE
-                }
-            }
-
-            holder.cardView.visibility = View.VISIBLE
-        }
-
-        if (friends.isNotEmpty()) {
-            val profileFriendCountsPlaceholder =
-                "${friends.size} ${view.resources.getString(R.string.placeholder_friend_counts)}"
-            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
-        } else {
-            val profileFriendCountsPlaceholder =
-                "0 " + view.resources.getString(R.string.placeholder_friend_counts)
-            holder.friendCountsTextView.text = profileFriendCountsPlaceholder
-        }
+        holder.bindView(userModel?.user, userModel?.room)
     }
 
 }

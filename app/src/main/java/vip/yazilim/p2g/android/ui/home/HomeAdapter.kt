@@ -26,15 +26,43 @@ class HomeAdapter(
     var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val roomName: TextView = itemView.findViewById(R.id.room_name)
-        val owner: TextView = itemView.findViewById(R.id.room_owner)
-        val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
-        val lock: ImageView = itemView.findViewById(R.id.lock_view)
-        val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
+        private val roomName: TextView = itemView.findViewById(R.id.room_name)
+        private val owner: TextView = itemView.findViewById(R.id.room_owner)
+        private val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
+        private val lock: ImageView = itemView.findViewById(R.id.lock_view)
+        private val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
 
         fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(roomModel)
+            }
+        }
+
+        fun bindView(roomModel: RoomModel){
+            val roomOwnerPlaceholder =
+                "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
+
+            roomName.text = roomModel.room?.name
+            owner.text = roomOwnerPlaceholder
+
+            if (roomModel.room?.privateFlag!!) {
+                lock.visibility = View.VISIBLE
+            } else {
+                lock.visibility = View.INVISIBLE
+            }
+
+            try {
+                flagImage.countryCode = roomModel.owner?.countryCode
+            } catch (exception: Exception) {
+                flagImage.visibility = View.INVISIBLE
+            }
+
+            if (roomModel.songList.isNullOrEmpty()) {
+                roomSongStatus.text =
+                    view.resources.getString(R.string.placeholder_room_song_not_found)
+            } else {
+                val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.songList)
+                roomSongStatus.text = songStatus
             }
         }
     }
@@ -49,35 +77,9 @@ class HomeAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bindEvent(roomModels[position], itemClickListener)
         val roomModel = roomModels[position]
-
-        val roomOwnerPlaceholder =
-            "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
-
-        holder.roomName.text = roomModel.room?.name
-        holder.owner.text = roomOwnerPlaceholder
-
-        if (roomModel.room?.privateFlag!!) {
-            holder.lock.visibility = View.VISIBLE
-        } else {
-            holder.lock.visibility = View.INVISIBLE
-        }
-
-        try {
-            holder.flagImage.countryCode = roomModel.owner?.countryCode
-        } catch (exception: Exception) {
-            holder.flagImage.visibility = View.INVISIBLE
-        }
-
-        if (roomModel.songList.isNullOrEmpty()) {
-            holder.roomSongStatus.text =
-                view.resources.getString(R.string.placeholder_room_song_not_found)
-        } else {
-            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.songList)
-            holder.roomSongStatus.text = songStatus
-        }
-
+        holder.bindView(roomModel)
+        holder.bindEvent(roomModel, itemClickListener)
     }
 
     override fun getItemCount(): Int {

@@ -40,7 +40,7 @@ class RoomInvitesAdapter(
             rejectButton.setOnClickListener { clickListener.onRejectClicked(roomInviteModel) }
         }
 
-        fun bindItem(roomInviteModel: RoomInviteModel) {
+        fun bindView(roomInviteModel: RoomInviteModel) {
             val roomInvite = roomInviteModel.roomInvite
             val roomModel = roomInviteModel.roomModel
 
@@ -133,7 +133,7 @@ class RoomInvitesAdapter(
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         val roomInviteModel = roomInviteModels[position]
         holder.bindEvent(roomInviteModel, itemClickListener)
-        holder.bindItem(roomInviteModel)
+        holder.bindView(roomInviteModel)
     }
 
     override fun getItemCount(): Int {
