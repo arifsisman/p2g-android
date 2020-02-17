@@ -8,10 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
-import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
  * @author mustafaarifsisman - 03.02.2020
@@ -41,18 +40,10 @@ class RoomInvitesAdapter(
         }
 
         fun bindView(roomInviteModel: RoomInviteModel) {
-            val roomInvite = roomInviteModel.roomInvite
             val roomModel = roomInviteModel.roomModel
+            val user = roomInviteModel.inviter
 
-            var user = User()
-
-            roomModel?.userList?.forEach {
-                if (it.id == roomInvite?.inviterId) {
-                    user = it
-                }
-            }
-
-            if (user.imageUrl != null) {
+            if (user?.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
@@ -61,13 +52,13 @@ class RoomInvitesAdapter(
                 profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
-            roomInviter.text = user.name
+            roomInviter.text = user?.name
 
             val roomNamePlaceholder =
                 "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel?.room?.name}"
             roomName.text = roomNamePlaceholder
 
-            when (user.onlineStatus) {
+            when (user?.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
                     onlineStatus.setImageResource(android.R.drawable.presence_online)
                     onlineStatus.visibility = View.VISIBLE
@@ -82,40 +73,8 @@ class RoomInvitesAdapter(
                 }
             }
 
-            if (roomModel?.songList.isNullOrEmpty()) {
-                roomSongStatus.text =
-                    view.resources.getString(R.string.placeholder_room_song_not_found)
-            } else {
-                val roomNowPlayingPlaceholder =
-                    view.resources.getString(R.string.placeholder_room_now_playing_song)
-                val roomPausedPlaceholder =
-                    view.resources.getString(R.string.placeholder_room_paused_song)
-                val roomNextSongPlaceholder =
-                    view.resources.getString(R.string.placeholder_room_next_song)
-
-                roomModel?.songList?.forEach {
-                    when (it.songStatus) {
-                        SongStatus.PLAYING.songStatus -> {
-                            val status =
-                                "$roomNowPlayingPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
-                            roomSongStatus.text = status
-                            return
-                        }
-                        SongStatus.PAUSED.songStatus -> {
-                            val status =
-                                "$roomPausedPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
-                            roomSongStatus.text = status
-                            return
-                        }
-                        SongStatus.NEXT.songStatus -> {
-                            val status =
-                                "$roomNextSongPlaceholder ${it.songName} - ${it.artistNames?.get(0)}"
-                            roomSongStatus.text = status
-                            return
-                        }
-                    }
-                }
-            }
+            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel?.song)
+            roomSongStatus.text = songStatus
         }
     }
 

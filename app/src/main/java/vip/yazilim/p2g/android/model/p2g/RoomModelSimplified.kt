@@ -28,12 +28,12 @@ data class RoomModelSimplified(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<RoomModel> {
-        override fun createFromParcel(parcel: Parcel): RoomModel {
-            return RoomModel(parcel)
+    companion object CREATOR : Parcelable.Creator<RoomModelSimplified> {
+        override fun createFromParcel(parcel: Parcel): RoomModelSimplified {
+            return RoomModelSimplified(parcel)
         }
 
-        override fun newArray(size: Int): Array<RoomModel?> {
+        override fun newArray(size: Int): Array<RoomModelSimplified?> {
             return arrayOfNulls(size)
         }
     }

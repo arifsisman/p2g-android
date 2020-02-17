@@ -9,16 +9,19 @@ import android.os.Parcelable
  */
 data class RoomInviteModel(
     var roomInvite: RoomInvite?,
-    var roomModel: RoomModel?
+    var roomModel: RoomModelSimplified?,
+    var inviter: User?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(RoomInvite::class.java.classLoader),
-        parcel.readParcelable(RoomModel::class.java.classLoader)
+        parcel.readParcelable(RoomModelSimplified::class.java.classLoader),
+        parcel.readParcelable(User::class.java.classLoader)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(roomInvite, flags)
         parcel.writeParcelable(roomModel, flags)
+        parcel.writeParcelable(inviter, flags)
     }
 
     override fun describeContents(): Int {
