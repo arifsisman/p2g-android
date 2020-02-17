@@ -18,6 +18,8 @@ import org.threeten.bp.LocalDateTime
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.websocket.ChatMessage
 import vip.yazilim.p2g.android.service.UserWebSocketService
@@ -82,6 +84,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.Logout -> {
+                P2GRequest.build(ApiClient.build().logout(), null)
+
                 db.deleteAllData()
                 val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(loginIntent)

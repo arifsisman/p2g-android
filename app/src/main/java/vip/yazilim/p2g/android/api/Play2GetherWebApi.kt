@@ -138,8 +138,12 @@ interface Play2GetherWebApi {
     @GET("/api/spotify/login")
     fun login(): Call<P2GResponse<User>>
 
+    @POST("/api/spotify/logout")
+    fun logout(): Call<P2GResponse<Boolean>>
+
     @POST("/api/spotify/token")
     fun updateAccessToken(@Body accessToken: String): Call<P2GResponse<String>>
+
 
     // Player API
     @POST("/api/spotify/player/play")
