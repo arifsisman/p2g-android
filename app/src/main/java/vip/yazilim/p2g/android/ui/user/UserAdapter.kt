@@ -13,7 +13,7 @@ import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.Room
-import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -26,7 +26,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
  */
 class UserAdapter(
     private var userModel: UserModel?,
-    private var roomModel: RoomModel?,
+    private var roomModel: RoomModelSimplified?,
     private var friends: MutableList<UserModel>
 ) :
     RecyclerView.Adapter<UserAdapter.MViewHolder>() {
@@ -98,7 +98,7 @@ class UserAdapter(
                         val tempText =
                             "$profileSongAndRoomStatusPlaceholder " + RoomHelper.getRoomSongStatus(
                                 view,
-                                roomModel?.songList
+                                roomModel?.song
                             )
                         songAndRoomStatus.text = tempText
                     }
@@ -143,7 +143,7 @@ class UserAdapter(
         return 1
     }
 
-    fun update(data: RoomModel) {
+    fun update(data: RoomModelSimplified) {
         roomModel = data
         notifyDataSetChanged()
     }

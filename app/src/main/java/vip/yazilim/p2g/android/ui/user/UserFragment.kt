@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.constant.GeneralConstants
-import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 
@@ -67,7 +67,7 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
         adapter.update(it)
     }
 
-    private val renderRoomModel = Observer<RoomModel> {
+    private val renderRoomModel = Observer<RoomModelSimplified> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE

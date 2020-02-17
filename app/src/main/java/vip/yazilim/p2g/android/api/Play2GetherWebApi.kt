@@ -39,7 +39,7 @@ interface Play2GetherWebApi {
     @GET("/api/room/model/")
     fun getSimplifiedRoomModels(): Call<P2GResponse<MutableList<RoomModelSimplified>>>
 
-    @PUT("/apiroom/")
+    @PUT("/api/room/")
     fun updateRoom(@Body room: Room): Call<P2GResponse<Room>>
 
     @DELETE("/api/room/{id}")
@@ -47,6 +47,9 @@ interface Play2GetherWebApi {
 
     @GET("/api/room/model/{id}")
     fun getRoomModel(@Path("id") roomId: Long): Call<P2GResponse<RoomModel>>
+
+    @GET("/api/room/smodel/{id}")
+    fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<P2GResponse<RoomModelSimplified>>
 
     @POST("/api/room/{roomId}/invite/{userId}")
     fun inviteUser(@Path("roomId") roomId: Long, @Path("userId") userId: String): Call<P2GResponse<RoomInvite>>
