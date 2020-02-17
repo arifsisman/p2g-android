@@ -71,7 +71,7 @@ class ProfileAdapter(
                 try {
                     flagImage.countryCode = user.countryCode
                 } catch (exception: Exception) {
-                    flagImage.visibility = View.INVISIBLE
+                    flagImage.visibility = View.GONE
                 }
 
                 userName.text = profileNamePlaceholder
@@ -79,7 +79,7 @@ class ProfileAdapter(
                 email.text = profileEmailPlaceholder
 
                 if (user.anthem == null) {
-                    anthem.visibility = View.INVISIBLE
+                    anthem.visibility = View.GONE
                 } else {
                     anthem.visibility = View.VISIBLE
                     anthem.text = profileAnthemPlaceholder

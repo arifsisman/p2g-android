@@ -14,6 +14,7 @@ import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterCompact
 
 
@@ -97,6 +98,7 @@ class FriendsAdapter(
     inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
         private val userName: TextView = itemView.findViewById(R.id.user_name)
         private val roomName: TextView = itemView.findViewById(R.id.room_name)
+        private val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         private val onlineStatus: ImageView =
             itemView.findViewById(R.id.online_status_online_image_view)
@@ -115,6 +117,7 @@ class FriendsAdapter(
             bindEvent(item, friendClickListener)
             val user = item.userModel?.user
             val room = item.userModel?.room
+            val song = item.song
 
             userName.text = user?.name
 
@@ -149,12 +152,19 @@ class FriendsAdapter(
                 if (room.privateFlag) {
                     lock.visibility = View.VISIBLE
                 } else {
-                    lock.visibility = View.INVISIBLE
+                    lock.visibility = View.GONE
                 }
             } else {
-                roomName.visibility = View.INVISIBLE
-                lock.visibility = View.INVISIBLE
-                joinButton.visibility = View.INVISIBLE
+                roomName.visibility = View.GONE
+                lock.visibility = View.GONE
+                joinButton.visibility = View.GONE
+                roomSongStatus.visibility = View.GONE
+            }
+
+            if(song != null){
+                roomSongStatus.text = RoomHelper.getRoomSongStatus(view, song)
+            }else{
+                roomSongStatus.visibility = View.GONE
             }
 
         }

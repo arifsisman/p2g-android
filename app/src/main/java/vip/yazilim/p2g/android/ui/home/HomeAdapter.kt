@@ -48,13 +48,13 @@ class HomeAdapter(
             if (roomModel.room?.privateFlag!!) {
                 lock.visibility = View.VISIBLE
             } else {
-                lock.visibility = View.INVISIBLE
+                lock.visibility = View.GONE
             }
 
             try {
                 flagImage.countryCode = roomModel.owner?.countryCode
             } catch (exception: Exception) {
-                flagImage.visibility = View.INVISIBLE
+                flagImage.visibility = View.GONE
             }
 
             val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
