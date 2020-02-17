@@ -13,14 +13,14 @@ data class FriendRequest(
     var senderId: String?,
     var receiverId: String?,
     var requestStatus: String?,
-    var requestDate: LocalDateTime
+    var requestDate: LocalDateTime?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readSerializable() as LocalDateTime
+        parcel.readSerializable() as? LocalDateTime
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

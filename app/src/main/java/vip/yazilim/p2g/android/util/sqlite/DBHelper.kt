@@ -91,7 +91,7 @@ class DBHelper(context: Context) :
         contentValues.put(COL_USER_SPOTIFY_PRODUCT_TYPE, user.spotifyProductType)
         contentValues.put(COL_USER_SHOW_ACTIVITY_FLAG, user.showActivityFlag)
         contentValues.put(COL_USER_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
-        contentValues.put(COL_USER_CREATION_DATE, user.creationDate.format(formatter))
+        contentValues.put(COL_USER_CREATION_DATE, user.creationDate?.format(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }

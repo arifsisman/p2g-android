@@ -55,7 +55,7 @@ class UserAdapter(
                 val profileAnthemPlaceholder =
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.format(
                         TimeHelper.dateTimeFormatterFull
                     )}"
 

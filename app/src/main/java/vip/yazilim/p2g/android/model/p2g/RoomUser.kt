@@ -13,7 +13,7 @@ data class RoomUser(
     var roomId: Long,
     var userId: String?,
     var role: String?,
-    var joinDate: LocalDateTime,
+    var joinDate: LocalDateTime?,
     var activeFlag: Boolean
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -21,7 +21,7 @@ data class RoomUser(
         parcel.readLong(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readSerializable() as LocalDateTime,
+        parcel.readSerializable() as? LocalDateTime,
         parcel.readByte() != 0.toByte()
     )
 

@@ -46,7 +46,7 @@ class ProfileAdapter(
             if (user != null) {
                 val profileNamePlaceholder = user.name
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.format(
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.format(
                         dateTimeFormatterFull
                     )}"
                 val profileEmailPlaceholder =

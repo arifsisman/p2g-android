@@ -19,8 +19,8 @@ data class Song(
     var imageUrl: String?,
     var durationMs: Int,
     var songStatus: String?,
-    var queuedTime: LocalDateTime,
-    var playingTime: LocalDateTime,
+    var queuedTime: LocalDateTime?,
+    var playingTime: LocalDateTime?,
     var currentMs: Int,
     var repeatFlag: Boolean,
     var votes: Int
@@ -36,8 +36,8 @@ data class Song(
         parcel.readString(),
         parcel.readInt(),
         parcel.readString(),
-        parcel.readSerializable() as LocalDateTime,
-        parcel.readSerializable() as LocalDateTime,
+        parcel.readSerializable() as? LocalDateTime,
+        parcel.readSerializable() as? LocalDateTime,
         parcel.readInt(),
         parcel.readByte() != 0.toByte(),
         parcel.readInt()

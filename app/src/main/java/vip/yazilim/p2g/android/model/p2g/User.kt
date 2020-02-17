@@ -20,7 +20,7 @@ data class User(
     var spotifyProductType: String? = "",
     var showActivityFlag: Boolean = false,
     var showFriendsFlag: Boolean = false,
-    var creationDate: LocalDateTime = LocalDateTime.now()
+    var creationDate: LocalDateTime? = LocalDateTime.now()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -34,7 +34,7 @@ data class User(
         parcel.readString(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
-        parcel.readSerializable() as LocalDateTime
+        parcel.readSerializable() as? LocalDateTime
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
