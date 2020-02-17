@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -93,7 +94,7 @@ class FriendsAdapter(
         }
     }
 
-    inner class FriendViewHolder(itemView: View) : ViewHolderBase<UserModel>(itemView) {
+    inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
         private val userName: TextView = itemView.findViewById(R.id.user_name)
         private val roomName: TextView = itemView.findViewById(R.id.room_name)
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
@@ -104,16 +105,16 @@ class FriendsAdapter(
         private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
 
-        private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onRowClicked(userModel) }
-            deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
-            joinButton.setOnClickListener { clickListener.onJoinClicked(userModel.room) }
+        private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
+            deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel.userModel) }
+            joinButton.setOnClickListener { clickListener.onJoinClicked(friendModel.userModel?.room) }
         }
 
-        override fun bindView(item: UserModel) {
+        override fun bindView(item: FriendModel) {
             bindEvent(item, friendClickListener)
-            val user = item.user
-            val room = item.room
+            val user = item.userModel?.user
+            val room = item.userModel?.room
 
             userName.text = user?.name
 
@@ -164,7 +165,7 @@ class FriendsAdapter(
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
         fun onJoinClicked(room: Room?)
-        fun onDeleteClicked(userModel: UserModel)
+        fun onDeleteClicked(userModel: UserModel?)
         fun onRowClicked(userModel: UserModel?)
     }
 
@@ -188,14 +189,14 @@ class FriendsAdapter(
         val element = adapterDataList[position]
         when (holder) {
             is FriendRequestViewHolder -> holder.bindView(element as FriendRequestModel)
-            is FriendViewHolder -> holder.bindView(element as UserModel)
+            is FriendViewHolder -> holder.bindView(element as FriendModel)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (adapterDataList[position]) {
             is FriendRequestModel -> TYPE_REQUEST
-            is UserModel -> TYPE_FRIEND
+            is FriendModel -> TYPE_FRIEND
             else -> throw IllegalArgumentException("Invalid type of data $position")
         }
     }

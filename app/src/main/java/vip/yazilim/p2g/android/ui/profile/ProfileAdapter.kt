@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterFull
@@ -21,7 +22,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatte
  */
 class ProfileAdapter(
     private var userModel: UserModel,
-    private var friends: MutableList<UserModel>
+    private var friends: MutableList<FriendModel>
 ) :
     RecyclerView.Adapter<ProfileAdapter.MViewHolder>() {
 
@@ -138,7 +139,7 @@ class ProfileAdapter(
         notifyDataSetChanged()
     }
 
-    fun update(data: MutableList<UserModel>) {
+    fun update(data: MutableList<FriendModel>) {
         friends = data
         notifyDataSetChanged()
     }

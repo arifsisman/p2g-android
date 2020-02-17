@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
-import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 
 class FriendsViewModel : ViewModelBase() {
@@ -39,14 +39,14 @@ class FriendsViewModel : ViewModelBase() {
 
         P2GRequest.build(
             ApiClient.build().getFriends(),
-            object : Callback<MutableList<UserModel>> {
+            object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<UserModel>) {
+                override fun onSuccess(obj: MutableList<FriendModel>) {
                     _isViewLoading.postValue(false)
                     _data.value = obj as MutableList<Any>
                 }

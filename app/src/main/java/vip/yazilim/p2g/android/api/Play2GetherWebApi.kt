@@ -130,10 +130,10 @@ interface Play2GetherWebApi {
     fun getFriendRequestModel(@Path("userId") userId: String): Call<P2GResponse<MutableList<FriendRequestModel>>>
 
     @GET("/api/friend/requests/friends")
-    fun getFriends(): Call<P2GResponse<MutableList<UserModel>>>
+    fun getFriends(): Call<P2GResponse<MutableList<FriendModel>>>
 
     @GET("/api/friend/requests/{userId}/friends")
-    fun getFriends(@Path("userId") userId: String): Call<P2GResponse<MutableList<UserModel>>>
+    fun getFriends(@Path("userId") userId: String): Call<P2GResponse<MutableList<FriendModel>>>
 
 
 

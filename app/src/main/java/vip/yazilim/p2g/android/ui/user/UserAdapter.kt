@@ -12,10 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
-import vip.yazilim.p2g.android.model.p2g.Room
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
-import vip.yazilim.p2g.android.model.p2g.User
-import vip.yazilim.p2g.android.model.p2g.UserModel
+import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper
@@ -27,7 +24,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
 class UserAdapter(
     private var userModel: UserModel?,
     private var roomModel: RoomModelSimplified?,
-    private var friends: MutableList<UserModel>
+    private var friends: MutableList<FriendModel>
 ) :
     RecyclerView.Adapter<UserAdapter.MViewHolder>() {
 
@@ -148,7 +145,7 @@ class UserAdapter(
         notifyDataSetChanged()
     }
 
-    fun update(data: MutableList<UserModel>) {
+    fun update(data: MutableList<FriendModel>) {
         friends = data
         notifyDataSetChanged()
     }

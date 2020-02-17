@@ -28,10 +28,7 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
-import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
-import vip.yazilim.p2g.android.model.p2g.Room
-import vip.yazilim.p2g.android.model.p2g.RoomUser
-import vip.yazilim.p2g.android.model.p2g.UserModel
+import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
@@ -193,13 +190,13 @@ class FriendsFragment : FragmentBase(
         }
     }
 
-    override fun onDeleteClicked(userModel: UserModel) {
+    override fun onDeleteClicked(userModel: UserModel?) {
         val dialogClickListener =
-            DialogInterface.OnClickListener { dialog, which ->
+            DialogInterface.OnClickListener { _, which ->
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
                         P2GRequest.build(
-                            userModel.user?.id?.let { ApiClient.build().deleteFriend(it) },
+                            userModel?.user?.id?.let { ApiClient.build().deleteFriend(it) },
                             object : Callback<Boolean> {
                                 override fun onError(msg: String) {
                                     Log.d(LOG_TAG, msg)
@@ -208,7 +205,7 @@ class FriendsFragment : FragmentBase(
 
                                 @Suppress("UNCHECKED_CAST")
                                 override fun onSuccess(obj: Boolean) {
-                                    adapter.remove(userModel)
+                                    userModel?.let { adapter.remove(it) }
                                 }
                             })
                     }
@@ -249,7 +246,7 @@ class FriendsFragment : FragmentBase(
     private fun loadFriends() {
         P2GRequest.build(
             ApiClient.build().getFriends(),
-            object : Callback<MutableList<UserModel>> {
+            object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, msg)
@@ -257,7 +254,7 @@ class FriendsFragment : FragmentBase(
                 }
 
                 @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<UserModel>) {
+                override fun onSuccess(obj: MutableList<FriendModel>) {
                     adapter.addAll(obj as MutableList<Any>)
                     adapter.adapterDataListFull.addAll(obj)
                     swipeContainer.isRefreshing = false
