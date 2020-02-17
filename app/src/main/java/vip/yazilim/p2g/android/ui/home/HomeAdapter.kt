@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
@@ -18,12 +18,12 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class HomeAdapter(
-    private var roomModels: MutableList<RoomModel>,
+    private var roomModels: MutableList<RoomModelSimplified>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
     private lateinit var view: View
-    var roomModelsFull: MutableList<RoomModel> = mutableListOf()
+    var roomModelsFull: MutableList<RoomModelSimplified> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val roomName: TextView = itemView.findViewById(R.id.room_name)
@@ -32,13 +32,13 @@ class HomeAdapter(
         private val lock: ImageView = itemView.findViewById(R.id.lock_view)
         private val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
 
-        fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
+        fun bindEvent(roomModel: RoomModelSimplified, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(roomModel)
             }
         }
 
-        fun bindView(roomModel: RoomModel){
+        fun bindView(roomModel: RoomModelSimplified){
             val roomOwnerPlaceholder =
                 "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
 
@@ -57,18 +57,13 @@ class HomeAdapter(
                 flagImage.visibility = View.INVISIBLE
             }
 
-            if (roomModel.songList.isNullOrEmpty()) {
-                roomSongStatus.text =
-                    view.resources.getString(R.string.placeholder_room_song_not_found)
-            } else {
-                val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.songList)
-                roomSongStatus.text = songStatus
-            }
+            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
+            roomSongStatus.text = songStatus
         }
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(roomModel: RoomModel)
+        fun onItemClicked(roomModel: RoomModelSimplified)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
@@ -86,7 +81,7 @@ class HomeAdapter(
         return roomModels.size
     }
 
-    fun update(data: MutableList<RoomModel>) {
+    fun update(data: MutableList<RoomModelSimplified>) {
         roomModels = data
         notifyDataSetChanged()
     }
@@ -101,7 +96,7 @@ class HomeAdapter(
         return object : Filter() {
 
             override fun performFiltering(constraint: CharSequence?): FilterResults? {
-                val filteredList: MutableList<RoomModel> = mutableListOf()
+                val filteredList: MutableList<RoomModelSimplified> = mutableListOf()
                 val charString = constraint.toString()
 
                 if (constraint == null || charString.isEmpty()) {
@@ -125,7 +120,7 @@ class HomeAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                update(filterResults.values as MutableList<RoomModel>)
+                update(filterResults.values as MutableList<RoomModelSimplified>)
             }
         }
     }

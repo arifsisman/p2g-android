@@ -17,17 +17,23 @@ class RoomHelper {
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         result =
-                            "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${it.songName} - " + getArtistsPlaceholder(it.artistNames)
+                            "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${it.songName} - " + getArtistsPlaceholder(
+                                it.artistNames
+                            )
                         return@forEach
                     }
                     SongStatus.PAUSED.songStatus -> {
                         result =
-                            "${view.resources.getString(R.string.placeholder_room_paused_song)} ${it.songName} - " + getArtistsPlaceholder(it.artistNames)
+                            "${view.resources.getString(R.string.placeholder_room_paused_song)} ${it.songName} - " + getArtistsPlaceholder(
+                                it.artistNames
+                            )
                         return@forEach
                     }
                     SongStatus.NEXT.songStatus -> {
                         result =
-                            "${view.resources.getString(R.string.placeholder_room_next_song)} ${it.songName} - " + getArtistsPlaceholder(it.artistNames)
+                            "${view.resources.getString(R.string.placeholder_room_next_song)} ${it.songName} - " + getArtistsPlaceholder(
+                                it.artistNames
+                            )
                         return@forEach
                     }
                     else -> {
@@ -37,6 +43,29 @@ class RoomHelper {
                 }
             }
             return result
+        }
+
+        fun getRoomSongStatus(view: View, song: Song?): String {
+            return when (song?.songStatus) {
+                SongStatus.PLAYING.songStatus -> {
+                    "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${song.songName} - " + getArtistsPlaceholder(
+                        song.artistNames
+                    )
+                }
+                SongStatus.PAUSED.songStatus -> {
+                    "${view.resources.getString(R.string.placeholder_room_paused_song)} ${song.songName} - " + getArtistsPlaceholder(
+                        song.artistNames
+                    )
+                }
+                SongStatus.NEXT.songStatus -> {
+                    "${view.resources.getString(R.string.placeholder_room_next_song)} ${song.songName} - " + getArtistsPlaceholder(
+                        song.artistNames
+                    )
+                }
+                else -> {
+                    view.resources.getString(R.string.placeholder_room_song_not_found)
+                }
+            }
         }
 
         private fun getArtistsPlaceholder(artists: ArrayList<String>?): String {

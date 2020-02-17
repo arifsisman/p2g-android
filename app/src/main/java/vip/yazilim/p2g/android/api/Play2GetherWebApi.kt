@@ -37,7 +37,7 @@ interface Play2GetherWebApi {
     fun getAllRooms(): Call<List<P2GResponse<Room>>>
 
     @GET("/api/room/model/")
-    fun getRoomModels(): Call<P2GResponse<MutableList<RoomModel>>>
+    fun getSimplifiedRoomModels(): Call<P2GResponse<MutableList<RoomModelSimplified>>>
 
     @PUT("/apiroom/")
     fun updateRoom(@Body room: Room): Call<P2GResponse<Room>>

@@ -29,7 +29,7 @@ import vip.yazilim.p2g.android.api.generic.P2GRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.model.p2g.Room
-import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -74,7 +74,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     // Observer
-    private val renderRoomModels = Observer<MutableList<RoomModel>> {
+    private val renderRoomModels = Observer<MutableList<RoomModelSimplified>> {
         Log.v(LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
@@ -125,7 +125,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         })
     }
 
-    override fun onItemClicked(roomModel: RoomModel) {
+    override fun onItemClicked(roomModel: RoomModelSimplified) {
         val room: Room? = roomModel.room
 
         if (room?.password?.isNotEmpty()!!) {
@@ -136,7 +136,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModel) {
+    private fun joinRoomEvent(roomModel: RoomModelSimplified) {
         val room = roomModel.room
         P2GRequest.build(
             room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
@@ -157,7 +157,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             })
     }
 
-    private fun joinPrivateRoomEvent(roomModel: RoomModel) {
+    private fun joinPrivateRoomEvent(roomModel: RoomModelSimplified) {
         val room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
@@ -273,15 +273,15 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     private fun refreshRoomsEvent() {
         P2GRequest.build(
-            ApiClient.build().getRoomModels(),
-            object : Callback<MutableList<RoomModel>> {
+            ApiClient.build().getSimplifiedRoomModels(),
+            object : Callback<MutableList<RoomModelSimplified>> {
                 override fun onError(msg: String) {
                     Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
                     swipeContainer.isRefreshing = false
                 }
 
-                override fun onSuccess(obj: MutableList<RoomModel>) {
+                override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
                     adapter.update(obj)
                     adapter.roomModelsFull = obj
                     swipeContainer.isRefreshing = false
