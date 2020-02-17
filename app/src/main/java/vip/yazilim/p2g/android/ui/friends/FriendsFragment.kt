@@ -139,12 +139,11 @@ class FriendsFragment : FragmentBase(
                     UIHelper.showSnackBarShort(root, msg)
                 }
 
-                @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
-                    friendRequestModel.friendRequestUserModel?.let { adapter.add(it) }
+                    friendRequestModel.friendRequestUserModel?.let { adapter.add(FriendModel(it, null)) }
                     friendRequestModel.friendRequestUserModel?.let {
-                        adapter.adapterDataListFull.add(it)
+                        adapter.adapterDataListFull.add(FriendModel(it, null))
                     }
                 }
             })
@@ -159,7 +158,6 @@ class FriendsFragment : FragmentBase(
                     UIHelper.showSnackBarShort(root, msg)
                 }
 
-                @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
                 }
@@ -175,7 +173,6 @@ class FriendsFragment : FragmentBase(
                     UIHelper.showSnackBarShort(root, msg)
                 }
 
-                @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
                 }
@@ -190,22 +187,21 @@ class FriendsFragment : FragmentBase(
         }
     }
 
-    override fun onDeleteClicked(userModel: UserModel?) {
+    override fun onDeleteClicked(friendModel: FriendModel?) {
         val dialogClickListener =
             DialogInterface.OnClickListener { _, which ->
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
                         P2GRequest.build(
-                            userModel?.user?.id?.let { ApiClient.build().deleteFriend(it) },
+                            friendModel?.userModel?.user?.id?.let { ApiClient.build().deleteFriend(it) },
                             object : Callback<Boolean> {
                                 override fun onError(msg: String) {
                                     Log.d(LOG_TAG, msg)
                                     UIHelper.showSnackBarShort(root, msg)
                                 }
 
-                                @Suppress("UNCHECKED_CAST")
                                 override fun onSuccess(obj: Boolean) {
-                                    userModel?.let { adapter.remove(it) }
+                                    friendModel?.let { adapter.remove(it) }
                                 }
                             })
                     }

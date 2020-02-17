@@ -107,7 +107,7 @@ class FriendsAdapter(
 
         private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
-            deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel.userModel) }
+            deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
             joinButton.setOnClickListener { clickListener.onJoinClicked(friendModel.userModel?.room) }
         }
 
@@ -165,7 +165,7 @@ class FriendsAdapter(
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
         fun onJoinClicked(room: Room?)
-        fun onDeleteClicked(userModel: UserModel?)
+        fun onDeleteClicked(friendModel: FriendModel?)
         fun onRowClicked(userModel: UserModel?)
     }
 
@@ -224,8 +224,8 @@ class FriendsAdapter(
                                     filteredList.add(it)
                                 }
                             }
-                            is UserModel -> {
-                                if (it.user?.name?.contains(filter, true)!!
+                            is FriendModel -> {
+                                if (it.userModel?.user?.name?.contains(filter, true)!!
                                 ) {
                                     filteredList.add(it)
                                 }
@@ -249,16 +249,16 @@ class FriendsAdapter(
 
     fun add(data: Any) {
         adapterDataList.add(data)
-        adapterDataList.sortBy { it is UserModel }
-        if (data is UserModel) {
-            adapterDataList.sortBy { data.user?.onlineStatus }
+        adapterDataList.sortBy { it is FriendModel }
+        if (data is FriendModel) {
+            adapterDataList.sortBy { data.userModel?.user?.onlineStatus }
         }
         notifyDataSetChanged()
     }
 
     fun addAll(data: MutableList<Any>) {
         adapterDataList.addAll(data)
-        adapterDataList.sortBy { it is UserModel }
+        adapterDataList.sortBy { it is FriendModel }
         notifyDataSetChanged()
     }
 
