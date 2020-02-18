@@ -258,8 +258,7 @@ class FriendsAdapter(
         if (data is FriendModel) {
             adapterDataList.sortBy { data.userModel?.user?.onlineStatus }
         }
-        val position = adapterDataList.indexOf(data)
-        notifyItemInserted(position)
+        notifyItemInserted(adapterDataList.size)
     }
 
     fun addAll(data: MutableList<Any>) {
@@ -279,12 +278,13 @@ class FriendsAdapter(
     }
 
     fun remove(data: Any) {
-        adapterDataList.remove(data)
-        adapterDataListFull.remove(data)
         val position = adapterDataList.indexOf(data)
         val size = adapterDataList.size
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, size)
+
+        adapterDataList.remove(data)
+        adapterDataListFull.remove(data)
     }
 
 }
