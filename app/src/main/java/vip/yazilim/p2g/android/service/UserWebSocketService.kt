@@ -73,7 +73,6 @@ class UserWebSocketService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.v(TAG, "onDestroy")
-        //STEP3: Unregister the receiver
         unregisterReceiver(serviceReceiver)
 
         if (this::userWSClient.isInitialized) {

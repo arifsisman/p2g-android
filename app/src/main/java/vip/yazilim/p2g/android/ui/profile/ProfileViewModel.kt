@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
-import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -18,8 +17,8 @@ class ProfileViewModel : ViewModelBase() {
     private val _userModel = MutableLiveData<UserModel>()
     val userModel: LiveData<UserModel> = _userModel
 
-    private val _friends = MutableLiveData<MutableList<FriendModel>>()
-    val friends: LiveData<MutableList<FriendModel>> = _friends
+    private val _friendCounts = MutableLiveData<Int>()
+    val friendCounts: LiveData<Int> = _friendCounts
 
     fun loadUserModel() {
         _isViewLoading.postValue(true)
@@ -39,16 +38,14 @@ class ProfileViewModel : ViewModelBase() {
             })
     }
 
-    fun loadFriendsCount() {
-        p2gRequest(
-            Singleton.apiClient().getFriends(),
-            object : Callback<MutableList<FriendModel>> {
+    fun loadFriendsCount() = p2gRequest(
+            Singleton.apiClient().getFriendsCounts(),
+            object : Callback<Int> {
                 override fun onError(msg: String) {
                 }
 
-                override fun onSuccess(obj: MutableList<FriendModel>) {
-                    _friends.value = obj
+                override fun onSuccess(obj: Int) {
+                    _friendCounts.value = obj
                 }
             })
-    }
 }

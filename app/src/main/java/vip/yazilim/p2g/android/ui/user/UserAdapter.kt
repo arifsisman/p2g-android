@@ -12,7 +12,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
-import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.model.p2g.Room
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper
@@ -24,7 +27,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
 class UserAdapter(
     private var userModel: UserModel?,
     private var roomModel: RoomModelSimplified?,
-    private var friends: MutableList<FriendModel>
+    private var friendCounts: Int
 ) :
     RecyclerView.Adapter<UserAdapter.MViewHolder>() {
 
@@ -119,15 +122,9 @@ class UserAdapter(
                 cardView.visibility = View.VISIBLE
             }
 
-            if (friends.isNotEmpty()) {
-                val profileFriendCountsPlaceholder =
-                    "${friends.size} ${view.resources.getString(R.string.placeholder_friend_counts)}"
-                friendCountsTextView.text = profileFriendCountsPlaceholder
-            } else {
-                val profileFriendCountsPlaceholder =
-                    "0 " + view.resources.getString(R.string.placeholder_friend_counts)
-                friendCountsTextView.text = profileFriendCountsPlaceholder
-            }
+            val profileFriendCountsPlaceholder =
+                "$friendCounts ${view.resources.getString(R.string.placeholder_friend_counts)}"
+            friendCountsTextView.text = profileFriendCountsPlaceholder
         }
     }
 
@@ -145,8 +142,8 @@ class UserAdapter(
         notifyDataSetChanged()
     }
 
-    fun update(data: MutableList<FriendModel>) {
-        friends = data
+    fun update(data: Int) {
+        friendCounts = data
         notifyDataSetChanged()
     }
 

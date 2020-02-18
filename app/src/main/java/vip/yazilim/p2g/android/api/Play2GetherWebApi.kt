@@ -135,6 +135,11 @@ interface Play2GetherWebApi {
     @GET("/api/friend/requests/{userId}/friends")
     fun getFriends(@Path("userId") userId: String): Call<Response<MutableList<FriendModel>>>
 
+    @GET("/api/friend/requests/friends/counts")
+    fun getFriendsCounts(): Call<Response<Int>>
+
+    @GET("/api/friend/requests/{userId}/friends/counts")
+    fun getFriendsCounts(@Path("userId") userId: String): Call<Response<Int>>
 
 
     // Authorization API
