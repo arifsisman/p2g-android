@@ -154,19 +154,14 @@ class FriendsAdapter(
                 } else {
                     lock.visibility = View.GONE
                 }
+
+                roomSongStatus.text = RoomHelper.getRoomSongStatus(view, song)
             } else {
                 roomName.visibility = View.GONE
                 lock.visibility = View.GONE
                 joinButton.visibility = View.GONE
                 roomSongStatus.visibility = View.GONE
             }
-
-            if(song != null){
-                roomSongStatus.text = RoomHelper.getRoomSongStatus(view, song)
-            }else{
-                roomSongStatus.visibility = View.GONE
-            }
-
         }
     }
 
@@ -285,7 +280,10 @@ class FriendsAdapter(
     fun remove(data: Any) {
         adapterDataList.remove(data)
         adapterDataListFull.remove(data)
-        notifyDataSetChanged()
+        val position = adapterDataList.indexOf(data)
+        val size = adapterDataList.size
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, size)
     }
 
 }

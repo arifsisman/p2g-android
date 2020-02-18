@@ -93,7 +93,7 @@ class UserAdapter(
                     }
                     roomModel != null -> {
                         val tempText =
-                            "$profileSongAndRoomStatusPlaceholder " + RoomHelper.getRoomSongStatus(
+                            "$profileSongAndRoomStatusPlaceholder - " + RoomHelper.getRoomSongStatus(
                                 view,
                                 roomModel?.song
                             )

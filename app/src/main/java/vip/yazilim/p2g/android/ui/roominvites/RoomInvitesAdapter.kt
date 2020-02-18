@@ -112,7 +112,10 @@ class RoomInvitesAdapter(
     fun remove(data: RoomInviteModel) {
         roomInviteModels.remove(data)
         roomInviteModelsFull.remove(data)
-        notifyDataSetChanged()
+        val position = roomInviteModels.indexOf(data)
+        val size = roomInviteModels.size
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, size)
     }
 
     fun clear() {

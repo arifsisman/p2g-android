@@ -34,10 +34,13 @@ class ProfileAdapter(
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
         private val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
         private val email: TextView = itemView.findViewById(R.id.email_text_view)
-        private val onlineStatus: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
+        private val onlineStatus: ImageView =
+            itemView.findViewById(R.id.online_status_online_image_view)
         private val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
-        private val friendCountsTextView: TextView = itemView.findViewById(R.id.friend_counts_text_view)
-        private val songAndRoomStatus: TextView = itemView.findViewById(R.id.song_room_status_text_view)
+        private val friendCountsTextView: TextView =
+            itemView.findViewById(R.id.friend_counts_text_view)
+        private val songAndRoomStatus: TextView =
+            itemView.findViewById(R.id.song_room_status_text_view)
         private val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
         private val spotifyId: TextView = itemView.findViewById(R.id.spotify_id_text_view)
 
@@ -91,7 +94,7 @@ class ProfileAdapter(
                     songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
                 } else {
                     val songAndRoomStatusString =
-                        view.resources.getString(R.string.placeholder_room_user_not_found)
+                        " - " + view.resources.getString(R.string.placeholder_room_user_not_found)
                     songAndRoomStatus.text = songAndRoomStatusString
                 }
 
