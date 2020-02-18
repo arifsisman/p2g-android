@@ -20,23 +20,25 @@ class HomeViewModel : ViewModelBase() {
     fun loadRooms() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.build(
-            ApiClient.build().getSimplifiedRoomModels(),
-            object : Callback<MutableList<RoomModelSimplified>> {
-                override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
-                    _isViewLoading.postValue(false)
-
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _roomModels.value = obj
+        P2GRequest.run {
+            build(
+                ApiClient.build().getSimplifiedRoomModels(),
+                object : Callback<MutableList<RoomModelSimplified>> {
+                    override fun onError(msg: String) {
+                        _isViewLoading.postValue(false)
+                        _onMessageError.postValue(msg)
                     }
-                }
-            })
+
+                    override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
+                        _isViewLoading.postValue(false)
+
+                        if (obj.isEmpty()) {
+                            _isEmptyList.postValue(true)
+                        } else {
+                            _roomModels.value = obj
+                        }
+                    }
+                })
+        }
     }
 }

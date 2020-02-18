@@ -24,31 +24,35 @@ class ProfileViewModel : ViewModelBase() {
     fun loadUserModel() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.build(
-            ApiClient.build().getUserModelMe(),
-            object : Callback<UserModel> {
-                override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
-                }
+        P2GRequest.run {
+            build(
+                ApiClient.build().getUserModelMe(),
+                object : Callback<UserModel> {
+                    override fun onError(msg: String) {
+                        _isViewLoading.postValue(false)
+                        _onMessageError.postValue(msg)
+                    }
 
-                override fun onSuccess(obj: UserModel) {
-                    _userModel.value = obj
-                    _isViewLoading.postValue(false)
-                }
-            })
+                    override fun onSuccess(obj: UserModel) {
+                        _userModel.value = obj
+                        _isViewLoading.postValue(false)
+                    }
+                })
+        }
     }
 
     fun loadFriendsCount() {
-        P2GRequest.build(
-            ApiClient.build().getFriends(),
-            object : Callback<MutableList<FriendModel>> {
-                override fun onError(msg: String) {
-                }
+        P2GRequest.run {
+            build(
+                ApiClient.build().getFriends(),
+                object : Callback<MutableList<FriendModel>> {
+                    override fun onError(msg: String) {
+                    }
 
-                override fun onSuccess(obj: MutableList<FriendModel>) {
-                    _friends.value = obj
-                }
-            })
+                    override fun onSuccess(obj: MutableList<FriendModel>) {
+                        _friends.value = obj
+                    }
+                })
+        }
     }
 }

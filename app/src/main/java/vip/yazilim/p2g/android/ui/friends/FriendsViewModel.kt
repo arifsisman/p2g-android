@@ -17,39 +17,43 @@ class FriendsViewModel : ViewModelBase() {
     fun loadFriendRequestModel() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.build(
-            ApiClient.build().getFriendRequestModel(),
-            object : Callback<MutableList<FriendRequestModel>> {
-                override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
-                }
+        P2GRequest.run {
+            build(
+                ApiClient.build().getFriendRequestModel(),
+                object : Callback<MutableList<FriendRequestModel>> {
+                    override fun onError(msg: String) {
+                        _isViewLoading.postValue(false)
+                        _onMessageError.postValue(msg)
+                    }
 
-                @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                    _isViewLoading.postValue(false)
-                    _data.value = obj as MutableList<Any>
-                }
-            })
+                    @Suppress("UNCHECKED_CAST")
+                    override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+                        _isViewLoading.postValue(false)
+                        _data.value = obj as MutableList<Any>
+                    }
+                })
+        }
 
     }
 
     fun loadFriends() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.build(
-            ApiClient.build().getFriends(),
-            object : Callback<MutableList<FriendModel>> {
-                override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
-                }
+        P2GRequest.run {
+            build(
+                ApiClient.build().getFriends(),
+                object : Callback<MutableList<FriendModel>> {
+                    override fun onError(msg: String) {
+                        _isViewLoading.postValue(false)
+                        _onMessageError.postValue(msg)
+                    }
 
-                @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<FriendModel>) {
-                    _isViewLoading.postValue(false)
-                    _data.value = obj as MutableList<Any>
-                }
-            })
+                    @Suppress("UNCHECKED_CAST")
+                    override fun onSuccess(obj: MutableList<FriendModel>) {
+                        _isViewLoading.postValue(false)
+                        _data.value = obj as MutableList<Any>
+                    }
+                })
+        }
     }
 }

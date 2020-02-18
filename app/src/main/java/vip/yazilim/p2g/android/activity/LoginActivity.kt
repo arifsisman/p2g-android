@@ -99,8 +99,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // getTokensFromSpotify via Spotify Web API
-    private fun getTokensFromSpotify(code: String) {
-        SpotifyRequest.build(
+    private fun getTokensFromSpotify(code: String) = SpotifyRequest.run {
+        build(
             SpotifyApiClient.build().getTokens(
                 SpotifyConstants.CLIENT_ID,
                 SpotifyConstants.CLIENT_SECRET,
@@ -123,8 +123,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // loginToPlay2Gether via Play2Gether Web API
-    private fun loginToPlay2Gether(tokenModel: TokenModel) {
-        P2GRequest.build(ApiClient.build().login(),
+    private fun loginToPlay2Gether(tokenModel: TokenModel) = P2GRequest.run {
+        build(ApiClient.build().login(),
             object : Callback<User> {
                 override fun onError(msg: String) {
                     UIHelper.showErrorDialog(this@LoginActivity, msg)
@@ -133,17 +133,16 @@ class LoginActivity : AppCompatActivity() {
                 override fun onSuccess(obj: User) {
                     if (obj.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
                         UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
-//                        UIHelper.showSnackBarShort(findViewById(android.R.id.content), SPOTIFY_PRODUCT_TYPE_ERROR)
 
                     } else {
 //                        db.insertData(obj)
                         UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
-//                        UIHelper.showSnackBarShort(findViewById(android.R.id.content), "Logged in as ${obj.name}")
                         startMainActivity(obj, tokenModel)
                     }
                 }
             })
     }
+
 
     private fun startMainActivity(user: User, tokenModel: TokenModel) {
         val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)

@@ -20,8 +20,8 @@ class UserViewModel : ViewModelBase() {
     private val _roomModel = MutableLiveData<RoomModelSimplified>()
     val roomModel: LiveData<RoomModelSimplified> = _roomModel
 
-    fun loadFriendsCount(userId: String) {
-        P2GRequest.build(
+    fun loadFriendsCount(userId: String) = P2GRequest.run {
+        build(
             ApiClient.build().getFriends(userId),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
@@ -33,8 +33,8 @@ class UserViewModel : ViewModelBase() {
             })
     }
 
-    fun loadRoomModel(roomId: Long) {
-        P2GRequest.build(
+    fun loadRoomModel(roomId: Long) = P2GRequest.run {
+        build(
             ApiClient.build().getSimplifiedRoomModel(roomId),
             object : Callback<RoomModelSimplified> {
                 override fun onError(msg: String) {

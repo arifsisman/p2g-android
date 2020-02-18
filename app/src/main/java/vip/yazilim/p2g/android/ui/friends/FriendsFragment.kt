@@ -130,8 +130,8 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
-        P2GRequest.build(
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = P2GRequest.run {
+        build(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
@@ -140,7 +140,14 @@ class FriendsFragment : FragmentBase(
 
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
-                    friendRequestModel.friendRequestUserModel?.let { adapter.add(FriendModel(it, null)) }
+                    friendRequestModel.friendRequestUserModel?.let {
+                        adapter.add(
+                            FriendModel(
+                                it,
+                                null
+                            )
+                        )
+                    }
                     friendRequestModel.friendRequestUserModel?.let {
                         adapter.adapterDataListFull.add(FriendModel(it, null))
                     }
@@ -148,8 +155,8 @@ class FriendsFragment : FragmentBase(
             })
     }
 
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
-        P2GRequest.build(
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) = P2GRequest.run {
+        build(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().reject(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
@@ -162,8 +169,8 @@ class FriendsFragment : FragmentBase(
             })
     }
 
-    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
-        P2GRequest.build(
+    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = P2GRequest.run {
+        build(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().ignore(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
@@ -185,11 +192,11 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onDeleteClicked(friendModel: FriendModel?) {
-        val dialogClickListener =
-            DialogInterface.OnClickListener { _, which ->
-                when (which) {
-                    DialogInterface.BUTTON_POSITIVE -> {
-                        P2GRequest.build(
+        val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
+            when (ans) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    P2GRequest.run {
+                        build(
                             friendModel?.userModel?.user?.id?.let {
                                 ApiClient.build().deleteFriend(it)
                             },
@@ -205,6 +212,7 @@ class FriendsFragment : FragmentBase(
                     }
                 }
             }
+        }
 
         AlertDialog.Builder(context)
             .setMessage("Are you sure you want to delete friend ?")
@@ -219,8 +227,8 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadFriendRequestModel() {
-        P2GRequest.build(
+    private fun loadFriendRequestModel() = P2GRequest.run {
+        build(
             ApiClient.build().getFriendRequestModel(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
@@ -236,8 +244,8 @@ class FriendsFragment : FragmentBase(
             })
     }
 
-    private fun loadFriends() {
-        P2GRequest.build(
+    private fun loadFriends() = P2GRequest.run {
+        build(
             ApiClient.build().getFriends(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
@@ -254,8 +262,8 @@ class FriendsFragment : FragmentBase(
             })
     }
 
-    private fun joinRoomEvent(room: Room) {
-        P2GRequest.build(
+    private fun joinRoomEvent(room: Room) = P2GRequest.run {
+        build(
             room.id.let { ApiClient.build().joinRoom(it, GeneralConstants.UNDEFINED) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {

@@ -53,8 +53,8 @@ class TokenAuthenticator : Authenticator {
                 })
         }
 
-        fun updateAccessTokenOnPlay2Gether(accessToken: String) {
-            P2GRequest.build(
+        fun updateAccessTokenOnPlay2Gether(accessToken: String) = P2GRequest.run {
+            build(
                 ApiClient.build().updateAccessToken(accessToken),
                 object : Callback<String> {
                     override fun onError(msg: String) {

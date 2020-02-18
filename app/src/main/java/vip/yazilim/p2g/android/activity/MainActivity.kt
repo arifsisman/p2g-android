@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.Logout -> {
-                P2GRequest.build(ApiClient.build().logout(), null)
+                P2GRequest.run { build(ApiClient.build().logout(), null) }
 
                 db.deleteAllData()
                 val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)

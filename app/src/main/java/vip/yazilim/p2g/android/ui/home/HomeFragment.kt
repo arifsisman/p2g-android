@@ -136,10 +136,9 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModelSimplified) {
-        val room = roomModel.room
-        P2GRequest.build(
-            room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
+    private fun joinRoomEvent(roomModel: RoomModelSimplified) = P2GRequest.run {
+        build(
+            roomModel.room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     UIHelper.showSnackBarShort(root, "Can not join room")
@@ -187,24 +186,26 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            val roomPassword = roomPasswordEditText.text.toString()
+            P2GRequest.run {
+                build(
+                    room?.id?.let { it ->
+                        ApiClient.build().joinRoom(it, roomPasswordEditText.text.toString())
+                    },
+                    object : Callback<RoomUser> {
+                        override fun onError(msg: String) {
+                            UIHelper.showSnackBarShort(root, "Can not join room")
+                        }
 
-            P2GRequest.build(
-                room?.id?.let { it1 -> ApiClient.build().joinRoom(it1, roomPassword) },
-                object : Callback<RoomUser> {
-                    override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(root, "Can not join room")
-                    }
+                        override fun onSuccess(obj: RoomUser) {
+                            Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                            mAlertDialog.dismiss()
+                            closeKeyboard()
 
-                    override fun onSuccess(obj: RoomUser) {
-                        Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
-                        mAlertDialog.dismiss()
-                        closeKeyboard()
-
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        startActivity(intent)
-                    }
-                })
+                            val intent = Intent(activity, RoomActivity::class.java)
+                            startActivity(intent)
+                        }
+                    })
+            }
         }
 
         // Click cancel
@@ -239,25 +240,27 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // Click create
         createButton.setOnClickListener {
-            val roomName = roomNameEditText.text.toString()
-            val roomPassword = roomPasswordEditText.text.toString()
+            P2GRequest.run {
+                build(
+                    ApiClient.build().createRoom(
+                        roomNameEditText.text.toString(),
+                        roomPasswordEditText.text.toString()
+                    ),
+                    object : Callback<Room> {
+                        override fun onError(msg: String) {
+                            Log.d(LOG_TAG, "Room can not created")
+                            UIHelper.showSnackBarShort(mDialogView, msg)
+                        }
 
-            P2GRequest.build(
-                ApiClient.build().createRoom(roomName, roomPassword),
-                object : Callback<Room> {
-                    override fun onError(msg: String) {
-                        Log.d(LOG_TAG, "Room can not created")
-                        UIHelper.showSnackBarShort(mDialogView, msg)
-                    }
+                        override fun onSuccess(obj: Room) {
+                            Log.d(LOG_TAG, "Room created with ID: " + obj.id)
+                            mAlertDialog.dismiss()
 
-                    override fun onSuccess(obj: Room) {
-                        Log.d(LOG_TAG, "Room created with ID: " + obj.id)
-                        mAlertDialog.dismiss()
-
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        startActivity(intent)
-                    }
-                })
+                            val intent = Intent(activity, RoomActivity::class.java)
+                            startActivity(intent)
+                        }
+                    })
+            }
         }
 
         // Click cancel
@@ -269,8 +272,8 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() {
-        P2GRequest.build(
+    private fun refreshRoomsEvent() = P2GRequest.run {
+        build(
             ApiClient.build().getSimplifiedRoomModels(),
             object : Callback<MutableList<RoomModelSimplified>> {
                 override fun onError(msg: String) {

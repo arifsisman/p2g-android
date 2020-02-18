@@ -138,8 +138,8 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         })
     }
 
-    override fun onAcceptClicked(roomInviteModel: RoomInviteModel) {
-        P2GRequest.build(
+    override fun onAcceptClicked(roomInviteModel: RoomInviteModel) = P2GRequest.run {
+        build(
             roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
@@ -157,8 +157,8 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             })
     }
 
-    override fun onRejectClicked(roomInviteModel: RoomInviteModel) {
-        P2GRequest.build(
+    override fun onRejectClicked(roomInviteModel: RoomInviteModel) = P2GRequest.run {
+        build(
             roomInviteModel.roomInvite?.id?.let { ApiClient.build().rejectInvite(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
@@ -172,11 +172,9 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             })
     }
 
-    override fun onRowClicked(roomInviteModel: RoomInviteModel) {
-        val inviterId = roomInviteModel.roomInvite?.inviterId
-
-        P2GRequest.build(
-            inviterId?.let { ApiClient.build().getUserModel(it) },
+    override fun onRowClicked(roomInviteModel: RoomInviteModel) = P2GRequest.run {
+        build(
+            roomInviteModel.roomInvite?.inviterId?.let { ApiClient.build().getUserModel(it) },
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                 }
@@ -189,8 +187,8 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             })
     }
 
-    private fun refreshRoomInvitesEvent() {
-        P2GRequest.build(
+    private fun refreshRoomInvitesEvent() = P2GRequest.run {
+        build(
             ApiClient.build().getRoomInviteModels(),
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {

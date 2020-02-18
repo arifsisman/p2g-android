@@ -20,23 +20,25 @@ class RoomInvitesViewModel : ViewModelBase() {
     fun loadRoomInviteModel() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.build(
-            ApiClient.build().getRoomInviteModels(),
-            object : Callback<MutableList<RoomInviteModel>> {
-                override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: MutableList<RoomInviteModel>) {
-                    _isViewLoading.postValue(false)
-
-                    if (obj.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _roomInviteModel.value = obj
+        P2GRequest.run {
+            build(
+                ApiClient.build().getRoomInviteModels(),
+                object : Callback<MutableList<RoomInviteModel>> {
+                    override fun onError(msg: String) {
+                        _isViewLoading.postValue(false)
+                        _onMessageError.postValue(msg)
                     }
-                }
-            })
+
+                    override fun onSuccess(obj: MutableList<RoomInviteModel>) {
+                        _isViewLoading.postValue(false)
+
+                        if (obj.isNullOrEmpty()) {
+                            _isEmptyList.postValue(true)
+                        } else {
+                            _roomInviteModel.value = obj
+                        }
+                    }
+                })
+        }
     }
 }
