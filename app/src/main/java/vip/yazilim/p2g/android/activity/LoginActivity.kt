@@ -109,7 +109,6 @@ class LoginActivity : AppCompatActivity() {
                 SpotifyConstants.REDIRECT_URI
             ), object : Callback<TokenModel> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showToastLong(this@LoginActivity, msg)
                 }
 
@@ -128,7 +127,6 @@ class LoginActivity : AppCompatActivity() {
         P2GRequest.build(ApiClient.build().login(),
             object : Callback<User> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showErrorDialog(this@LoginActivity, msg)
                 }
 

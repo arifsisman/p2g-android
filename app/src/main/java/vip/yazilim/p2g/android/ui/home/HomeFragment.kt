@@ -142,8 +142,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
-                        UIHelper.showSnackBarShort(root, "Can not join room")
+                    UIHelper.showSnackBarShort(root, "Can not join room")
                 }
 
                 override fun onSuccess(obj: RoomUser) {
@@ -194,8 +193,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 room?.id?.let { it1 -> ApiClient.build().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        Log.d(LOG_TAG, msg)
-                            UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShort(root, "Can not join room")
                     }
 
                     override fun onSuccess(obj: RoomUser) {
@@ -276,7 +274,6 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             ApiClient.build().getSimplifiedRoomModels(),
             object : Callback<MutableList<RoomModelSimplified>> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
                     swipeContainer.isRefreshing = false
                 }

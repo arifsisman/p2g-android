@@ -135,7 +135,6 @@ class FriendsFragment : FragmentBase(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, msg)
                 }
 
@@ -154,7 +153,6 @@ class FriendsFragment : FragmentBase(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().reject(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, msg)
                 }
 
@@ -169,7 +167,6 @@ class FriendsFragment : FragmentBase(
             friendRequestModel.friendRequest?.id?.let { ApiClient.build().ignore(it) },
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, msg)
                 }
 
@@ -193,10 +190,11 @@ class FriendsFragment : FragmentBase(
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
                         P2GRequest.build(
-                            friendModel?.userModel?.user?.id?.let { ApiClient.build().deleteFriend(it) },
+                            friendModel?.userModel?.user?.id?.let {
+                                ApiClient.build().deleteFriend(it)
+                            },
                             object : Callback<Boolean> {
                                 override fun onError(msg: String) {
-                                    Log.d(LOG_TAG, msg)
                                     UIHelper.showSnackBarShort(root, msg)
                                 }
 
@@ -226,7 +224,6 @@ class FriendsFragment : FragmentBase(
             ApiClient.build().getFriendRequestModel(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, msg)
                     swipeContainer.isRefreshing = false
                 }
@@ -244,7 +241,6 @@ class FriendsFragment : FragmentBase(
             ApiClient.build().getFriends(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
                     UIHelper.showSnackBarShort(root, msg)
                     swipeContainer.isRefreshing = false
                 }
@@ -263,8 +259,7 @@ class FriendsFragment : FragmentBase(
             room.id.let { ApiClient.build().joinRoom(it, GeneralConstants.UNDEFINED) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
-                    Log.d(LOG_TAG, msg)
-                        UIHelper.showSnackBarShort(root, msg)
+                    UIHelper.showSnackBarShort(root, "Can not join room")
                 }
 
                 override fun onSuccess(obj: RoomUser) {
@@ -312,8 +307,7 @@ class FriendsFragment : FragmentBase(
                 room.id.let { it1 -> ApiClient.build().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        Log.d(LOG_TAG, msg)
-                            UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShort(root, "Can not join room")
                     }
 
                     override fun onSuccess(obj: RoomUser) {

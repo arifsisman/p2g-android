@@ -15,15 +15,17 @@ abstract class SpotifyRequest {
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
-                            val data = result.response.body()
-                            Log.v(SPOTIFY_REQUEST_TAG, "Response Data -> $data")
-                            callback.onSuccess(data as T)
+                            callback.onSuccess(result.response.body() as T)
                         } else {
-                            callback.onError(result.response.message())
+                            val msg = result.response.message()
+                            Log.d(SPOTIFY_REQUEST_TAG, msg)
+                            callback.onError(msg)
                         }
                     }
                     is Result.Failure -> {
-                        callback.onError(result.error.message as String)
+                        val msg = result.error.message as String
+                        Log.d(SPOTIFY_REQUEST_TAG, msg)
+                        callback.onError(msg)
                     }
                 }
             }

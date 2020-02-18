@@ -143,8 +143,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
-                    Log.d(TAG, msg)
-                    UIHelper.showSnackBarShort(root, msg)
+                    UIHelper.showSnackBarShort(root, "Can not join room")
                 }
 
                 override fun onSuccess(obj: RoomUser) {

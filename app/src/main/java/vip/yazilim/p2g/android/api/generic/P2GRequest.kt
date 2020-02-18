@@ -11,20 +11,23 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.REQUEST_TAG
  */
 abstract class P2GRequest {
     companion object {
-        fun <T> build(call: Call<P2GResponse<T>>?, callback: Callback<T>?) {
+        inline fun <reified T> build(call: Call<P2GResponse<T>>?, callback: Callback<T>?) {
             call?.enqueue { result ->
                 when (result) {
                     is Result.Success -> {
                         if (result.response.isSuccessful) {
-                            val data = result.response.body()?.data
-                            Log.v(REQUEST_TAG, "Response Data -> $data")
-                            callback?.onSuccess(data!!)
+                            callback?.onSuccess(result.response.body()?.data as T)
                         } else {
-                            callback?.onError(result.response.errorBody()!!.string())
+                            result.response.errorBody()?.let {
+                                Log.d(REQUEST_TAG, it.string())
+                                callback?.onError(it.string())
+                            }
                         }
                     }
                     is Result.Failure -> {
-                        callback?.onError(result.error.message as String)
+                        val msg = result.error.message as String
+                        Log.d(REQUEST_TAG, msg)
+                        callback?.onError(msg)
                     }
                 }
             }
