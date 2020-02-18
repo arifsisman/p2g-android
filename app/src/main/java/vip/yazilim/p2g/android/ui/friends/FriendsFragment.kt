@@ -25,7 +25,7 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.*
@@ -130,58 +130,55 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = P2GRequest.run {
-        build(
-            friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
-            object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, msg)
-                }
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
+        friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
+        object : Callback<Boolean> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, msg)
+            }
 
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(friendRequestModel)
-                    friendRequestModel.friendRequestUserModel?.let {
-                        adapter.add(
-                            FriendModel(
-                                it,
-                                null
-                            )
+            override fun onSuccess(obj: Boolean) {
+                adapter.remove(friendRequestModel)
+                friendRequestModel.friendRequestUserModel?.let {
+                    adapter.add(
+                        FriendModel(
+                            it,
+                            null
                         )
-                    }
-                    friendRequestModel.friendRequestUserModel?.let {
-                        adapter.adapterDataListFull.add(FriendModel(it, null))
-                    }
+                    )
                 }
-            })
-    }
+                friendRequestModel.friendRequestUserModel?.let {
+                    adapter.adapterDataListFull.add(FriendModel(it, null))
+                }
+            }
+        })
 
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) = P2GRequest.run {
-        build(
-            friendRequestModel.friendRequest?.id?.let { ApiClient.build().reject(it) },
-            object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, msg)
-                }
 
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(friendRequestModel)
-                }
-            })
-    }
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
+        friendRequestModel.friendRequest?.id?.let { ApiClient.build().reject(it) },
+        object : Callback<Boolean> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, msg)
+            }
 
-    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = P2GRequest.run {
-        build(
-            friendRequestModel.friendRequest?.id?.let { ApiClient.build().ignore(it) },
-            object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, msg)
-                }
+            override fun onSuccess(obj: Boolean) {
+                adapter.remove(friendRequestModel)
+            }
+        })
 
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(friendRequestModel)
-                }
-            })
-    }
+
+    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
+        friendRequestModel.friendRequest?.id?.let { ApiClient.build().ignore(it) },
+        object : Callback<Boolean> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, msg)
+            }
+
+            override fun onSuccess(obj: Boolean) {
+                adapter.remove(friendRequestModel)
+            }
+        })
+
 
     override fun onJoinClicked(room: Room?) {
         if (room?.password?.isNotEmpty()!!) {
@@ -195,24 +192,23 @@ class FriendsFragment : FragmentBase(
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    P2GRequest.run {
-                        build(
-                            friendModel?.userModel?.user?.id?.let {
-                                ApiClient.build().deleteFriend(it)
-                            },
-                            object : Callback<Boolean> {
-                                override fun onError(msg: String) {
-                                    UIHelper.showSnackBarShort(root, msg)
-                                }
+                    p2gRequest(
+                        friendModel?.userModel?.user?.id?.let {
+                            ApiClient.build().deleteFriend(it)
+                        },
+                        object : Callback<Boolean> {
+                            override fun onError(msg: String) {
+                                UIHelper.showSnackBarShort(root, msg)
+                            }
 
-                                override fun onSuccess(obj: Boolean) {
-                                    friendModel?.let { adapter.remove(it) }
-                                }
-                            })
-                    }
+                            override fun onSuccess(obj: Boolean) {
+                                friendModel?.let { adapter.remove(it) }
+                            }
+                        })
                 }
             }
         }
+
 
         AlertDialog.Builder(context)
             .setMessage("Are you sure you want to delete friend ?")
@@ -227,58 +223,55 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadFriendRequestModel() = P2GRequest.run {
-        build(
-            ApiClient.build().getFriendRequestModel(),
-            object : Callback<MutableList<FriendRequestModel>> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, msg)
-                    swipeContainer.isRefreshing = false
-                }
+    private fun loadFriendRequestModel() = p2gRequest(
+        ApiClient.build().getFriendRequestModel(),
+        object : Callback<MutableList<FriendRequestModel>> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, msg)
+                swipeContainer.isRefreshing = false
+            }
 
-                @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                    adapter.addAll(obj as MutableList<Any>)
-                    adapter.adapterDataListFull.addAll(obj)
-                }
-            })
-    }
+            @Suppress("UNCHECKED_CAST")
+            override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+                adapter.addAll(obj as MutableList<Any>)
+                adapter.adapterDataListFull.addAll(obj)
+            }
+        })
 
-    private fun loadFriends() = P2GRequest.run {
-        build(
-            ApiClient.build().getFriends(),
-            object : Callback<MutableList<FriendModel>> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, msg)
-                    swipeContainer.isRefreshing = false
-                }
 
-                @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<FriendModel>) {
-                    adapter.addAll(obj as MutableList<Any>)
-                    adapter.adapterDataListFull.addAll(obj)
-                    swipeContainer.isRefreshing = false
-                }
-            })
-    }
+    private fun loadFriends() = p2gRequest(
+        ApiClient.build().getFriends(),
+        object : Callback<MutableList<FriendModel>> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, msg)
+                swipeContainer.isRefreshing = false
+            }
 
-    private fun joinRoomEvent(room: Room) = P2GRequest.run {
-        build(
-            room.id.let { ApiClient.build().joinRoom(it, GeneralConstants.UNDEFINED) },
-            object : Callback<RoomUser> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, "Can not join room")
-                }
+            @Suppress("UNCHECKED_CAST")
+            override fun onSuccess(obj: MutableList<FriendModel>) {
+                adapter.addAll(obj as MutableList<Any>)
+                adapter.adapterDataListFull.addAll(obj)
+                swipeContainer.isRefreshing = false
+            }
+        })
 
-                override fun onSuccess(obj: RoomUser) {
-                    Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
 
-                    val intent = Intent(activity, RoomActivity::class.java)
-                    intent.putExtra("roomUser", obj)
-                    startActivity(intent)
-                }
-            })
-    }
+    private fun joinRoomEvent(room: Room) = p2gRequest(
+        room.id.let { ApiClient.build().joinRoom(it, GeneralConstants.UNDEFINED) },
+        object : Callback<RoomUser> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, "Can not join room")
+            }
+
+            override fun onSuccess(obj: RoomUser) {
+                Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+
+                val intent = Intent(activity, RoomActivity::class.java)
+                intent.putExtra("roomUser", obj)
+                startActivity(intent)
+            }
+        })
+
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
@@ -311,7 +304,7 @@ class FriendsFragment : FragmentBase(
         joinButton.setOnClickListener {
             val roomPassword = roomPasswordEditText.text.toString()
 
-            P2GRequest.build(
+            p2gRequest(
                 room.id.let { it1 -> ApiClient.build().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {

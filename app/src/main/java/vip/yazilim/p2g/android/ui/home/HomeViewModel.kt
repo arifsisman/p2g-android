@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.ui.ViewModelBase
 
@@ -20,25 +20,24 @@ class HomeViewModel : ViewModelBase() {
     fun loadRooms() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.run {
-            build(
-                ApiClient.build().getSimplifiedRoomModels(),
-                object : Callback<MutableList<RoomModelSimplified>> {
-                    override fun onError(msg: String) {
-                        _isViewLoading.postValue(false)
-                        _onMessageError.postValue(msg)
-                    }
+        p2gRequest(
+            ApiClient.build().getSimplifiedRoomModels(),
+            object : Callback<MutableList<RoomModelSimplified>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
 
-                    override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
-                        _isViewLoading.postValue(false)
+                override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
+                    _isViewLoading.postValue(false)
 
-                        if (obj.isEmpty()) {
-                            _isEmptyList.postValue(true)
-                        } else {
-                            _roomModels.value = obj
-                        }
+                    if (obj.isEmpty()) {
+                        _isEmptyList.postValue(true)
+                    } else {
+                        _roomModels.value = obj
                     }
-                })
-        }
+                }
+            })
     }
+
 }

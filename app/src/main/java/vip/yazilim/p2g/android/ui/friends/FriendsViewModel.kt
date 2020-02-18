@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
@@ -17,43 +17,38 @@ class FriendsViewModel : ViewModelBase() {
     fun loadFriendRequestModel() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.run {
-            build(
-                ApiClient.build().getFriendRequestModel(),
-                object : Callback<MutableList<FriendRequestModel>> {
-                    override fun onError(msg: String) {
-                        _isViewLoading.postValue(false)
-                        _onMessageError.postValue(msg)
-                    }
+        p2gRequest(
+            ApiClient.build().getFriendRequestModel(),
+            object : Callback<MutableList<FriendRequestModel>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
 
-                    @Suppress("UNCHECKED_CAST")
-                    override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                        _isViewLoading.postValue(false)
-                        _data.value = obj as MutableList<Any>
-                    }
-                })
-        }
-
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+                    _isViewLoading.postValue(false)
+                    _data.value = obj as MutableList<Any>
+                }
+            })
     }
 
     fun loadFriends() {
         _isViewLoading.postValue(true)
 
-        P2GRequest.run {
-            build(
-                ApiClient.build().getFriends(),
-                object : Callback<MutableList<FriendModel>> {
-                    override fun onError(msg: String) {
-                        _isViewLoading.postValue(false)
-                        _onMessageError.postValue(msg)
-                    }
+        p2gRequest(
+            ApiClient.build().getFriends(),
+            object : Callback<MutableList<FriendModel>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
 
-                    @Suppress("UNCHECKED_CAST")
-                    override fun onSuccess(obj: MutableList<FriendModel>) {
-                        _isViewLoading.postValue(false)
-                        _data.value = obj as MutableList<Any>
-                    }
-                })
-        }
+                @Suppress("UNCHECKED_CAST")
+                override fun onSuccess(obj: MutableList<FriendModel>) {
+                    _isViewLoading.postValue(false)
+                    _data.value = obj as MutableList<Any>
+                }
+            })
     }
 }

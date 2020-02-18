@@ -14,8 +14,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
-import vip.yazilim.p2g.android.api.generic.SpotifyRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
@@ -99,49 +99,44 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // getTokensFromSpotify via Spotify Web API
-    private fun getTokensFromSpotify(code: String) = SpotifyRequest.run {
-        build(
-            SpotifyApiClient.build().getTokens(
-                SpotifyConstants.CLIENT_ID,
-                SpotifyConstants.CLIENT_SECRET,
-                SpotifyConstants.GRANT_TYPE_AUTHORIZATION_CODE_REQUEST,
-                code,
-                SpotifyConstants.REDIRECT_URI
-            ), object : Callback<TokenModel> {
-                override fun onError(msg: String) {
-                    UIHelper.showToastLong(this@LoginActivity, msg)
-                }
-
-                override fun onSuccess(obj: TokenModel) {
-                    SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
-                    SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
-//                    db.insertData(obj)
-                    loginToPlay2Gether(obj)
-                }
+    private fun getTokensFromSpotify(code: String) =
+        spotifyRequest(SpotifyApiClient.build().getTokens(
+            SpotifyConstants.CLIENT_ID,
+            SpotifyConstants.CLIENT_SECRET,
+            SpotifyConstants.GRANT_TYPE_AUTHORIZATION_CODE_REQUEST,
+            code,
+            SpotifyConstants.REDIRECT_URI
+        ), object : Callback<TokenModel> {
+            override fun onError(msg: String) {
+                UIHelper.showToastLong(this@LoginActivity, msg)
             }
-        )
-    }
+
+            override fun onSuccess(obj: TokenModel) {
+                SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
+                SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
+//                    db.insertData(obj)
+                loginToPlay2Gether(obj)
+            }
+        })
 
     // loginToPlay2Gether via Play2Gether Web API
-    private fun loginToPlay2Gether(tokenModel: TokenModel) = P2GRequest.run {
-        build(ApiClient.build().login(),
-            object : Callback<User> {
-                override fun onError(msg: String) {
-                    UIHelper.showErrorDialog(this@LoginActivity, msg)
-                }
+    private fun loginToPlay2Gether(tokenModel: TokenModel) = p2gRequest(ApiClient.build().login(),
+        object : Callback<User> {
+            override fun onError(msg: String) {
+                UIHelper.showErrorDialog(this@LoginActivity, msg)
+            }
 
-                override fun onSuccess(obj: User) {
-                    if (obj.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
-                        UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
+            override fun onSuccess(obj: User) {
+                if (obj.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
+                    UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
 
-                    } else {
+                } else {
 //                        db.insertData(obj)
-                        UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
-                        startMainActivity(obj, tokenModel)
-                    }
+                    UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
+                    startMainActivity(obj, tokenModel)
                 }
-            })
-    }
+            }
+        })
 
 
     private fun startMainActivity(user: User, tokenModel: TokenModel) {

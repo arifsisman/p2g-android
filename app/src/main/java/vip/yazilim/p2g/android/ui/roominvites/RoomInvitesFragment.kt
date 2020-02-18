@@ -23,7 +23,7 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -138,70 +138,65 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         })
     }
 
-    override fun onAcceptClicked(roomInviteModel: RoomInviteModel) = P2GRequest.run {
-        build(
-            roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
-            object : Callback<RoomUser> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, "Can not join room")
-                }
+    override fun onAcceptClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+        roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
+        object : Callback<RoomUser> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, "Can not join room")
+            }
 
-                override fun onSuccess(obj: RoomUser) {
-                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+            override fun onSuccess(obj: RoomUser) {
+                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
-                    val intent = Intent(activity, RoomActivity::class.java)
-                    intent.putExtra("roomModel", roomInviteModel.roomModel)
-                    intent.putExtra("roomUser", obj)
-                    startActivity(intent)
-                }
-            })
-    }
+                val intent = Intent(activity, RoomActivity::class.java)
+                intent.putExtra("roomModel", roomInviteModel.roomModel)
+                intent.putExtra("roomUser", obj)
+                startActivity(intent)
+            }
+        })
 
-    override fun onRejectClicked(roomInviteModel: RoomInviteModel) = P2GRequest.run {
-        build(
-            roomInviteModel.roomInvite?.id?.let { ApiClient.build().rejectInvite(it) },
-            object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    Log.d(TAG, msg)
-                    UIHelper.showSnackBarShort(root, msg)
-                }
 
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(roomInviteModel)
-                }
-            })
-    }
+    override fun onRejectClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+        roomInviteModel.roomInvite?.id?.let { ApiClient.build().rejectInvite(it) },
+        object : Callback<Boolean> {
+            override fun onError(msg: String) {
+                Log.d(TAG, msg)
+                UIHelper.showSnackBarShort(root, msg)
+            }
 
-    override fun onRowClicked(roomInviteModel: RoomInviteModel) = P2GRequest.run {
-        build(
-            roomInviteModel.roomInvite?.inviterId?.let { ApiClient.build().getUserModel(it) },
-            object : Callback<UserModel> {
-                override fun onError(msg: String) {
-                }
+            override fun onSuccess(obj: Boolean) {
+                adapter.remove(roomInviteModel)
+            }
+        })
 
-                override fun onSuccess(obj: UserModel) {
-                    val intent = Intent(activity, UserActivity::class.java)
-                    intent.putExtra("userModel", obj)
-                    startActivity(intent)
-                }
-            })
-    }
 
-    private fun refreshRoomInvitesEvent() = P2GRequest.run {
-        build(
-            ApiClient.build().getRoomInviteModels(),
-            object : Callback<MutableList<RoomInviteModel>> {
-                override fun onError(msg: String) {
-                    Log.d(TAG, msg)
-                    UIHelper.showSnackBarShort(root, "Rooms Invites cannot refreshed")
-                    swipeContainer.isRefreshing = false
-                }
+    override fun onRowClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+        roomInviteModel.roomInvite?.inviterId?.let { ApiClient.build().getUserModel(it) },
+        object : Callback<UserModel> {
+            override fun onError(msg: String) {
+            }
 
-                override fun onSuccess(obj: MutableList<RoomInviteModel>) {
-                    adapter.update(obj)
-                    adapter.roomInviteModelsFull.addAll(obj)
-                    swipeContainer.isRefreshing = false
-                }
-            })
-    }
+            override fun onSuccess(obj: UserModel) {
+                val intent = Intent(activity, UserActivity::class.java)
+                intent.putExtra("userModel", obj)
+                startActivity(intent)
+            }
+        })
+
+
+    private fun refreshRoomInvitesEvent() = p2gRequest(
+        ApiClient.build().getRoomInviteModels(),
+        object : Callback<MutableList<RoomInviteModel>> {
+            override fun onError(msg: String) {
+                Log.d(TAG, msg)
+                UIHelper.showSnackBarShort(root, "Rooms Invites cannot refreshed")
+                swipeContainer.isRefreshing = false
+            }
+
+            override fun onSuccess(obj: MutableList<RoomInviteModel>) {
+                adapter.update(obj)
+                adapter.roomInviteModelsFull.addAll(obj)
+                swipeContainer.isRefreshing = false
+            }
+        })
 }

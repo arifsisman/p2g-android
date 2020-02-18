@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.api
 
 import retrofit2.Call
 import retrofit2.http.*
-import vip.yazilim.p2g.android.api.generic.P2GResponse
+import vip.yazilim.p2g.android.api.generic.Response
 import vip.yazilim.p2g.android.model.p2g.*
 
 /**
@@ -13,161 +13,161 @@ interface Play2GetherWebApi {
 
     // User API
     @GET("/api/user/{id}")
-    fun getUser(@Path("id") userId: String): Call<P2GResponse<User>>
+    fun getUser(@Path("id") userId: String): Call<Response<User>>
 
     @PUT("/api/user/")
-    fun updateUser(@Body user: User): Call<P2GResponse<User>>
+    fun updateUser(@Body user: User): Call<Response<User>>
 
     @GET("/api/user/{id}/model")
-    fun getUserModel(@Path("id") userId: String): Call<P2GResponse<UserModel>>
+    fun getUserModel(@Path("id") userId: String): Call<Response<UserModel>>
 
     @GET("/api/user/me/model")
-    fun getUserModelMe(): Call<P2GResponse<UserModel>>
+    fun getUserModelMe(): Call<Response<UserModel>>
 
 
 
     // Room API
     @POST("/api/room/create/{roomName}")
-    fun createRoom(@Path("roomName") roomName: String, @Body roomPassword: String): Call<P2GResponse<Room>>
+    fun createRoom(@Path("roomName") roomName: String, @Body roomPassword: String): Call<Response<Room>>
 
     @GET("/api/room/{id}")
-    fun getRoom(@Path("id") roomId: Long): Call<P2GResponse<Room>>
+    fun getRoom(@Path("id") roomId: Long): Call<Response<Room>>
 
     @GET("/api/room/")
-    fun getAllRooms(): Call<List<P2GResponse<Room>>>
+    fun getAllRooms(): Call<List<Response<Room>>>
 
     @GET("/api/room/model/")
-    fun getSimplifiedRoomModels(): Call<P2GResponse<MutableList<RoomModelSimplified>>>
+    fun getSimplifiedRoomModels(): Call<Response<MutableList<RoomModelSimplified>>>
 
     @PUT("/api/room/")
-    fun updateRoom(@Body room: Room): Call<P2GResponse<Room>>
+    fun updateRoom(@Body room: Room): Call<Response<Room>>
 
     @DELETE("/api/room/{id}")
-    fun deleteRoom(@Path("id") roomId: Long): Call<P2GResponse<Boolean>>
+    fun deleteRoom(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @GET("/api/room/model/{id}")
-    fun getRoomModel(@Path("id") roomId: Long): Call<P2GResponse<RoomModel>>
+    fun getRoomModel(@Path("id") roomId: Long): Call<Response<RoomModel>>
 
     @GET("/api/room/smodel/{id}")
-    fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<P2GResponse<RoomModelSimplified>>
+    fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<Response<RoomModelSimplified>>
 
     @POST("/api/room/{roomId}/invite/{userId}")
-    fun inviteUser(@Path("roomId") roomId: Long, @Path("userId") userId: String): Call<P2GResponse<RoomInvite>>
+    fun inviteUser(@Path("roomId") roomId: Long, @Path("userId") userId: String): Call<Response<RoomInvite>>
 
     @POST("/api/room/invite/accept")
-    fun acceptInvite(@Body roomInvite: RoomInvite): Call<P2GResponse<RoomUser>>
+    fun acceptInvite(@Body roomInvite: RoomInvite): Call<Response<RoomUser>>
 
     @DELETE("/api/room/invite/{id}/reject")
-    fun rejectInvite(@Path("id") roomId: Long): Call<P2GResponse<Boolean>>
+    fun rejectInvite(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/room/{id}/join")
-    fun joinRoom(@Path("id") roomId: Long, @Body password: String): Call<P2GResponse<RoomUser>>
+    fun joinRoom(@Path("id") roomId: Long, @Body password: String): Call<Response<RoomUser>>
 
     @DELETE("/api/room/leave")
-    fun leaveRoom(): Call<P2GResponse<Boolean>>
+    fun leaveRoom(): Call<Response<Boolean>>
 
     @GET("/api/room/{id}/users")
-    fun getRoomUsers(@Path("id") roomId: Long): Call<P2GResponse<List<User>>>
+    fun getRoomUsers(@Path("id") roomId: Long): Call<Response<List<User>>>
 
     @PUT("/api/room/user/{id}/promote")
-    fun promoteUser(@Path("id") roomId: String): Call<P2GResponse<RoomUser>>
+    fun promoteUser(@Path("id") roomId: String): Call<Response<RoomUser>>
 
     @PUT("/api/room/user/{id}/demote")
-    fun demoteUser(@Path("id") roomId: String): Call<P2GResponse<RoomUser>>
+    fun demoteUser(@Path("id") roomId: String): Call<Response<RoomUser>>
 
     @GET("/api/room/invite/model")
-    fun getRoomInviteModels(): Call<P2GResponse<MutableList<RoomInviteModel>>>
+    fun getRoomInviteModels(): Call<Response<MutableList<RoomInviteModel>>>
 
 
 
     // Song API
     @GET("/api/song/{id}")
-    fun getSong(@Path("id") songId: Long): Call<P2GResponse<Song>>
+    fun getSong(@Path("id") songId: Long): Call<Response<Song>>
 
     @GET("/api/song/{roomId}/list")
-    fun getRoomSongs(@Path("roomId") roomId: Long): Call<P2GResponse<List<Song>>>
+    fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<List<Song>>>
 
     @POST("/api/song/{roomId}")
-    fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<P2GResponse<List<Song>>>
+    fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<Response<List<Song>>>
 
     @DELETE("/api/song/{songId}")
-    fun removeSongFromRoom(@Path("songId") songId: Long): Call<P2GResponse<List<Song>>>
+    fun removeSongFromRoom(@Path("songId") songId: Long): Call<Response<List<Song>>>
 
     @PUT("/api/song/{songId}/upvote")
-    fun upvoteSong(@Path("songId") songId: Long): Call<P2GResponse<Int>>
+    fun upvoteSong(@Path("songId") songId: Long): Call<Response<Int>>
 
     @PUT("/api/song/{songId}/downvote")
-    fun downvoteSong(@Path("songId") songId: Long): Call<P2GResponse<Int>>
+    fun downvoteSong(@Path("songId") songId: Long): Call<Response<Int>>
 
 
 
     // Friends API
     @POST("/api/friend/requests/")
-    fun getRequests(): Call<P2GResponse<List<User>>>
+    fun getRequests(): Call<Response<List<User>>>
 
     @GET("/api/friend/requests/{id}")
-    fun getRequestById(@Path("id") friendRequestId: Long): Call<P2GResponse<List<User>>>
+    fun getRequestById(@Path("id") friendRequestId: Long): Call<Response<List<User>>>
 
     @POST("/api/friend/requests/{userId}/add")
-    fun addFriend(@Path("userId") userId: String): Call<P2GResponse<Boolean>>
+    fun addFriend(@Path("userId") userId: String): Call<Response<Boolean>>
 
     @DELETE("/api/friend/requests/{userId}/delete")
-    fun deleteFriend(@Path("userId") userId: String): Call<P2GResponse<Boolean>>
+    fun deleteFriend(@Path("userId") userId: String): Call<Response<Boolean>>
 
     @PUT("/api/friend/requests/{id}/accept")
-    fun accept(@Path("id") friendRequestId: Long): Call<P2GResponse<Boolean>>
+    fun accept(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
 
     @PUT("/api/friend/requests/{id}/reject")
-    fun reject(@Path("id") friendRequestId: Long): Call<P2GResponse<Boolean>>
+    fun reject(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
 
     @PUT("/api/friend/requests/{id}/ignore")
-    fun ignore(@Path("id") friendRequestId: Long): Call<P2GResponse<Boolean>>
+    fun ignore(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
 
     @GET("/api/friend/requests/model")
-    fun getFriendRequestModel(): Call<P2GResponse<MutableList<FriendRequestModel>>>
+    fun getFriendRequestModel(): Call<Response<MutableList<FriendRequestModel>>>
 
     @GET("/api/friend/requests/{userId}/model")
-    fun getFriendRequestModel(@Path("userId") userId: String): Call<P2GResponse<MutableList<FriendRequestModel>>>
+    fun getFriendRequestModel(@Path("userId") userId: String): Call<Response<MutableList<FriendRequestModel>>>
 
     @GET("/api/friend/requests/friends")
-    fun getFriends(): Call<P2GResponse<MutableList<FriendModel>>>
+    fun getFriends(): Call<Response<MutableList<FriendModel>>>
 
     @GET("/api/friend/requests/{userId}/friends")
-    fun getFriends(@Path("userId") userId: String): Call<P2GResponse<MutableList<FriendModel>>>
+    fun getFriends(@Path("userId") userId: String): Call<Response<MutableList<FriendModel>>>
 
 
 
     // Authorization API
     @GET("/api/spotify/login")
-    fun login(): Call<P2GResponse<User>>
+    fun login(): Call<Response<User>>
 
     @POST("/api/spotify/logout")
-    fun logout(): Call<P2GResponse<Boolean>>
+    fun logout(): Call<Response<Boolean>>
 
     @POST("/api/spotify/token")
-    fun updateAccessToken(@Body accessToken: String): Call<P2GResponse<String>>
+    fun updateAccessToken(@Body accessToken: String): Call<Response<String>>
 
 
     // Player API
     @POST("/api/spotify/player/play")
-    fun play(@Body song: Song): Call<P2GResponse<List<Song>>>
+    fun play(@Body song: Song): Call<Response<List<Song>>>
 
     @POST("/api/spotify/player/{id}/play")
-    fun startResume(@Path("id") roomId: Long): Call<P2GResponse<List<Song>>>
+    fun startResume(@Path("id") roomId: Long): Call<Response<List<Song>>>
 
     @POST("/api/spotify/player/{id}/pause")
-    fun pause(@Path("id") roomId: Long): Call<P2GResponse<List<Song>>>
+    fun pause(@Path("id") roomId: Long): Call<Response<List<Song>>>
 
     @POST("/api/spotify/player/{id}/next")
-    fun next(@Path("id") roomId: Long): Call<P2GResponse<List<Song>>>
+    fun next(@Path("id") roomId: Long): Call<Response<List<Song>>>
 
     @POST("/api/spotify/player/{id}/previous")
-    fun previous(@Path("id") roomId: Long): Call<P2GResponse<List<Song>>>
+    fun previous(@Path("id") roomId: Long): Call<Response<List<Song>>>
 
     @POST("/api/spotify/player/{id}/seek/{ms}")
-    fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<P2GResponse<Int>>
+    fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<Response<Int>>
 
     @POST("/api/spotify/player/{id}/repeat")
-    fun repeat(@Path("id") roomId: Long): Call<P2GResponse<Boolean>>
+    fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>
 
 }

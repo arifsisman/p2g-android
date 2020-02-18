@@ -25,7 +25,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.model.p2g.Room
@@ -136,24 +136,23 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModelSimplified) = P2GRequest.run {
-        build(
-            roomModel.room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
-            object : Callback<RoomUser> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, "Can not join room")
-                }
+    private fun joinRoomEvent(roomModel: RoomModelSimplified) = p2gRequest(
+        roomModel.room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
+        object : Callback<RoomUser> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, "Can not join room")
+            }
 
-                override fun onSuccess(obj: RoomUser) {
-                    Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+            override fun onSuccess(obj: RoomUser) {
+                Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
 
-                    val intent = Intent(activity, RoomActivity::class.java)
-                    intent.putExtra("roomModel", roomModel)
-                    intent.putExtra("roomUser", obj)
-                    startActivity(intent)
-                }
-            })
-    }
+                val intent = Intent(activity, RoomActivity::class.java)
+                intent.putExtra("roomModel", roomModel)
+                intent.putExtra("roomUser", obj)
+                startActivity(intent)
+            }
+        })
+
 
     private fun joinPrivateRoomEvent(roomModel: RoomModelSimplified) {
         val room = roomModel.room
@@ -186,27 +185,26 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            P2GRequest.run {
-                build(
-                    room?.id?.let { it ->
-                        ApiClient.build().joinRoom(it, roomPasswordEditText.text.toString())
-                    },
-                    object : Callback<RoomUser> {
-                        override fun onError(msg: String) {
-                            UIHelper.showSnackBarShort(root, "Can not join room")
-                        }
+            p2gRequest(
+                room?.id?.let { id ->
+                    ApiClient.build().joinRoom(id, roomPasswordEditText.text.toString())
+                },
+                object : Callback<RoomUser> {
+                    override fun onError(msg: String) {
+                        UIHelper.showSnackBarShort(root, "Can not join room")
+                    }
 
-                        override fun onSuccess(obj: RoomUser) {
-                            Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
-                            mAlertDialog.dismiss()
-                            closeKeyboard()
+                    override fun onSuccess(obj: RoomUser) {
+                        Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                        mAlertDialog.dismiss()
+                        closeKeyboard()
 
-                            val intent = Intent(activity, RoomActivity::class.java)
-                            startActivity(intent)
-                        }
-                    })
-            }
+                        val intent = Intent(activity, RoomActivity::class.java)
+                        startActivity(intent)
+                    }
+                })
         }
+
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
@@ -240,28 +238,27 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // Click create
         createButton.setOnClickListener {
-            P2GRequest.run {
-                build(
-                    ApiClient.build().createRoom(
-                        roomNameEditText.text.toString(),
-                        roomPasswordEditText.text.toString()
-                    ),
-                    object : Callback<Room> {
-                        override fun onError(msg: String) {
-                            Log.d(LOG_TAG, "Room can not created")
-                            UIHelper.showSnackBarShort(mDialogView, msg)
-                        }
+            p2gRequest(
+                ApiClient.build().createRoom(
+                    roomNameEditText.text.toString(),
+                    roomPasswordEditText.text.toString()
+                ),
+                object : Callback<Room> {
+                    override fun onError(msg: String) {
+                        Log.d(LOG_TAG, "Room can not created")
+                        UIHelper.showSnackBarShort(mDialogView, msg)
+                    }
 
-                        override fun onSuccess(obj: Room) {
-                            Log.d(LOG_TAG, "Room created with ID: " + obj.id)
-                            mAlertDialog.dismiss()
+                    override fun onSuccess(obj: Room) {
+                        Log.d(LOG_TAG, "Room created with ID: " + obj.id)
+                        mAlertDialog.dismiss()
 
-                            val intent = Intent(activity, RoomActivity::class.java)
-                            startActivity(intent)
-                        }
-                    })
-            }
+                        val intent = Intent(activity, RoomActivity::class.java)
+                        startActivity(intent)
+                    }
+                })
         }
+
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
@@ -272,21 +269,20 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() = P2GRequest.run {
-        build(
-            ApiClient.build().getSimplifiedRoomModels(),
-            object : Callback<MutableList<RoomModelSimplified>> {
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
-                    swipeContainer.isRefreshing = false
-                }
+    private fun refreshRoomsEvent() = p2gRequest(
+        ApiClient.build().getSimplifiedRoomModels(),
+        object : Callback<MutableList<RoomModelSimplified>> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
+                swipeContainer.isRefreshing = false
+            }
 
-                override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
-                    adapter.update(obj)
-                    adapter.roomModelsFull = obj
-                    swipeContainer.isRefreshing = false
-                }
-            })
-    }
+            override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
+                adapter.update(obj)
+                adapter.roomModelsFull = obj
+                swipeContainer.isRefreshing = false
+            }
+        })
+
 
 }

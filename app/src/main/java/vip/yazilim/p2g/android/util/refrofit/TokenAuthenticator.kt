@@ -8,8 +8,8 @@ import okhttp3.Route
 import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.P2GRequest
-import vip.yazilim.p2g.android.api.generic.SpotifyRequest
+import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
@@ -34,7 +34,7 @@ class TokenAuthenticator : Authenticator {
 
     companion object {
         fun refreshExpiredToken(refreshToken: String) {
-            SpotifyRequest.build(
+            spotifyRequest(
                 SpotifyApiClient.build().refreshExpiredToken(
                     SpotifyConstants.CLIENT_ID,
                     SpotifyConstants.CLIENT_SECRET,
@@ -53,18 +53,16 @@ class TokenAuthenticator : Authenticator {
                 })
         }
 
-        fun updateAccessTokenOnPlay2Gether(accessToken: String) = P2GRequest.run {
-            build(
-                ApiClient.build().updateAccessToken(accessToken),
-                object : Callback<String> {
-                    override fun onError(msg: String) {
-                    }
+        fun updateAccessTokenOnPlay2Gether(accessToken: String) = p2gRequest(
+            ApiClient.build().updateAccessToken(accessToken),
+            object : Callback<String> {
+                override fun onError(msg: String) {
+                }
 
-                    override fun onSuccess(obj: String) {
-                        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj)
-                    }
-                })
-        }
+                override fun onSuccess(obj: String) {
+                    SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj)
+                }
+            })
     }
-
 }
+
