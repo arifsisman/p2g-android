@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
-import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
@@ -33,6 +32,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -137,7 +137,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     private fun joinRoomEvent(roomModel: RoomModelSimplified) = p2gRequest(
-        roomModel.room?.id?.let { ApiClient.build().joinRoom(it, UNDEFINED) },
+        roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, "Can not join room")
@@ -187,7 +187,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         joinButton.setOnClickListener {
             p2gRequest(
                 room?.id?.let { id ->
-                    ApiClient.build().joinRoom(id, roomPasswordEditText.text.toString())
+                    Singleton.apiClient().joinRoom(id, roomPasswordEditText.text.toString())
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
@@ -239,7 +239,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         // Click create
         createButton.setOnClickListener {
             p2gRequest(
-                ApiClient.build().createRoom(
+                Singleton.apiClient().createRoom(
                     roomNameEditText.text.toString(),
                     roomPasswordEditText.text.toString()
                 ),
@@ -270,7 +270,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     private fun refreshRoomsEvent() = p2gRequest(
-        ApiClient.build().getSimplifiedRoomModels(),
+        Singleton.apiClient().getSimplifiedRoomModels(),
         object : Callback<MutableList<RoomModelSimplified>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")

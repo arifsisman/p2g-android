@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
-import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
@@ -29,6 +28,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -139,7 +139,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
     }
 
     override fun onAcceptClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
-        roomInviteModel.roomInvite?.let { ApiClient.build().acceptInvite(it) },
+        roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, "Can not join room")
@@ -157,7 +157,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
 
     override fun onRejectClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
-        roomInviteModel.roomInvite?.id?.let { ApiClient.build().rejectInvite(it) },
+        roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
@@ -171,7 +171,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
-        roomInviteModel.roomInvite?.inviterId?.let { ApiClient.build().getUserModel(it) },
+        roomInviteModel.roomInvite?.inviterId?.let { Singleton.apiClient().getUserModel(it) },
         object : Callback<UserModel> {
             override fun onError(msg: String) {
             }
@@ -185,7 +185,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
 
     private fun refreshRoomInvitesEvent() = p2gRequest(
-        ApiClient.build().getRoomInviteModels(),
+        Singleton.apiClient().getRoomInviteModels(),
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)

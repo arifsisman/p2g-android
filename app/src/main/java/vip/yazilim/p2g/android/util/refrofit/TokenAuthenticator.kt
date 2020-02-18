@@ -5,7 +5,6 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
@@ -25,6 +24,8 @@ class TokenAuthenticator : Authenticator {
         val refreshToken =
             SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
         val updatedToken = refreshExpiredToken(refreshToken.toString())
+
+        Singleton.buildApi()
 
         return response.request.newBuilder()
             .header("Authorization", "Bearer $updatedToken")
@@ -54,7 +55,7 @@ class TokenAuthenticator : Authenticator {
         }
 
         fun updateAccessTokenOnPlay2Gether(accessToken: String) = p2gRequest(
-            ApiClient.build().updateAccessToken(accessToken),
+            Singleton.apiClient().updateAccessToken(accessToken),
             object : Callback<String> {
                 override fun onError(msg: String) {
                 }

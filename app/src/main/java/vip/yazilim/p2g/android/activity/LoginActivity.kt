@@ -11,8 +11,6 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
@@ -26,6 +24,7 @@ import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 /**
@@ -44,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
         // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
         SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
+        Singleton.initApis()
 
         spotify_login_btn.setOnClickListener {
             getAuthorizationCodeFromSpotify()
@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
 
     // getTokensFromSpotify via Spotify Web API
     private fun getTokensFromSpotify(code: String) =
-        spotifyRequest(SpotifyApiClient.build().getTokens(
+        spotifyRequest(Singleton.spotifyApiClient().getTokens(
             SpotifyConstants.CLIENT_ID,
             SpotifyConstants.CLIENT_SECRET,
             SpotifyConstants.GRANT_TYPE_AUTHORIZATION_CODE_REQUEST,
@@ -120,7 +120,7 @@ class LoginActivity : AppCompatActivity() {
         })
 
     // loginToPlay2Gether via Play2Gether Web API
-    private fun loginToPlay2Gether(tokenModel: TokenModel) = p2gRequest(ApiClient.build().login(),
+    private fun loginToPlay2Gether(tokenModel: TokenModel) = p2gRequest(Singleton.apiClient().login(),
         object : Callback<User> {
             override fun onError(msg: String) {
                 UIHelper.showErrorDialog(this@LoginActivity, msg)

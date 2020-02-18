@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
-import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants
@@ -31,6 +30,7 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class FriendsFragment : FragmentBase(
@@ -131,7 +131,7 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
-        friendRequestModel.friendRequest?.id?.let { ApiClient.build().accept(it) },
+        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
@@ -155,7 +155,7 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
-        friendRequestModel.friendRequest?.id?.let { ApiClient.build().reject(it) },
+        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
@@ -168,7 +168,7 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
-        friendRequestModel.friendRequest?.id?.let { ApiClient.build().ignore(it) },
+        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
@@ -194,7 +194,7 @@ class FriendsFragment : FragmentBase(
                 DialogInterface.BUTTON_POSITIVE -> {
                     p2gRequest(
                         friendModel?.userModel?.user?.id?.let {
-                            ApiClient.build().deleteFriend(it)
+                            Singleton.apiClient().deleteFriend(it)
                         },
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
@@ -224,7 +224,7 @@ class FriendsFragment : FragmentBase(
     }
 
     private fun loadFriendRequestModel() = p2gRequest(
-        ApiClient.build().getFriendRequestModel(),
+        Singleton.apiClient().getFriendRequestModel(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
@@ -240,7 +240,7 @@ class FriendsFragment : FragmentBase(
 
 
     private fun loadFriends() = p2gRequest(
-        ApiClient.build().getFriends(),
+        Singleton.apiClient().getFriends(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
@@ -257,7 +257,7 @@ class FriendsFragment : FragmentBase(
 
 
     private fun joinRoomEvent(room: Room) = p2gRequest(
-        room.id.let { ApiClient.build().joinRoom(it, GeneralConstants.UNDEFINED) },
+        room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, "Can not join room")
@@ -305,7 +305,7 @@ class FriendsFragment : FragmentBase(
             val roomPassword = roomPasswordEditText.text.toString()
 
             p2gRequest(
-                room.id.let { it1 -> ApiClient.build().joinRoom(it1, roomPassword) },
+                room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         UIHelper.showSnackBarShort(root, "Can not join room")

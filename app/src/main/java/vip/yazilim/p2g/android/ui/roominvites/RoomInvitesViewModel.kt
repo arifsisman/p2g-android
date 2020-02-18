@@ -2,11 +2,11 @@ package vip.yazilim.p2g.android.ui.roominvites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.p2gRequest
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
+import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -21,7 +21,7 @@ class RoomInvitesViewModel : ViewModelBase() {
         _isViewLoading.postValue(true)
 
         p2gRequest(
-            ApiClient.build().getRoomInviteModels(),
+            Singleton.apiClient().getRoomInviteModels(),
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
