@@ -258,7 +258,8 @@ class FriendsAdapter(
         if (data is FriendModel) {
             adapterDataList.sortBy { data.userModel?.user?.onlineStatus }
         }
-        notifyDataSetChanged()
+        val position = adapterDataList.indexOf(data)
+        notifyItemInserted(position)
     }
 
     fun addAll(data: MutableList<Any>) {
