@@ -136,8 +136,8 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModelSimplified) = request(
-        roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
+    private fun joinRoomEvent(roomModelSimplified: RoomModelSimplified) = request(
+        roomModelSimplified.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, "Can not join room")
@@ -147,7 +147,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModel", roomModel)
+                intent.putExtra("roomModelSimplified", roomModelSimplified)
                 intent.putExtra("roomUser", obj)
                 startActivity(intent)
             }

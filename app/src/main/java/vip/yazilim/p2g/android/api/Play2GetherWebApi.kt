@@ -25,7 +25,6 @@ interface Play2GetherWebApi {
     fun getUserModelMe(): Call<Response<UserModel>>
 
 
-
     // Room API
     @POST("/api/room/create/{roomName}")
     fun createRoom(@Path("roomName") roomName: String, @Body roomPassword: String): Call<Response<Room>>
@@ -47,6 +46,9 @@ interface Play2GetherWebApi {
 
     @GET("/api/room/model/{id}")
     fun getRoomModel(@Path("id") roomId: Long): Call<Response<RoomModel>>
+
+    @GET("/api/room/model/me")
+    fun getRoomModelMe(): Call<Response<RoomModel>>
 
     @GET("/api/room/smodel/{id}")
     fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<Response<RoomModelSimplified>>
@@ -79,7 +81,6 @@ interface Play2GetherWebApi {
     fun getRoomInviteModels(): Call<Response<MutableList<RoomInviteModel>>>
 
 
-
     // Song API
     @GET("/api/song/{id}")
     fun getSong(@Path("id") songId: Long): Call<Response<Song>>
@@ -98,7 +99,6 @@ interface Play2GetherWebApi {
 
     @PUT("/api/song/{songId}/downvote")
     fun downvoteSong(@Path("songId") songId: Long): Call<Response<Int>>
-
 
 
     // Friends API

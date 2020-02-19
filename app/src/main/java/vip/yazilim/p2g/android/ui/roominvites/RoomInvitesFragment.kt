@@ -179,7 +179,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
                 Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModel", roomInviteModel.roomModel)
+                intent.putExtra("roomModelSimplified", roomInviteModel.roomModel)
                 intent.putExtra("roomUser", obj)
                 startActivity(intent)
             }

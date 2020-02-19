@@ -15,7 +15,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.model.p2g.Room
+import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 class RoomActivity : AppCompatActivity() {
@@ -36,11 +37,20 @@ class RoomActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        val room = intent.getParcelableExtra<Room>("room")
-        if (room != null) {
-            title = room.name
-        } else {
-            setTitle(R.string.title_room)
+        val roomModel = intent.getParcelableExtra<RoomModel>("roomModel")
+        val roomModelSimplified =
+            intent.getParcelableExtra<RoomModelSimplified>("roomModelSimplified")
+
+        when {
+            roomModel != null -> {
+                title = roomModel.room?.name
+            }
+            roomModelSimplified != null -> {
+                title = roomModelSimplified.room?.name
+            }
+            else -> {
+                setTitle(R.string.title_room)
+            }
         }
     }
 

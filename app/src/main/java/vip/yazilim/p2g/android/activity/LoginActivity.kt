@@ -21,8 +21,8 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.User
-import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -151,14 +151,13 @@ class LoginActivity : AppCompatActivity() {
         startActivity(startMainIntent)
     }
 
-    private fun existingRoomCheck() = request(Singleton.apiClient().getUserModelMe(),
-        object : Callback<UserModel> {
-            override fun onSuccess(obj: UserModel) {
-                if (obj.roomUser != null) {
-                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                    roomIntent.putExtra("room", obj.room)
-                    startActivity(roomIntent)
-                }
+    private fun existingRoomCheck() = request(
+        Singleton.apiClient().getRoomModelMe(),
+        object : Callback<RoomModel> {
+            override fun onSuccess(obj: RoomModel) {
+                val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                roomIntent.putExtra("roomModel", obj)
+                startActivity(roomIntent)
             }
 
             override fun onError(msg: String) {
