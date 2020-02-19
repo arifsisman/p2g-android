@@ -11,6 +11,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse
 import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.room.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
@@ -21,6 +22,7 @@ import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -132,6 +134,8 @@ class LoginActivity : AppCompatActivity() {
                     UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
 
                 } else {
+                    existingRoomCheck()
+
 //                        db.insertData(obj)
                     UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
                     startMainActivity(obj, tokenModel)
@@ -146,5 +150,20 @@ class LoginActivity : AppCompatActivity() {
         startMainIntent.putExtra("tokenModel", tokenModel)
         startActivity(startMainIntent)
     }
+
+    private fun existingRoomCheck() = request(Singleton.apiClient().getUserModelMe(),
+        object : Callback<UserModel> {
+            override fun onSuccess(obj: UserModel) {
+                if (obj.roomUser != null) {
+                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                    startActivity(roomIntent)
+                }
+            }
+
+            override fun onError(msg: String) {
+                request(Singleton.apiClient().leaveRoom(), null)
+            }
+
+        })
 
 }

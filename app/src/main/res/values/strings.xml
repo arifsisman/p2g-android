@@ -3,6 +3,7 @@
     <string name="app_name">Play2Gether</string>
     <string name="title_home">Home</string>
     <string name="title_rooms">Rooms</string>
+    <string name="title_room">Room</string>
     <string name="title_friends">Friends</string>
     <string name="title_profile">Profile</string>
     <string name="title_activity_login">Sign in</string>
@@ -10,6 +11,7 @@
     <string name="title_room_invites">Room Invites</string>
     <string name="title_search_room">Search Room</string>
     <string name="title_logout">Logout</string>
+    <string name="title_leave">Leave Room</string>
     <string name="title_invites">Invites</string>
     <string name="title_tab_1">Tab 1</string>
     <string name="title_tab_2">Tab 2</string>

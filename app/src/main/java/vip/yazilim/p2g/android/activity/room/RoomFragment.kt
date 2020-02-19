@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.room
+package vip.yazilim.p2g.android.activity.room
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,13 +13,13 @@ import vip.yazilim.p2g.android.R
 /**
  * A placeholder fragment containing a simple view.
  */
-class PlaceholderFragment : Fragment() {
+class RoomFragment : Fragment() {
 
-    private lateinit var pageViewModel: PageViewModel
+    private lateinit var roomViewModel: RoomViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
+        roomViewModel = ViewModelProvider(this).get(RoomViewModel::class.java).apply {
             setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
         }
     }
@@ -30,26 +30,18 @@ class PlaceholderFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_room, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
-        pageViewModel.text.observe(this, Observer<String> {
+        roomViewModel.text.observe(this, Observer<String> {
             textView.text = it
         })
         return root
     }
 
     companion object {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
         private const val ARG_SECTION_NUMBER = "section_number"
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         @JvmStatic
-        fun newInstance(sectionNumber: Int): PlaceholderFragment {
-            return PlaceholderFragment().apply {
+        fun newInstance(sectionNumber: Int): RoomFragment {
+            return RoomFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_SECTION_NUMBER, sectionNumber)
                 }

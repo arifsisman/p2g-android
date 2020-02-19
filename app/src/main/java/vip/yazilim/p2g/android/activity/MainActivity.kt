@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.Logout -> {
+            R.id.logout -> {
                 request(Singleton.apiClient().logout(), null)
 
 //                db.deleteAllData()
