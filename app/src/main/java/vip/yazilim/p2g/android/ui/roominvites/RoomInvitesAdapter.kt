@@ -17,7 +17,7 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomInvitesAdapter(
-    var roomInviteModels: MutableList<RoomInviteModel>,
+    private var roomInviteModels: MutableList<RoomInviteModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
     Filterable {

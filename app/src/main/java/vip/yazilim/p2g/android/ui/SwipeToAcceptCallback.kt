@@ -1,28 +1,29 @@
 package vip.yazilim.p2g.android.ui
 
-import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import vip.yazilim.p2g.android.R
 
 /**
  * @author mustafaarifsisman - 19.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
 
-abstract class SwipeToAcceptCallback(context: Context?) :
+abstract class SwipeToAcceptCallback(
+    private val acceptIcon: Drawable,
+    private val backgroundColor: Int
+) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
-    private val acceptIcon: Drawable =
-        context?.let { ContextCompat.getDrawable(it, R.drawable.ic_check_white_24dp) }!!
     private val intrinsicWidth = acceptIcon.intrinsicWidth
     private val intrinsicHeight = acceptIcon.intrinsicHeight
     private val background = ColorDrawable()
-    private val backgroundColor = Color.parseColor("#1DB954")
+
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
     override fun onMove(
@@ -67,8 +68,8 @@ abstract class SwipeToAcceptCallback(context: Context?) :
         // Calculate position of accept icon
         val acceptIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
         val acceptIconMargin = (itemHeight - intrinsicHeight) / 2
-        val acceptIconLeft = itemView.left - acceptIconMargin - intrinsicWidth
-        val acceptIconRight = itemView.left - acceptIconMargin
+        val acceptIconLeft = -(itemView.left - acceptIconMargin)
+        val acceptIconRight = -(itemView.left - acceptIconMargin - intrinsicWidth)
         val acceptIconBottom = acceptIconTop + intrinsicHeight
 
         // Draw the accept icon

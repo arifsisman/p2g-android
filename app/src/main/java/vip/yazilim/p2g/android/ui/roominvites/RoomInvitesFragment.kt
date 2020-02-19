@@ -12,7 +12,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -28,8 +27,6 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
-import vip.yazilim.p2g.android.ui.SwipeToAcceptCallback
-import vip.yazilim.p2g.android.ui.SwipeToDeleteCallback
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -89,29 +86,34 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
 
-        // Swipe left for delete
-        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
-                onReject(roomInviteModel)
-                adapter.remove(roomInviteModel)
-            }
-        }
-
-        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
-        swipeDeleteHelper.attachToRecyclerView(recyclerView)
-
-        // Swipe right for accept
-        val swipeAcceptHandler = object : SwipeToAcceptCallback(context) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
-                onAccept(roomInviteModel)
-                adapter.remove(roomInviteModel)
-            }
-        }
-
-        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
-        swipeAcceptHelper.attachToRecyclerView(recyclerView)
+//        // Swipe left for delete
+//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
+//                onReject(roomInviteModel)
+//                adapter.remove(roomInviteModel)
+//            }
+//        }
+//
+//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
+//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
+//
+//        // Swipe right for accept
+//        val swipeAcceptHandler = object : SwipeToAcceptCallback(
+//            ContextCompat.getDrawable(
+//                this.context!!,
+//                R.drawable.ic_check_white_24dp
+//            )!!, Color.parseColor("#1DB954")
+//        ) {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
+//                onAccept(roomInviteModel)
+//                adapter.remove(roomInviteModel)
+//            }
+//        }
+//
+//        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
+//        swipeAcceptHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observers

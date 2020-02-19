@@ -69,6 +69,7 @@ class FriendsFragment : FragmentBase(
         adapter = FriendsAdapter(viewModel.data.value ?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
+        // SwipeRefreshLayout
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener {
             adapter.clearDataList()
@@ -76,6 +77,42 @@ class FriendsFragment : FragmentBase(
             loadFriendRequestModel()
             loadFriends()
         }
+
+//        // Swipe left for delete
+//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                val data = adapter.adapterDataList[viewHolder.adapterPosition]
+//                if (data is FriendModel) {
+//                    onDeleteClicked(data)
+//                } else if (data is FriendRequestModel) {
+//                    onRejectClicked(data)
+//                }
+//            }
+//        }
+//
+//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
+//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
+//
+//        // Swipe right for accept
+//        val swipeAcceptHandler = object : SwipeToAcceptCallback(
+//            ContextCompat.getDrawable(
+//                this.context!!,
+//                R.drawable.ic_check_white_24dp
+//            )!!, Color.parseColor("#1DB954")
+//        ) {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                val data = adapter.adapterDataList[viewHolder.adapterPosition]
+//                if (data is FriendModel) {
+//                    onJoinClicked(data.userModel?.room)
+//                } else if (data is FriendRequestModel) {
+//                    onAcceptClicked(data)
+//                }
+//                adapter.remove(data)
+//            }
+//        }
+//
+//        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
+//        swipeAcceptHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observer
