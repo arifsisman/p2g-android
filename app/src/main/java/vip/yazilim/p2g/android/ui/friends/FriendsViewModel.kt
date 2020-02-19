@@ -3,7 +3,7 @@ package vip.yazilim.p2g.android.ui.friends
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
@@ -17,7 +17,7 @@ class FriendsViewModel : ViewModelBase() {
     fun loadFriendRequestModel() {
         _isViewLoading.postValue(true)
 
-        p2gRequest(
+        request(
             Singleton.apiClient().getFriendRequestModel(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
@@ -36,7 +36,7 @@ class FriendsViewModel : ViewModelBase() {
     fun loadFriends() {
         _isViewLoading.postValue(true)
 
-        p2gRequest(
+        request(
             Singleton.apiClient().getFriends(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {

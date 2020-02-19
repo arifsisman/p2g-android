@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.model.p2g.Room
@@ -136,7 +136,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModelSimplified) = p2gRequest(
+    private fun joinRoomEvent(roomModel: RoomModelSimplified) = request(
         roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
@@ -185,7 +185,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            p2gRequest(
+            request(
                 room?.id?.let { id ->
                     Singleton.apiClient().joinRoom(id, roomPasswordEditText.text.toString())
                 },
@@ -238,7 +238,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // Click create
         createButton.setOnClickListener {
-            p2gRequest(
+            request(
                 Singleton.apiClient().createRoom(
                     roomNameEditText.text.toString(),
                     roomPasswordEditText.text.toString()
@@ -269,7 +269,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() = p2gRequest(
+    private fun refreshRoomsEvent() = request(
         Singleton.apiClient().getSimplifiedRoomModels(),
         object : Callback<MutableList<RoomModelSimplified>> {
             override fun onError(msg: String) {

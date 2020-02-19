@@ -7,7 +7,7 @@ import okhttp3.Response
 import okhttp3.Route
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
@@ -54,7 +54,7 @@ class TokenAuthenticator : Authenticator {
                 })
         }
 
-        fun updateAccessTokenOnPlay2Gether(accessToken: String) = p2gRequest(
+        fun updateAccessTokenOnPlay2Gether(accessToken: String) = request(
             Singleton.apiClient().updateAccessToken(accessToken),
             object : Callback<String> {
                 override fun onError(msg: String) {

@@ -17,7 +17,7 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomInvitesAdapter(
-    private var roomInviteModels: MutableList<RoomInviteModel>,
+    var roomInviteModels: MutableList<RoomInviteModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
     Filterable {
@@ -35,8 +35,8 @@ class RoomInvitesAdapter(
 
         fun bindEvent(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(roomInviteModel) }
-            acceptButton.setOnClickListener { clickListener.onAcceptClicked(roomInviteModel) }
-            rejectButton.setOnClickListener { clickListener.onRejectClicked(roomInviteModel) }
+            acceptButton.setOnClickListener { clickListener.onAccept(roomInviteModel) }
+            rejectButton.setOnClickListener { clickListener.onReject(roomInviteModel) }
         }
 
         fun bindView(roomInviteModel: RoomInviteModel) {
@@ -79,9 +79,8 @@ class RoomInvitesAdapter(
     }
 
     interface OnItemClickListener {
-        fun onAcceptClicked(roomInviteModel: RoomInviteModel)
-        fun onRejectClicked(roomInviteModel: RoomInviteModel)
-        fun onRejectSwiped(roomInviteModel: RoomInviteModel)
+        fun onAccept(roomInviteModel: RoomInviteModel)
+        fun onReject(roomInviteModel: RoomInviteModel)
         fun onRowClicked(roomInviteModel: RoomInviteModel)
     }
 

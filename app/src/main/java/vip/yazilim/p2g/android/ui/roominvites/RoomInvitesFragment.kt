@@ -23,12 +23,13 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
-import vip.yazilim.p2g.android.ui.helper.SwipeToDeleteCallback
+import vip.yazilim.p2g.android.ui.SwipeToAcceptCallback
+import vip.yazilim.p2g.android.ui.SwipeToDeleteCallback
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -84,16 +85,33 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
+        // SwipeRefreshLayout
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
 
-        val swipeHandler = object : SwipeToDeleteCallback(context!!) {
+        // Swipe left for delete
+        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                adapter.removeAt(viewHolder.adapterPosition)
+                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
+                onReject(roomInviteModel)
+                adapter.remove(roomInviteModel)
             }
         }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
+        swipeDeleteHelper.attachToRecyclerView(recyclerView)
+
+        // Swipe right for accept
+        val swipeAcceptHandler = object : SwipeToAcceptCallback(context) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
+                onAccept(roomInviteModel)
+                adapter.remove(roomInviteModel)
+            }
+        }
+
+        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
+        swipeAcceptHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observers
@@ -148,7 +166,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         })
     }
 
-    override fun onAcceptClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+    override fun onAccept(roomInviteModel: RoomInviteModel) = request(
         roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
@@ -166,7 +184,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         })
 
 
-    override fun onRejectClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+    override fun onReject(roomInviteModel: RoomInviteModel) = request(
         roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
@@ -175,26 +193,11 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
             }
 
             override fun onSuccess(obj: Boolean) {
-                adapter.remove(roomInviteModel)
             }
         })
 
 
-    override fun onRejectSwiped(roomInviteModel: RoomInviteModel) = p2gRequest(
-        roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
-        object : Callback<Boolean> {
-            override fun onError(msg: String) {
-                Log.d(TAG, msg)
-                UIHelper.showSnackBarShort(root, msg)
-            }
-
-            override fun onSuccess(obj: Boolean) {
-                adapter.remove(roomInviteModel)
-            }
-        })
-
-
-    override fun onRowClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+    override fun onRowClicked(roomInviteModel: RoomInviteModel) = request(
         roomInviteModel.roomInvite?.inviterId?.let { Singleton.apiClient().getUserModel(it) },
         object : Callback<UserModel> {
             override fun onError(msg: String) {
@@ -208,7 +211,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         })
 
 
-    private fun refreshRoomInvitesEvent() = p2gRequest(
+    private fun refreshRoomInvitesEvent() = request(
         Singleton.apiClient().getRoomInviteModels(),
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {

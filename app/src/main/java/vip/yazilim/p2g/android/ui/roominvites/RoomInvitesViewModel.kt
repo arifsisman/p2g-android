@@ -3,7 +3,7 @@ package vip.yazilim.p2g.android.ui.roominvites
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -20,7 +20,7 @@ class RoomInvitesViewModel : ViewModelBase() {
     fun loadRoomInviteModel() {
         _isViewLoading.postValue(true)
 
-        p2gRequest(
+        request(
             Singleton.apiClient().getRoomInviteModels(),
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {

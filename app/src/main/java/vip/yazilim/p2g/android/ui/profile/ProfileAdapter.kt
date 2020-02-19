@@ -93,7 +93,7 @@ class ProfileAdapter(
                     songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
                 } else {
                     val songAndRoomStatusString =
-                        " - " + view.resources.getString(R.string.placeholder_room_user_not_found)
+                        " " + view.resources.getString(R.string.placeholder_room_user_not_found)
                     songAndRoomStatus.text = songAndRoomStatusString
                 }
 

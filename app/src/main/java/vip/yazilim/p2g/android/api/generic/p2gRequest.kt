@@ -8,7 +8,7 @@ import vip.yazilim.p2g.android.constant.GeneralConstants.REQUEST_TAG
  * @author mustafaarifsisman - 28.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-inline fun <reified T> p2gRequest(call: Call<Response<T>>?, callback: Callback<T>?) {
+inline fun <reified T> request(call: Call<Response<T>>?, callback: Callback<T>?) {
     call?.enqueue { result ->
         when (result) {
             is Result.Success -> {

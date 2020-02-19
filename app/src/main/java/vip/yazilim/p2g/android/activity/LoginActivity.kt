@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
@@ -120,7 +120,8 @@ class LoginActivity : AppCompatActivity() {
         })
 
     // loginToPlay2Gether via Play2Gether Web API
-    private fun loginToPlay2Gether(tokenModel: TokenModel) = p2gRequest(Singleton.apiClient().login(),
+    private fun loginToPlay2Gether(tokenModel: TokenModel) = request(
+        Singleton.apiClient().login(),
         object : Callback<User> {
             override fun onError(msg: String) {
                 UIHelper.showErrorDialog(this@LoginActivity, msg)

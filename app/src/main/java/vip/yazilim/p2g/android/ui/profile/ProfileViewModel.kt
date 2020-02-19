@@ -3,7 +3,7 @@ package vip.yazilim.p2g.android.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -23,7 +23,7 @@ class ProfileViewModel : ViewModelBase() {
     fun loadUserModel() {
         _isViewLoading.postValue(true)
 
-        p2gRequest(
+        request(
             Singleton.apiClient().getUserModelMe(),
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
@@ -38,7 +38,7 @@ class ProfileViewModel : ViewModelBase() {
             })
     }
 
-    fun loadFriendsCount() = p2gRequest(
+    fun loadFriendsCount() = request(
             Singleton.apiClient().getFriendsCounts(),
             object : Callback<Int> {
                 override fun onError(msg: String) {

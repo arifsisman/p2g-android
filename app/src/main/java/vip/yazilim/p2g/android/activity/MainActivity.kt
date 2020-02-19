@@ -12,7 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.Logout -> {
-                p2gRequest(Singleton.apiClient().logout(), null)
+                request(Singleton.apiClient().logout(), null)
 
 //                db.deleteAllData()
                 val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)

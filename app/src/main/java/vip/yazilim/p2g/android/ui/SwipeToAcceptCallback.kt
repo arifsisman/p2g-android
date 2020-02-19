@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.helper
+package vip.yazilim.p2g.android.ui
 
 import android.content.Context
 import android.graphics.*
@@ -14,15 +14,15 @@ import vip.yazilim.p2g.android.R
  * @contact mustafaarifsisman@gmail.com
  */
 
-abstract class SwipeToDeleteCallback(context: Context) :
-    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+abstract class SwipeToAcceptCallback(context: Context?) :
+    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
-    private val deleteIcon: Drawable =
-        ContextCompat.getDrawable(context, R.drawable.ic_delete_white_24dp)!!
-    private val intrinsicWidth = deleteIcon.intrinsicWidth
-    private val intrinsicHeight = deleteIcon.intrinsicHeight
+    private val acceptIcon: Drawable =
+        context?.let { ContextCompat.getDrawable(it, R.drawable.ic_check_white_24dp) }!!
+    private val intrinsicWidth = acceptIcon.intrinsicWidth
+    private val intrinsicHeight = acceptIcon.intrinsicHeight
     private val background = ColorDrawable()
-    private val backgroundColor = Color.parseColor("#f44336")
+    private val backgroundColor = Color.parseColor("#1DB954")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
     override fun onMove(
@@ -45,35 +45,35 @@ abstract class SwipeToDeleteCallback(context: Context) :
         if (isCanceled) {
             clearCanvas(
                 c,
-                itemView.right + dX,
+                itemView.left.toFloat(),
                 itemView.top.toFloat(),
-                itemView.right.toFloat(),
+                itemView.left + dX,
                 itemView.bottom.toFloat()
             )
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             return
         }
 
-        // Draw the red delete background
+        // Draw the green accept background
         background.color = backgroundColor
         background.setBounds(
-            itemView.right + dX.toInt(),
+            itemView.left,
             itemView.top,
-            itemView.right,
+            itemView.left + dX.toInt(),
             itemView.bottom
         )
         background.draw(c)
 
-        // Calculate position of delete icon
-        val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-        val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
-        val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
-        val deleteIconRight = itemView.right - deleteIconMargin
-        val deleteIconBottom = deleteIconTop + intrinsicHeight
+        // Calculate position of accept icon
+        val acceptIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+        val acceptIconMargin = (itemHeight - intrinsicHeight) / 2
+        val acceptIconLeft = itemView.left - acceptIconMargin - intrinsicWidth
+        val acceptIconRight = itemView.left - acceptIconMargin
+        val acceptIconBottom = acceptIconTop + intrinsicHeight
 
-        // Draw the delete icon
-        deleteIcon.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
-        deleteIcon.draw(c)
+        // Draw the accept icon
+        acceptIcon.setBounds(acceptIconLeft, acceptIconTop, acceptIconRight, acceptIconBottom)
+        acceptIcon.draw(c)
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }

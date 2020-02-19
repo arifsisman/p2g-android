@@ -24,7 +24,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.p2gRequest
+import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.*
@@ -130,7 +130,7 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = request(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
@@ -154,7 +154,7 @@ class FriendsFragment : FragmentBase(
         })
 
 
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) = request(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
@@ -167,7 +167,7 @@ class FriendsFragment : FragmentBase(
         })
 
 
-    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = p2gRequest(
+    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = request(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
@@ -192,7 +192,7 @@ class FriendsFragment : FragmentBase(
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    p2gRequest(
+                    request(
                         friendModel?.userModel?.user?.id?.let {
                             Singleton.apiClient().deleteFriend(it)
                         },
@@ -223,7 +223,7 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadFriendRequestModel() = p2gRequest(
+    private fun loadFriendRequestModel() = request(
         Singleton.apiClient().getFriendRequestModel(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
@@ -239,7 +239,7 @@ class FriendsFragment : FragmentBase(
         })
 
 
-    private fun loadFriends() = p2gRequest(
+    private fun loadFriends() = request(
         Singleton.apiClient().getFriends(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
@@ -256,7 +256,7 @@ class FriendsFragment : FragmentBase(
         })
 
 
-    private fun joinRoomEvent(room: Room) = p2gRequest(
+    private fun joinRoomEvent(room: Room) = request(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
@@ -304,7 +304,7 @@ class FriendsFragment : FragmentBase(
         joinButton.setOnClickListener {
             val roomPassword = roomPasswordEditText.text.toString()
 
-            p2gRequest(
+            request(
                 room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
