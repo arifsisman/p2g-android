@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -27,6 +28,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.helper.SwipeToDeleteCallback
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -84,6 +86,14 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
         val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
+
+        val swipeHandler = object : SwipeToDeleteCallback(context!!) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                adapter.removeAt(viewHolder.adapterPosition)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observers
@@ -157,6 +167,20 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
 
 
     override fun onRejectClicked(roomInviteModel: RoomInviteModel) = p2gRequest(
+        roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
+        object : Callback<Boolean> {
+            override fun onError(msg: String) {
+                Log.d(TAG, msg)
+                UIHelper.showSnackBarShort(root, msg)
+            }
+
+            override fun onSuccess(obj: Boolean) {
+                adapter.remove(roomInviteModel)
+            }
+        })
+
+
+    override fun onRejectSwiped(roomInviteModel: RoomInviteModel) = p2gRequest(
         roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {

@@ -81,6 +81,7 @@ class RoomInvitesAdapter(
     interface OnItemClickListener {
         fun onAcceptClicked(roomInviteModel: RoomInviteModel)
         fun onRejectClicked(roomInviteModel: RoomInviteModel)
+        fun onRejectSwiped(roomInviteModel: RoomInviteModel)
         fun onRowClicked(roomInviteModel: RoomInviteModel)
     }
 
@@ -117,6 +118,15 @@ class RoomInvitesAdapter(
 
         roomInviteModels.remove(data)
         roomInviteModelsFull.remove(data)
+    }
+
+    fun removeAt(position: Int) {
+        val size = roomInviteModels.size
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, size)
+
+        roomInviteModels.removeAt(position)
+        roomInviteModelsFull.removeAt(position)
     }
 
     fun clear() {
