@@ -156,6 +156,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onSuccess(obj: UserModel) {
                 if (obj.roomUser != null) {
                     val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                    roomIntent.putExtra("room", obj.room)
                     startActivity(roomIntent)
                 }
             }

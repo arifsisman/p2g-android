@@ -39,14 +39,13 @@
         <activity
             android:name=".activity.room.RoomActivity"
             android:label="@string/title_activity_room"
-            android:parentActivityName=".activity.MainActivity"
-            android:theme="@style/AppTheme">
+            android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
 
-        <service android:name=".service.UserWebSocketService"/>
+        <service android:name=".service.UserWebSocketService" />
 
     </application>
 

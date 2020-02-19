@@ -25,8 +25,6 @@ class TokenAuthenticator : Authenticator {
             SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
         val updatedToken = refreshExpiredToken(refreshToken.toString())
 
-        Singleton.buildApi()
-
         return response.request.newBuilder()
             .header("Authorization", "Bearer $updatedToken")
             .build()
@@ -62,6 +60,7 @@ class TokenAuthenticator : Authenticator {
 
                 override fun onSuccess(obj: String) {
                     SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj)
+                    Singleton.buildApi()
                 }
             })
     }

@@ -1,5 +1,7 @@
 package vip.yazilim.p2g.android.activity.room
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -13,6 +15,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 class RoomActivity : AppCompatActivity() {
@@ -33,7 +36,12 @@ class RoomActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
-        setTitle(R.string.title_room)
+        val room = intent.getParcelableExtra<Room>("room")
+        if (room != null) {
+            title = room.name
+        } else {
+            setTitle(R.string.title_room)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -44,18 +52,48 @@ class RoomActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.leave -> {
-                request(Singleton.apiClient().leaveRoom(), object : Callback<Boolean> {
-                    override fun onSuccess(obj: Boolean) {
-                        val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
-                        startActivity(loginIntent)
-                    }
-
-                    override fun onError(msg: String) {
-                    }
-
-                })
+                leaveRoom()
+            }
+            android.R.id.home -> {
+                leaveRoom()
             }
         }
         return true
     }
+
+    override fun onBackPressed() {
+        leaveRoom()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        request(Singleton.apiClient().leaveRoom(), null)
+    }
+
+    private fun leaveRoom() {
+        val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
+            when (ans) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    request(Singleton.apiClient().leaveRoom(), object : Callback<Boolean> {
+                        override fun onSuccess(obj: Boolean) {
+                            val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
+                            startActivity(loginIntent)
+
+                            //TODO: disconnect from room socket
+                        }
+
+                        override fun onError(msg: String) {
+                        }
+                    })
+                }
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setMessage("Are you sure you want leave room ? \n(If you are owner of the room, it will be closed)")
+            .setPositiveButton("Yes", dialogClickListener)
+            .setNegativeButton("No", dialogClickListener)
+            .show()
+    }
+
 }
