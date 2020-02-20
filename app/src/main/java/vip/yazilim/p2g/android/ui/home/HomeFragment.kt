@@ -251,10 +251,12 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
                     override fun onSuccess(obj: Room) {
                         Log.d(LOG_TAG, "Room created with ID: " + obj.id)
+                        closeKeyboard()
                         mAlertDialog.dismiss()
 
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        startActivity(intent)
+                        val roomIntent = Intent(activity, RoomActivity::class.java)
+                        roomIntent.putExtra("room", obj)
+                        startActivity(roomIntent)
                     }
                 })
         }
@@ -283,6 +285,5 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 swipeContainer.isRefreshing = false
             }
         })
-
 
 }

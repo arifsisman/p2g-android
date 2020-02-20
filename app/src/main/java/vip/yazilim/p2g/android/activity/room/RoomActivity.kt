@@ -15,9 +15,11 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.util.refrofit.Singleton
+
 
 class RoomActivity : AppCompatActivity() {
 
@@ -26,27 +28,35 @@ class RoomActivity : AppCompatActivity() {
         setContentView(R.layout.activity_room)
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
-        val fab: FloatingActionButton = findViewById(R.id.fab)
 
+        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
+        tabLayout.setupWithViewPager(viewPager)
+
+        tabLayout.bringToFront()
+
+        val fab: FloatingActionButton = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
 
+        val room = intent.getParcelableExtra<Room>("room")
         val roomModel = intent.getParcelableExtra<RoomModel>("roomModel")
         val roomModelSimplified =
             intent.getParcelableExtra<RoomModelSimplified>("roomModelSimplified")
 
         when {
-            roomModel != null -> {
-                title = roomModel.room?.name
+            room != null -> {
+                title = room.name
             }
             roomModelSimplified != null -> {
                 title = roomModelSimplified.room?.name
+            }
+            roomModel != null -> {
+                title = roomModel.room?.name
             }
             else -> {
                 setTitle(R.string.title_room)

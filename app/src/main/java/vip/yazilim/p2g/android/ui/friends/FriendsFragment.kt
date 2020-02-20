@@ -292,7 +292,6 @@ class FriendsFragment : FragmentBase(
             }
         })
 
-
     private fun joinRoomEvent(room: Room) = request(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
@@ -305,10 +304,10 @@ class FriendsFragment : FragmentBase(
 
                 val intent = Intent(activity, RoomActivity::class.java)
                 intent.putExtra("roomUser", obj)
+                intent.putExtra("room", room)
                 startActivity(intent)
             }
         })
-
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
