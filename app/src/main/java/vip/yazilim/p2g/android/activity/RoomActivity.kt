@@ -26,6 +26,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class RoomActivity : AppCompatActivity() {
+    lateinit var roomModel: RoomModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,20 +60,23 @@ class RoomActivity : AppCompatActivity() {
 
         tabLayout.bringToFront()
 
-        val room = intent.getParcelableExtra<Room>("room")
-        val roomModel = intent.getParcelableExtra<RoomModel>("roomModel")
-        val roomModelSimplified =
+        val roomFromIntent = intent.getParcelableExtra<Room>("room")
+        val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
+        val roomModelSimplifiedFromIntent =
             intent.getParcelableExtra<RoomModelSimplified>("roomModelSimplified")
 
         when {
-            room != null -> {
-                title = room.name
+            roomFromIntent != null -> {
+                title = roomFromIntent.name
+                getRoomModel(roomFromIntent.id)
             }
-            roomModelSimplified != null -> {
-                title = roomModelSimplified.room?.name
+            roomModelSimplifiedFromIntent != null -> {
+                title = roomModelSimplifiedFromIntent.room?.name
+                roomModelSimplifiedFromIntent.room?.id?.let { getRoomModel(it) }
             }
-            roomModel != null -> {
-                title = roomModel.room?.name
+            roomModelFromIntent != null -> {
+                title = roomModelFromIntent.room?.name
+                roomModel = roomModelFromIntent
             }
             else -> {
                 setTitle(R.string.title_room)
@@ -131,6 +135,16 @@ class RoomActivity : AppCompatActivity() {
             .setNegativeButton("No", dialogClickListener)
             .show()
     }
+
+    private fun getRoomModel(roomId: Long) =
+        request(Singleton.apiClient().getRoomModel(roomId), object : Callback<RoomModel> {
+            override fun onSuccess(obj: RoomModel) {
+                roomModel = obj
+            }
+
+            override fun onError(msg: String) {
+            }
+        })
 
     private val tabTitles = arrayOf(
         R.string.queue_title,

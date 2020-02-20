@@ -86,7 +86,7 @@ interface Play2GetherWebApi {
     fun getSong(@Path("id") songId: Long): Call<Response<Song>>
 
     @GET("/api/song/{roomId}/list")
-    fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<List<Song>>>
+    fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<MutableList<Song>>>
 
     @POST("/api/song/{roomId}")
     fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<Response<List<Song>>>

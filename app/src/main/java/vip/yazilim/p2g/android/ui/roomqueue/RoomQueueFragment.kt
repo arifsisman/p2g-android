@@ -9,6 +9,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -39,6 +40,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     override fun setupViewModel() {
         viewModel = super.setupViewModelBase() as RoomQueueViewModel
         viewModel.songs.observe(this, renderRoomQueue)
+        (activity as RoomActivity).roomModel.room?.id?.let { viewModel.loadSongs(it) }
     }
 
     // Observer
