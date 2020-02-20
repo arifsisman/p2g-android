@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.ui.room.roomqueue
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -13,6 +14,7 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
+
 
 /**
  * @author mustafaarifsisman - 20.02.2020
@@ -29,6 +31,11 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = RoomQueueAdapter(viewModel.songs.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
+        val dividerItemDecoration = DividerItemDecoration(
+            recyclerView.context,
+            (recyclerView.layoutManager as LinearLayoutManager).orientation
+        )
+        recyclerView.addItemDecoration(dividerItemDecoration)
 
         val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
         fab.setOnClickListener { view ->

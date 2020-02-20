@@ -118,17 +118,12 @@ class RoomActivity : AppCompatActivity() {
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    request(Singleton.apiClient().leaveRoom(), object : Callback<Boolean> {
-                        override fun onSuccess(obj: Boolean) {
-                            val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
-                            startActivity(loginIntent)
+                    request(Singleton.apiClient().leaveRoom(), null)
 
-                            //TODO: disconnect from room socket
-                        }
+                    val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
+                    startActivity(loginIntent)
 
-                        override fun onError(msg: String) {
-                        }
-                    })
+                    //TODO: disconnect from room socket
                 }
             }
         }
