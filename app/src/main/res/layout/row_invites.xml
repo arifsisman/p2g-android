@@ -61,7 +61,7 @@
         <ImageButton
             android:id="@+id/accept_button"
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="0dp"
             android:layout_margin="8dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
@@ -73,7 +73,7 @@
         <ImageButton
             android:id="@+id/reject_button"
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="0dp"
             android:layout_margin="8dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_reject_button"

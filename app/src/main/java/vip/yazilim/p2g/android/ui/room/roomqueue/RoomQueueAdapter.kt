@@ -3,10 +3,13 @@ package vip.yazilim.p2g.android.ui.room.roomqueue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.Song
+import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
  * @author mustafaarifsisman - 20.02.2020
@@ -22,6 +25,7 @@ class RoomQueueAdapter(
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val songName: TextView = itemView.findViewById(R.id.song_name)
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
+        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
         fun bindEvent(roomModel: Song, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
@@ -30,6 +34,13 @@ class RoomQueueAdapter(
         }
 
         fun bindView(song: Song) {
+            songName.text = song.songName
+            songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames)
+            if (song.imageUrl != null) {
+                GlideApp.with(view)
+                    .load(song.imageUrl)
+                    .into(songImage)
+            }
         }
     }
 

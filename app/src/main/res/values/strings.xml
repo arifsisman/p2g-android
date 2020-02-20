@@ -67,6 +67,10 @@
     <string name="description_friend_request_icon">Friend Request Icon</string>
     <string name="placeholder_song_artists">Song Artists</string>
     <string name="placeholder_song_name">Song Name</string>
+    <string name="description_song_cover_image">Song cover image</string>
+    <string name="description_upvote_song_button">Upvote song button</string>
+    <string name="description_downvote_song_button">Downvote song button</string>
+    <string name="placeholder_song_vote">0</string>
 
 
 </resources>

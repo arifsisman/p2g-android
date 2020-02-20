@@ -31,6 +31,6 @@
         android:backgroundTint="@color/spotifyGreenColor"
         app:layout_anchor="@id/view_pager"
         app:layout_anchorGravity="bottom|right|end"
-        app:srcCompat="@drawable/ic_playlist_add_white_40dp" />
+        app:srcCompat="@drawable/spotify_icon" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

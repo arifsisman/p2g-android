@@ -68,7 +68,7 @@ class RoomHelper {
             }
         }
 
-        private fun getArtistsPlaceholder(artists: ArrayList<String>?): String {
+        fun getArtistsPlaceholder(artists: ArrayList<String>?): String {
             return artists
                 .toString()
                 .replace("[", "")
