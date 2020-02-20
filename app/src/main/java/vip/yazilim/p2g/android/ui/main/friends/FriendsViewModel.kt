@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.friends
+package vip.yazilim.p2g.android.ui.main.friends
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

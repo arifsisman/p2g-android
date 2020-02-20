@@ -21,12 +21,13 @@ import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
-import vip.yazilim.p2g.android.ui.roomqueue.RoomQueueFragment
+import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class RoomActivity : AppCompatActivity() {
-    lateinit var roomModel: RoomModel
+    var room: Room? = null
+    var roomModel: RoomModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,14 +69,17 @@ class RoomActivity : AppCompatActivity() {
         when {
             roomFromIntent != null -> {
                 title = roomFromIntent.name
+                room = roomFromIntent
                 getRoomModel(roomFromIntent.id)
             }
             roomModelSimplifiedFromIntent != null -> {
                 title = roomModelSimplifiedFromIntent.room?.name
+                room = roomModelSimplifiedFromIntent.room
                 roomModelSimplifiedFromIntent.room?.id?.let { getRoomModel(it) }
             }
             roomModelFromIntent != null -> {
                 title = roomModelFromIntent.room?.name
+                room = roomModelFromIntent.room
                 roomModel = roomModelFromIntent
             }
             else -> {

@@ -9,7 +9,7 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:background="@color/primaryLightColor"
         app:tabSelectedTextColor="@color/primaryDarkColor"
         app:tabTextColor="@color/secondaryTextColor" />
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tab_layout"
-        android:paddingTop="?actionBarSize"
+        android:paddingTop="40dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -28,8 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/view_pager"
         android:backgroundTint="@color/spotifyGreenColor"
+        app:layout_anchor="@id/view_pager"
         app:layout_anchorGravity="bottom|right|end"
         app:srcCompat="@drawable/ic_playlist_add_white_40dp" />
 

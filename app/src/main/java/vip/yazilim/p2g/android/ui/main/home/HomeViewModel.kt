@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.home
+package vip.yazilim.p2g.android.ui.main.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

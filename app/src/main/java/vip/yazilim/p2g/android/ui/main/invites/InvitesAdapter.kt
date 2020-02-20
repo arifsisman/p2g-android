@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.roominvites
+package vip.yazilim.p2g.android.ui.main.invites
 
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +16,10 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @author mustafaarifsisman - 03.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesAdapter(
+class InvitesAdapter(
     private var roomInviteModels: MutableList<RoomInviteModel>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<RoomInvitesAdapter.MViewHolder>(),
+) : RecyclerView.Adapter<InvitesAdapter.MViewHolder>(),
     Filterable {
     private lateinit var view: View
     var roomInviteModelsFull: MutableList<RoomInviteModel> = mutableListOf()
@@ -85,7 +85,7 @@ class RoomInvitesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_invites, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_invites, parent, false)
         return MViewHolder(view)
     }
 

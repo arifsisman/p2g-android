@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.roomqueue
+package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.util.Log
 import android.view.View
@@ -40,7 +40,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     override fun setupViewModel() {
         viewModel = super.setupViewModelBase() as RoomQueueViewModel
         viewModel.songs.observe(this, renderRoomQueue)
-        (activity as RoomActivity).roomModel.room?.id?.let { viewModel.loadSongs(it) }
+        (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
     }
 
     // Observer

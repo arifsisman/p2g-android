@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.roominvites
+package vip.yazilim.p2g.android.ui.main.invites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,7 +12,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesViewModel : ViewModelBase() {
+class InvitesViewModel : ViewModelBase() {
 
     private val _roomInviteModel = MutableLiveData<MutableList<RoomInviteModel>>()
     val roomInviteModel: LiveData<MutableList<RoomInviteModel>> = _roomInviteModel

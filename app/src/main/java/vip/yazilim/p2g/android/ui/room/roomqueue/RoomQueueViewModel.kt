@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.roomqueue
+package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

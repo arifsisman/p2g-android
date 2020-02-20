@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.roominvites
+package vip.yazilim.p2g.android.ui.main.invites
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -34,8 +34,8 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragment_room_invites),
-    RoomInvitesAdapter.OnItemClickListener {
+class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_room_invites),
+    InvitesAdapter.OnItemClickListener {
 
     companion object {
         private val TAG = this::class.simpleName
@@ -52,8 +52,8 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         }
     }
 
-    private lateinit var viewModel: RoomInvitesViewModel
-    private lateinit var adapter: RoomInvitesAdapter
+    private lateinit var viewModel: InvitesViewModel
+    private lateinit var adapter: InvitesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +70,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as RoomInvitesViewModel
+        viewModel = super.setupViewModelBase() as InvitesViewModel
         viewModel.roomInviteModel.observe(this, renderRoomInviteModel)
     }
 
@@ -79,7 +79,7 @@ class RoomInvitesFragment : FragmentBase(RoomInvitesViewModel(), R.layout.fragme
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = RoomInvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
+        adapter = InvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout

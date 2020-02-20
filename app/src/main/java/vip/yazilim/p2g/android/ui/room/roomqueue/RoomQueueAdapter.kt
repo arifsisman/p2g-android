@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.roomqueue
+package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +38,7 @@ class RoomQueueAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_queue, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_queue, parent, false)
         return MViewHolder(view)
     }
 

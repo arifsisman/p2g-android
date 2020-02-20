@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.profile
+package vip.yazilim.p2g.android.ui.main.profile
 
 import android.os.Bundle
 import android.util.Log
