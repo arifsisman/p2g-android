@@ -37,7 +37,7 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".activity.room.RoomActivity"
+            android:name=".activity.RoomActivity"
             android:label="@string/title_activity_room"
             android:parentActivityName=".activity.MainActivity">
             <meta-data

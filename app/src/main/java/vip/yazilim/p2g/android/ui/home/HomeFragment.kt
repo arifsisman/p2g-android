@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_passwo
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.activity.room.RoomActivity
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG

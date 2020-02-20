@@ -1,23 +1,27 @@
-package vip.yazilim.p2g.android.activity.room
+package vip.yazilim.p2g.android.activity
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.ui.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -114,6 +118,43 @@ class RoomActivity : AppCompatActivity() {
             .setPositiveButton("Yes", dialogClickListener)
             .setNegativeButton("No", dialogClickListener)
             .show()
+    }
+
+    private val tabTitles = arrayOf(
+        R.string.queue_title,
+        R.string.users_title,
+        R.string.chat_title,
+        R.string.invite_title
+    )
+
+    inner class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> { // RoomQueueFragment
+                    RoomQueueFragment()
+                }
+                1 -> { //TODO RoomUsersFragment
+                    RoomQueueFragment()
+                }
+                2 -> { //TODO RoomChatFragment
+                    RoomQueueFragment()
+                }
+                3 -> { //TODO RoomInviteFragment
+                    RoomQueueFragment()
+                }
+                else -> throw IllegalArgumentException()
+            }
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return context.resources.getString(tabTitles[position])
+        }
+
+        override fun getCount(): Int {
+            return tabTitles.size
+        }
     }
 
 }

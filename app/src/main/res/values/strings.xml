@@ -13,8 +13,10 @@
     <string name="title_logout">Logout</string>
     <string name="title_leave">Leave Room</string>
     <string name="title_invites">Invites</string>
-    <string name="title_tab_1">Tab 1</string>
-    <string name="title_tab_2">Tab 2</string>
+    <string name="queue_title">Queue</string>
+    <string name="users_title">Users</string>
+    <string name="chat_title">Chat</string>
+    <string name="invite_title">Invite</string>
 
     <!--Eng. Hints-->
     <string name="placeholder_room_name">Room Name</string>
@@ -63,6 +65,8 @@
     <string name="placeholder_user_name">Username</string>
     <string name="placeholder_friend_request_date">Request Date:</string>
     <string name="description_friend_request_icon">Friend Request Icon</string>
+    <string name="placeholder_song_artists">Song Artists</string>
+    <string name="placeholder_song_name">Song Name</string>
 
 
 </resources>
