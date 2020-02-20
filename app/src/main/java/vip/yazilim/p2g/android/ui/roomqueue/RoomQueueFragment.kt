@@ -5,6 +5,8 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.GeneralConstants
@@ -26,6 +28,12 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = RoomQueueAdapter(viewModel.songs.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
+
+        val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
+        }
     }
 
     override fun setupViewModel() {
