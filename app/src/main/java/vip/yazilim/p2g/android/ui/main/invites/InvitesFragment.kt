@@ -195,6 +195,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_room_
             }
 
             override fun onSuccess(obj: Boolean) {
+                adapter.remove(roomInviteModel)
             }
         })
 
