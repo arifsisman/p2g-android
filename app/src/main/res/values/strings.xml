@@ -75,6 +75,7 @@
     <string name="description_next_button">Next button</string>
     <string name="description_previous_button">Previous button</string>
     <string name="description_repeat_button">Replay button</string>
+    <string name="placeholder_add_song">Add song</string>
 
 
 </resources>

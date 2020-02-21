@@ -1,5 +1,7 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +27,9 @@ class RoomQueueAdapter(
         private val songName: TextView = itemView.findViewById(R.id.song_name)
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
+        private val songVote: TextView = itemView.findViewById(R.id.song_vote)
 
+        @SuppressLint("SetTextI18n")
         fun bindView(song: Song) {
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames)
@@ -33,6 +37,14 @@ class RoomQueueAdapter(
                 GlideApp.with(view)
                     .load(song.imageUrl)
                     .into(songImage)
+            }
+
+            if (song.votes > 0) {
+                songVote.text = "+" + song.votes.toString()
+                songVote.setTextColor(Color.parseColor("#1DB954"))
+            } else if (song.votes < 0) {
+                songVote.text = "-" + song.votes.toString()
+                songVote.setTextColor(Color.parseColor("#B91D1D"))
             }
         }
     }

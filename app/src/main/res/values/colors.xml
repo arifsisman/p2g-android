@@ -7,4 +7,5 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#1A1A1A</color>
     <color name="spotifyGreenColor">#1DB954</color>
+    <color name="negativeColor">#B91D1D</color>
 </resources>

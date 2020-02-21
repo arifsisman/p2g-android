@@ -63,13 +63,18 @@
         android:id="@+id/player_exp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/player_mini">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/player_mini"
+        app:layout_constraintVertical_bias="0.494">
 
         <TextView
             android:id="@+id/song_name_exp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:text="@string/placeholder_song_name"
             android:textSize="18sp"
@@ -88,8 +93,8 @@
 
         <ImageView
             android:id="@+id/song_image_exp"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_marginTop="30dp"
             android:contentDescription="@string/description_song_cover_image"
             app:layout_constraintEnd_toEndOf="parent"
@@ -120,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginStart="16dp"
-                    android:text="1:22"
+                    android:text="0:00"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/seek_bar_exp"
@@ -134,7 +139,7 @@
                     android:layout_gravity="end"
                     android:layout_marginEnd="16dp"
 
-                    android:text="3:45"
+                    android:text="x:xx"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/seek_bar_exp"
                     app:layout_constraintTop_toBottomOf="@+id/seek_bar_exp"
@@ -156,6 +161,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
@@ -175,10 +181,12 @@
                 <ImageButton
                     android:id="@+id/next_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:layout_marginStart="8dp"
+                    android:adjustViewBounds="true"
                     android:background="?android:selectableItemBackground"
                     android:contentDescription="@string/description_next_button"
+                    android:scaleType="centerInside"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/play_button"
                     app:layout_constraintTop_toTopOf="parent"
@@ -187,10 +195,12 @@
                 <ImageButton
                     android:id="@+id/previous_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
                     android:background="?android:selectableItemBackground"
                     android:contentDescription="@string/description_previous_button"
+                    android:scaleType="centerInside"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/play_button"
                     app:layout_constraintTop_toTopOf="parent"
@@ -198,11 +208,13 @@
 
                 <ImageButton
                     android:id="@+id/repeat_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
                     android:background="?android:selectableItemBackground"
                     android:contentDescription="@string/description_repeat_button"
+                    android:scaleType="centerInside"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/previous_button"
                     app:layout_constraintTop_toTopOf="parent"

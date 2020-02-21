@@ -162,7 +162,6 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError(msg: String) {
-                request(Singleton.apiClient().leaveRoom(), null)
             }
 
         })
