@@ -2,8 +2,7 @@ package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -77,35 +76,21 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                 newState: SlidingUpPanelLayout.PanelState?
             ) {
                 when (newState) {
-                    COLLAPSED -> {
-                        val songName: TextView = panel?.findViewById(R.id.song_name)!!
-                        val songArtists: TextView = panel.findViewById(R.id.song_artists)!!
-                        val songImage: ImageView = panel.findViewById(R.id.song_image)!!
-
-                        songName.visibility = View.VISIBLE
-                        songArtists.visibility = View.VISIBLE
-                        songImage.visibility = View.VISIBLE
-
-                        fab.show()
-                    }
-                    EXPANDED -> {
-                    }
-                    ANCHORED -> {
-                    }
-                    HIDDEN -> {
-                    }
                     DRAGGING -> {
-                        val songName: TextView = panel?.findViewById(R.id.song_name)!!
-                        val songArtists: TextView = panel.findViewById(R.id.song_artists)!!
-                        val songImage: ImageView = panel.findViewById(R.id.song_image)!!
+                        if (previousState == COLLAPSED) {
+                            fab.hide()
 
-                        songName.visibility = View.GONE
-                        songArtists.visibility = View.GONE
-                        songImage.visibility = View.GONE
+                            val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
+                            playerMini.visibility = View.GONE
+                        } else if (previousState == EXPANDED) {
+                            fab.show()
 
-                        fab.hide()
+                            val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
+                            playerMini.visibility = View.VISIBLE
+                        }
                     }
-                    null -> {
+                    else -> {
+
                     }
                 }
             }
