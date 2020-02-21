@@ -71,6 +71,10 @@
     <string name="description_upvote_song_button">Upvote song button</string>
     <string name="description_downvote_song_button">Downvote song button</string>
     <string name="placeholder_song_vote">0</string>
+    <string name="description_play_button">Play button</string>
+    <string name="description_next_button">Next button</string>
+    <string name="description_previous_button">Previous button</string>
+    <string name="description_repeat_button">Replay button</string>
 
 
 </resources>

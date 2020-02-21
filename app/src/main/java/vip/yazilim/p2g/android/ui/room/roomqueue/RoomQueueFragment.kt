@@ -81,15 +81,16 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                     DRAGGING -> {
                         if (previousState == COLLAPSED) {
                             fab.hide()
-
-                            val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
-                            playerMini.visibility = View.GONE
-                        } else if (previousState == EXPANDED) {
-                            fab.show()
-
-                            val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
-                            playerMini.visibility = View.VISIBLE
+                            showMaximizedPlayer()
                         }
+                    }
+                    COLLAPSED -> {
+                        fab.show()
+                        showMinimizedPlayer()
+                    }
+                    EXPANDED -> {
+                        fab.hide()
+                        showMaximizedPlayer()
                     }
                     else -> {
 
@@ -127,5 +128,15 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                 UIHelper.showSnackBarShort(root, msg)
             }
         })
+
+    private fun showMinimizedPlayer() {
+        val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
+        playerMini.visibility = View.VISIBLE
+    }
+
+    private fun showMaximizedPlayer() {
+        val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
+        playerMini.visibility = View.GONE
+    }
 
 }
