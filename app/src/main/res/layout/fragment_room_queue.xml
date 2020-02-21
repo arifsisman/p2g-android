@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoPanelHeight="60dp"
-    sothree:umanoShadowHeight="4dp">
+    sothree:umanoPanelHeight="65dp"
+    sothree:umanoShadowHeight="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -68,8 +68,8 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
-        android:id="@+id/row_player"
-        layout="@layout/row_player"
+        android:id="@+id/player"
+        layout="@layout/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

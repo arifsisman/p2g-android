@@ -1,7 +1,9 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
+import android.widget.SeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -33,6 +35,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     private lateinit var adapter: RoomQueueAdapter
     private lateinit var viewModel: RoomQueueViewModel
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun setupUI() {
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
@@ -65,7 +68,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         val slidingUpPanel: SlidingUpPanelLayout =
             root.findViewById(R.id.sliding_layout) as SlidingUpPanelLayout
 
-
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
             override fun onPanelSlide(view: View, v: Float) {}
@@ -96,6 +98,8 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
             }
         })
 
+        val seekBarTop = root.findViewById<SeekBar>(R.id.seek_bar_top)
+        seekBarTop.setOnTouchListener { _, _ -> true }
 
     }
 
