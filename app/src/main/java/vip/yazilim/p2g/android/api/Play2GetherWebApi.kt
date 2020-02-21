@@ -92,7 +92,7 @@ interface Play2GetherWebApi {
     fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<Response<List<Song>>>
 
     @DELETE("/api/song/{songId}")
-    fun removeSongFromRoom(@Path("songId") songId: Long): Call<Response<List<Song>>>
+    fun removeSongFromRoom(@Path("songId") songId: Long): Call<Response<Boolean>>
 
     @PUT("/api/song/{songId}/upvote")
     fun upvoteSong(@Path("songId") songId: Long): Call<Response<Int>>

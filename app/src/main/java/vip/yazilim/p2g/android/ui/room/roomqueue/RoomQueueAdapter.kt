@@ -16,8 +16,7 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomQueueAdapter(
-    private var songs: MutableList<Song>,
-    private val itemClickListener: OnItemClickListener
+    var songs: MutableList<Song>
 ) : RecyclerView.Adapter<RoomQueueAdapter.MViewHolder>() {
 
     private lateinit var view: View
@@ -26,12 +25,6 @@ class RoomQueueAdapter(
         private val songName: TextView = itemView.findViewById(R.id.song_name)
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
-
-        fun bindEvent(roomModel: Song, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener {
-                clickListener.onItemClicked(roomModel)
-            }
-        }
 
         fun bindView(song: Song) {
             songName.text = song.songName
@@ -44,10 +37,6 @@ class RoomQueueAdapter(
         }
     }
 
-    interface OnItemClickListener {
-        fun onItemClicked(roomModel: Song)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_queue, parent, false)
         return MViewHolder(view)
@@ -56,7 +45,6 @@ class RoomQueueAdapter(
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         val roomModel = songs[position]
         holder.bindView(roomModel)
-        holder.bindEvent(roomModel, itemClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -71,6 +59,23 @@ class RoomQueueAdapter(
     fun clear() {
         songs.clear()
         notifyDataSetChanged()
+    }
+
+    fun removeAt(position: Int) {
+        val size = songs.size
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, size)
+
+        songs.removeAt(position)
+    }
+
+    fun remove(song: Song) {
+        val position = songs.indexOf(song)
+        val size = songs.size
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, size)
+
+        songs.remove(song)
     }
 
 }
