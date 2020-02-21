@@ -2,6 +2,8 @@ package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -9,7 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_home.*
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
+import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -58,6 +62,56 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
         val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
         swipeDeleteHelper.attachToRecyclerView(recyclerView)
+
+        val slidingUpPanel: SlidingUpPanelLayout =
+            root.findViewById(R.id.sliding_layout) as SlidingUpPanelLayout
+
+
+        slidingUpPanel.addPanelSlideListener(object :
+            SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelSlide(view: View, v: Float) {}
+
+            override fun onPanelStateChanged(
+                panel: View?,
+                previousState: SlidingUpPanelLayout.PanelState?,
+                newState: SlidingUpPanelLayout.PanelState?
+            ) {
+                when (newState) {
+                    COLLAPSED -> {
+                        val songName: TextView = panel?.findViewById(R.id.song_name)!!
+                        val songArtists: TextView = panel.findViewById(R.id.song_artists)!!
+                        val songImage: ImageView = panel.findViewById(R.id.song_image)!!
+
+                        songName.visibility = View.VISIBLE
+                        songArtists.visibility = View.VISIBLE
+                        songImage.visibility = View.VISIBLE
+
+                        fab.show()
+                    }
+                    EXPANDED -> {
+                    }
+                    ANCHORED -> {
+                    }
+                    HIDDEN -> {
+                    }
+                    DRAGGING -> {
+                        val songName: TextView = panel?.findViewById(R.id.song_name)!!
+                        val songArtists: TextView = panel.findViewById(R.id.song_artists)!!
+                        val songImage: ImageView = panel.findViewById(R.id.song_image)!!
+
+                        songName.visibility = View.GONE
+                        songArtists.visibility = View.GONE
+                        songImage.visibility = View.GONE
+
+                        fab.hide()
+                    }
+                    null -> {
+                    }
+                }
+            }
+        })
+
+
     }
 
     override fun setupViewModel() {

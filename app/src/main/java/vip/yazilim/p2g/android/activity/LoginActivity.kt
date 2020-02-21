@@ -44,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
         // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
         SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
-        Singleton.initApis()
 
         spotify_login_btn.setOnClickListener {
             getAuthorizationCodeFromSpotify()
@@ -116,6 +115,9 @@ class LoginActivity : AppCompatActivity() {
                 SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                 SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
 //                    db.insertData(obj)
+
+                Singleton.initApis()
+
                 loginToPlay2Gether(obj)
             }
         })
