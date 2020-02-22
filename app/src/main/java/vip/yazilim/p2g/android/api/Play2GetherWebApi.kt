@@ -175,4 +175,9 @@ interface Play2GetherWebApi {
     @POST("/api/spotify/player/{id}/repeat")
     fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>
 
+
+    // Spotify API
+    @GET("/api/spotify/search/{query}")
+    fun search(@Path("query") query: String): Call<Response<MutableList<SearchModel>>>
+
 }

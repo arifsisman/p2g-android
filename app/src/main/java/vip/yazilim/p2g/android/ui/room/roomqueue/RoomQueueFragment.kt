@@ -1,6 +1,9 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
@@ -11,15 +14,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
+import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants
+import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.SwipeToDeleteCallback
@@ -48,11 +52,9 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         )
         recyclerView.addItemDecoration(dividerItemDecoration)
 
+        // Search with floating action button
         val fab: ExtendedFloatingActionButton = activity?.findViewById(R.id.fab)!!
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        fab.setOnClickListener { showSearchDialog() }
 
         // Swipe left for delete
         val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
@@ -137,6 +139,45 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     private fun showMaximizedPlayer() {
         val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
         playerMini.visibility = View.GONE
+    }
+
+    private fun showSearchDialog() {
+        val mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
+        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val mAlertDialog = mBuilder.show()
+
+        val queryEditText = mDialogView.dialog_query
+        val searchButton = mDialogView.dialog_search_button
+
+        // For request focus and open keyboard
+        queryEditText.requestFocus()
+        showKeyboard()
+
+        // For disable create button if name is empty
+        queryEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                searchButton.isEnabled = s.isNotEmpty()
+            }
+        })
+
+        // Click search
+        searchButton.setOnClickListener {
+            request(
+                Singleton.apiClient().search(queryEditText.text.toString()),
+                object : Callback<MutableList<SearchModel>> {
+                    override fun onError(msg: String) {
+                        UIHelper.showSnackBarShort(mDialogView, msg)
+                    }
+
+                    override fun onSuccess(obj: MutableList<SearchModel>) {
+                        closeKeyboard()
+                    }
+                })
+        }
+
+
     }
 
 }

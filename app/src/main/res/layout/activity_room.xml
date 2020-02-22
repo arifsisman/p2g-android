@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/primaryLightColor"
-        app:tabSelectedTextColor="@color/primaryDarkColor"
+        app:tabSelectedTextColor="@color/primaryTextColor"
         app:tabTextColor="@color/secondaryTextColor" />
 
     <androidx.viewpager.widget.ViewPager

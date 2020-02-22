@@ -76,6 +76,12 @@
     <string name="description_previous_button">Previous button</string>
     <string name="description_repeat_button">Replay button</string>
     <string name="placeholder_add_song">Add song</string>
+    <string name="placeholder_search_spotify">Search</string>
+    <string name="placeholder_search_spotify_expanded">Song, Album, Playlist, Artist…</string>
+    <string name="placeholder_search_model_name">Search Model Name</string>
+    <string name="placeholder_search_model_artists">Search Model Artists</string>
+    <string name="description_search_model_cover_image">Search Model Cover Image</string>
+    <string name="placeholder_search_model_type">Search Model Type</string>
 
 
 </resources>
