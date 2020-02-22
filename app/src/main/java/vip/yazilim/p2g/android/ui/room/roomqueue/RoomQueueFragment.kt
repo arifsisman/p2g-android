@@ -37,9 +37,11 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 20.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_room_queue) {
+class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_room_queue),
+    SearchAdapter.OnItemClickListener {
     private lateinit var adapter: RoomQueueAdapter
     private lateinit var viewModel: RoomQueueViewModel
+    private lateinit var searchAdapter: SearchAdapter
 
     @SuppressLint("ClickableViewAccessibility")
     override fun setupUI() {
@@ -199,7 +201,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                             mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
                         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-                        val searchAdapter = SearchAdapter(mutableListOf())
+                        searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
                         recyclerView.adapter = searchAdapter
 
                         recyclerView.addItemDecoration(object : DividerItemDecoration(
@@ -218,6 +220,10 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                 })
         }
 
+    }
+
+    override fun onSearchItemClicked(searchModel: SearchModel) {
+        searchAdapter.select(searchModel)
     }
 
 }
