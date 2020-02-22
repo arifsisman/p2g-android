@@ -81,7 +81,8 @@
     <string name="placeholder_search_model_name">Search Model Name</string>
     <string name="placeholder_search_model_artists">Search Model Artists</string>
     <string name="description_search_model_cover_image">Search Model Cover Image</string>
-    <string name="placeholder_search_model_type">Search Model Type</string>
+    <string name="placeholder_search_model_type">Model Type</string>
+    <string name="placeholder_add_song_to_room">Add</string>
 
 
 </resources>

@@ -184,8 +184,8 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
                         closeKeyboard()
-                        searchButton.visibility = View.GONE
-                        addButton.visibility = View.VISIBLE
+                        mDialogView.findViewById<View>(R.id.search_layout).visibility = View.GONE
+                        mDialogView.findViewById<View>(R.id.add_layout).visibility = View.VISIBLE
 
                         val recyclerView =
                             mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
@@ -194,11 +194,10 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                         val searchAdapter = SearchAdapter(obj)
                         recyclerView.adapter = searchAdapter
 
-                        val dividerItemDecoration = DividerItemDecoration(
+                        recyclerView.addItemDecoration(object : DividerItemDecoration(
                             recyclerView.context,
                             (recyclerView.layoutManager as LinearLayoutManager).orientation
-                        )
-                        recyclerView.addItemDecoration(dividerItemDecoration)
+                        ) {})
                     }
                 })
         }

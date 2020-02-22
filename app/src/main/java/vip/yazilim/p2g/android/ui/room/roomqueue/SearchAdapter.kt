@@ -27,13 +27,9 @@ class SearchAdapter(var searchModels: MutableList<SearchModel>) :
 
         fun bindView(searchModel: SearchModel) {
             searchModelName.text = searchModel.name
-            searchModelType.text = searchModel.type
+            searchModelType.text = searchModel.type.toString()
 
-            if (!searchModel.artistNames.isNullOrEmpty()) {
-                searchModelArtists.text = RoomHelper.getArtistsPlaceholder(searchModel.artistNames)
-            } else {
-                searchModelArtists.visibility = View.GONE
-            }
+            searchModelArtists.text = RoomHelper.getArtistsPlaceholder(searchModel.artistNames)
 
             if (searchModel.imageUrl != null) {
                 GlideApp.with(view)
