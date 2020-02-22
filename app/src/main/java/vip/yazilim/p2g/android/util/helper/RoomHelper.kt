@@ -69,11 +69,15 @@ class RoomHelper {
         }
 
         fun getArtistsPlaceholder(artists: ArrayList<String>?): String {
-            return artists
-                .toString()
-                .replace("[", "")
-                .replace("]", "")
-                .trim()
+            return if (artists.isNullOrEmpty()) {
+                ""
+            } else {
+                artists
+                    .toString()
+                    .replace("[", "")
+                    .replace("]", "")
+                    .trim()
+            }
         }
     }
 }
