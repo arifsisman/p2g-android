@@ -46,19 +46,28 @@ class UIHelper {
         fun showSnackBarLong(view: View?, message: String) {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG) }
             val snackView = snack?.view
-            val params = snackView?.layoutParams as FrameLayout.LayoutParams
-            params.gravity = Gravity.TOP
-            snackView.layoutParams = params
-            snack.show()
+            try {
+                val params = snackView?.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.TOP
+                snackView.layoutParams = params
+            } catch (e: Exception) {
+                snack?.show()
+            }
         }
 
         fun showSnackBarShort(view: View?, message: String) {
-            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            val params = snackView?.layoutParams as FrameLayout.LayoutParams
-            params.gravity = Gravity.TOP
-            snackView.layoutParams = params
-            snack.show()
+            try {
+                val snack: Snackbar? =
+                    view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+                val snackView = snack?.view
+                val params = snackView?.layoutParams as FrameLayout.LayoutParams
+                params.gravity = Gravity.TOP
+                snackView.layoutParams = params
+            } catch (e: Exception) {
+                val snack: Snackbar? =
+                    view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+                snack?.show()
+            }
         }
 
     }

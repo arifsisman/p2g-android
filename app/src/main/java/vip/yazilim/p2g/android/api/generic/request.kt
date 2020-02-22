@@ -15,15 +15,14 @@ inline fun <reified T> request(call: Call<Response<T>>?, callback: Callback<T>?)
                 if (result.response.isSuccessful) {
                     callback?.onSuccess(result.response.body()?.data as T)
                 } else {
-                    result.response.errorBody()?.let {
-                        Log.d(REQUEST_TAG, it.string())
-                        callback?.onError(it.string())
-                    }
+                    val msg = result.response.errorBody()!!.string()
+                    Log.d("$REQUEST_TAG not successful ", msg)
+                    callback?.onError(msg)
                 }
             }
             is Result.Failure -> {
                 val msg = result.error.message as String
-                Log.d(REQUEST_TAG, msg)
+                Log.d("$REQUEST_TAG failed ", msg)
                 callback?.onError(msg)
             }
         }

@@ -236,6 +236,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                 }
 
                 override fun onError(msg: String) {
+                    cancelButton.performClick()
                     UIHelper.showSnackBarShort(root, msg)
                 }
             })
