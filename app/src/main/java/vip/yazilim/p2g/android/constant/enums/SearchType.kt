@@ -10,5 +10,5 @@ enum class SearchType(
     val TRACK: String = "track",
     val ARTIST: String = "artist",
     val USER: String = "user"
-)
+) : CharSequence
 

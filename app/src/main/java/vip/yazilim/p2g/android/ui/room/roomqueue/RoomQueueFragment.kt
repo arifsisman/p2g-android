@@ -44,8 +44,10 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
+
         adapter = RoomQueueAdapter(viewModel.songs.value ?: mutableListOf())
         recyclerView.adapter = adapter
+
         val dividerItemDecoration = DividerItemDecoration(
             recyclerView.context,
             (recyclerView.layoutManager as LinearLayoutManager).orientation
@@ -143,11 +145,13 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
     private fun showSearchDialog() {
         val mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val mBuilder =
+            AlertDialog.Builder(activity, R.style.myFullscreenAlertDialogStyle).setView(mDialogView)
         val mAlertDialog = mBuilder.show()
 
         val queryEditText = mDialogView.dialog_query
         val searchButton = mDialogView.dialog_search_button
+        val addButton = mDialogView.dialog_add_button
 
         // For request focus and open keyboard
         queryEditText.requestFocus()
@@ -162,6 +166,13 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
             }
         })
 
+        // Click cancel
+        mDialogView.dialog_cancel_button.setOnClickListener {
+            mAlertDialog.cancel()
+            queryEditText.clearFocus()
+            closeKeyboard()
+        }
+
         // Click search
         searchButton.setOnClickListener {
             request(
@@ -173,6 +184,21 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
                         closeKeyboard()
+                        searchButton.visibility = View.GONE
+                        addButton.visibility = View.VISIBLE
+
+                        val recyclerView =
+                            mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
+                        recyclerView.layoutManager = LinearLayoutManager(activity)
+
+                        val searchAdapter = SearchAdapter(obj)
+                        recyclerView.adapter = searchAdapter
+
+                        val dividerItemDecoration = DividerItemDecoration(
+                            recyclerView.context,
+                            (recyclerView.layoutManager as LinearLayoutManager).orientation
+                        )
+                        recyclerView.addItemDecoration(dividerItemDecoration)
                     }
                 })
         }
