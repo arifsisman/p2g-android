@@ -96,7 +96,8 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                         }
                     }
                     COLLAPSED -> {
-                        fab.show()
+                        val roomActivity = activity as RoomActivity
+                        roomActivity.roomUser?.let { roomActivity.canUserAddAndControlSongs(it) }
                         showMinimizedPlayer()
                     }
                     EXPANDED -> {

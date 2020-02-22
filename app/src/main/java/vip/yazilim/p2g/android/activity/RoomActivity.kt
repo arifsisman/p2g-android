@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -18,9 +19,11 @@ import kotlinx.android.synthetic.main.activity_room.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -28,6 +31,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 class RoomActivity : AppCompatActivity() {
     var room: Room? = null
     var roomModel: RoomModel? = null
+    var roomUser: RoomUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +52,7 @@ class RoomActivity : AppCompatActivity() {
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> fab.show()
+                    0 -> roomUser?.let { canUserAddAndControlSongs(it) }
                     else -> fab.hide()
                 }
             }
@@ -86,6 +90,8 @@ class RoomActivity : AppCompatActivity() {
                 setTitle(R.string.title_room)
             }
         }
+
+        getRoomUserMe()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -144,6 +150,28 @@ class RoomActivity : AppCompatActivity() {
             override fun onError(msg: String) {
             }
         })
+
+    private fun getRoomUserMe() =
+        request(Singleton.apiClient().getRoomUserMe(), object : Callback<RoomUser> {
+            override fun onSuccess(obj: RoomUser) {
+                roomUser = obj
+                canUserAddAndControlSongs(obj)
+            }
+
+            override fun onError(msg: String) {
+            }
+        })
+
+    fun canUserAddAndControlSongs(roomUser: RoomUser) {
+        val controllerButtons: View = findViewById(R.id.player_controller_buttons)
+        return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
+            fab.show()
+            controllerButtons.visibility = View.VISIBLE
+        } else {
+            fab.hide()
+            controllerButtons.visibility = View.GONE
+        }
+    }
 
     private val tabTitles = arrayOf(
         R.string.queue_title,

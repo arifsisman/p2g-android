@@ -80,6 +80,8 @@ interface Play2GetherWebApi {
     @GET("/api/room/invite/model")
     fun getRoomInviteModels(): Call<Response<MutableList<RoomInviteModel>>>
 
+    @GET("/api/room/user/me")
+    fun getRoomUserMe(): Call<Response<RoomUser>>
 
     // Song API
     @GET("/api/song/{id}")
