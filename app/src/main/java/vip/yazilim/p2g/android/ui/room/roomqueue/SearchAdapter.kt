@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -88,13 +89,37 @@ class SearchAdapter(
         notifyDataSetChanged()
     }
 
-    fun select(data: SearchModel): Boolean {
-        if (selectedSearchModels.contains(data)) {
-            selectedSearchModels.remove(data)
-        } else {
-            selectedSearchModels.add(data)
+    fun select(data: SearchModel): Boolean? {
+        return when {
+            checkConstraints() -> {
+                if (selectedSearchModels.contains(data)) {
+                    selectedSearchModels.remove(data)
+                } else {
+                    selectedSearchModels.add(data)
+                }
+                notifyDataSetChanged()
+
+                selectedSearchModels.isNotEmpty()
+            }
+            selectedSearchModels.contains(data) -> {
+                selectedSearchModels.remove(data)
+                notifyDataSetChanged()
+
+                selectedSearchModels.isNotEmpty()
+            }
+            else -> {
+                null
+            }
         }
-        notifyDataSetChanged()
-        return selectedSearchModels.isNotEmpty()
+    }
+
+    private fun checkConstraints(): Boolean {
+        selectedSearchModels.forEach {
+            if ((it.type == SearchType.ALBUM || it.type == SearchType.PLAYLIST)) {
+                return false
+            }
+        }
+
+        return selectedSearchModels.size < 10
     }
 }

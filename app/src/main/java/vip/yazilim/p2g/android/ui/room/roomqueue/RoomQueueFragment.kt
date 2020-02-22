@@ -226,15 +226,18 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
-        val isAnyItemsSelected = searchAdapter.select(searchModel)
-        val addButton = mDialogView.findViewById<Button>(R.id.dialog_add_button)
-        addButton.isEnabled = isAnyItemsSelected
-
-        //TODO max 5 songs or 1 album or 1 playlist can be added
-//        searchAdapter.selectedSearchModels.forEach{
-//
-//        }
-
+        if (::searchAdapter.isInitialized && ::mDialogView.isInitialized) {
+            val isAnyItemsSelected = searchAdapter.select(searchModel)
+            if (isAnyItemsSelected != null) {
+                mDialogView.findViewById<Button>(R.id.dialog_add_button).isEnabled =
+                    isAnyItemsSelected
+            } else {
+                UIHelper.showSnackBarShort(
+                    mDialogView,
+                    "10 songs or 1 Album/Playlist can be added in each search!"
+                )
+            }
+        }
     }
 
 }
