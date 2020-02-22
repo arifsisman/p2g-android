@@ -6,7 +6,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -175,8 +177,9 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
         // Click search
         searchButton.setOnClickListener {
+            val query = queryEditText.text.toString()
             request(
-                Singleton.apiClient().search(queryEditText.text.toString()),
+                Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
                         UIHelper.showSnackBarShort(mDialogView, msg)
@@ -184,9 +187,14 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
                         closeKeyboard()
-                        mDialogView.findViewById<View>(R.id.search_layout).visibility = View.GONE
-                        mDialogView.findViewById<View>(R.id.add_layout).visibility = View.VISIBLE
 
+                        // Hide search bar, search button and show addButton
+                        searchButton.visibility = View.GONE
+                        addButton.visibility = View.VISIBLE
+
+                        mDialogView.findViewById<EditText>(R.id.dialog_query).visibility = View.GONE
+
+                        // Adapter start and update with requested search model
                         val recyclerView =
                             mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
                         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -200,6 +208,12 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                         ) {})
 
                         searchAdapter.update(obj)
+
+                        // Search text query
+                        val searchText: TextView = mDialogView.findViewById(R.id.search_text)
+                        val searchTextPlaceholder = "Search with query '${query}'"
+                        searchText.text = searchTextPlaceholder
+                        searchText.visibility = View.VISIBLE
                     }
                 })
         }
