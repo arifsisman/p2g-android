@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
@@ -41,7 +42,9 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     SearchAdapter.OnItemClickListener {
     private lateinit var adapter: RoomQueueAdapter
     private lateinit var viewModel: RoomQueueViewModel
+
     private lateinit var searchAdapter: SearchAdapter
+    private lateinit var mDialogView: View
 
     @SuppressLint("ClickableViewAccessibility")
     override fun setupUI() {
@@ -148,7 +151,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     }
 
     private fun showSearchDialog() {
-        val mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
+        mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder =
             AlertDialog.Builder(context, R.style.myFullscreenAlertDialogStyle).setView(mDialogView)
         val mAlertDialog = mBuilder.show()
@@ -223,7 +226,15 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
-        searchAdapter.select(searchModel)
+        val isAnyItemsSelected = searchAdapter.select(searchModel)
+        val addButton = mDialogView.findViewById<Button>(R.id.dialog_add_button)
+        addButton.isEnabled = isAnyItemsSelected
+
+        //TODO max 5 songs or 1 album or 1 playlist can be added
+//        searchAdapter.selectedSearchModels.forEach{
+//
+//        }
+
     }
 
 }

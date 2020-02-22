@@ -23,7 +23,7 @@ class SearchAdapter(
     RecyclerView.Adapter<SearchAdapter.MViewHolder>() {
     private lateinit var view: View
 
-    private var selectedSearchModels = mutableListOf<SearchModel>()
+    var selectedSearchModels = mutableListOf<SearchModel>()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val searchModelName: TextView = itemView.findViewById(R.id.search_model_name)
@@ -54,7 +54,13 @@ class SearchAdapter(
                     .into(searchModelImage)
             }
 
-            checkBox.isSelected = selectedSearchModels.contains(searchModel)
+            val isChecked = selectedSearchModels.contains(searchModel)
+            if (isChecked) {
+                checkBox.isChecked = isChecked
+                checkBox.visibility = View.VISIBLE
+            } else {
+                checkBox.visibility = View.GONE
+            }
         }
     }
 
@@ -82,8 +88,13 @@ class SearchAdapter(
         notifyDataSetChanged()
     }
 
-    fun select(data: SearchModel) {
-        selectedSearchModels.add(data)
+    fun select(data: SearchModel): Boolean {
+        if (selectedSearchModels.contains(data)) {
+            selectedSearchModels.remove(data)
+        } else {
+            selectedSearchModels.add(data)
+        }
         notifyDataSetChanged()
+        return selectedSearchModels.isNotEmpty()
     }
 }
