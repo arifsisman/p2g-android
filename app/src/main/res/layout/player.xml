@@ -95,7 +95,7 @@
             android:id="@+id/song_image_exp"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:contentDescription="@string/description_song_cover_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

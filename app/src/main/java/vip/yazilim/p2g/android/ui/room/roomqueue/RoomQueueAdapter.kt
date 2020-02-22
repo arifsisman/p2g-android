@@ -31,7 +31,7 @@ class RoomQueueAdapter(
         fun bindView(song: Song) {
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
-            if (song.imageUrl != null) {
+            if (song.imageUrl != null && !song.imageUrl!!.contains("mp3")) {
                 GlideApp.with(view)
                     .load(song.imageUrl)
                     .into(songImage)

@@ -159,6 +159,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         val queryEditText = mDialogView.dialog_query
         val searchButton = mDialogView.dialog_search_button
         val addButton = mDialogView.dialog_add_button
+        val cancelButton = mDialogView.dialog_cancel_button
 
         // For request focus and open keyboard
         queryEditText.requestFocus()
@@ -174,7 +175,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         })
 
         // Click cancel
-        mDialogView.dialog_cancel_button.setOnClickListener {
+        cancelButton.setOnClickListener {
             mAlertDialog.cancel()
             queryEditText.clearFocus()
             closeKeyboard()
@@ -221,6 +222,23 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                         searchText.visibility = View.VISIBLE
                     }
                 })
+        }
+
+        addButton.setOnClickListener {
+            val selectedSearchModels = searchAdapter.selectedSearchModels
+
+            request((activity as RoomActivity).room?.id?.let {
+                Singleton.apiClient().addSongToRoom(it, selectedSearchModels)
+            }, object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                    cancelButton.performClick()
+                    selectedSearchModels.clear()
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShort(root, msg)
+                }
+            })
         }
 
     }
