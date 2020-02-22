@@ -32,7 +32,7 @@ class RoomQueueAdapter(
         @SuppressLint("SetTextI18n")
         fun bindView(song: Song) {
             songName.text = song.songName
-            songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames)
+            songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "•")
             if (song.imageUrl != null) {
                 GlideApp.with(view)
                     .load(song.imageUrl)

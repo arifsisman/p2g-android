@@ -21,15 +21,19 @@ class SearchAdapter(var searchModels: MutableList<SearchModel>) :
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val searchModelName: TextView = itemView.findViewById(R.id.search_model_name)
-        private val searchModelArtists: TextView = itemView.findViewById(R.id.search_model_artists)
-        private val searchModelType: TextView = itemView.findViewById(R.id.search_model_type)
+        private val searchModelTypeAndArtists: TextView =
+            itemView.findViewById(R.id.search_model_type_and_artists)
         private val searchModelImage: ImageView = itemView.findViewById(R.id.search_model_image)
 
         fun bindView(searchModel: SearchModel) {
             searchModelName.text = searchModel.name
-            searchModelType.text = searchModel.type.toString()
 
-            searchModelArtists.text = RoomHelper.getArtistsPlaceholder(searchModel.artistNames)
+            val typeAndArtistsPlaceholder =
+                searchModel.type.toString() + RoomHelper.getArtistsPlaceholder(
+                    searchModel.artistNames,
+                    " • "
+                )
+            searchModelTypeAndArtists.text = typeAndArtistsPlaceholder
 
             if (searchModel.imageUrl != null) {
                 GlideApp.with(view)

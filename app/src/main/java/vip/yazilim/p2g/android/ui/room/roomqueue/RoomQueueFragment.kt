@@ -191,17 +191,18 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                             mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
                         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-                        val searchAdapter = SearchAdapter(obj)
+                        val searchAdapter = SearchAdapter(mutableListOf())
                         recyclerView.adapter = searchAdapter
 
                         recyclerView.addItemDecoration(object : DividerItemDecoration(
                             recyclerView.context,
                             (recyclerView.layoutManager as LinearLayoutManager).orientation
                         ) {})
+
+                        searchAdapter.update(obj)
                     }
                 })
         }
-
 
     }
 

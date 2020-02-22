@@ -23,11 +23,12 @@
             tools:text="@string/placeholder_search_model_name" />
 
         <TextView
-            android:id="@+id/search_model_artists"
+            android:id="@+id/search_model_type_and_artists"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:text="@string/placeholder_search_model_artists"
+            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/search_model_name"
             app:layout_constraintTop_toBottomOf="@+id/search_model_name" />
 
@@ -42,17 +43,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@mipmap/ic_launcher" />
-
-        <TextView
-            android:id="@+id/search_model_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder_search_model_type"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SmallSp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

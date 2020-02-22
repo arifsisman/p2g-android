@@ -5,9 +5,9 @@ package vip.yazilim.p2g.android.constant.enums
  * @contact mustafaarifsisman@gmail.com
  */
 enum class SearchType(val type: String) {
+    SONG("track"),
     ALBUM("album"),
     PLAYLIST("playlist"),
-    TRACK("track"),
     ARTIST("artist");
 }
 

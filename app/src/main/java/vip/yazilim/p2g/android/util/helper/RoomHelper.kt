@@ -17,22 +17,22 @@ class RoomHelper {
                 when (it.songStatus) {
                     SongStatus.PLAYING.songStatus -> {
                         result =
-                            "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${it.songName} - " + getArtistsPlaceholder(
-                                it.artistNames
+                            "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${it.songName}" + getArtistsPlaceholder(
+                                it.artistNames, " • "
                             )
                         return@forEach
                     }
                     SongStatus.PAUSED.songStatus -> {
                         result =
-                            "${view.resources.getString(R.string.placeholder_room_paused_song)} ${it.songName} - " + getArtistsPlaceholder(
-                                it.artistNames
+                            "${view.resources.getString(R.string.placeholder_room_paused_song)} ${it.songName}" + getArtistsPlaceholder(
+                                it.artistNames, " • "
                             )
                         return@forEach
                     }
                     SongStatus.NEXT.songStatus -> {
                         result =
-                            "${view.resources.getString(R.string.placeholder_room_next_song)} ${it.songName} - " + getArtistsPlaceholder(
-                                it.artistNames
+                            "${view.resources.getString(R.string.placeholder_room_next_song)} ${it.songName}" + getArtistsPlaceholder(
+                                it.artistNames, " • "
                             )
                         return@forEach
                     }
@@ -48,18 +48,18 @@ class RoomHelper {
         fun getRoomSongStatus(view: View, song: Song?): String {
             return when (song?.songStatus) {
                 SongStatus.PLAYING.songStatus -> {
-                    "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${song.songName} - " + getArtistsPlaceholder(
-                        song.artistNames
+                    "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${song.songName}" + getArtistsPlaceholder(
+                        song.artistNames, " • "
                     )
                 }
                 SongStatus.PAUSED.songStatus -> {
-                    "${view.resources.getString(R.string.placeholder_room_paused_song)} ${song.songName} - " + getArtistsPlaceholder(
-                        song.artistNames
+                    "${view.resources.getString(R.string.placeholder_room_paused_song)} ${song.songName}" + getArtistsPlaceholder(
+                        song.artistNames, " • "
                     )
                 }
                 SongStatus.NEXT.songStatus -> {
-                    "${view.resources.getString(R.string.placeholder_room_next_song)} ${song.songName} - " + getArtistsPlaceholder(
-                        song.artistNames
+                    "${view.resources.getString(R.string.placeholder_room_next_song)} ${song.songName}" + getArtistsPlaceholder(
+                        song.artistNames, " • "
                     )
                 }
                 else -> {
@@ -68,11 +68,11 @@ class RoomHelper {
             }
         }
 
-        fun getArtistsPlaceholder(artists: ArrayList<String>?): String {
+        fun getArtistsPlaceholder(artists: ArrayList<String>?, delimiter: String): String {
             return if (artists.isNullOrEmpty()) {
                 ""
             } else {
-                artists
+                delimiter + artists
                     .toString()
                     .replace("[", "")
                     .replace("]", "")
