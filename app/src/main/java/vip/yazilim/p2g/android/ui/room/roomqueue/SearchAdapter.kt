@@ -49,7 +49,7 @@ class SearchAdapter(
                 )
             searchModelTypeAndArtists.text = typeAndArtistsPlaceholder
 
-            if (searchModel.imageUrl != null && !searchModel.imageUrl!!.contains("mp3")) {
+            if (searchModel.imageUrl != null) {
                 GlideApp.with(view)
                     .load(searchModel.imageUrl)
                     .into(searchModelImage)

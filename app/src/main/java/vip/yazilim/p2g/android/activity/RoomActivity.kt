@@ -182,11 +182,6 @@ class RoomActivity : AppCompatActivity(),
 
         playerRecyclerView.adapter = playerAdapter
 //        playerExp.adapter = playerAdapter
-
-        //TODO disable seekbar top touch event
-//        // Disable touch on minimized seekBar
-//        val seekBarTop = findViewById<SeekBar>(R.id.seek_bar)
-//        seekBarTop.setOnTouchListener { _, _ -> true }
     }
 
     private fun setupViewModel() {

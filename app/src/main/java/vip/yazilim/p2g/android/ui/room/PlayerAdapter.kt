@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.ui.room
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,11 +27,12 @@ class PlayerAdapter(private var songOnPlayer: MutableList<Song>) :
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
         private val seekBar: SeekBar = itemView.findViewById(R.id.seek_bar)
 
+        @SuppressLint("ClickableViewAccessibility")
         fun bindViewMinimized(song: Song) {
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
-            if (song.imageUrl != null && !song.imageUrl!!.contains("mp3")) {
+            if (song.imageUrl != null) {
                 GlideApp.with(view)
                     .load(song.imageUrl)
                     .into(songImage)
@@ -38,12 +40,14 @@ class PlayerAdapter(private var songOnPlayer: MutableList<Song>) :
                 songImage.setImageResource(R.mipmap.ic_launcher)
             }
 
-            //TODO seekbar
+            seekBar.setOnTouchListener { _, _ -> true }
+
+            //TODO seekbar value
         }
 
-        private val songNameExp: TextView = itemView.findViewById(R.id.song_name)
-        private val songArtistsExp: TextView = itemView.findViewById(R.id.song_artists)
-        private val songImageExp: ImageView = itemView.findViewById(R.id.song_image)
+        private val songNameExp: TextView = itemView.findViewById(R.id.song_name_exp)
+        private val songArtistsExp: TextView = itemView.findViewById(R.id.song_artists_exp)
+        private val songImageExp: ImageView = itemView.findViewById(R.id.song_image_exp)
         private val seekBarExp: SeekBar = itemView.findViewById(R.id.seek_bar_exp)
         private val songCurrent: TextView = itemView.findViewById(R.id.song_current)
         private val songMax: TextView = itemView.findViewById(R.id.song_max)
@@ -52,7 +56,7 @@ class PlayerAdapter(private var songOnPlayer: MutableList<Song>) :
             songNameExp.text = song.songName
             songArtistsExp.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
-            if (song.imageUrl != null && !song.imageUrl!!.contains("mp3")) {
+            if (song.imageUrl != null) {
                 GlideApp.with(view)
                     .load(song.imageUrl)
                     .into(songImageExp)

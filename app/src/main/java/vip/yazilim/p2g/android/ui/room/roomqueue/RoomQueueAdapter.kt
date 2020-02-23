@@ -33,7 +33,7 @@ class RoomQueueAdapter(
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
-            if (song.imageUrl != null && !song.imageUrl!!.contains("mp3")) {
+            if (song.imageUrl != null) {
                 GlideApp.with(view)
                     .load(song.imageUrl)
                     .into(songImage)
