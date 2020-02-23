@@ -13,9 +13,6 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomQueueViewModel : ViewModelBase() {
-    private var _songOnPlayer = MutableLiveData<MutableList<Song>>()
-    val songOnPlayer: LiveData<MutableList<Song>> = _songOnPlayer
-
     private val _songs = MutableLiveData<MutableList<Song>>()
     val songs: LiveData<MutableList<Song>> = _songs
 
@@ -37,7 +34,6 @@ class RoomQueueViewModel : ViewModelBase() {
                         _isEmptyList.postValue(true)
                     } else {
                         _songs.value = obj
-                        _songOnPlayer.value = obj
                     }
                 }
             })

@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.room.roomqueue
+package vip.yazilim.p2g.android.ui.room
 
 import android.view.LayoutInflater
 import android.view.View

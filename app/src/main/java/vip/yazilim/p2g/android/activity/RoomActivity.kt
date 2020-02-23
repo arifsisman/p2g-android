@@ -15,6 +15,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
@@ -25,18 +28,21 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
-import vip.yazilim.p2g.android.model.p2g.Room
-import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
-import vip.yazilim.p2g.android.model.p2g.RoomUser
+import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.ui.room.PlayerAdapter
+import vip.yazilim.p2g.android.ui.room.PlayerViewModel
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
-class RoomActivity : AppCompatActivity() {
+class RoomActivity : AppCompatActivity(),
+    ViewModelProvider.Factory {
     var room: Room? = null
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
+
+    private lateinit var playerViewModel: PlayerViewModel
+    private lateinit var playerAdapter: PlayerAdapter
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,13 +103,14 @@ class RoomActivity : AppCompatActivity() {
             }
         }
 
+        // Get room user to decide role and show control & add song events
         getRoomUserMe()
 
-        // Minimized and expanded player UI
+        // setup PlayerViewModel for observe songOnPlayer
+        setupViewModel()
 
         // Minimized and expanded player UI
-        val slidingUpPanel: SlidingUpPanelLayout =
-            findViewById<SlidingUpPanelLayout>(R.id.container)
+        val slidingUpPanel: SlidingUpPanelLayout = findViewById(R.id.container)
 
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
@@ -164,10 +171,27 @@ class RoomActivity : AppCompatActivity() {
                 }
             }
         })
+
+        // PlayerAdapter
+        playerAdapter = PlayerAdapter(
+            playerViewModel.songOnPlayer.value ?: mutableListOf()
+        )
+//        playerMini.adapter = playerAdapter
+//        playerExp.adapter = playerAdapter
 
         // Disable touch on minimized seekBar
         val seekBarTop = findViewById<SeekBar>(R.id.seek_bar)
         seekBarTop.setOnTouchListener { _, _ -> true }
+    }
+
+    private fun setupViewModel() {
+        playerViewModel = ViewModelProvider(this, this).get(PlayerViewModel::class.java)
+        playerViewModel.songOnPlayer.observe(this, renderSongOnPlayer)
+    }
+
+    // Observer
+    private val renderSongOnPlayer = Observer<MutableList<Song>> {
+        playerAdapter.updateSongOnPlayer(it)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -294,5 +318,10 @@ class RoomActivity : AppCompatActivity() {
     private fun showMaximizedPlayer() {
         val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
         playerMini.visibility = View.GONE
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return PlayerViewModel() as T
     }
 }

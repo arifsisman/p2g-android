@@ -41,22 +41,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var mDialogView: View
 
-    private lateinit var playerAdapter: PlayerAdapter
-
     override fun setupUI() {
-//        val playerMini = root.findViewById<View>(R.id.player_mini) as RecyclerView
-//        playerMini.setHasFixedSize(true)
-//        playerMini.layoutManager = LinearLayoutManager(context)
-//
-//        val playerExp = root.findViewById<View>(R.id.player_exp) as RecyclerView
-//        playerExp.setHasFixedSize(true)
-//        playerExp.layoutManager = LinearLayoutManager(context)
-
-        // PlayerAdapter
-        playerAdapter = PlayerAdapter(viewModel.songOnPlayer.value ?: mutableListOf())
-//        playerMini.adapter = playerAdapter
-//        playerExp.adapter = playerAdapter
-
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -90,7 +75,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     override fun setupViewModel() {
         viewModel = super.setupViewModelBase() as RoomQueueViewModel
         viewModel.songs.observe(this, renderRoomQueue)
-        viewModel.songOnPlayer.observe(this, renderSongOnPlayer)
         (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
     }
 
@@ -106,10 +90,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
-    }
-
-    private val renderSongOnPlayer = Observer<MutableList<Song>> {
-        playerAdapter.updateSongOnPlayer(it)
     }
 
     private fun onDelete(song: Song) =
