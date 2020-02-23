@@ -34,7 +34,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_room_invites),
+class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invites),
     InvitesAdapter.OnItemClickListener {
 
     companion object {
