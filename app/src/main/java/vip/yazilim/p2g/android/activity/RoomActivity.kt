@@ -191,7 +191,7 @@ class RoomActivity : AppCompatActivity(),
 
     // Observer
     private val renderSongOnPlayer = Observer<MutableList<Song>> {
-        playerAdapter.updateSongOnPlayer(it)
+        playerAdapter.updatePlayerSongList(it)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
