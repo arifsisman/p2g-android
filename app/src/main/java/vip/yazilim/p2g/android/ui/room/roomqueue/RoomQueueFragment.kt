@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,17 +7,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.SeekBar
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
@@ -48,14 +43,23 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
 
     private lateinit var playerAdapter: PlayerAdapter
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun setupUI() {
+//        val playerMini = root.findViewById<View>(R.id.player_mini) as RecyclerView
+//        playerMini.setHasFixedSize(true)
+//        playerMini.layoutManager = LinearLayoutManager(context)
+//
+//        val playerExp = root.findViewById<View>(R.id.player_exp) as RecyclerView
+//        playerExp.setHasFixedSize(true)
+//        playerExp.layoutManager = LinearLayoutManager(context)
+
+        // PlayerAdapter
+        playerAdapter = PlayerAdapter(viewModel.songOnPlayer.value ?: mutableListOf())
+//        playerMini.adapter = playerAdapter
+//        playerExp.adapter = playerAdapter
+
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-
-        // PlayerAdapter
-        playerAdapter = PlayerAdapter(viewModel.songOnPlayer.value)
 
         // QueueAdapter
         adapter = RoomQueueAdapter(viewModel.songs.value ?: mutableListOf())
@@ -81,45 +85,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
         swipeDeleteHelper.attachToRecyclerView(recyclerView)
 
-        // Minimized and expanded player UI
-        val slidingUpPanel: SlidingUpPanelLayout =
-            root.findViewById(R.id.sliding_layout) as SlidingUpPanelLayout
-
-        slidingUpPanel.addPanelSlideListener(object :
-            SlidingUpPanelLayout.SimplePanelSlideListener() {
-            override fun onPanelSlide(view: View, v: Float) {}
-
-            override fun onPanelStateChanged(
-                panel: View?,
-                previousState: SlidingUpPanelLayout.PanelState?,
-                newState: SlidingUpPanelLayout.PanelState?
-            ) {
-                when (newState) {
-                    DRAGGING -> {
-                        if (previousState == COLLAPSED) {
-                            fab.hide()
-                            showMaximizedPlayer()
-                        }
-                    }
-                    COLLAPSED -> {
-                        val roomActivity = activity as RoomActivity
-                        roomActivity.roomUser?.let { roomActivity.canUserAddAndControlSongs(it) }
-                        showMinimizedPlayer()
-                    }
-                    EXPANDED -> {
-                        fab.hide()
-                        showMaximizedPlayer()
-                    }
-                    else -> {
-                    }
-                }
-            }
-        })
-
-        // Disable touch on minimized seekBar
-        val seekBarTop = root.findViewById<SeekBar>(R.id.seek_bar)
-        seekBarTop.setOnTouchListener { _, _ -> true }
-
     }
 
     override fun setupViewModel() {
@@ -143,7 +108,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         adapter.update(it)
     }
 
-    private val renderSongOnPlayer = Observer<Song> {
+    private val renderSongOnPlayer = Observer<MutableList<Song>> {
         playerAdapter.updateSongOnPlayer(it)
     }
 
@@ -157,16 +122,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                 UIHelper.showSnackBarShort(root, msg)
             }
         })
-
-    private fun showMinimizedPlayer() {
-        val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
-        playerMini.visibility = View.VISIBLE
-    }
-
-    private fun showMaximizedPlayer() {
-        val playerMini: ConstraintLayout = root.findViewById(R.id.player_mini)
-        playerMini.visibility = View.GONE
-    }
 
     private fun showSearchDialog() {
         mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)

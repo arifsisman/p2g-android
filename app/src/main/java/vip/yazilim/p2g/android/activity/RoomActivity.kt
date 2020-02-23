@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.activity
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -8,13 +9,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -33,6 +38,7 @@ class RoomActivity : AppCompatActivity() {
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
@@ -92,6 +98,76 @@ class RoomActivity : AppCompatActivity() {
         }
 
         getRoomUserMe()
+
+        // Minimized and expanded player UI
+
+        // Minimized and expanded player UI
+        val slidingUpPanel: SlidingUpPanelLayout =
+            findViewById<SlidingUpPanelLayout>(R.id.container)
+
+        slidingUpPanel.addPanelSlideListener(object :
+            SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelSlide(view: View, v: Float) {}
+
+            override fun onPanelStateChanged(
+                panel: View?,
+                previousState: SlidingUpPanelLayout.PanelState?,
+                newState: SlidingUpPanelLayout.PanelState?
+            ) {
+                when (newState) {
+                    DRAGGING -> {
+                        if (previousState == COLLAPSED) {
+                            fab.hide()
+                            showMaximizedPlayer()
+                        }
+                    }
+                    COLLAPSED -> {
+                        roomUser?.let { canUserAddAndControlSongs(it) }
+                        showMinimizedPlayer()
+                    }
+                    EXPANDED -> {
+                        fab.hide()
+                        showMaximizedPlayer()
+                    }
+                    else -> {
+                    }
+                }
+            }
+        })
+
+        slidingUpPanel.addPanelSlideListener(object :
+            SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelSlide(view: View, v: Float) {}
+
+            override fun onPanelStateChanged(
+                panel: View?,
+                previousState: SlidingUpPanelLayout.PanelState?,
+                newState: SlidingUpPanelLayout.PanelState?
+            ) {
+                when (newState) {
+                    DRAGGING -> {
+                        if (previousState == COLLAPSED) {
+                            fab.hide()
+                            showMaximizedPlayer()
+                        }
+                    }
+                    COLLAPSED -> {
+                        roomUser?.let { canUserAddAndControlSongs(it) }
+                        showMinimizedPlayer()
+                    }
+                    EXPANDED -> {
+                        fab.hide()
+                        showMaximizedPlayer()
+                    }
+                    else -> {
+                    }
+                }
+            }
+        })
+
+        // Disable touch on minimized seekBar
+        val seekBarTop = findViewById<SeekBar>(R.id.seek_bar)
+        seekBarTop.setOnTouchListener { _, _ -> true }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -210,4 +286,13 @@ class RoomActivity : AppCompatActivity() {
         }
     }
 
+    private fun showMinimizedPlayer() {
+        val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
+        playerMini.visibility = View.VISIBLE
+    }
+
+    private fun showMaximizedPlayer() {
+        val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
+        playerMini.visibility = View.GONE
+    }
 }

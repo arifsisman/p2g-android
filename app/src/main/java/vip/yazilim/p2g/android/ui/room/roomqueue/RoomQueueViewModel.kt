@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -14,8 +13,8 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomQueueViewModel : ViewModelBase() {
-    private var _songOnPlayer = MutableLiveData<Song>()
-    val songOnPlayer: LiveData<Song> = _songOnPlayer
+    private var _songOnPlayer = MutableLiveData<MutableList<Song>>()
+    val songOnPlayer: LiveData<MutableList<Song>> = _songOnPlayer
 
     private val _songs = MutableLiveData<MutableList<Song>>()
     val songs: LiveData<MutableList<Song>> = _songs
@@ -38,23 +37,7 @@ class RoomQueueViewModel : ViewModelBase() {
                         _isEmptyList.postValue(true)
                     } else {
                         _songs.value = obj
-
-                        obj.forEach {
-                            when (it.songStatus) {
-                                SongStatus.PLAYING.songStatus -> {
-                                    _songOnPlayer.value = it
-                                    return@forEach
-                                }
-                                SongStatus.PAUSED.songStatus -> {
-                                    _songOnPlayer.value = it
-                                    return@forEach
-                                }
-                                SongStatus.NEXT.songStatus -> {
-                                    _songOnPlayer.value = it
-                                    return@forEach
-                                }
-                            }
-                        }
+                        _songOnPlayer.value = obj
                     }
                 }
             })

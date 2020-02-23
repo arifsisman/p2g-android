@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -66,8 +67,10 @@ class RoomQueueAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        val roomModel = songs[position]
-        holder.bindView(roomModel)
+        val song = songs[position]
+        if (song.songStatus != SongStatus.PLAYED.songStatus) {
+            holder.bindView(song)
+        }
     }
 
     override fun getItemCount(): Int {

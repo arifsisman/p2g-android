@@ -16,7 +16,7 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @author mustafaarifsisman - 23.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class PlayerAdapter(private var songOnPlayer: Song?) :
+class PlayerAdapter(private var songOnPlayer: MutableList<Song>) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     private lateinit var view: View
 
@@ -74,15 +74,10 @@ class PlayerAdapter(private var songOnPlayer: Song?) :
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        songOnPlayer?.let { holder.bindViewMinimized(it) }
-        songOnPlayer?.let { holder.bindViewExpanded(it) }
-    }
+        holder.bindViewMinimized(songOnPlayer[0])
+        holder.bindViewExpanded(songOnPlayer[0])
 
-    fun updateSongOnPlayer(data: Song) {
-        songOnPlayer = data
-        notifyDataSetChanged()
-
-        //        songList.forEach {
+//        songOnPlayer.forEach {
 //            when (it.songStatus) {
 //                SongStatus.PLAYING.songStatus -> {
 //                    songOnPlayer = it
@@ -101,6 +96,11 @@ class PlayerAdapter(private var songOnPlayer: Song?) :
 //                }
 //            }
 //        }
+    }
+
+    fun updateSongOnPlayer(data: MutableList<Song>) {
+        songOnPlayer = data
+        notifyDataSetChanged()
     }
 
 }
