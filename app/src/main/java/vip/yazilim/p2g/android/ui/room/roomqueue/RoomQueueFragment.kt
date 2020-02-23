@@ -46,20 +46,26 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var mDialogView: View
 
+    private lateinit var playerAdapter: PlayerAdapter
+
     @SuppressLint("ClickableViewAccessibility")
     override fun setupUI() {
         val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
+        // PlayerAdapter
+        playerAdapter = PlayerAdapter(viewModel.songOnPlayer.value)
+
+        // QueueAdapter
         adapter = RoomQueueAdapter(viewModel.songs.value ?: mutableListOf())
         recyclerView.adapter = adapter
 
-        val dividerItemDecoration = DividerItemDecoration(
+        // recyclerView divider
+        recyclerView.addItemDecoration(object : DividerItemDecoration(
             recyclerView.context,
             (recyclerView.layoutManager as LinearLayoutManager).orientation
-        )
-        recyclerView.addItemDecoration(dividerItemDecoration)
+        ) {})
 
         // Search with floating action button
         val fab: ExtendedFloatingActionButton = activity?.findViewById(R.id.fab)!!
@@ -72,10 +78,10 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                 onDelete(song)
             }
         }
-
         val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
         swipeDeleteHelper.attachToRecyclerView(recyclerView)
 
+        // Minimized and expanded player UI
         val slidingUpPanel: SlidingUpPanelLayout =
             root.findViewById(R.id.sliding_layout) as SlidingUpPanelLayout
 
@@ -105,13 +111,13 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
                         showMaximizedPlayer()
                     }
                     else -> {
-
                     }
                 }
             }
         })
 
-        val seekBarTop = root.findViewById<SeekBar>(R.id.seek_bar_top)
+        // Disable touch on minimized seekBar
+        val seekBarTop = root.findViewById<SeekBar>(R.id.seek_bar)
         seekBarTop.setOnTouchListener { _, _ -> true }
 
     }
@@ -119,6 +125,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
     override fun setupViewModel() {
         viewModel = super.setupViewModelBase() as RoomQueueViewModel
         viewModel.songs.observe(this, renderRoomQueue)
+        viewModel.songOnPlayer.observe(this, renderSongOnPlayer)
         (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
     }
 
@@ -134,6 +141,10 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
+    }
+
+    private val renderSongOnPlayer = Observer<Song> {
+        playerAdapter.updateSongOnPlayer(it)
     }
 
     private fun onDelete(song: Song) =

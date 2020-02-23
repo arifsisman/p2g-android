@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <SeekBar
-            android:id="@+id/seek_bar_top"
+            android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="5dp"
             android:paddingStart="0dp"
@@ -118,7 +118,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/seek_bar_current"
+                    android:id="@+id/song_current"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
@@ -131,7 +131,7 @@
                     tools:ignore="HardcodedText" />
 
                 <TextView
-                    android:id="@+id/seek_bar_max"
+                    android:id="@+id/song_max"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
