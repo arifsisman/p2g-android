@@ -28,7 +28,6 @@
             android:id="@+id/search_model_type_and_artists"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
             android:maxLines="1"
             android:text="@string/placeholder_search_model_artists"
             android:textSize="12sp"
