@@ -163,7 +163,7 @@ class RoomActivity : AppCompatActivity() {
         })
 
     fun canUserAddAndControlSongs(roomUser: RoomUser) {
-        val controllerButtons: View = findViewById(R.id.player_controller_buttons)
+        val controllerButtons: View = findViewById(R.id.player_controller)
         return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
             fab.show()
             controllerButtons.visibility = View.VISIBLE

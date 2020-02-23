@@ -31,20 +31,31 @@ class RoomQueueAdapter(
         fun bindView(song: Song) {
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
+
             if (song.imageUrl != null && !song.imageUrl!!.contains("mp3")) {
                 GlideApp.with(view)
                     .load(song.imageUrl)
                     .into(songImage)
+            } else {
+                songImage.setImageResource(R.mipmap.ic_launcher)
             }
 
-            if (song.votes > 0) {
-                val songVotePlaceholder = "+" + song.votes.toString()
-                songVote.text = songVotePlaceholder
-                songVote.setTextColor(Color.parseColor("#1DB954"))
-            } else if (song.votes < 0) {
-                val songVotePlaceholder = "-" + song.votes.toString()
-                songVote.text = songVotePlaceholder
-                songVote.setTextColor(Color.parseColor("#B91D1D"))
+            when {
+                song.votes > 0 -> {
+                    val songVotePlaceholder = "+" + song.votes.toString()
+                    songVote.text = songVotePlaceholder
+                    songVote.setTextColor(Color.parseColor("#1DB954"))
+                }
+                song.votes < 0 -> {
+                    val songVotePlaceholder = "-" + song.votes.toString()
+                    songVote.text = songVotePlaceholder
+                    songVote.setTextColor(Color.parseColor("#B91D1D"))
+                }
+                else -> {
+                    val songVotePlaceholder = "0"
+                    songVote.text = songVotePlaceholder
+                    songVote.setTextColor(Color.parseColor("#000000"))
+                }
             }
         }
     }

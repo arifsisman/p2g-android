@@ -122,6 +122,12 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
     }
 
+    override fun onResume() {
+        super.onResume()
+        adapter.clear()
+        (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
+    }
+
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> {
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
