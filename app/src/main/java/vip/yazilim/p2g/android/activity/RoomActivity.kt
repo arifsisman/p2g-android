@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -18,6 +17,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
@@ -42,7 +43,7 @@ class RoomActivity : AppCompatActivity(),
     var roomUser: RoomUser? = null
 
     private lateinit var playerViewModel: PlayerViewModel
-    private lateinit var playerAdapter: PlayerAdapter
+    lateinit var playerAdapter: PlayerAdapter
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +110,7 @@ class RoomActivity : AppCompatActivity(),
         // setup PlayerViewModel for observe songOnPlayer
         setupViewModel()
 
-        // Minimized and expanded player UI
+        // Minimized and expanded row_player UI
         val slidingUpPanel: SlidingUpPanelLayout = findViewById(R.id.container)
 
         slidingUpPanel.addPanelSlideListener(object :
@@ -172,16 +173,20 @@ class RoomActivity : AppCompatActivity(),
             }
         })
 
+        val playerRecyclerView = findViewById<View>(R.id.playerRecyclerView) as RecyclerView
+        playerRecyclerView.setHasFixedSize(true)
+        playerRecyclerView.layoutManager = LinearLayoutManager(this)
+
         // PlayerAdapter
-        playerAdapter = PlayerAdapter(
-            playerViewModel.songOnPlayer.value ?: mutableListOf()
-        )
-//        playerMini.adapter = playerAdapter
+        playerAdapter = PlayerAdapter(playerViewModel.songOnPlayer.value ?: mutableListOf())
+
+        playerRecyclerView.adapter = playerAdapter
 //        playerExp.adapter = playerAdapter
 
-        // Disable touch on minimized seekBar
-        val seekBarTop = findViewById<SeekBar>(R.id.seek_bar)
-        seekBarTop.setOnTouchListener { _, _ -> true }
+        //TODO disable seekbar top touch event
+//        // Disable touch on minimized seekBar
+//        val seekBarTop = findViewById<SeekBar>(R.id.seek_bar)
+//        seekBarTop.setOnTouchListener { _, _ -> true }
     }
 
     private fun setupViewModel() {

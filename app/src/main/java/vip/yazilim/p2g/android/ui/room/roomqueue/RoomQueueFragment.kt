@@ -90,6 +90,8 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
+
+        (activity as RoomActivity).playerAdapter.updateSongOnPlayer(it)
     }
 
     private fun onDelete(song: Song) =

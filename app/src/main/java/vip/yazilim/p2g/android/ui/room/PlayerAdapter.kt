@@ -65,7 +65,7 @@ class PlayerAdapter(private var songOnPlayer: MutableList<Song>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.player, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_player, parent, false)
         return PlayerViewHolder(view)
     }
 
@@ -74,8 +74,11 @@ class PlayerAdapter(private var songOnPlayer: MutableList<Song>) :
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.bindViewMinimized(songOnPlayer[0])
-        holder.bindViewExpanded(songOnPlayer[0])
+        //TODO change with below for each
+        if (songOnPlayer.isNotEmpty()) {
+            holder.bindViewMinimized(songOnPlayer[0])
+            holder.bindViewExpanded(songOnPlayer[0])
+        }
 
 //        songOnPlayer.forEach {
 //            when (it.songStatus) {

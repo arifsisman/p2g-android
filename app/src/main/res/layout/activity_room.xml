@@ -44,10 +44,14 @@
             app:layout_anchorGravity="bottom|center" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <include
-        android:id="@+id/player"
-        layout="@layout/player"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playerRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
