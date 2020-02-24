@@ -2,7 +2,6 @@ package vip.yazilim.p2g.android.ui.room
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import vip.yazilim.p2g.android.ui.room.roomqueue.RoomViewModel
 
 /**
  * @author mustafaarifsisman - 24.02.2020

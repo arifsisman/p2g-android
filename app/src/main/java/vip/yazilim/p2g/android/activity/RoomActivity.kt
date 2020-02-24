@@ -32,9 +32,9 @@ import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.PlayerAdapter
+import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
-import vip.yazilim.p2g.android.ui.room.roomqueue.RoomViewModel
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -43,7 +43,8 @@ class RoomActivity : AppCompatActivity() {
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
 
-    var roomViewModel: RoomViewModel = RoomViewModel()
+    var roomViewModel: RoomViewModel =
+        RoomViewModel()
     lateinit var playerAdapter: PlayerAdapter
 
     companion object {
