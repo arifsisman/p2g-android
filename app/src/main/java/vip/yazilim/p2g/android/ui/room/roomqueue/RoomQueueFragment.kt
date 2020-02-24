@@ -33,11 +33,10 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 20.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_room_queue),
+class RoomQueueFragment : FragmentBase(RoomViewModel(), R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener {
 
     private lateinit var adapter: RoomQueueAdapter
-    private lateinit var viewModel: RoomQueueViewModel
 
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var mDialogView: View
@@ -48,7 +47,9 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // QueueAdapter
-        adapter = RoomQueueAdapter((activity as RoomActivity).songList)
+        adapter = RoomQueueAdapter(
+            (activity as RoomActivity).roomViewModel.songList.value ?: mutableListOf()
+        )
         recyclerView.adapter = adapter
 
         // recyclerView divider
@@ -70,19 +71,24 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         }
         val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
         swipeDeleteHelper.attachToRecyclerView(recyclerView)
+
+        (activity as RoomActivity).roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as RoomQueueViewModel
-        viewModel.songs.observe(this, renderRoomQueue)
-        (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
     }
 
-    override fun onResume() {
-        super.onResume()
-        adapter.clear()
-        (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
-    }
+//    override fun setupViewModel() {
+//        viewModel = super.setupViewModelBase() as RoomViewModel
+//        viewModel.songs.observe(this, renderRoomQueue)
+//        (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
+//    }
+
+//    override fun onResume() {
+//        super.onResume()
+//        adapter.clear()
+//        (activity as RoomActivity).room?.id?.let { viewModel.loadSongs(it) }
+//    }
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> {
@@ -90,9 +96,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
-
-        (activity as RoomActivity).songList = it
-        (activity as RoomActivity).playerAdapter.updatePlayerSongList(it)
     }
 
     private fun onDelete(song: Song) =

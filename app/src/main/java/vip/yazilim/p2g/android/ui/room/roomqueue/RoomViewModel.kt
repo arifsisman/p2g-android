@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -12,9 +11,9 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 20.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomQueueViewModel : ViewModelBase() {
-    private val _songs = MutableLiveData<MutableList<Song>>()
-    val songs: LiveData<MutableList<Song>> = _songs
+class RoomViewModel : ViewModelBase() {
+    private val _songList = MutableLiveData<MutableList<Song>>()
+    val songList: MutableLiveData<MutableList<Song>> = _songList
 
     fun loadSongs(roomId: Long) {
         _isViewLoading.postValue(true)
@@ -33,7 +32,7 @@ class RoomQueueViewModel : ViewModelBase() {
                     if (obj.isEmpty()) {
                         _isEmptyList.postValue(true)
                     } else {
-                        _songs.value = obj
+                        _songList.value = obj
                     }
                 }
             })

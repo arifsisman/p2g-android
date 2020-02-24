@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.activity
 import android.app.AlertDialog
 import android.content.*
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -12,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,31 +22,31 @@ import com.google.android.material.tabs.TabLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.PlayerAdapter
-import vip.yazilim.p2g.android.ui.room.PlayerViewModel
+import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
+import vip.yazilim.p2g.android.ui.room.roomqueue.RoomViewModel
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
-class RoomActivity : AppCompatActivity(),
-    ViewModelProvider.Factory {
+class RoomActivity : AppCompatActivity() {
     var room: Room? = null
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
 
-    private lateinit var playerViewModel: PlayerViewModel
+    var roomViewModel: RoomViewModel = RoomViewModel()
     lateinit var playerAdapter: PlayerAdapter
 
-    var songList: MutableList<Song> = mutableListOf()
-
     companion object {
-        private val TAG = this::class.simpleName
         private const val ACTION_SONG_LIST = "SongList"
     }
 
@@ -55,6 +55,8 @@ class RoomActivity : AppCompatActivity(),
         setContentView(R.layout.activity_room)
 
         setupViewPager()
+
+        setupViewModelBase()
 
         setupRoomModel()
 
@@ -139,9 +141,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun setupViewModel() {
-        // setup PlayerViewModel for observe songOnPlayer
-        playerViewModel = ViewModelProvider(this, this).get(PlayerViewModel::class.java)
-        playerViewModel.playerSongList.observe(this, renderSongOnPlayer)
+        roomViewModel.songList.observe(this, renderSongOnPlayer)
     }
 
     private fun setupSlidingUpPanel() {
@@ -214,19 +214,50 @@ class RoomActivity : AppCompatActivity(),
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // PlayerAdapter
-        playerAdapter = PlayerAdapter(songList)
+        playerAdapter = PlayerAdapter(roomViewModel.songList.value ?: mutableListOf())
 
         playerRecyclerView.adapter = playerAdapter
     }
 
+    private fun setupViewModelBase() {
+        roomViewModel =
+            ViewModelProvider(this, RoomViewModelFactory()).get(RoomViewModel::class.java)
+        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
+        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
+        roomViewModel.isEmptyList.observe(this, emptyListObserver)
+    }
 
     // Observer
     private val renderSongOnPlayer = Observer<MutableList<Song>> {
         playerAdapter.updatePlayerSongList(it)
     }
 
+    // Default Observers
+    private val isViewLoadingObserver = Observer<Boolean> {
+        Log.v(GeneralConstants.LOG_TAG, "isViewLoading $it")
+        val visibility = if (it) View.VISIBLE else View.GONE
+        progressBar.visibility = visibility
+    }
 
-    // Events & Requests
+    private val onMessageErrorObserver = Observer<Any> {
+        Log.v(GeneralConstants.LOG_TAG, "onMessageError $it")
+        layoutError.visibility = View.VISIBLE
+        layoutEmpty.visibility = View.GONE
+        textViewError.text = it?.toString()
+    }
+
+    private val emptyListObserver = Observer<Boolean> {
+        Log.v(GeneralConstants.LOG_TAG, "emptyListObserver $it")
+        layoutEmpty.visibility = View.VISIBLE
+        layoutError.visibility = View.GONE
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        room?.id?.let { roomViewModel.loadSongs(it) }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
         return true
@@ -305,7 +336,7 @@ class RoomActivity : AppCompatActivity(),
         override fun onReceive(context: Context?, intent: Intent?) {
             val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
             songListFromIntent?.let {
-                songList = it
+                roomViewModel.songList.value = it
                 playerAdapter.updatePlayerSongList(it)
             }
         }
@@ -369,12 +400,5 @@ class RoomActivity : AppCompatActivity(),
     private fun showMaximizedPlayer() {
         val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
         playerMini.visibility = View.GONE
-    }
-
-
-    // ViewModelFactory.create
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return PlayerViewModel() as T
     }
 }
