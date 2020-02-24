@@ -60,20 +60,20 @@ abstract class FragmentBase(private var viewModelBase: ViewModelBase, var layout
     }
 
     // Default Observers
-    private val isViewLoadingObserver = Observer<Boolean> {
+    val isViewLoadingObserver = Observer<Boolean> {
         Log.v(GeneralConstants.LOG_TAG, "isViewLoading $it")
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar.visibility = visibility
     }
 
-    private val onMessageErrorObserver = Observer<Any> {
+    val onMessageErrorObserver = Observer<Any> {
         Log.v(GeneralConstants.LOG_TAG, "onMessageError $it")
         layoutError.visibility = View.VISIBLE
         layoutEmpty.visibility = View.GONE
         textViewError.text = it?.toString()
     }
 
-    private val emptyListObserver = Observer<Boolean> {
+    val emptyListObserver = Observer<Boolean> {
         Log.v(GeneralConstants.LOG_TAG, "emptyListObserver $it")
         layoutEmpty.visibility = View.VISIBLE
         layoutError.visibility = View.GONE

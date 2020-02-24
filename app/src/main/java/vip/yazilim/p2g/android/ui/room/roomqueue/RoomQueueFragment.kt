@@ -34,7 +34,8 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 20.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomQueueFragment : FragmentBase(RoomViewModel(), R.layout.fragment_room_queue),
+class RoomQueueFragment(var roomViewModel: RoomViewModel) :
+    FragmentBase(roomViewModel, R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener {
 
     private lateinit var adapter: RoomQueueAdapter
@@ -78,6 +79,14 @@ class RoomQueueFragment : FragmentBase(RoomViewModel(), R.layout.fragment_room_q
     }
 
     override fun setupViewModel() {
+        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
+        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
+        roomViewModel.isEmptyList.observe(this, emptyListObserver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as RoomActivity).room?.id?.let { roomViewModel.loadSongs(it) }
     }
 
     // Observer
@@ -85,6 +94,17 @@ class RoomQueueFragment : FragmentBase(RoomViewModel(), R.layout.fragment_room_q
         Log.v(GeneralConstants.LOG_TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
+
+        val activity = (activity as RoomActivity)
+
+        if (it.isEmpty()) {
+            activity.slidingUpPanel.isEnabled = false
+            activity.slidingUpPanel.isTouchEnabled = false
+        } else {
+            activity.slidingUpPanel.isEnabled = true
+            activity.slidingUpPanel.isTouchEnabled = true
+        }
+
         adapter.update(it)
     }
 
@@ -96,6 +116,7 @@ class RoomQueueFragment : FragmentBase(RoomViewModel(), R.layout.fragment_room_q
 
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
+                adapter.resetSwipe(song)
             }
         })
 

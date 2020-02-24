@@ -40,11 +40,11 @@ class RoomActivity : AppCompatActivity() {
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
 
-    var roomViewModel: RoomViewModel = RoomViewModel()
+    lateinit var roomViewModel: RoomViewModel
 
     lateinit var playerAdapter: PlayerAdapter
     private lateinit var viewPager: ViewPager
-    private lateinit var slidingUpPanel: SlidingUpPanelLayout
+    lateinit var slidingUpPanel: SlidingUpPanelLayout
 
     companion object {
         private const val ACTION_SONG_LIST = "SongList"
@@ -228,11 +228,6 @@ class RoomActivity : AppCompatActivity() {
         playerAdapter.updatePlayerSong(playerSong)
     }
 
-    override fun onResume() {
-        super.onResume()
-        room?.id?.let { roomViewModel.loadSongs(it) }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
         return true
@@ -367,16 +362,16 @@ class RoomActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> { // RoomQueueFragment
-                    RoomQueueFragment()
+                    RoomQueueFragment(roomViewModel)
                 }
                 1 -> { //TODO RoomUsersFragment
-                    RoomQueueFragment()
+                    RoomQueueFragment(roomViewModel)
                 }
                 2 -> { //TODO RoomChatFragment
-                    RoomQueueFragment()
+                    RoomQueueFragment(roomViewModel)
                 }
                 3 -> { //TODO RoomInviteFragment
-                    RoomQueueFragment()
+                    RoomQueueFragment(roomViewModel)
                 }
                 else -> throw IllegalArgumentException()
             }

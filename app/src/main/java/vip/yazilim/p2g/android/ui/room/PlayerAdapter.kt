@@ -106,6 +106,8 @@ class PlayerAdapter(private var song: Song?) :
                     songImageExp.setImageResource(R.mipmap.ic_launcher)
                 }
 
+                view.visibility = View.VISIBLE
+
             } else {
                 songName.text = ""
                 songArtists.text = ""
@@ -117,6 +119,8 @@ class PlayerAdapter(private var song: Song?) :
                 seekBarExp.progress = 0
                 songCurrent.text = getHumanReadableTimestamp(0)
                 songMax.text = getHumanReadableTimestamp(0)
+
+                view.visibility = View.GONE
             }
         }
     }

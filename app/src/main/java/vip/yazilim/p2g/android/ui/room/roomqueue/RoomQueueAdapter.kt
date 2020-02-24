@@ -105,4 +105,9 @@ class RoomQueueAdapter(
         songs.remove(song)
     }
 
+    fun resetSwipe(song: Song) {
+        val position = songs.indexOf(song)
+        notifyItemChanged(position)
+    }
+
 }
