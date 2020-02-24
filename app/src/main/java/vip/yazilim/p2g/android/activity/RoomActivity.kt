@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.activity
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.*
 import android.os.Bundle
@@ -48,6 +49,7 @@ class RoomActivity : AppCompatActivity() {
         RoomViewModel()
     lateinit var playerAdapter: PlayerAdapter
     private lateinit var viewPager: ViewPager
+    private lateinit var slidingUpPanel: SlidingUpPanelLayout
 
     companion object {
         private const val ACTION_SONG_LIST = "SongList"
@@ -144,11 +146,11 @@ class RoomActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        roomViewModel.songList.observe(this, renderSongOnPlayer)
+        roomViewModel.songList.observe(this, renderPlayerSong)
     }
 
     private fun setupSlidingUpPanel() {
-        val slidingUpPanel: SlidingUpPanelLayout = findViewById(R.id.container)
+        slidingUpPanel = findViewById(R.id.slidingUpContainer)
 
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
@@ -231,9 +233,19 @@ class RoomActivity : AppCompatActivity() {
     }
 
     // Observer
-    private val renderSongOnPlayer = Observer<MutableList<Song>> {
+    @SuppressLint("ClickableViewAccessibility")
+    private val renderPlayerSong = Observer<MutableList<Song>> {
+        if (it.isEmpty()) {
+            slidingUpPanel.isEnabled = false
+            slidingUpPanel.isTouchEnabled = false
+        } else {
+            slidingUpPanel.isEnabled = true
+            slidingUpPanel.isTouchEnabled = true
+        }
+
         playerAdapter.updatePlayerSongList(it)
     }
+
 
     // Default Observers
     private val isViewLoadingObserver = Observer<Boolean> {

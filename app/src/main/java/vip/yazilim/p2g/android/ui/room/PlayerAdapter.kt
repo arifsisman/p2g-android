@@ -17,6 +17,7 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 
+
 /**
  * @author mustafaarifsisman - 23.02.2020
  * @contact mustafaarifsisman@gmail.com
@@ -24,7 +25,6 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadable
 class PlayerAdapter(private var playerSongList: MutableList<Song>) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     private lateinit var view: View
-//    private lateinit var playerRecyclerView: RecyclerView
 
     inner class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var currentMs: Long = 0
@@ -105,6 +105,9 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
                     songImage.setImageResource(R.mipmap.ic_launcher)
                     songImageExp.setImageResource(R.mipmap.ic_launcher)
                 }
+
+                view.visibility = View.VISIBLE
+
             } else {
                 songName.text = ""
                 songArtists.text = ""
@@ -116,12 +119,14 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
                 seekBarExp.progress = 0
                 songCurrent.text = getHumanReadableTimestamp(0)
                 songMax.text = getHumanReadableTimestamp(0)
+
+                view.visibility = View.GONE
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
-//        playerRecyclerView = parent.findViewById(R.id.playerRecyclerView)
+//        slidingUpContainer = parent.findViewById(R.id.slidingUpContainer)
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_player, parent, false)
         return PlayerViewHolder(view)
     }
