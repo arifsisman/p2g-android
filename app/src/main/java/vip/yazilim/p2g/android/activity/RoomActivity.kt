@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.activity
 import android.app.AlertDialog
 import android.content.*
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,12 +21,9 @@ import com.google.android.material.tabs.TabLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.service.RoomWebSocketService
@@ -225,46 +221,12 @@ class RoomActivity : AppCompatActivity() {
     private fun setupViewModelBase() {
         roomViewModel =
             ViewModelProvider(this, RoomViewModelFactory()).get(RoomViewModel::class.java)
-        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
-        roomViewModel.isEmptyList.observe(this, emptyListObserver)
     }
 
     // Observer
     private val renderPlayerSong = Observer<Song> { playerSong ->
-        if (playerSong == null) {
-            //TODO not working, fix it
-            slidingUpPanel.isEnabled = false
-            slidingUpPanel.isTouchEnabled = false
-        } else {
-            slidingUpPanel.isEnabled = true
-            slidingUpPanel.isTouchEnabled = true
-        }
-
         playerAdapter.updatePlayerSong(playerSong)
     }
-
-
-    // Default Observers
-    private val isViewLoadingObserver = Observer<Boolean> {
-        Log.v(GeneralConstants.LOG_TAG, "isViewLoading $it")
-        val visibility = if (it) View.VISIBLE else View.GONE
-        progressBar.visibility = visibility
-    }
-
-    private val onMessageErrorObserver = Observer<Any> {
-        Log.v(GeneralConstants.LOG_TAG, "onMessageError $it")
-        layoutError.visibility = View.VISIBLE
-        layoutEmpty.visibility = View.GONE
-        textViewError.text = it?.toString()
-    }
-
-    private val emptyListObserver = Observer<Boolean> {
-        Log.v(GeneralConstants.LOG_TAG, "emptyListObserver $it")
-        layoutEmpty.visibility = View.VISIBLE
-        layoutError.visibility = View.GONE
-    }
-
 
     override fun onResume() {
         super.onResume()
