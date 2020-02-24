@@ -83,6 +83,11 @@ class RoomQueueAdapter(
         notifyDataSetChanged()
     }
 
+    fun add(song: Song, position: Int) {
+        songs.add(position, song)
+        notifyItemInserted(position)
+    }
+
     fun clear() {
         songs.clear()
         notifyDataSetChanged()
@@ -103,11 +108,6 @@ class RoomQueueAdapter(
         notifyItemRangeChanged(position, size)
 
         songs.remove(song)
-    }
-
-    fun resetSwipe(song: Song) {
-        val position = songs.indexOf(song)
-        notifyItemChanged(position)
     }
 
 }

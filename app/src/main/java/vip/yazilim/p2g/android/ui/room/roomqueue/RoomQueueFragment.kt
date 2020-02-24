@@ -108,17 +108,20 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         adapter.update(it)
     }
 
-    private fun onDelete(song: Song) =
+    private fun onDelete(song: Song) {
+        val position = adapter.songs.indexOf(song)
+        adapter.remove(song)
+
         request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
-                adapter.remove(song)
             }
 
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
-                adapter.resetSwipe(song)
+                adapter.add(song, position)
             }
         })
+    }
 
     private fun showSearchDialog() {
         mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)

@@ -345,15 +345,20 @@ class RoomActivity : AppCompatActivity() {
 
 
     // Helpers
-    fun canUserAddAndControlSongs(roomUser: RoomUser) {
+    fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
         val controllerButtons: View = findViewById(R.id.player_controller)
-        return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
-            fab.show()
-            controllerButtons.visibility = View.VISIBLE
-        } else {
-            fab.hide()
-            controllerButtons.visibility = View.GONE
+        if (roomUser != null) {
+            return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
+                fab.show()
+                controllerButtons.visibility = View.VISIBLE
+                true
+            } else {
+                fab.hide()
+                controllerButtons.visibility = View.GONE
+                false
+            }
         }
+        return false
     }
 
     inner class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
