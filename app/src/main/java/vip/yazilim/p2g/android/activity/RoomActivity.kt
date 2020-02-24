@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.activity
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.*
 import android.os.Bundle
@@ -51,24 +50,27 @@ class RoomActivity : AppCompatActivity(),
         private const val ACTION_SONG_LIST = "SongList"
     }
 
-    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
-            songListFromIntent?.let {
-                songList = it
-
-                playerAdapter.updatePlayerSongList(it)
-//                adapter.add(it)
-//                adapter.roomInviteModelsFull.add(it)
-            }
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
+        setupViewPager()
+
+        setupRoomModel()
+
+        setupRoomSocketService()
+
+        getRoomUserMe()
+
+        setupViewModel()
+
+        setupSlidingUpPanel()
+
+        setupPlayer()
+    }
+
+    // Setups
+    private fun setupViewPager() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
 
         val viewPager: ViewPager = findViewById(R.id.view_pager)
@@ -96,7 +98,9 @@ class RoomActivity : AppCompatActivity(),
         tabLayout.setupWithViewPager(viewPager)
 
         tabLayout.bringToFront()
+    }
 
+    private fun setupRoomModel() {
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
         val roomModelSimplifiedFromIntent =
@@ -122,7 +126,9 @@ class RoomActivity : AppCompatActivity(),
                 setTitle(R.string.title_room)
             }
         }
+    }
 
+    private fun setupRoomSocketService() {
         // start service and register service
         val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
         intent.putExtra("roomId", room?.id)
@@ -130,14 +136,15 @@ class RoomActivity : AppCompatActivity(),
 
         val intentFilter = IntentFilter(ACTION_SONG_LIST)
         registerReceiver(broadcastReceiver, intentFilter)
+    }
 
-        // Get room user to decide role and show control & add song events
-        getRoomUserMe()
-
+    private fun setupViewModel() {
         // setup PlayerViewModel for observe songOnPlayer
-        setupViewModel()
+        playerViewModel = ViewModelProvider(this, this).get(PlayerViewModel::class.java)
+        playerViewModel.playerSongList.observe(this, renderSongOnPlayer)
+    }
 
-        // Minimized and expanded row_player UI
+    private fun setupSlidingUpPanel() {
         val slidingUpPanel: SlidingUpPanelLayout = findViewById(R.id.container)
 
         slidingUpPanel.addPanelSlideListener(object :
@@ -199,7 +206,9 @@ class RoomActivity : AppCompatActivity(),
                 }
             }
         })
+    }
 
+    private fun setupPlayer() {
         val playerRecyclerView = findViewById<View>(R.id.playerRecyclerView) as RecyclerView
         playerRecyclerView.setHasFixedSize(true)
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -210,16 +219,14 @@ class RoomActivity : AppCompatActivity(),
         playerRecyclerView.adapter = playerAdapter
     }
 
-    private fun setupViewModel() {
-        playerViewModel = ViewModelProvider(this, this).get(PlayerViewModel::class.java)
-        playerViewModel.playerSongList.observe(this, renderSongOnPlayer)
-    }
 
     // Observer
     private val renderSongOnPlayer = Observer<MutableList<Song>> {
         playerAdapter.updatePlayerSongList(it)
     }
 
+
+    // Events & Requests
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
         return true
@@ -267,7 +274,9 @@ class RoomActivity : AppCompatActivity(),
             .show()
     }
 
-    private fun getRoomModel(roomId: Long) =
+    private fun getRoomModel(roomId: Long) {
+        // Get room model if not exists
+
         request(Singleton.apiClient().getRoomModel(roomId), object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
                 roomModel = obj
@@ -276,8 +285,11 @@ class RoomActivity : AppCompatActivity(),
             override fun onError(msg: String) {
             }
         })
+    }
 
-    private fun getRoomUserMe() =
+    private fun getRoomUserMe() {
+        // Get room user to decide role and show control & add song events
+
         request(Singleton.apiClient().getRoomUserMe(), object : Callback<RoomUser> {
             override fun onSuccess(obj: RoomUser) {
                 roomUser = obj
@@ -287,7 +299,20 @@ class RoomActivity : AppCompatActivity(),
             override fun onError(msg: String) {
             }
         })
+    }
 
+    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
+            songListFromIntent?.let {
+                songList = it
+                playerAdapter.updatePlayerSongList(it)
+            }
+        }
+    }
+
+
+    // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser) {
         val controllerButtons: View = findViewById(R.id.player_controller)
         return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
@@ -346,6 +371,8 @@ class RoomActivity : AppCompatActivity(),
         playerMini.visibility = View.GONE
     }
 
+
+    // ViewModelFactory.create
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return PlayerViewModel() as T
