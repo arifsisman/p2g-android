@@ -74,7 +74,15 @@ class RoomQueueAdapter(
     }
 
     override fun getItemCount(): Int {
-        return songs.size
+        var size = 0
+
+        songs.forEach {
+            if (it.songStatus != SongStatus.PLAYED.songStatus) {
+                size++
+            }
+        }
+
+        return size
     }
 
     fun update(data: MutableList<Song>) {

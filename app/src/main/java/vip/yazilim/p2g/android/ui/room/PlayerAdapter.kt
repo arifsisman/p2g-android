@@ -15,6 +15,7 @@ import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 
 /**
  * @author mustafaarifsisman - 23.02.2020
@@ -47,7 +48,12 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
             maxMs = song.durationMs.toLong()
             currentMs = when (song.songStatus) {
                 SongStatus.PLAYING.songStatus -> {
-                    Duration.between(LocalDateTime.now(), song.playingTime).toMillis()
+                    val passed = Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
+                    if (passed > maxMs) {
+                        0
+                    } else {
+                        passed
+                    }
                 }
                 SongStatus.PAUSED.songStatus -> {
                     song.currentMs.toLong()
@@ -74,8 +80,8 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
             songNameExp.text = song.songName
             songArtistsExp.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
-            songCurrent.text = currentMs.toString()
-            songMax.text = maxMs.toString()
+            songCurrent.text = getHumanReadableTimestamp(currentMs)
+            songMax.text = getHumanReadableTimestamp(maxMs)
 
             seekBarExp.progress = currentMs.toInt()
             seekBarExp.max = maxMs.toInt()
@@ -110,32 +116,46 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
+        var playingSong: Song? = null
+        var pausedSong: Song? = null
+        var nextSong: Song? = null
+
         playerSongList.forEach {
             when (it.songStatus) {
                 SongStatus.PLAYING.songStatus -> {
-                    bindViews(holder, it)
-                    return@forEach
+                    if (playingSong == null) {
+                        playingSong = it
+                    }
                 }
                 SongStatus.PAUSED.songStatus -> {
-                    bindViews(holder, it)
-                    return@forEach
+                    if (pausedSong == null) {
+                        pausedSong = it
+                    }
                 }
                 SongStatus.NEXT.songStatus -> {
-                    bindViews(holder, it)
-                    return@forEach
+                    if (nextSong == null) {
+                        nextSong = it
+                    }
                 }
-
-                //TODO change below case with visibility gone
-                SongStatus.PLAYED.songStatus -> {
-                    bindViews(holder, it)
-                    return@forEach
-                }
+                //TODO else player visibility gone
+//                else -> {
+//                    view.visibility = View.GONE
+//                }
             }
         }
-    }
 
-    private fun bindViews(holder: PlayerViewHolder, song: Song) {
-        holder.bindView(song)
+        playingSong?.let {
+            holder.bindView(it)
+            return
+        }
+        pausedSong?.let {
+            holder.bindView(it)
+            return
+        }
+        nextSong?.let {
+            holder.bindView(it)
+            return
+        }
     }
 
     fun updatePlayerSongList(data: MutableList<Song>) {

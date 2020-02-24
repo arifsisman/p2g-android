@@ -12,7 +12,6 @@ data class Song(
     var id: Long,
     var roomId: Long,
     var songId: String?,
-    var songUri: String?,
     var songName: String?,
     var albumName: String?,
     var artistNames: ArrayList<String>?,
@@ -31,7 +30,6 @@ data class Song(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
         parcel.createStringArrayList(),
         parcel.readString(),
         parcel.readInt(),
@@ -47,7 +45,6 @@ data class Song(
         parcel.writeLong(id)
         parcel.writeLong(roomId)
         parcel.writeString(songId)
-        parcel.writeString(songUri)
         parcel.writeString(songName)
         parcel.writeString(albumName)
         parcel.writeStringList(artistNames)
