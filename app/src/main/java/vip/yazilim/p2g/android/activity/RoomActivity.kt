@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.activity
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.*
 import android.os.Bundle
@@ -45,8 +44,8 @@ class RoomActivity : AppCompatActivity() {
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
 
-    var roomViewModel: RoomViewModel =
-        RoomViewModel()
+    var roomViewModel: RoomViewModel = RoomViewModel()
+
     lateinit var playerAdapter: PlayerAdapter
     private lateinit var viewPager: ViewPager
     private lateinit var slidingUpPanel: SlidingUpPanelLayout
@@ -146,7 +145,7 @@ class RoomActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        roomViewModel.songList.observe(this, renderPlayerSong)
+        roomViewModel.playerSong.observe(this, renderPlayerSong)
     }
 
     private fun setupSlidingUpPanel() {
@@ -219,8 +218,7 @@ class RoomActivity : AppCompatActivity() {
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // PlayerAdapter
-        playerAdapter = PlayerAdapter(roomViewModel.songList.value ?: mutableListOf())
-
+        playerAdapter = PlayerAdapter(roomViewModel.playerSong.value)
         playerRecyclerView.adapter = playerAdapter
     }
 
@@ -233,9 +231,8 @@ class RoomActivity : AppCompatActivity() {
     }
 
     // Observer
-    @SuppressLint("ClickableViewAccessibility")
-    private val renderPlayerSong = Observer<MutableList<Song>> {
-        if (it.isEmpty()) {
+    private val renderPlayerSong = Observer<Song> { playerSong ->
+        if (playerSong == null) {
             slidingUpPanel.isEnabled = false
             slidingUpPanel.isTouchEnabled = false
         } else {
@@ -243,7 +240,7 @@ class RoomActivity : AppCompatActivity() {
             slidingUpPanel.isTouchEnabled = true
         }
 
-        playerAdapter.updatePlayerSongList(it)
+        playerAdapter.updatePlayerSong(playerSong)
     }
 
 
@@ -331,7 +328,6 @@ class RoomActivity : AppCompatActivity() {
                         room?.id?.let { Singleton.apiClient().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
-
                             }
 
                             override fun onError(msg: String) {
@@ -380,9 +376,11 @@ class RoomActivity : AppCompatActivity() {
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
-            songListFromIntent?.let {
-                roomViewModel.songList.value = it
-                playerAdapter.updatePlayerSongList(it)
+            songListFromIntent?.let { songList ->
+                roomViewModel.songList.value = songList
+
+                val song = roomViewModel.getCurrentSong(songList)
+                playerAdapter.updatePlayerSong(song)
             }
         }
     }
@@ -446,4 +444,6 @@ class RoomActivity : AppCompatActivity() {
         val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
         playerMini.visibility = View.GONE
     }
+
+
 }

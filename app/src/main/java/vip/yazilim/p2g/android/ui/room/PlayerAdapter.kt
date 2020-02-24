@@ -22,7 +22,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadable
  * @author mustafaarifsisman - 23.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class PlayerAdapter(private var playerSongList: MutableList<Song>) :
+class PlayerAdapter(private var song: Song?) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     private lateinit var view: View
 
@@ -126,7 +126,6 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
-//        slidingUpContainer = parent.findViewById(R.id.slidingUpContainer)
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_player, parent, false)
         return PlayerViewHolder(view)
     }
@@ -136,45 +135,11 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        var playingSong: Song? = null
-        var pausedSong: Song? = null
-        var nextSong: Song? = null
-
-        playerSongList.forEach {
-            when (it.songStatus) {
-                SongStatus.PLAYING.songStatus -> {
-                    playingSong = it
-                }
-                SongStatus.PAUSED.songStatus -> {
-                    pausedSong = it
-                }
-                SongStatus.NEXT.songStatus -> {
-                    if (nextSong == null) {
-                        nextSong = it
-                    }
-                }
-                //TODO else player visibility gone
-            }
-        }
-
-        playingSong?.let {
-            holder.bindView(it)
-            return
-        }
-        pausedSong?.let {
-            holder.bindView(it)
-            return
-        }
-        nextSong?.let {
-            holder.bindView(it)
-            return
-        }
-
-        holder.bindView(null)
+        holder.bindView(song)
     }
 
-    fun updatePlayerSongList(data: MutableList<Song>) {
-        playerSongList = data
+    fun updatePlayerSong(data: Song?) {
+        song = data
         notifyDataSetChanged()
     }
 
