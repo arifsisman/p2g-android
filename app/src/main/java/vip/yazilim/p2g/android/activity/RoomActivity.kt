@@ -233,6 +233,7 @@ class RoomActivity : AppCompatActivity() {
     // Observer
     private val renderPlayerSong = Observer<Song> { playerSong ->
         if (playerSong == null) {
+            //TODO not working, fix it
             slidingUpPanel.isEnabled = false
             slidingUpPanel.isTouchEnabled = false
         } else {

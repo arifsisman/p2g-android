@@ -67,26 +67,19 @@ class RoomQueueAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        val song = songs[position]
-        if (song.songStatus != SongStatus.PLAYED.songStatus) {
-            holder.bindView(song)
-        }
+        holder.bindView(songs[position])
     }
 
     override fun getItemCount(): Int {
-        var size = 0
+        return songs.size
+    }
 
-        songs.forEach {
-            if (it.songStatus != SongStatus.PLAYED.songStatus) {
-                size++
-            }
-        }
-
-        return size
+    override fun getItemId(position: Int): Long {
+        return songs[position].id
     }
 
     fun update(data: MutableList<Song>) {
-        songs = data
+        songs = data.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
         notifyDataSetChanged()
     }
 

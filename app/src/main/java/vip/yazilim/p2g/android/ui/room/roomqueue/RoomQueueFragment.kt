@@ -51,6 +51,7 @@ class RoomQueueFragment : FragmentBase(RoomViewModel(), R.layout.fragment_room_q
         adapter = RoomQueueAdapter(
             (activity as RoomActivity).roomViewModel.songList.value ?: mutableListOf()
         )
+        adapter.setHasStableIds(true)
         recyclerView.adapter = adapter
 
         // recyclerView divider
