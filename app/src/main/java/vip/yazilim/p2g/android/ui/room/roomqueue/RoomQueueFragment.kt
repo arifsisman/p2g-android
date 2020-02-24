@@ -35,6 +35,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  */
 class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener {
+
     private lateinit var adapter: RoomQueueAdapter
     private lateinit var viewModel: RoomQueueViewModel
 
@@ -47,7 +48,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // QueueAdapter
-        adapter = RoomQueueAdapter(viewModel.songs.value ?: mutableListOf())
+        adapter = RoomQueueAdapter((activity as RoomActivity).songList)
         recyclerView.adapter = adapter
 
         // recyclerView divider
@@ -69,7 +70,6 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         }
         val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
         swipeDeleteHelper.attachToRecyclerView(recyclerView)
-
     }
 
     override fun setupViewModel() {
@@ -91,6 +91,7 @@ class RoomQueueFragment : FragmentBase(RoomQueueViewModel(), R.layout.fragment_r
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
 
+        (activity as RoomActivity).songList = it
         (activity as RoomActivity).playerAdapter.updatePlayerSongList(it)
     }
 

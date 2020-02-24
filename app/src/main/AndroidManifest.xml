@@ -47,6 +47,7 @@
         </activity>
 
         <service android:name=".service.UserWebSocketService" />
+        <service android:name=".service.RoomWebSocketService" />
 
     </application>
 

@@ -2,9 +2,7 @@ package vip.yazilim.p2g.android.activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -30,6 +28,7 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.PlayerViewModel
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
@@ -44,6 +43,26 @@ class RoomActivity : AppCompatActivity(),
 
     private lateinit var playerViewModel: PlayerViewModel
     lateinit var playerAdapter: PlayerAdapter
+
+    var songList: MutableList<Song> = mutableListOf()
+
+    companion object {
+        private val TAG = this::class.simpleName
+        private const val ACTION_SONG_LIST = "SongList"
+    }
+
+    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
+            songListFromIntent?.let {
+                songList = it
+
+                playerAdapter.updatePlayerSongList(it)
+//                adapter.add(it)
+//                adapter.roomInviteModelsFull.add(it)
+            }
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,6 +122,14 @@ class RoomActivity : AppCompatActivity(),
                 setTitle(R.string.title_room)
             }
         }
+
+        // start service and register service
+        val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+        intent.putExtra("roomId", room?.id)
+        startService(intent)
+
+        val intentFilter = IntentFilter(ACTION_SONG_LIST)
+        registerReceiver(broadcastReceiver, intentFilter)
 
         // Get room user to decide role and show control & add song events
         getRoomUserMe()
@@ -178,15 +205,14 @@ class RoomActivity : AppCompatActivity(),
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // PlayerAdapter
-        playerAdapter = PlayerAdapter(playerViewModel.songOnPlayer.value ?: mutableListOf())
+        playerAdapter = PlayerAdapter(songList)
 
         playerRecyclerView.adapter = playerAdapter
-//        playerExp.adapter = playerAdapter
     }
 
     private fun setupViewModel() {
         playerViewModel = ViewModelProvider(this, this).get(PlayerViewModel::class.java)
-        playerViewModel.songOnPlayer.observe(this, renderSongOnPlayer)
+        playerViewModel.playerSongList.observe(this, renderSongOnPlayer)
     }
 
     // Observer
