@@ -24,6 +24,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadable
 class PlayerAdapter(private var playerSongList: MutableList<Song>) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     private lateinit var view: View
+//    private lateinit var playerRecyclerView: RecyclerView
 
     inner class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var currentMs: Long = 0
@@ -107,6 +108,7 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
+//        playerRecyclerView = parent.findViewById(R.id.playerRecyclerView)
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_player, parent, false)
         return PlayerViewHolder(view)
     }
@@ -123,14 +125,10 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
         playerSongList.forEach {
             when (it.songStatus) {
                 SongStatus.PLAYING.songStatus -> {
-                    if (playingSong == null) {
-                        playingSong = it
-                    }
+                    playingSong = it
                 }
                 SongStatus.PAUSED.songStatus -> {
-                    if (pausedSong == null) {
-                        pausedSong = it
-                    }
+                    pausedSong = it
                 }
                 SongStatus.NEXT.songStatus -> {
                     if (nextSong == null) {
@@ -138,9 +136,6 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
                     }
                 }
                 //TODO else player visibility gone
-//                else -> {
-//                    view.visibility = View.GONE
-//                }
             }
         }
 

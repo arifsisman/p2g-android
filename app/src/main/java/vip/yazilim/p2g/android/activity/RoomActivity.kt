@@ -273,13 +273,6 @@ class RoomActivity : AppCompatActivity(),
         }
     }
 
-    private val tabTitles = arrayOf(
-        R.string.queue_title,
-        R.string.users_title,
-        R.string.chat_title,
-        R.string.invite_title
-    )
-
     inner class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
@@ -300,6 +293,13 @@ class RoomActivity : AppCompatActivity(),
                 else -> throw IllegalArgumentException()
             }
         }
+
+        private val tabTitles = arrayOf(
+            R.string.queue_title,
+            R.string.users_title,
+            R.string.chat_title,
+            R.string.invite_title
+        )
 
         override fun getPageTitle(position: Int): CharSequence? {
             return context.resources.getString(tabTitles[position])
