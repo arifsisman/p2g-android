@@ -83,6 +83,10 @@ interface Play2GetherWebApi {
     @GET("/api/room/user/me")
     fun getRoomUserMe(): Call<Response<RoomUser>>
 
+    @POST("/api/room/{roomId}/queue/clear")
+    fun clearQueue(@Path("roomId") roomId: Long): Call<Response<Boolean>>
+
+
     // Song API
     @GET("/api/song/{id}")
     fun getSong(@Path("id") songId: Long): Call<Response<Song>>

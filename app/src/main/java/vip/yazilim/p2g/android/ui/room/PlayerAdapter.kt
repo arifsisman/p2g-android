@@ -45,66 +45,79 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
         private val songMax: TextView = itemView.findViewById(R.id.song_max)
 
         @SuppressLint("ClickableViewAccessibility")
-        fun bindView(song: Song) {
-            maxMs = song.durationMs.toLong()
-            currentMs = when (song.songStatus) {
-                SongStatus.PLAYING.songStatus -> {
-                    val passed = Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
-                    if (passed > maxMs) {
+        fun bindView(song: Song?) {
+            if (song != null) {
+                maxMs = song.durationMs.toLong()
+                currentMs = when (song.songStatus) {
+                    SongStatus.PLAYING.songStatus -> {
+                        val passed =
+                            Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
+                        if (passed > maxMs) {
+                            0
+                        } else {
+                            passed
+                        }
+                    }
+                    SongStatus.PAUSED.songStatus -> {
+                        song.currentMs.toLong()
+                    }
+                    else -> {
                         0
-                    } else {
-                        passed
                     }
                 }
-                SongStatus.PAUSED.songStatus -> {
-                    song.currentMs.toLong()
+
+                ///////////////////////
+                // Minimized views bind
+                ///////////////////////
+                songName.text = song.songName
+                songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
+
+                seekBar.setOnTouchListener { _, _ -> true }
+                seekBar.progress = currentMs.toInt()
+                seekBar.max = maxMs.toInt()
+
+
+                //////////////////////
+                // Expanded views bind
+                //////////////////////
+                songNameExp.text = song.songName
+                songArtistsExp.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
+
+                songCurrent.text = getHumanReadableTimestamp(currentMs)
+                songMax.text = getHumanReadableTimestamp(maxMs)
+
+                seekBarExp.progress = currentMs.toInt()
+                seekBarExp.max = maxMs.toInt()
+
+
+                ///////////////////////
+                // Image views bind
+                ///////////////////////
+                if (song.imageUrl != null) {
+                    GlideApp.with(view)
+                        .load(song.imageUrl)
+                        .into(songImage)
+
+                    GlideApp.with(view)
+                        .load(song.imageUrl)
+                        .into(songImageExp)
+                } else {
+                    songImage.setImageResource(R.mipmap.ic_launcher)
+                    songImageExp.setImageResource(R.mipmap.ic_launcher)
                 }
-                else -> {
-                    0
-                }
-            }
-
-            ///////////////////////
-            // Minimized views bind
-            ///////////////////////
-            songName.text = song.songName
-            songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
-
-            seekBar.setOnTouchListener { _, _ -> true }
-            seekBar.progress = currentMs.toInt()
-            seekBar.max = maxMs.toInt()
-
-
-            //////////////////////
-            // Expanded views bind
-            //////////////////////
-            songNameExp.text = song.songName
-            songArtistsExp.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
-
-            songCurrent.text = getHumanReadableTimestamp(currentMs)
-            songMax.text = getHumanReadableTimestamp(maxMs)
-
-            seekBarExp.progress = currentMs.toInt()
-            seekBarExp.max = maxMs.toInt()
-
-
-            ///////////////////////
-            // Image views bind
-            ///////////////////////
-            if (song.imageUrl != null) {
-                GlideApp.with(view)
-                    .load(song.imageUrl)
-                    .into(songImage)
-
-                GlideApp.with(view)
-                    .load(song.imageUrl)
-                    .into(songImageExp)
             } else {
-                songImage.setImageResource(R.mipmap.ic_launcher)
-                songImageExp.setImageResource(R.mipmap.ic_launcher)
+                songName.text = ""
+                songArtists.text = ""
+                songImage.setImageResource(R.drawable.sample_cover_image)
+                seekBar.progress = 0
+                songNameExp.text = ""
+                songArtistsExp.text = ""
+                songImageExp.setImageResource(R.drawable.sample_cover_image)
+                seekBarExp.progress = 0
+                songCurrent.text = getHumanReadableTimestamp(0)
+                songMax.text = getHumanReadableTimestamp(0)
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
@@ -151,6 +164,8 @@ class PlayerAdapter(private var playerSongList: MutableList<Song>) :
             holder.bindView(it)
             return
         }
+
+        holder.bindView(null)
     }
 
     fun updatePlayerSongList(data: MutableList<Song>) {

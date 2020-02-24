@@ -84,6 +84,7 @@
     <string name="placeholder_search_model_type">Model Type</string>
     <string name="placeholder_add_song_to_room">Add</string>
     <string name="placeholder_search_query">Search Query</string>
+    <string name="title_clear_queue">Clear Room Queue</string>
 
 
 </resources>

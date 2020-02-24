@@ -35,6 +35,7 @@ import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
+import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -46,6 +47,7 @@ class RoomActivity : AppCompatActivity() {
     var roomViewModel: RoomViewModel =
         RoomViewModel()
     lateinit var playerAdapter: PlayerAdapter
+    private lateinit var viewPager: ViewPager
 
     companion object {
         private const val ACTION_SONG_LIST = "SongList"
@@ -76,7 +78,7 @@ class RoomActivity : AppCompatActivity() {
     private fun setupViewPager() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
 
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        viewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
 
         viewPager.addOnPageChangeListener(object : OnPageChangeListener {
@@ -266,6 +268,9 @@ class RoomActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.clear_queue -> {
+                clearQueue()
+            }
             R.id.leave -> {
                 leaveRoom()
             }
@@ -305,6 +310,33 @@ class RoomActivity : AppCompatActivity() {
             .setNegativeButton("No", dialogClickListener)
             .show()
     }
+
+    private fun clearQueue() {
+        val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
+            when (ans) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    request(
+                        room?.id?.let { Singleton.apiClient().clearQueue(it) },
+                        object : Callback<Boolean> {
+                            override fun onSuccess(obj: Boolean) {
+
+                            }
+
+                            override fun onError(msg: String) {
+                                UIHelper.showSnackBarShort(viewPager, msg)
+                            }
+                        })
+                }
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setMessage("Are you sure you want clear room queue ?")
+            .setPositiveButton("Yes", dialogClickListener)
+            .setNegativeButton("No", dialogClickListener)
+            .show()
+    }
+
 
     private fun getRoomModel(roomId: Long) {
         // Get room model if not exists
