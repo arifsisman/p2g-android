@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.threeten.bp.Duration
@@ -27,7 +26,8 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadable
  */
 class PlayerAdapter(
     private var song: Song?,
-    private val itemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener,
+    private val seekBarChangeListener: OnSeekBarChangeListener
 ) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     private lateinit var view: View
@@ -100,23 +100,6 @@ class PlayerAdapter(
                 seekBarExp.progress = currentMs.toInt()
                 seekBarExp.max = maxMs.toInt()
 
-                seekBarExp.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                    override fun onStopTrackingTouch(sb: SeekBar) {
-                        seekBar.progress = sb.progress
-                    }
-
-                    override fun onStartTrackingTouch(seekBar: SeekBar) {
-                    }
-
-                    override fun onProgressChanged(
-                        seekBar: SeekBar,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        songCurrent.text = getHumanReadableTimestamp(progress.toLong())
-                    }
-                })
-
                 ///////////////////////
                 // Image views bind
                 ///////////////////////
@@ -162,11 +145,22 @@ class PlayerAdapter(
             }
         }
 
-        fun bindEvent(clickListener: OnItemClickListener) {
+        fun bindEvent(
+            clickListener: OnItemClickListener,
+            seekBarChangeListener: OnSeekBarChangeListener
+        ) {
             playPauseButton.setOnClickListener { clickListener.onPlayPauseClicked() }
             nextButton.setOnClickListener { clickListener.onNextClicked() }
             previousButton.setOnClickListener { clickListener.onPreviousClicked() }
             repeatButton.setOnClickListener { clickListener.onRepeatClicked() }
+
+            seekBarExp.setOnSeekBarChangeListener(
+                seekBarChangeListener.onSeekBarChanged(
+                    seekBar,
+                    songCurrent,
+                    songMax
+                )
+            )
         }
     }
 
@@ -181,7 +175,7 @@ class PlayerAdapter(
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
         holder.bindView(song)
-        holder.bindEvent(itemClickListener)
+        holder.bindEvent(itemClickListener, seekBarChangeListener)
     }
 
     fun updatePlayerSong(data: Song?) {
@@ -196,5 +190,12 @@ class PlayerAdapter(
         fun onRepeatClicked()
     }
 
+    interface OnSeekBarChangeListener {
+        fun onSeekBarChanged(
+            seekBar: SeekBar,
+            songCurrent: TextView,
+            songMax: TextView
+        ): SeekBar.OnSeekBarChangeListener
+    }
 
 }

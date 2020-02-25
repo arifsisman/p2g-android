@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -31,11 +33,13 @@ import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
-class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener {
+class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
+    PlayerAdapter.OnSeekBarChangeListener {
     var room: Room? = null
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
@@ -214,7 +218,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener {
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // PlayerAdapter
-        playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this)
+        playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this, this)
         playerRecyclerView.adapter = playerAdapter
     }
 
@@ -424,5 +428,27 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun onSeekBarChanged(
+        seekBar: SeekBar,
+        songCurrent: TextView,
+        songMax: TextView
+    ): SeekBar.OnSeekBarChangeListener {
+        return object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(sb: SeekBar) {
+                seekBar.progress = sb.progress
+            }
+
+            override fun onStartTrackingTouch(sb: SeekBar) {
+            }
+
+            override fun onProgressChanged(
+                sb: SeekBar,
+                progress: Int,
+                fromUser: Boolean
+            ) {
+                songCurrent.text = getHumanReadableTimestamp(progress.toLong())
+            }
+        }
+    }
 
 }
