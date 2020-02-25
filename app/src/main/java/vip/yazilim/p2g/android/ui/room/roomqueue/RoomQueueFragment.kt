@@ -36,7 +36,8 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  */
 class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     FragmentBase(roomViewModel, R.layout.fragment_room_queue),
-    SearchAdapter.OnItemClickListener {
+    SearchAdapter.OnItemClickListener,
+    RoomQueueAdapter.OnItemClickListener {
 
     private lateinit var adapter: RoomQueueAdapter
 
@@ -51,6 +52,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         // QueueAdapter
         adapter = RoomQueueAdapter(
             (activity as RoomActivity).roomViewModel.songList.value ?: mutableListOf()
+            , this
         )
         adapter.setHasStableIds(true)
         recyclerView.adapter = adapter
@@ -231,5 +233,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
         }
     }
+
+    override fun onSongClicked(song: Song) =
+        request(Singleton.apiClient().play(song), object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, msg)
+            }
+        })
 
 }

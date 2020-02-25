@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.threeten.bp.Duration
@@ -89,6 +90,22 @@ class PlayerAdapter(private var song: Song?) :
                 seekBarExp.progress = currentMs.toInt()
                 seekBarExp.max = maxMs.toInt()
 
+                seekBarExp.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                    override fun onStopTrackingTouch(sb: SeekBar) {
+                        seekBar.progress = sb.progress
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    }
+
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        songCurrent.text = getHumanReadableTimestamp(progress.toLong())
+                    }
+                })
 
                 ///////////////////////
                 // Image views bind
@@ -105,7 +122,6 @@ class PlayerAdapter(private var song: Song?) :
                     songImage.setImageResource(R.mipmap.ic_launcher)
                     songImageExp.setImageResource(R.mipmap.ic_launcher)
                 }
-
             } else {
                 songName.text = ""
                 songArtists.text = ""

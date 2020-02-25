@@ -161,22 +161,22 @@ interface Play2GetherWebApi {
 
     // Player API
     @POST("/api/spotify/player/play")
-    fun play(@Body song: Song): Call<Response<List<Song>>>
+    fun play(@Body song: Song): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/play")
-    fun startResume(@Path("id") roomId: Long): Call<Response<List<Song>>>
+    fun startResume(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/pause")
-    fun pause(@Path("id") roomId: Long): Call<Response<List<Song>>>
+    fun pause(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/next")
-    fun next(@Path("id") roomId: Long): Call<Response<List<Song>>>
+    fun next(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/previous")
-    fun previous(@Path("id") roomId: Long): Call<Response<List<Song>>>
+    fun previous(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/seek/{ms}")
-    fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<Response<Int>>
+    fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<Boolean>
 
     @POST("/api/spotify/player/{id}/repeat")
     fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>

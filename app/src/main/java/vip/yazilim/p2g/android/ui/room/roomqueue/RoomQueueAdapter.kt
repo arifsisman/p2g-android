@@ -18,7 +18,8 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomQueueAdapter(
-    var songs: MutableList<Song>
+    var songs: MutableList<Song>,
+    private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RoomQueueAdapter.MViewHolder>() {
 
     private lateinit var view: View
@@ -59,6 +60,16 @@ class RoomQueueAdapter(
                 }
             }
         }
+
+        fun bindEvent(song: Song, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener {
+                clickListener.onSongClicked(song)
+            }
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onSongClicked(song: Song)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
@@ -68,6 +79,7 @@ class RoomQueueAdapter(
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         holder.bindView(songs[position])
+        holder.bindEvent(songs[position], itemClickListener)
     }
 
     override fun getItemCount(): Int {
