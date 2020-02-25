@@ -296,7 +296,7 @@ class FriendsFragment : FragmentBase(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, "Can not join room")
+                UIHelper.showSnackBarShort(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -344,7 +344,7 @@ class FriendsFragment : FragmentBase(
                 room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(root, "Can not join room")
+                        UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {

@@ -140,7 +140,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         roomModelSimplified.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, "Can not join room")
+                UIHelper.showSnackBarShort(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -191,7 +191,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(root, "Can not join room")
+                        UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
