@@ -55,19 +55,21 @@ class UIHelper {
             }
         }
 
+        // For showing SnackBar in view which is not casted FrameLayout.LayoutParams
+        fun showSnackBarShortSafe(view: View?, message: String) {
+            val snack: Snackbar? =
+                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+            snack?.show()
+        }
+
         fun showSnackBarShort(view: View?, message: String) {
-            try {
-                val snack: Snackbar? =
-                    view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-                val snackView = snack?.view
-                val params = snackView?.layoutParams as FrameLayout.LayoutParams
-                params.gravity = Gravity.TOP
-                snackView.layoutParams = params
-            } catch (e: Exception) {
-                val snack: Snackbar? =
-                    view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-                snack?.show()
-            }
+            val snack: Snackbar? =
+                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+            val snackView = snack?.view
+            val params = snackView?.layoutParams as FrameLayout.LayoutParams
+            params.gravity = Gravity.TOP
+            snackView.layoutParams = params
+            snack.show()
         }
 
     }

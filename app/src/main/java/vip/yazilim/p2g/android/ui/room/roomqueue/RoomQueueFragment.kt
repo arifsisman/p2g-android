@@ -119,7 +119,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortSafe(root, msg)
                 adapter.add(song, position)
             }
         })
@@ -163,7 +163,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortSafe(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -212,7 +212,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    UIHelper.showSnackBarShort(root, msg)
+                    UIHelper.showSnackBarShortSafe(root, msg)
                 }
             })
         }
@@ -226,7 +226,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 mDialogView.findViewById<Button>(R.id.dialog_add_button).isEnabled =
                     isAnyItemsSelected
             } else {
-                UIHelper.showSnackBarShort(
+                UIHelper.showSnackBarShortSafe(
                     mDialogView,
                     "10 songs or 1 Album/Playlist can be added in each search!"
                 )
@@ -240,7 +240,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortSafe(root, msg)
             }
         })
 
