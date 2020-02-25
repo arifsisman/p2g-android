@@ -1,9 +1,11 @@
 package vip.yazilim.p2g.android.ui.room
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -44,6 +46,9 @@ class PlayerAdapter(private var song: Song?) :
         private val seekBarExp: SeekBar = itemView.findViewById(R.id.seek_bar_exp)
         private val songCurrent: TextView = itemView.findViewById(R.id.song_current)
         private val songMax: TextView = itemView.findViewById(R.id.song_max)
+
+        private val playButton: ImageButton = itemView.findViewById(R.id.play_button)
+        private val repeatButton: ImageButton = itemView.findViewById(R.id.repeat_button)
 
         @SuppressLint("ClickableViewAccessibility")
         fun bindView(song: Song?) {
@@ -122,6 +127,22 @@ class PlayerAdapter(private var song: Song?) :
                     songImage.setImageResource(R.mipmap.ic_launcher)
                     songImageExp.setImageResource(R.mipmap.ic_launcher)
                 }
+
+                ////////////////////////
+                // Controller views bind
+                ////////////////////////
+                if (song.songStatus == SongStatus.PLAYING.songStatus) {
+                    playButton.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
+                } else {
+                    playButton.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                }
+
+                if (song.repeatFlag) {
+                    repeatButton.setColorFilter(Color.parseColor("#1DB954"))
+                } else {
+                    repeatButton.setColorFilter(Color.parseColor("#000000"))
+                }
+
             } else {
                 songName.text = ""
                 songArtists.text = ""
