@@ -15,7 +15,7 @@ class TimeHelper {
             DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm")
 
         @SuppressLint("SimpleDateFormat")
-        fun getHumanReadableTimestamp(time: Long): String {
+        fun getHumanReadableTimestamp(time: Int): String {
             return (SimpleDateFormat("mm:ss")).format(time)
         }
     }

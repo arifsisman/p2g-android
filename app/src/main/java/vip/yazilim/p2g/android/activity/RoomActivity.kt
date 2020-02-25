@@ -27,15 +27,12 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
-import vip.yazilim.p2g.android.util.helper.RoomHelper
-import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -233,23 +230,38 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
 
-        if (song.songStatus == SongStatus.PLAYING.songStatus) {
-            handlePlayingSong(song)
-        }
-    }
-
-    private fun handlePlayingSong(song: Song) {
-        var maxMs = song.durationMs.toLong()
-        var currentMs = RoomHelper.getSongCurrentMs(song)
-
-        val seekBar: SeekBar = findViewById(R.id.seek_bar)
-        val seekBarExp: SeekBar = findViewById(R.id.seek_bar_exp)
-
-        val songCurrent: TextView = findViewById(R.id.song_current)
-        val songMax: TextView = findViewById(R.id.song_max)
-
+//        if (song.songStatus == SongStatus.PLAYING.songStatus) {
+//        handlePlayingSong(song)
+//        }
 
     }
+
+//    private fun handlePlayingSong(song: Song) {
+//        var maxMs = song.durationMs.toLong()
+//        var currentMs = RoomHelper.getSongCurrentMs(song)
+//
+//        val seekBar: SeekBar = findViewById(R.id.seek_bar)
+//        val seekBarExp: SeekBar = findViewById(R.id.seek_bar_exp)
+//
+//        val songCurrent: TextView = findViewById(R.id.song_current)
+//        val songMax: TextView = findViewById(R.id.song_max)
+//
+////        val updateHandler = Handler()
+////        val timerRunnable: Runnable = object : Runnable {
+////            override fun run() {
+////                songCurrent.text = getHumanReadableTimestamp(seekBar.progress.toLong())
+////                updateHandler.postDelayed(this, 1000)
+////                println("timer.........")
+////            }
+////        }
+////        timerRunnable.run()
+//
+////        updateHandler.postDelayed({
+////            println("timer.........")
+////            songCurrent.text = getHumanReadableTimestamp(seekBar.progress.toLong())
+////        }, 1000)
+//
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
@@ -361,7 +373,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 roomViewModel.songList.value = songList
 
                 val song = roomViewModel.getCurrentSong(songList)
-                playerAdapter.updatePlayerSong(song)
+                roomViewModel.playerSong.value = song
             }
         }
     }
@@ -454,7 +466,8 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     ): SeekBar.OnSeekBarChangeListener {
         return object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(sb: SeekBar) {
-                seekBar.progress = sb.progress
+                //TODO
+//                seekBar.progress = sb.progress
             }
 
             override fun onStartTrackingTouch(sb: SeekBar) {
@@ -465,7 +478,8 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 progress: Int,
                 fromUser: Boolean
             ) {
-                songCurrent.text = getHumanReadableTimestamp(progress.toLong())
+                //TODO
+//                songCurrent.text = getHumanReadableTimestamp(progress)
             }
         }
     }

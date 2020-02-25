@@ -1,8 +1,6 @@
 package vip.yazilim.p2g.android.util.helper
 
 import android.view.View
-import org.threeten.bp.Duration
-import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
@@ -79,27 +77,6 @@ class RoomHelper {
                     .replace("[", "")
                     .replace("]", "")
                     .trim()
-            }
-        }
-
-        fun getSongCurrentMs(song: Song): Long {
-            val maxMs = song.durationMs.toLong()
-            return when (song.songStatus) {
-                SongStatus.PLAYING.songStatus -> {
-                    val passed =
-                        Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
-                    if (passed > maxMs) {
-                        0
-                    } else {
-                        passed
-                    }
-                }
-                SongStatus.PAUSED.songStatus -> {
-                    song.currentMs.toLong()
-                }
-                else -> {
-                    0
-                }
             }
         }
     }

@@ -15,7 +15,6 @@ import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
-import vip.yazilim.p2g.android.util.helper.RoomHelper.Companion.getSongCurrentMs
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 
 
@@ -32,8 +31,8 @@ class PlayerAdapter(
     private lateinit var view: View
 
     inner class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var currentMs: Long = 0
-        private var maxMs: Long = 0
+        private var currentMs: Int = 0
+        private var maxMs: Int = 0
 
         // Minimized views
         private val songName: TextView = itemView.findViewById(R.id.song_name)
@@ -57,8 +56,8 @@ class PlayerAdapter(
         @SuppressLint("ClickableViewAccessibility")
         fun bindView(song: Song?) {
             if (song != null) {
-                maxMs = song.durationMs.toLong()
-                currentMs = getSongCurrentMs(song)
+                maxMs = song.durationMs
+                currentMs = song.currentMs
 
                 ///////////////////////
                 // Minimized views bind
@@ -67,8 +66,8 @@ class PlayerAdapter(
                 songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
                 seekBar.setOnTouchListener { _, _ -> true }
-                seekBar.progress = currentMs.toInt()
-                seekBar.max = maxMs.toInt()
+                seekBar.progress = currentMs
+                seekBar.max = maxMs
 
 
                 //////////////////////
@@ -80,8 +79,8 @@ class PlayerAdapter(
                 songCurrent.text = getHumanReadableTimestamp(currentMs)
                 songMax.text = getHumanReadableTimestamp(maxMs)
 
-                seekBarExp.progress = currentMs.toInt()
-                seekBarExp.max = maxMs.toInt()
+                seekBarExp.progress = currentMs
+                seekBarExp.max = maxMs
 
                 ///////////////////////
                 // Image views bind
