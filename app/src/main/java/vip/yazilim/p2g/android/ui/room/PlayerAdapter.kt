@@ -10,13 +10,12 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.threeten.bp.Duration
-import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
+import vip.yazilim.p2g.android.util.helper.RoomHelper.Companion.getSongCurrentMs
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 
 
@@ -59,23 +58,7 @@ class PlayerAdapter(
         fun bindView(song: Song?) {
             if (song != null) {
                 maxMs = song.durationMs.toLong()
-                currentMs = when (song.songStatus) {
-                    SongStatus.PLAYING.songStatus -> {
-                        val passed =
-                            Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
-                        if (passed > maxMs) {
-                            0
-                        } else {
-                            passed
-                        }
-                    }
-                    SongStatus.PAUSED.songStatus -> {
-                        song.currentMs.toLong()
-                    }
-                    else -> {
-                        0
-                    }
-                }
+                currentMs = getSongCurrentMs(song)
 
                 ///////////////////////
                 // Minimized views bind
