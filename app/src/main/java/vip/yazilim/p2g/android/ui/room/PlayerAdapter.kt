@@ -25,7 +25,10 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadable
  * @author mustafaarifsisman - 23.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class PlayerAdapter(private var song: Song?) :
+class PlayerAdapter(
+    private var song: Song?,
+    private val itemClickListener: OnItemClickListener
+) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     private lateinit var view: View
 
@@ -47,7 +50,9 @@ class PlayerAdapter(private var song: Song?) :
         private val songCurrent: TextView = itemView.findViewById(R.id.song_current)
         private val songMax: TextView = itemView.findViewById(R.id.song_max)
 
-        private val playButton: ImageButton = itemView.findViewById(R.id.play_button)
+        private val playPauseButton: ImageButton = itemView.findViewById(R.id.playPause_button)
+        private val nextButton: ImageButton = itemView.findViewById(R.id.next_button)
+        private val previousButton: ImageButton = itemView.findViewById(R.id.previous_button)
         private val repeatButton: ImageButton = itemView.findViewById(R.id.repeat_button)
 
         @SuppressLint("ClickableViewAccessibility")
@@ -132,9 +137,9 @@ class PlayerAdapter(private var song: Song?) :
                 // Controller views bind
                 ////////////////////////
                 if (song.songStatus == SongStatus.PLAYING.songStatus) {
-                    playButton.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
+                    playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
                 } else {
-                    playButton.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                    playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
                 }
 
                 if (song.repeatFlag) {
@@ -156,6 +161,13 @@ class PlayerAdapter(private var song: Song?) :
                 songMax.text = getHumanReadableTimestamp(0)
             }
         }
+
+        fun bindEvent(clickListener: OnItemClickListener) {
+            playPauseButton.setOnClickListener { clickListener.onPlayPauseClicked() }
+            nextButton.setOnClickListener { clickListener.onNextClicked() }
+            previousButton.setOnClickListener { clickListener.onPreviousClicked() }
+            repeatButton.setOnClickListener { clickListener.onRepeatClicked() }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
@@ -169,11 +181,20 @@ class PlayerAdapter(private var song: Song?) :
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
         holder.bindView(song)
+        holder.bindEvent(itemClickListener)
     }
 
     fun updatePlayerSong(data: Song?) {
         song = data
         notifyDataSetChanged()
     }
+
+    interface OnItemClickListener {
+        fun onPlayPauseClicked()
+        fun onNextClicked()
+        fun onPreviousClicked()
+        fun onRepeatClicked()
+    }
+
 
 }

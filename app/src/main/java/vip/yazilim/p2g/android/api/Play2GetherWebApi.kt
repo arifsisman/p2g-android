@@ -163,11 +163,8 @@ interface Play2GetherWebApi {
     @POST("/api/spotify/player/play")
     fun play(@Body song: Song): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/{id}/play")
-    fun startResume(@Path("id") roomId: Long): Call<Response<Boolean>>
-
-    @POST("/api/spotify/player/{id}/pause")
-    fun pause(@Path("id") roomId: Long): Call<Response<Boolean>>
+    @POST("/api/spotify/player/{id}/playPause")
+    fun playPause(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/next")
     fun next(@Path("id") roomId: Long): Call<Response<Boolean>>

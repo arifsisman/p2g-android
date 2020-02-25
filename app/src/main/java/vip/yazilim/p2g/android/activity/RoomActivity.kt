@@ -35,7 +35,7 @@ import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
-class RoomActivity : AppCompatActivity() {
+class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener {
     var room: Room? = null
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
@@ -214,7 +214,7 @@ class RoomActivity : AppCompatActivity() {
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // PlayerAdapter
-        playerAdapter = PlayerAdapter(roomViewModel.playerSong.value)
+        playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this)
         playerRecyclerView.adapter = playerAdapter
     }
 
@@ -406,6 +406,22 @@ class RoomActivity : AppCompatActivity() {
     private fun showMaximizedPlayer() {
         val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
         playerMini.visibility = View.GONE
+    }
+
+    override fun onPlayPauseClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onNextClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onPreviousClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onRepeatClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
