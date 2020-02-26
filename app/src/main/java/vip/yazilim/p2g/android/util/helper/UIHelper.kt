@@ -72,6 +72,13 @@ class UIHelper {
             snack.show()
         }
 
+        fun showPlayerError(view: View?, message: String) {
+            val snack: Snackbar? =
+                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+            snack?.anchorView = view
+            snack?.show()
+        }
+
     }
 }
 

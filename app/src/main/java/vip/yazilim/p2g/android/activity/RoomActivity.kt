@@ -23,6 +23,7 @@ import com.google.android.material.tabs.TabLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
+import kotlinx.android.synthetic.main.row_player.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -209,10 +210,12 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 }
             }
         })
+
+//        playerExp = findViewById(R.id.player_exp)
     }
 
     private fun setupPlayer() {
-        val playerRecyclerView = findViewById<View>(R.id.playerRecyclerView) as RecyclerView
+        val playerRecyclerView: RecyclerView = findViewById(R.id.playerRecyclerView)
         playerRecyclerView.setHasFixedSize(true)
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -443,21 +446,45 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         playerMini.visibility = View.GONE
     }
 
-    override fun onPlayPauseClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onPlayPauseClicked() =
+        request(room?.id?.let { Singleton.apiClient().playPause(it) }, object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
 
-    override fun onNextClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+            override fun onError(msg: String) {
+                UIHelper.showPlayerError(seek_bar_exp, msg)
+            }
+        })
 
-    override fun onPreviousClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onNextClicked() =
+        request(room?.id?.let { Singleton.apiClient().next(it) }, object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
 
-    override fun onRepeatClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+            override fun onError(msg: String) {
+                UIHelper.showPlayerError(seek_bar_exp, msg)
+            }
+        })
+
+    override fun onPreviousClicked() =
+        request(room?.id?.let { Singleton.apiClient().previous(it) }, object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showPlayerError(seek_bar_exp, msg)
+            }
+        })
+
+    override fun onRepeatClicked() =
+        request(room?.id?.let { Singleton.apiClient().repeat(it) }, object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showPlayerError(seek_bar_exp, msg)
+            }
+        })
 
     override fun onSeekBarChanged(
         seekBar: SeekBar,
