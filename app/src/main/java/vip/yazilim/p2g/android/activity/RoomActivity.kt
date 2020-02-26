@@ -59,7 +59,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private var isSeeking = false
 
     companion object {
-        private val TAG = this::class.simpleName
+        private const val PLAYER_TAG = "Player"
         private const val ACTION_SONG_LIST = "SongList"
     }
 
@@ -232,10 +232,10 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                     seek_bar_exp.progress += 1000
                     seek_bar.progress += 1000
                     song_current.text = seek_bar_exp.progress.getHumanReadableTimestamp()
-                    Log.v("PlayerTimer", "Song is playing! Views updated.")
+                    Log.d(PLAYER_TAG, "Song is playing! Views updated.")
                 }
             } else {
-                Log.v("PlayerTimer", "Not playing any song, views are not updated")
+                Log.d(PLAYER_TAG, "Not playing any song, views are not updated")
             }
             TimeUnit.SECONDS.sleep(1)
         }
@@ -249,8 +249,14 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     // Observer
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
-        isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
-        Log.d(TAG, "Is ${song.songName} playing? = $isPlaying")
+
+        if (song != null) {
+            isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
+            Log.d(PLAYER_TAG, "Is ${song.songName} playing? = $isPlaying")
+        } else {
+            isPlaying = false
+            Log.d(PLAYER_TAG, "Not playing any song!")
+        }
     }
 
 
