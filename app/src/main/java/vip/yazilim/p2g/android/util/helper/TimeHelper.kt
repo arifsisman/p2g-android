@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.util.helper
 
 import android.annotation.SuppressLint
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 
@@ -10,13 +11,17 @@ import java.text.SimpleDateFormat
  */
 class TimeHelper {
     companion object {
-        val dateTimeFormatterFull: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM uuuu")
-        val dateTimeFormatterCompact: DateTimeFormatter =
-            DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm")
+        fun LocalDateTime?.getFormattedFull(): String {
+            return DateTimeFormatter.ofPattern("dd MMMM uuuu").format(this)
+        }
+
+        fun LocalDateTime?.getFormattedCompact(): String {
+            return DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm").format(this)
+        }
 
         @SuppressLint("SimpleDateFormat")
-        fun getHumanReadableTimestamp(time: Int): String {
-            return (SimpleDateFormat("mm:ss")).format(time)
+        fun Int.getHumanReadableTimestamp(): String {
+            return (SimpleDateFormat("mm:ss")).format(this)
         }
     }
 }

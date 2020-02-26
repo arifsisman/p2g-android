@@ -54,8 +54,8 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private lateinit var viewPager: ViewPager
     lateinit var slidingUpPanel: SlidingUpPanelLayout
 
-    private lateinit var playerTimer: Runnable
-    var isPlaying = false
+    private val updateHandler = Handler()
+    private var isPlaying = false
 
     companion object {
         private val TAG = this::class.simpleName
@@ -243,44 +243,29 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
         if (song.songStatus == SongStatus.PLAYING.songStatus) {
             isPlaying = true
-            handlePlayingSong(song)
+            playerTimer().start()
         } else {
-            isPlaying = false
-        }
-
-    }
-
-    private fun handlePlayingSong(song: Song) {
-        var maxMs = song.durationMs.toLong()
-        var currentMs = if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
-
-        val seekBar: SeekBar = findViewById(R.id.seek_bar)
-        val seekBarExp: SeekBar = findViewById(R.id.seek_bar_exp)
-
-        val songCurrent: TextView = findViewById(R.id.song_current)
-        val songMax: TextView = findViewById(R.id.song_max)
-
-        val updateHandler = Handler()
-        playerTimer = object : Runnable {
-            override fun run() {
-                if (!isPlaying) {
-                    handleSongFinish()
-                    return
-                } else {
-                    seekBarExp.progress += 1000
-                    seekBar.progress += 1000
-                    songCurrent.text = getHumanReadableTimestamp(seekBarExp.progress)
-                    Log.v(TAG, "views updated.........")
-                    updateHandler.postDelayed(this, 1000)
-                }
+            if (isPlaying) {
+                isPlaying = false
+                playerTimer().interrupt()
             }
         }
-        playerTimer.run()
     }
 
-    private fun handleSongFinish() {
+    private fun playerTimer(): Thread = Thread(object : Runnable {
+        override fun run() {
+            if (isPlaying) {
+                seek_bar_exp.progress += 1000
+                seek_bar.progress += 1000
+                song_current.text = seek_bar_exp.progress.getHumanReadableTimestamp()
+                Log.v(TAG, "views updated.........")
+                updateHandler.postDelayed(this, 1000)
+            } else {
+                return
+            }
+        }
+    })
 
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
@@ -437,10 +422,10 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         }
 
         private val tabTitles = arrayOf(
-            R.string.queue_title,
-            R.string.users_title,
-            R.string.chat_title,
-            R.string.invite_title
+            R.string.title_queue,
+            R.string.title_users,
+            R.string.title_chat,
+            R.string.title_invite
         )
 
         override fun getPageTitle(position: Int): CharSequence? {
@@ -502,15 +487,22 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
             }
         })
 
+    private fun onSeekPerformed(ms: Int) =
+        request(room?.id?.let { Singleton.apiClient().seek(it, ms) }, object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showPlayerError(seek_bar_exp, msg)
+            }
+        })
+
     override fun onSeekBarChanged(
-        seekBar: SeekBar,
-        songCurrent: TextView,
-        songMax: TextView
+        songCurrent: TextView
     ): SeekBar.OnSeekBarChangeListener {
         return object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(sb: SeekBar) {
-                //TODO
-                seekBar.progress = sb.progress
+                onSeekPerformed(sb.progress)
             }
 
             override fun onStartTrackingTouch(sb: SeekBar) {
@@ -521,8 +513,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 progress: Int,
                 fromUser: Boolean
             ) {
-                //TODO
-//                songCurrent.text = getHumanReadableTimestamp(progress)
+                songCurrent.text = progress.getHumanReadableTimestamp()
             }
         }
     }

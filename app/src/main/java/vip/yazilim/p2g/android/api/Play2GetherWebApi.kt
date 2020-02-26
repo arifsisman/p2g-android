@@ -173,7 +173,7 @@ interface Play2GetherWebApi {
     fun previous(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/seek/{ms}")
-    fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<Boolean>
+    fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<Response<Boolean>>
 
     @POST("/api/spotify/player/{id}/repeat")
     fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>

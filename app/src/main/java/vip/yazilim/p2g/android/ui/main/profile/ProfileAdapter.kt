@@ -13,7 +13,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
-import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterFull
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedFull
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -49,9 +49,7 @@ class ProfileAdapter(
             if (user != null) {
                 val profileNamePlaceholder = user.name
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.format(
-                        dateTimeFormatterFull
-                    )}"
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.getFormattedFull()}"
                 val profileEmailPlaceholder =
                     "${view.resources.getString(R.string.placeholder_email)} ${user.email}"
                 val profileSongAndRoomStatusPlaceholder =

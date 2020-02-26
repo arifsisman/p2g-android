@@ -77,8 +77,8 @@ class PlayerAdapter(
                 songNameExp.text = song.songName
                 songArtistsExp.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
-                songCurrent.text = getHumanReadableTimestamp(currentMs)
-                songMax.text = getHumanReadableTimestamp(maxMs)
+                songCurrent.text = currentMs.getHumanReadableTimestamp()
+                songMax.text = maxMs.getHumanReadableTimestamp()
 
                 seekBarExp.progress = currentMs
                 seekBarExp.max = maxMs
@@ -123,8 +123,8 @@ class PlayerAdapter(
                 songArtistsExp.text = ""
                 songImageExp.setImageResource(R.drawable.sample_cover_image)
                 seekBarExp.progress = 0
-                songCurrent.text = getHumanReadableTimestamp(0)
-                songMax.text = getHumanReadableTimestamp(0)
+                songCurrent.text = view.resources.getString(R.string.placeholder_song_default_time)
+                songMax.text = view.resources.getString(R.string.placeholder_song_default_time)
             }
         }
 
@@ -139,9 +139,7 @@ class PlayerAdapter(
 
             seekBarExp.setOnSeekBarChangeListener(
                 seekBarChangeListener.onSeekBarChanged(
-                    seekBar,
-                    songCurrent,
-                    songMax
+                    songCurrent
                 )
             )
         }
@@ -157,8 +155,8 @@ class PlayerAdapter(
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.bindView(song)
         holder.bindEvent(itemClickListener, seekBarChangeListener)
+        holder.bindView(song)
     }
 
     fun updatePlayerSong(data: Song?) {
@@ -175,9 +173,7 @@ class PlayerAdapter(
 
     interface OnSeekBarChangeListener {
         fun onSeekBarChanged(
-            seekBar: SeekBar,
-            songCurrent: TextView,
-            songMax: TextView
+            songCurrent: TextView
         ): SeekBar.OnSeekBarChangeListener
     }
 

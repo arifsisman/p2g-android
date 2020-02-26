@@ -13,14 +13,14 @@
     <string name="title_logout">Logout</string>
     <string name="title_leave">Leave Room</string>
     <string name="title_invites">Invites</string>
-    <string name="queue_title">Queue</string>
-    <string name="users_title">Users</string>
-    <string name="chat_title">Chat</string>
-    <string name="invite_title">Invite</string>
+    <string name="title_queue">Queue</string>
+    <string name="title_users">Users</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_invite">Invite</string>
+    <string name="title_clear_queue">Clear Room Queue</string>
+
 
     <!--Eng. Hints-->
-    <string name="placeholder_room_name">Room Name</string>
-    <string name="placeholder_room_name_expanded">Room:</string>
     <string name="hint_room_password_optional">Room Password (Optional)</string>
     <string name="hint_room_password_required">Room Password</string>
 
@@ -34,6 +34,18 @@
     <string name="description_country_flag_image">Country Flag Image</string>
     <string name="description_join_button">Join Button</string>
     <string name="description_ignore_button">Ignore Button</string>
+    <string name="description_accept_button">Accept Button</string>
+    <string name="description_reject_button">Reject Button</string>
+    <string name="description_song_cover_image">Song cover image</string>
+    <string name="description_upvote_song_button">Upvote song button</string>
+    <string name="description_downvote_song_button">Downvote song button</string>
+    <string name="description_play_button">Play button</string>
+    <string name="description_next_button">Next button</string>
+    <string name="description_previous_button">Previous button</string>
+    <string name="description_repeat_button">Replay button</string>
+    <string name="description_search_model_cover_image">Search Model Cover Image</string>
+    <string name="description_friend_request_icon">Friend Request Icon</string>
+
 
     <!--Eng. Placeholders-->
     <string name="placeholder_cancel">Cancel</string>
@@ -59,32 +71,22 @@
     <string name="placeholder_set_anthem">Set Anthem</string>
     <string name="placeholder_app_description">Listen to Spotify with your friends</string>
     <string name="placeholder_room_inviter">From</string>
-    <string name="description_accept_button">Accept Button</string>
-    <string name="description_reject_button">Reject Button</string>
     <string name="placeholder_member_since">Member since</string>
     <string name="placeholder_user_name">Username</string>
     <string name="placeholder_friend_request_date">Request Date:</string>
-    <string name="description_friend_request_icon">Friend Request Icon</string>
     <string name="placeholder_song_artists">Song Artists</string>
     <string name="placeholder_song_name">Song Name</string>
-    <string name="description_song_cover_image">Song cover image</string>
-    <string name="description_upvote_song_button">Upvote song button</string>
-    <string name="description_downvote_song_button">Downvote song button</string>
     <string name="placeholder_song_vote">0</string>
-    <string name="description_play_button">Play button</string>
-    <string name="description_next_button">Next button</string>
-    <string name="description_previous_button">Previous button</string>
-    <string name="description_repeat_button">Replay button</string>
     <string name="placeholder_add_song">Add song</string>
     <string name="placeholder_search_spotify">Search</string>
     <string name="placeholder_search_spotify_expanded">Song, Album, Playlist, Artist…</string>
     <string name="placeholder_search_model_name">Search Model Name</string>
     <string name="placeholder_search_model_artists">Search Model Artists</string>
-    <string name="description_search_model_cover_image">Search Model Cover Image</string>
     <string name="placeholder_search_model_type">Model Type</string>
     <string name="placeholder_add_song_to_room">Add</string>
     <string name="placeholder_search_query">Search Query</string>
-    <string name="title_clear_queue">Clear Room Queue</string>
-
+    <string name="placeholder_room_name">Room Name</string>
+    <string name="placeholder_room_name_expanded">Room:</string>
+    <string name="placeholder_song_default_time">00:00</string>
 
 </resources>

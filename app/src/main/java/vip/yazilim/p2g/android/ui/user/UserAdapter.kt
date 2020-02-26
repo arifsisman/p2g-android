@@ -18,7 +18,7 @@ import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
-import vip.yazilim.p2g.android.util.helper.TimeHelper
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedFull
 
 /**
  * @author mustafaarifsisman - 11.02.2020
@@ -55,9 +55,7 @@ class UserAdapter(
                 val profileAnthemPlaceholder =
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.format(
-                        TimeHelper.dateTimeFormatterFull
-                    )}"
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.getFormattedFull()}"
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)

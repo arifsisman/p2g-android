@@ -15,7 +15,7 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
-import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.dateTimeFormatterCompact
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedCompact
 
 
 /**
@@ -62,9 +62,7 @@ class FriendsAdapter(
             val user = item.friendRequestUserModel?.user
 
             val inviteDatePlaceholder =
-                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.format(
-                    dateTimeFormatterCompact
-                )}"
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.getFormattedCompact()}"
 
             userName.text = user?.name
             inviteDate.text = inviteDatePlaceholder
