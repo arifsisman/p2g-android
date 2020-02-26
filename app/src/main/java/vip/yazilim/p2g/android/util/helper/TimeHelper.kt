@@ -11,11 +11,11 @@ import java.text.SimpleDateFormat
  */
 class TimeHelper {
     companion object {
-        fun LocalDateTime?.getFormattedFull(): String {
+        fun LocalDateTime.getFormattedFull(): String {
             return DateTimeFormatter.ofPattern("dd MMMM uuuu").format(this)
         }
 
-        fun LocalDateTime?.getFormattedCompact(): String {
+        fun LocalDateTime.getFormattedCompact(): String {
             return DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm").format(this)
         }
 

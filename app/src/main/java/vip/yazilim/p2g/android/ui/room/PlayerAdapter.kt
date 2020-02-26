@@ -83,6 +83,7 @@ class PlayerAdapter(
                 seekBarExp.progress = currentMs
                 seekBarExp.max = maxMs
 
+
                 ///////////////////////
                 // Image views bind
                 ///////////////////////
@@ -98,6 +99,7 @@ class PlayerAdapter(
                     songImage.setImageResource(R.mipmap.ic_launcher)
                     songImageExp.setImageResource(R.mipmap.ic_launcher)
                 }
+
 
                 ////////////////////////
                 // Controller views bind
@@ -137,11 +139,7 @@ class PlayerAdapter(
             previousButton.setOnClickListener { clickListener.onPreviousClicked() }
             repeatButton.setOnClickListener { clickListener.onRepeatClicked() }
 
-            seekBarExp.setOnSeekBarChangeListener(
-                seekBarChangeListener.onSeekBarChanged(
-                    songCurrent
-                )
-            )
+            seekBarExp.setOnSeekBarChangeListener(seekBarChangeListener.onSeekBarChanged())
         }
     }
 
@@ -172,9 +170,7 @@ class PlayerAdapter(
     }
 
     interface OnSeekBarChangeListener {
-        fun onSeekBarChanged(
-            songCurrent: TextView
-        ): SeekBar.OnSeekBarChangeListener
+        fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener
     }
 
 }

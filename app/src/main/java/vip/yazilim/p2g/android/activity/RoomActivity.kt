@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -40,6 +39,7 @@ import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
+import java.util.concurrent.TimeUnit
 
 
 class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
@@ -54,8 +54,9 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private lateinit var viewPager: ViewPager
     lateinit var slidingUpPanel: SlidingUpPanelLayout
 
+    private var isPlaying = true
+
     private val updateHandler = Handler()
-    private var isPlaying = false
 
     companion object {
         private val TAG = this::class.simpleName
@@ -65,21 +66,13 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
-
         setupViewPager()
-
         setupViewModelBase()
-
         setupRoomModel()
-
         setupRoomSocketService()
-
         getRoomUserMe()
-
         setupViewModel()
-
         setupSlidingUpPanel()
-
         setupPlayer()
     }
 
@@ -218,8 +211,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 }
             }
         })
-
-//        playerExp = findViewById(R.id.player_exp)
     }
 
     private fun setupPlayer() {
@@ -230,6 +221,20 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         // PlayerAdapter
         playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this, this)
         playerRecyclerView.adapter = playerAdapter
+
+        Thread { runOnUiThread(playerTimer()) }.start()
+    }
+
+    private fun playerTimer() = Runnable {
+        if (isPlaying && seek_bar_exp != null && seek_bar != null && song_current != null) {
+            seek_bar_exp.progress += 1000
+            seek_bar.progress += 1000
+            song_current.text = seek_bar_exp.progress.getHumanReadableTimestamp()
+            Log.v(TAG, "Song is playing! Views updated.")
+        } else {
+            Log.v(TAG, "Not playing any song, views are not updated")
+        }
+        TimeUnit.SECONDS.sleep(1)
     }
 
     private fun setupViewModelBase() {
@@ -240,31 +245,9 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     // Observer
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
-
-        if (song.songStatus == SongStatus.PLAYING.songStatus) {
-            isPlaying = true
-            playerTimer().start()
-        } else {
-            if (isPlaying) {
-                isPlaying = false
-                playerTimer().interrupt()
-            }
-        }
+        isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
+        Log.d(TAG, "Is ${song.songName} playing? = $isPlaying")
     }
-
-    private fun playerTimer(): Thread = Thread(object : Runnable {
-        override fun run() {
-            if (isPlaying) {
-                seek_bar_exp.progress += 1000
-                seek_bar.progress += 1000
-                song_current.text = seek_bar_exp.progress.getHumanReadableTimestamp()
-                Log.v(TAG, "views updated.........")
-                updateHandler.postDelayed(this, 1000)
-            } else {
-                return
-            }
-        }
-    })
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -497,9 +480,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
             }
         })
 
-    override fun onSeekBarChanged(
-        songCurrent: TextView
-    ): SeekBar.OnSeekBarChangeListener {
+    override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {
         return object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(sb: SeekBar) {
                 onSeekPerformed(sb.progress)
@@ -513,7 +494,8 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 progress: Int,
                 fromUser: Boolean
             ) {
-                songCurrent.text = progress.getHumanReadableTimestamp()
+                isPlaying = false
+                song_current?.text = progress.getHumanReadableTimestamp()
             }
         }
     }
