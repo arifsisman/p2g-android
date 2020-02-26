@@ -3,6 +3,8 @@ package vip.yazilim.p2g.android.activity
 import android.app.AlertDialog
 import android.content.*
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,12 +30,14 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
+import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -50,7 +54,11 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private lateinit var viewPager: ViewPager
     lateinit var slidingUpPanel: SlidingUpPanelLayout
 
+    private lateinit var playerTimer: Runnable
+    var isPlaying = false
+
     companion object {
+        private val TAG = this::class.simpleName
         private const val ACTION_SONG_LIST = "SongList"
     }
 
@@ -233,38 +241,46 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
 
-//        if (song.songStatus == SongStatus.PLAYING.songStatus) {
-//        handlePlayingSong(song)
-//        }
+        if (song.songStatus == SongStatus.PLAYING.songStatus) {
+            isPlaying = true
+            handlePlayingSong(song)
+        } else {
+            isPlaying = false
+        }
 
     }
 
-//    private fun handlePlayingSong(song: Song) {
-//        var maxMs = song.durationMs.toLong()
-//        var currentMs = RoomHelper.getSongCurrentMs(song)
-//
-//        val seekBar: SeekBar = findViewById(R.id.seek_bar)
-//        val seekBarExp: SeekBar = findViewById(R.id.seek_bar_exp)
-//
-//        val songCurrent: TextView = findViewById(R.id.song_current)
-//        val songMax: TextView = findViewById(R.id.song_max)
-//
-////        val updateHandler = Handler()
-////        val timerRunnable: Runnable = object : Runnable {
-////            override fun run() {
-////                songCurrent.text = getHumanReadableTimestamp(seekBar.progress.toLong())
-////                updateHandler.postDelayed(this, 1000)
-////                println("timer.........")
-////            }
-////        }
-////        timerRunnable.run()
-//
-////        updateHandler.postDelayed({
-////            println("timer.........")
-////            songCurrent.text = getHumanReadableTimestamp(seekBar.progress.toLong())
-////        }, 1000)
-//
-//    }
+    private fun handlePlayingSong(song: Song) {
+        var maxMs = song.durationMs.toLong()
+        var currentMs = if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
+
+        val seekBar: SeekBar = findViewById(R.id.seek_bar)
+        val seekBarExp: SeekBar = findViewById(R.id.seek_bar_exp)
+
+        val songCurrent: TextView = findViewById(R.id.song_current)
+        val songMax: TextView = findViewById(R.id.song_max)
+
+        val updateHandler = Handler()
+        playerTimer = object : Runnable {
+            override fun run() {
+                if (!isPlaying) {
+                    handleSongFinish()
+                    return
+                } else {
+                    seekBarExp.progress += 1000
+                    seekBar.progress += 1000
+                    songCurrent.text = getHumanReadableTimestamp(seekBarExp.progress)
+                    Log.v(TAG, "views updated.........")
+                    updateHandler.postDelayed(this, 1000)
+                }
+            }
+        }
+        playerTimer.run()
+    }
+
+    private fun handleSongFinish() {
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
@@ -494,7 +510,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         return object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(sb: SeekBar) {
                 //TODO
-//                seekBar.progress = sb.progress
+                seekBar.progress = sb.progress
             }
 
             override fun onStartTrackingTouch(sb: SeekBar) {

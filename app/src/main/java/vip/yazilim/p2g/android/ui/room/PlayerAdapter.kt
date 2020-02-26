@@ -57,7 +57,8 @@ class PlayerAdapter(
         fun bindView(song: Song?) {
             if (song != null) {
                 maxMs = song.durationMs
-                currentMs = song.currentMs
+                currentMs =
+                    if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
 
                 ///////////////////////
                 // Minimized views bind
