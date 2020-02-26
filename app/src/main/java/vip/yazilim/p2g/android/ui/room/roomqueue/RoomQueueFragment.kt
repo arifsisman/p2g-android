@@ -138,7 +138,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
         // For request focus and open keyboard
         queryEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if name is empty
         queryEditText.addTextChangedListener(object : TextWatcher {
@@ -153,12 +152,26 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         cancelButton.setOnClickListener {
             mAlertDialog.cancel()
             queryEditText.clearFocus()
-            closeKeyboard()
         }
 
         // Click search
         searchButton.setOnClickListener {
+            // Adapter start and update with requested search model
+            val recyclerView =
+                mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
+            recyclerView.layoutManager = LinearLayoutManager(activity)
+            recyclerView.setHasFixedSize(true)
+
+            searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
+            recyclerView.adapter = searchAdapter
+
+            recyclerView.addItemDecoration(object : DividerItemDecoration(
+                recyclerView.context,
+                (recyclerView.layoutManager as LinearLayoutManager).orientation
+            ) {})
+
             val query = queryEditText.text.toString()
+
             request(
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
@@ -174,19 +187,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                         addButton.visibility = View.VISIBLE
 
                         mDialogView.findViewById<EditText>(R.id.dialog_query).visibility = View.GONE
-
-                        // Adapter start and update with requested search model
-                        val recyclerView =
-                            mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
-                        recyclerView.layoutManager = LinearLayoutManager(activity)
-
-                        searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
-                        recyclerView.adapter = searchAdapter
-
-                        recyclerView.addItemDecoration(object : DividerItemDecoration(
-                            recyclerView.context,
-                            (recyclerView.layoutManager as LinearLayoutManager).orientation
-                        ) {})
 
                         searchAdapter.update(obj)
 

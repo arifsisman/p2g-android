@@ -74,6 +74,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         setupViewModel()
         setupSlidingUpPanel()
         setupPlayer()
+        Thread(playerTimer).start()
     }
 
     // Setups
@@ -221,8 +222,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         // PlayerAdapter
         playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this, this)
         playerRecyclerView.adapter = playerAdapter
-
-        Thread(playerTimer).start()
     }
 
     private val playerTimer = Runnable {
@@ -232,10 +231,15 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                     seek_bar_exp.progress += 1000
                     seek_bar.progress += 1000
                     song_current.text = seek_bar_exp.progress.getHumanReadableTimestamp()
-                    Log.d(PLAYER_TAG, "Song is playing! Views updated.")
+                    Log.v(PLAYER_TAG, "Song is playing! Views updated.")
                 }
-            } else {
-                Log.d(PLAYER_TAG, "Not playing any song, views are not updated")
+                if (seek_bar_exp.progress >= seek_bar_exp.max) {
+                    isPlaying = false
+                    Log.v(PLAYER_TAG, "Song is finished!")
+                    runOnUiThread {
+                        playPause_button.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                    }
+                }
             }
             TimeUnit.SECONDS.sleep(1)
         }
