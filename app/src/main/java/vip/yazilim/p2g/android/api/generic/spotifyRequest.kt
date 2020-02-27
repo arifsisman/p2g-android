@@ -2,12 +2,14 @@ package vip.yazilim.p2g.android.api.generic
 
 import android.util.Log
 import retrofit2.Call
-import vip.yazilim.p2g.android.util.helper.SPOTIFY_REQUEST_TAG
 
 /**
  * @author mustafaarifsisman - 29.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
+
+const val SPOTIFY_REQUEST_TAG = "SpotifyRequest"
+
 inline fun <reified T> spotifyRequest(call: Call<T>, callback: Callback<T>) {
     call.enqueue { result ->
         when (result) {

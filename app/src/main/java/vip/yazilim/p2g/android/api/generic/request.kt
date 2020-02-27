@@ -2,12 +2,14 @@ package vip.yazilim.p2g.android.api.generic
 
 import android.util.Log
 import retrofit2.Call
-import vip.yazilim.p2g.android.util.helper.REQUEST_TAG
 
 /**
  * @author mustafaarifsisman - 28.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
+
+const val REQUEST_TAG = "Play2GetherRequest"
+
 inline fun <reified T> request(call: Call<Response<T>>?, callback: Callback<T>?) {
     call?.enqueue { result ->
         when (result) {
