@@ -328,7 +328,12 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                     val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
                     startActivity(loginIntent)
 
-                    //TODO: disconnect from room socket
+                    // stop service and unregister service
+                    val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+                    intent.putExtra("roomId", room?.id)
+                    stopService(intent)
+
+                    unregisterReceiver(broadcastReceiver)
                 }
             }
         }
