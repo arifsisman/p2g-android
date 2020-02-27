@@ -5,6 +5,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -23,46 +24,44 @@ class TokenAuthenticator : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         val refreshToken =
             SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
-        val updatedToken = refreshExpiredToken(refreshToken.toString())
+        if (refreshToken == TokenConstants.UNDEFINED) return null
 
-        return response.request.newBuilder()
-            .header("Authorization", "Bearer $updatedToken")
-            .build()
+        spotifyRequest(
+            SpotifyApiClient.build().refreshExpiredToken(
+                SpotifyConstants.CLIENT_ID,
+                SpotifyConstants.CLIENT_SECRET,
+                SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
+                refreshToken!!
+            ), object : Callback<TokenModel> {
+                override fun onError(msg: String) {
+                }
+
+                override fun onSuccess(obj: TokenModel) {
+                    SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
+                    SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.access_token)
+                    obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
+                    Log.d(LOG_TAG, "Token refreshed. New access token is: $obj.access_token")
+                    Singleton.buildApi()
+                }
+            })
+
+        val updatedToken: String? =
+            SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
+
+        return if (updatedToken == TokenConstants.UNDEFINED) null else
+            response.request.newBuilder()
+                .header(
+                    "Authorization",
+                    "Bearer ${updatedToken.toString()}"
+                )
+                .build()
     }
 
 
     companion object {
-        fun refreshExpiredToken(refreshToken: String) {
-            spotifyRequest(
-                SpotifyApiClient.build().refreshExpiredToken(
-                    SpotifyConstants.CLIENT_ID,
-                    SpotifyConstants.CLIENT_SECRET,
-                    SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
-                    refreshToken
-                ), object : Callback<TokenModel> {
-                    override fun onError(msg: String) {
-                    }
-
-                    override fun onSuccess(obj: TokenModel) {
-                        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
-                        SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
-                        obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
-                        Log.d(LOG_TAG, "Token refreshed")
-                    }
-                })
-        }
-
         fun updateAccessTokenOnPlay2Gether(accessToken: String) = request(
-            Singleton.apiClient().updateAccessToken(accessToken),
-            object : Callback<String> {
-                override fun onError(msg: String) {
-                }
-
-                override fun onSuccess(obj: String) {
-                    SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj)
-                    Singleton.buildApi()
-                }
-            })
+            ApiClient.build().updateAccessToken(accessToken), null
+        )
     }
 }
 

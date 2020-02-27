@@ -114,10 +114,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onSuccess(obj: TokenModel) {
                 SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                 SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
-//                    db.insertData(obj)
-
                 Singleton.initApis()
-
                 loginToPlay2Gether(obj)
             }
         })
