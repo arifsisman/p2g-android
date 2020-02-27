@@ -23,6 +23,7 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -39,7 +40,6 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
 
     companion object {
         private val TAG = this::class.simpleName
-        private const val ACTION_ROOM_INVITE = "RoomInvite"
     }
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {

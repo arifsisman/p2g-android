@@ -13,9 +13,14 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient
+
 
 /**
  * @author mustafaarifsisman - 24.02.2020
@@ -27,9 +32,6 @@ class RoomWebSocketService : Service() {
 
     companion object {
         private val TAG = this::class.simpleName
-        private const val ACTION_STRING_SERVICE = "ToService"
-        private const val ACTION_STRING_ACTIVITY = "ToActivity"
-        private const val ACTION_SONG_LIST = "SongList"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -52,8 +54,14 @@ class RoomWebSocketService : Service() {
     private fun sendBroadcastSongList(songList: MutableList<Song>) {
         Log.v(TAG, "Sending broadcastSongList to activity")
         val intent = Intent()
-        intent.action = ACTION_SONG_LIST
+        intent.action = ACTION_SONG_LIST_RECEIVED
         intent.putParcelableArrayListExtra("songList", ArrayList<Parcelable>(songList))
+        sendBroadcast(intent)
+    }
+
+    private fun sendBroadcastSocketClosed() {
+        val intent = Intent()
+        intent.action = ACTION_ROOM_SOCKET_CLOSED
         sendBroadcast(intent)
     }
 
@@ -97,9 +105,11 @@ class RoomWebSocketService : Service() {
                             Log.i(TAG, it.toString())
                         }
                         LifecycleEvent.Type.CLOSED -> {
+                            sendBroadcastSocketClosed()
                             Log.i(TAG, it.toString())
                         }
                         LifecycleEvent.Type.ERROR -> {
+                            sendBroadcastSocketClosed()
                             Log.i(TAG, it.toString())
                         }
                         else -> Log.i(TAG, it.toString())

@@ -29,6 +29,8 @@ import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.*
@@ -64,7 +66,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
     companion object {
         private const val PLAYER_TAG = "Player"
-        private const val ACTION_SONG_LIST = "SongList"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +74,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         setupViewPager()
         setupViewModelBase()
         setupRoomModel()
-        setupRoomSocketService()
+        startRoomWebSocketService(broadcastReceiver)
         getRoomUserMe()
         setupViewModel()
         setupSlidingUpPanel()
@@ -139,16 +140,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 setTitle(R.string.title_room)
             }
         }
-    }
-
-    private fun setupRoomSocketService() {
-        // start service and register service
-        val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
-        intent.putExtra("roomId", room?.id)
-        startService(intent)
-
-        val intentFilter = IntentFilter(ACTION_SONG_LIST)
-        registerReceiver(broadcastReceiver, intentFilter)
     }
 
     private fun setupViewModel() {
@@ -328,12 +319,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                     val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
                     startActivity(loginIntent)
 
-                    // stop service and unregister service
-                    val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
-                    intent.putExtra("roomId", room?.id)
-                    stopService(intent)
-
-                    unregisterReceiver(broadcastReceiver)
+                    stopRoomWebSocketService(broadcastReceiver)
                 }
             }
         }
@@ -343,6 +329,27 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
             .setPositiveButton("Yes", dialogClickListener)
             .setNegativeButton("No", dialogClickListener)
             .show()
+    }
+
+    private fun stopRoomWebSocketService(broadcastReceiver: BroadcastReceiver) {
+        // stop service and unregister service
+        val stopServiceIntent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+        stopServiceIntent.putExtra("roomId", room?.id)
+        stopService(stopServiceIntent)
+
+        unregisterReceiver(broadcastReceiver)
+    }
+
+    private fun startRoomWebSocketService(broadcastReceiver: BroadcastReceiver) {
+        // start service and register service
+        val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+        intent.putExtra("roomId", room?.id)
+        startService(intent)
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(ACTION_SONG_LIST_RECEIVED)
+        intentFilter.addAction(ACTION_ROOM_SOCKET_CLOSED)
+        registerReceiver(broadcastReceiver, intentFilter)
     }
 
     private fun clearQueue() {
@@ -400,12 +407,18 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
-            songListFromIntent?.let { songList ->
-                roomViewModel.songList.value = songList
+            val action = intent?.action
+            if (action.equals(ACTION_SONG_LIST_RECEIVED)) {
+                val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
+                songListFromIntent?.let { songList ->
+                    roomViewModel.songList.value = songList
 
-                val song = roomViewModel.getCurrentSong(songList)
-                roomViewModel.playerSong.value = song
+                    val song = roomViewModel.getCurrentSong(songList)
+                    roomViewModel.playerSong.value = song
+                }
+            } else if (action.equals(ACTION_SONG_LIST_RECEIVED)) {
+                stopRoomWebSocketService(this)
+                startRoomWebSocketService(this)
             }
         }
     }
