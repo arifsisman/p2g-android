@@ -60,25 +60,32 @@ class PlayerAdapter(
             if (song != null) {
                 maxMs = song.durationMs
 
-                if (song.songStatus == SongStatus.PAUSED.songStatus) {
-                    currentMs =
-                        if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
-                } else if (song.songStatus == SongStatus.PLAYING.songStatus) {
-                    val passed =
-                        Duration.between(song.playingTime, LocalDateTime.now()).toMillis().toInt()
-                    currentMs =
-                        when {
-                            passed > song.durationMs -> {
-                                song.durationMs
+                when (song.songStatus) {
+                    SongStatus.PAUSED.songStatus -> {
+                        currentMs =
+                            if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
+                    }
+                    SongStatus.PLAYING.songStatus -> {
+                        val passed =
+                            Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
+                                .toInt()
+                        currentMs =
+                            when {
+                                passed > song.durationMs -> {
+                                    song.durationMs
+                                }
+                                song.currentMs > passed -> {
+                                    song.currentMs
+                                }
+                                else -> {
+                                    passed
+                                }
                             }
-                            song.currentMs > passed -> {
-                                song.currentMs
-                            }
-                            else -> {
-                                passed
-                            }
-                        }
-                    println("CURRENT MS $currentMs")
+                        println("CURRENT MS $currentMs")
+                    }
+                    else -> {
+                        currentMs = 0
+                    }
                 }
 
                 ///////////////////////

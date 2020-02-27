@@ -60,7 +60,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     @Volatile
     private var isSeeking = false
     @Volatile
-    private var songMs = 0
+    private var songCurrentMs = 0
 
     companion object {
         private const val PLAYER_TAG = "Player"
@@ -233,13 +233,13 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         while (true) {
             if (isPlaying && !isSeeking) {
                 runOnUiThread {
-                    seek_bar_exp.progress = songMs
-                    seek_bar.progress = songMs
-                    song_current.text = songMs.getHumanReadableTimestamp()
+                    seek_bar_exp.progress = songCurrentMs
+                    seek_bar.progress = songCurrentMs
+                    song_current.text = songCurrentMs.getHumanReadableTimestamp()
                     Log.v(PLAYER_TAG, "Song is playing! Views updated.")
                 }
-                songMs += 1000
-                if (songMs >= roomViewModel.playerSong.value?.durationMs!!) {
+                songCurrentMs += 1000
+                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs!!) {
                     isPlaying = false
                     Log.v(PLAYER_TAG, "Song is finished!")
                     runOnUiThread {
@@ -262,20 +262,27 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
         if (song != null) {
             isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
-            val passed = Duration.between(song.playingTime, LocalDateTime.now()).toMillis().toInt()
-            songMs = when {
-                passed > song.durationMs -> {
-                    song.durationMs
+
+            if (song.playingTime != null) {
+                val passed =
+                    Duration.between(song.playingTime, LocalDateTime.now()).toMillis().toInt()
+                songCurrentMs = when {
+                    passed > song.durationMs -> {
+                        song.durationMs
+                    }
+                    song.currentMs > passed -> {
+                        song.currentMs
+                    }
+                    else -> {
+                        passed
+                    }
                 }
-                song.currentMs > passed -> {
-                    song.currentMs
-                }
-                else -> {
-                    passed
-                }
+            } else {
+                songCurrentMs = 0
             }
+
             Log.d(PLAYER_TAG, "Is ${song.songName} playing? = $isPlaying")
-            Log.d(PLAYER_TAG, "CURRENT MS $songMs")
+            Log.d(PLAYER_TAG, "CURRENT MS $songCurrentMs")
         } else {
             isPlaying = false
             Log.d(PLAYER_TAG, "Not playing any song!")
