@@ -351,7 +351,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                             }
 
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShort(viewPager, msg)
+                                UIHelper.showSnackBarShortSafe(viewPager, msg)
                             }
                         })
                 }
