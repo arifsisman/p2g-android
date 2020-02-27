@@ -10,6 +10,8 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
@@ -57,8 +59,27 @@ class PlayerAdapter(
         fun bindView(song: Song?) {
             if (song != null) {
                 maxMs = song.durationMs
-                currentMs =
-                    if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
+
+                if (song.songStatus == SongStatus.PAUSED.songStatus) {
+                    currentMs =
+                        if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
+                } else if (song.songStatus == SongStatus.PLAYING.songStatus) {
+                    val passed =
+                        Duration.between(song.playingTime, LocalDateTime.now()).toMillis().toInt()
+                    currentMs =
+                        when {
+                            passed > song.durationMs -> {
+                                song.durationMs
+                            }
+                            song.currentMs > passed -> {
+                                song.currentMs
+                            }
+                            else -> {
+                                passed
+                            }
+                        }
+                    println("CURRENT MS $currentMs")
+                }
 
                 ///////////////////////
                 // Minimized views bind
@@ -67,8 +88,8 @@ class PlayerAdapter(
                 songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
                 seekBar.setOnTouchListener { _, _ -> true }
-                seekBar.progress = currentMs
                 seekBar.max = maxMs
+                seekBar.progress = currentMs
 
 
                 //////////////////////
@@ -80,8 +101,8 @@ class PlayerAdapter(
                 songCurrent.text = currentMs.getHumanReadableTimestamp()
                 songMax.text = maxMs.getHumanReadableTimestamp()
 
-                seekBarExp.progress = currentMs
                 seekBarExp.max = maxMs
+                seekBarExp.progress = currentMs
 
 
                 ///////////////////////

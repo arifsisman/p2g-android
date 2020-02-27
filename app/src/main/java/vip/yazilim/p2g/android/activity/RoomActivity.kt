@@ -24,6 +24,8 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.row_player.*
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -57,6 +59,8 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private var isPlaying = false
     @Volatile
     private var isSeeking = false
+    @Volatile
+    private var songMs = 0
 
     companion object {
         private const val PLAYER_TAG = "Player"
@@ -75,6 +79,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         setupSlidingUpPanel()
         setupPlayer()
         Thread(playerTimer).start()
+        room?.id?.let { roomViewModel.loadSongs(it) }
     }
 
     // Setups
@@ -228,12 +233,13 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         while (true) {
             if (isPlaying && !isSeeking) {
                 runOnUiThread {
-                    seek_bar_exp.progress += 1000
-                    seek_bar.progress += 1000
-                    song_current.text = seek_bar_exp.progress.getHumanReadableTimestamp()
+                    seek_bar_exp.progress = songMs
+                    seek_bar.progress = songMs
+                    song_current.text = songMs.getHumanReadableTimestamp()
                     Log.v(PLAYER_TAG, "Song is playing! Views updated.")
                 }
-                if (seek_bar_exp.progress >= seek_bar_exp.max) {
+                songMs += 1000
+                if (songMs >= roomViewModel.playerSong.value?.durationMs!!) {
                     isPlaying = false
                     Log.v(PLAYER_TAG, "Song is finished!")
                     runOnUiThread {
@@ -256,7 +262,20 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
         if (song != null) {
             isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
+            val passed = Duration.between(song.playingTime, LocalDateTime.now()).toMillis().toInt()
+            songMs = when {
+                passed > song.durationMs -> {
+                    song.durationMs
+                }
+                song.currentMs > passed -> {
+                    song.currentMs
+                }
+                else -> {
+                    passed
+                }
+            }
             Log.d(PLAYER_TAG, "Is ${song.songName} playing? = $isPlaying")
+            Log.d(PLAYER_TAG, "CURRENT MS $songMs")
         } else {
             isPlaying = false
             Log.d(PLAYER_TAG, "Not playing any song!")

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
@@ -78,17 +79,32 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         swipeDeleteHelper.attachToRecyclerView(recyclerView)
 
         (activity as RoomActivity).roomViewModel.songList.observe(this, renderRoomQueue)
+
+        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        swipeContainer.setOnRefreshListener {
+            refreshQueueEvent()
+        }
+
     }
+
+    private fun refreshQueueEvent() = request(
+        (activity as RoomActivity).room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
+        object : Callback<MutableList<Song>> {
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
+                swipeContainer.isRefreshing = false
+            }
+
+            override fun onSuccess(obj: MutableList<Song>) {
+                adapter.update(obj)
+                swipeContainer.isRefreshing = false
+            }
+        })
 
     override fun setupViewModel() {
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
         roomViewModel.isEmptyList.observe(this, emptyListObserver)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (activity as RoomActivity).room?.id?.let { roomViewModel.loadSongs(it) }
     }
 
     // Observer
