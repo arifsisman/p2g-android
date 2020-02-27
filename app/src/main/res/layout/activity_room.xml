@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/slidingUpContainer"
+    android:id="@+id/slidingUpPanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
@@ -17,7 +17,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@color/primaryLightColor"
@@ -25,10 +25,10 @@
             app:tabTextColor="@color/secondaryTextColor" />
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/tab_layout"
+            android:layout_below="@+id/tabLayout"
             android:paddingTop="40dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
@@ -42,7 +42,7 @@
             android:tint="@color/primaryColor"
             android:visibility="invisible"
             app:icon="@drawable/spotify_icon"
-            app:layout_anchor="@id/view_pager"
+            app:layout_anchor="@id/viewPager"
             app:layout_anchorGravity="bottom|center" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

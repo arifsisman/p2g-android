@@ -101,7 +101,7 @@
             app:srcCompat="@drawable/sample_cover_image" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/player_controller"
+            android:id="@+id/playerController"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

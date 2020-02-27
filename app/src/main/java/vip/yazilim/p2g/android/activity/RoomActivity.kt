@@ -9,17 +9,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import com.google.android.material.tabs.TabLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
@@ -56,7 +52,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     lateinit var roomViewModel: RoomViewModel
 
     lateinit var playerAdapter: PlayerAdapter
-    private lateinit var viewPager: ViewPager
     lateinit var slidingUpPanel: SlidingUpPanelLayout
 
     @Volatile
@@ -88,8 +83,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     // Setups
     private fun setupViewPager() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
-
-        viewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
 
         viewPager.addOnPageChangeListener(object : OnPageChangeListener {
@@ -110,9 +103,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
             override fun onPageScrollStateChanged(state: Int) {}
         })
 
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         tabLayout.setupWithViewPager(viewPager)
-
         tabLayout.bringToFront()
     }
 
@@ -149,8 +140,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     }
 
     private fun setupSlidingUpPanel() {
-        slidingUpPanel = findViewById(R.id.slidingUpContainer)
-
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
             override fun onPanelSlide(view: View, v: Float) {}
@@ -180,6 +169,14 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 }
             }
         })
+
+        //TODO
+//        slidingUpPanel.setFadeOnClickListener {
+//            View.OnClickListener {
+//                slidingUpPanel.panelState =
+//                    COLLAPSED
+//            }
+//        }
 
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
@@ -213,7 +210,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     }
 
     private fun setupPlayer() {
-        val playerRecyclerView: RecyclerView = findViewById(R.id.playerRecyclerView)
         playerRecyclerView.setHasFixedSize(true)
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -444,15 +440,14 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
     // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
-        val controllerButtons: View = findViewById(R.id.player_controller)
         if (roomUser != null) {
             return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
                 fab.show()
-                controllerButtons.visibility = View.VISIBLE
+                playerController.visibility = View.VISIBLE
                 true
             } else {
                 fab.hide()
-                controllerButtons.visibility = View.GONE
+                playerController.visibility = View.GONE
                 false
             }
         }
@@ -497,13 +492,17 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     }
 
     private fun showMinimizedPlayer() {
-        val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
-        playerMini.visibility = View.VISIBLE
+        player_mini.visibility = View.VISIBLE
+        slidingUpPanel.panelState = COLLAPSED
     }
 
     private fun showMaximizedPlayer() {
-        val playerMini: ConstraintLayout = findViewById(R.id.player_mini)
-        playerMini.visibility = View.GONE
+        player_mini.visibility = View.GONE
+        slidingUpPanel.panelState = EXPANDED
+    }
+
+    override fun onPlayerMiniClicked() {
+        showMaximizedPlayer()
     }
 
     override fun onPlayPauseClicked() =

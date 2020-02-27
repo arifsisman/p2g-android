@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
@@ -37,6 +38,7 @@ class PlayerAdapter(
         private var maxMs: Int = 0
 
         // Minimized views
+        private val playerMini: ConstraintLayout = itemView.findViewById(R.id.player_mini)
         private val songName: TextView = itemView.findViewById(R.id.song_name)
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
@@ -167,6 +169,8 @@ class PlayerAdapter(
             repeatButton.setOnClickListener { clickListener.onRepeatClicked() }
 
             seekBarExp.setOnSeekBarChangeListener(seekBarChangeListener.onSeekBarChanged())
+
+            playerMini.setOnClickListener { itemClickListener.onPlayerMiniClicked() }
         }
     }
 
@@ -190,6 +194,7 @@ class PlayerAdapter(
     }
 
     interface OnItemClickListener {
+        fun onPlayerMiniClicked()
         fun onPlayPauseClicked()
         fun onNextClicked()
         fun onPreviousClicked()
