@@ -14,9 +14,11 @@ import com.google.gson.reflect.TypeToken
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
+import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -56,6 +58,14 @@ class RoomWebSocketService : Service() {
         sendBroadcast(intent)
     }
 
+    private fun sendBroadcastRoomStatus(status: String) {
+        Log.v(TAG, "Sending broadcastRoomStatus to activity")
+        val intent = Intent()
+        intent.action = ACTION_ROOM_STATUS
+        intent.putExtra("roomStatus", status)
+        sendBroadcast(intent)
+    }
+
     private fun sendBroadcastSocketClosed() {
         val intent = Intent()
         intent.action = ACTION_ROOM_SOCKET_CLOSED
@@ -84,7 +94,8 @@ class RoomWebSocketService : Service() {
         roomId = intent?.getLongExtra("roomId", -1L)
         roomId?.run {
             connectWebSocket(this)
-            subscribe("/p2g/room/${this}/songs")
+            subscribeRoomSongs("/p2g/room/${this}/songs")
+            subscribeRoomStatus("/p2g/room/${this}/status")
         }
 
         return START_STICKY
@@ -117,9 +128,9 @@ class RoomWebSocketService : Service() {
         }
     }
 
-    private fun subscribe(destinationPath: String) {
+    private fun subscribeRoomSongs(songsPath: String) {
         roomWSClient.run {
-            topic(destinationPath)
+            topic(songsPath)
                 .subscribe({
                     val json = it.payload
                     Log.v(TAG, json)
@@ -130,6 +141,21 @@ class RoomWebSocketService : Service() {
                     val songList = gson.fromJson<MutableList<Song>>(json)
 
                     sendBroadcastSongList(songList)
+                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
+        }
+    }
+
+    private fun subscribeRoomStatus(statusPath: String) {
+        roomWSClient.run {
+            topic(statusPath)
+                .subscribe({
+                    val json = it.payload
+                    Log.v(TAG, json)
+
+                    val gson = GsonBuilder().create()
+                    val roomStatus = gson.fromJson<RoomStatus>(json)
+
+                    sendBroadcastRoomStatus(roomStatus.status)
                 }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }
     }

@@ -9,5 +9,6 @@ object WebSocketActions {
     const val ACTION_STRING_ACTIVITY = "ToActivity"
     const val ACTION_SONG_LIST_RECEIVED = "SongListReceived"
     const val ACTION_ROOM_SOCKET_CLOSED = "RoomSocketClosed"
+    const val ACTION_ROOM_STATUS = "RoomStatus"
     const val ACTION_ROOM_INVITE = "RoomInviteReceived"
 }

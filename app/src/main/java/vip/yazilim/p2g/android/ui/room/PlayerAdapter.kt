@@ -81,7 +81,6 @@ class PlayerAdapter(
                                     passed
                                 }
                             }
-                        println("CURRENT MS $currentMs")
                     }
                     else -> {
                         currentMs = 0

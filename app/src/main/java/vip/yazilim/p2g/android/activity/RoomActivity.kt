@@ -30,8 +30,10 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.enums.Role
+import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.service.RoomWebSocketService
@@ -349,6 +351,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
         val intentFilter = IntentFilter()
         intentFilter.addAction(ACTION_SONG_LIST_RECEIVED)
         intentFilter.addAction(ACTION_ROOM_SOCKET_CLOSED)
+        intentFilter.addAction(ACTION_ROOM_STATUS)
         registerReceiver(broadcastReceiver, intentFilter)
     }
 
@@ -408,17 +411,32 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
-            if (action.equals(ACTION_SONG_LIST_RECEIVED)) {
-                val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
-                songListFromIntent?.let { songList ->
-                    roomViewModel.songList.value = songList
+            when {
+                action.equals(ACTION_SONG_LIST_RECEIVED) -> {
+                    val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
+                    songListFromIntent?.let { songList ->
+                        roomViewModel.songList.value = songList
 
-                    val song = roomViewModel.getCurrentSong(songList)
-                    roomViewModel.playerSong.value = song
+                        val song = roomViewModel.getCurrentSong(songList)
+                        roomViewModel.playerSong.value = song
+                    }
                 }
-            } else if (action.equals(ACTION_SONG_LIST_RECEIVED)) {
-                stopRoomWebSocketService(this)
-                startRoomWebSocketService(this)
+                action.equals(ACTION_SONG_LIST_RECEIVED) -> {
+                    stopRoomWebSocketService(this)
+                    startRoomWebSocketService(this)
+                }
+                action.equals(ACTION_ROOM_STATUS) -> {
+                    val status: String? = intent?.getStringExtra("roomStatus")
+                    if (status.equals(RoomStatus.CLOSED.status)) {
+                        UIHelper.showToastLong(context, "Room ${room?.name} by ${room?.ownerId}")
+                        request(Singleton.apiClient().leaveRoom(), null)
+
+                        val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
+                        startActivity(leaveIntent)
+
+                        stopRoomWebSocketService(this)
+                    }
+                }
             }
         }
     }

@@ -91,7 +91,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         (activity as RoomActivity).room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortSafe(root, "Rooms cannot refreshed")
                 swipeContainer.isRefreshing = false
             }
 
