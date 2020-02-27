@@ -15,7 +15,6 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
-import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
@@ -24,6 +23,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
                 getTokensFromSpotify(response.code)
             } else {
                 val msg = "Can not get authorization code from Spotify"
-                Log.d(LOG_TAG, msg)
+                Log.d(TAG, msg)
                 UIHelper.showToastShort(this, msg)
             }
         }

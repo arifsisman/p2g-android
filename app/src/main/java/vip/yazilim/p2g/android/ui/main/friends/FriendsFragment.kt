@@ -26,9 +26,9 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants
-import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -117,7 +117,7 @@ class FriendsFragment : FragmentBase(
 
     // Observer
     private val renderData = Observer<MutableList<Any>> {
-        Log.v(LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.adapterDataListFull.addAll(it)
@@ -300,7 +300,7 @@ class FriendsFragment : FragmentBase(
             }
 
             override fun onSuccess(obj: RoomUser) {
-                Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
                 intent.putExtra("roomUser", obj)
@@ -348,7 +348,7 @@ class FriendsFragment : FragmentBase(
                     }
 
                     override fun onSuccess(obj: RoomUser) {
-                        Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
                         mAlertDialog.dismiss()
                         closeKeyboard()
 

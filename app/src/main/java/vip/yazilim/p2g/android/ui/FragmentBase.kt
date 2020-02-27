@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_error.*
-import vip.yazilim.p2g.android.constant.GeneralConstants
+import vip.yazilim.p2g.android.util.helper.TAG
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -61,20 +61,20 @@ abstract class FragmentBase(private var viewModelBase: ViewModelBase, var layout
 
     // Default Observers
     val isViewLoadingObserver = Observer<Boolean> {
-        Log.v(GeneralConstants.LOG_TAG, "isViewLoading $it")
+        Log.v(TAG, "isViewLoading $it")
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar.visibility = visibility
     }
 
     val onMessageErrorObserver = Observer<Any> {
-        Log.v(GeneralConstants.LOG_TAG, "onMessageError $it")
+        Log.v(TAG, "onMessageError $it")
         layoutError.visibility = View.VISIBLE
         layoutEmpty.visibility = View.GONE
         textViewError.text = it?.toString()
     }
 
     val emptyListObserver = Observer<Boolean> {
-        Log.v(GeneralConstants.LOG_TAG, "emptyListObserver $it")
+        Log.v(TAG, "emptyListObserver $it")
         layoutEmpty.visibility = View.VISIBLE
         layoutError.visibility = View.GONE
     }

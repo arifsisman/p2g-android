@@ -16,9 +16,13 @@ import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
 import vip.yazilim.p2g.android.model.p2g.RoomInvite
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 
 
@@ -29,13 +33,6 @@ import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 class UserWebSocketService : Service() {
     private var userId: String? = null
     private lateinit var userWSClient: StompClient
-
-    companion object {
-        private val TAG = this::class.simpleName
-        private const val ACTION_STRING_SERVICE = "ToService"
-        private const val ACTION_STRING_ACTIVITY = "ToActivity"
-        private const val ACTION_ROOM_INVITE = "RoomInvite"
-    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

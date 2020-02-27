@@ -25,12 +25,12 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -75,7 +75,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     // Observer
     private val renderRoomModels = Observer<MutableList<RoomModelSimplified>> {
-        Log.v(LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.roomModelsFull = it
@@ -144,7 +144,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             }
 
             override fun onSuccess(obj: RoomUser) {
-                Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
                 intent.putExtra("roomModelSimplified", roomModelSimplified)
@@ -195,7 +195,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                     }
 
                     override fun onSuccess(obj: RoomUser) {
-                        Log.d(LOG_TAG, "Joined room with roomUser ID: " + obj.id)
+                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
                         mAlertDialog.dismiss()
                         closeKeyboard()
 
@@ -245,12 +245,12 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 ),
                 object : Callback<Room> {
                     override fun onError(msg: String) {
-                        Log.d(LOG_TAG, "Room can not created")
+                        Log.d(TAG, "Room can not created")
                         UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: Room) {
-                        Log.d(LOG_TAG, "Room created with ID: " + obj.id)
+                        Log.d(TAG, "Room created with ID: " + obj.id)
                         closeKeyboard()
                         mAlertDialog.dismiss()
 

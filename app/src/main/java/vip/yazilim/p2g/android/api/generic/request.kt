@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.api.generic
 
 import android.util.Log
 import retrofit2.Call
-import vip.yazilim.p2g.android.constant.GeneralConstants.REQUEST_TAG
+import vip.yazilim.p2g.android.util.helper.REQUEST_TAG
 
 /**
  * @author mustafaarifsisman - 28.01.2020

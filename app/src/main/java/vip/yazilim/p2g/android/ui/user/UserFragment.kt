@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.UserActivity
-import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.TAG
 
 
 /**
@@ -61,14 +61,14 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
 
     // Observers
     private val renderFriendsCount = Observer<Int> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 
     private val renderRoomModel = Observer<RoomModelSimplified> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)

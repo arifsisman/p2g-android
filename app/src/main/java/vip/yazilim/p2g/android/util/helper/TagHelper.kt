@@ -5,4 +5,11 @@ package vip.yazilim.p2g.android.util.helper
  * @contact mustafaarifsisman@gmail.com
  */
 
-inline fun <reified T> T.TAG(): String = T::class.java.simpleName
+val Any.TAG: String
+    get() {
+        val tag = javaClass.simpleName
+        return if (tag.length <= 23) tag else tag.substring(0, 23)
+    }
+
+const val REQUEST_TAG = "Play2GetherRequest"
+const val SPOTIFY_REQUEST_TAG = "SpotifyRequest"

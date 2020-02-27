@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.TAG
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -54,14 +54,14 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
 
     // Observers
     private val renderUser = Observer<UserModel> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 
     private val renderFriendsCount = Observer<Int> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)

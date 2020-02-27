@@ -10,11 +10,11 @@ import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
-import vip.yazilim.p2g.android.constant.GeneralConstants.LOG_TAG
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.util.helper.TAG
 
 /**
  * @author mustafaarifsisman - 22.01.2020
@@ -40,7 +40,7 @@ class TokenAuthenticator : Authenticator {
                     SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                     SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.access_token)
                     obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
-                    Log.d(LOG_TAG, "Token refreshed. New access token is: $obj.access_token")
+                    Log.d(TAG, "Token refreshed. New access token is: $obj.access_token")
                     Singleton.buildApi()
                 }
             })

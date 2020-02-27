@@ -19,6 +19,7 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 
 
@@ -29,10 +30,6 @@ import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 class RoomWebSocketService : Service() {
     private var roomId: Long? = null
     private lateinit var roomWSClient: StompClient
-
-    companion object {
-        private val TAG = this::class.simpleName
-    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

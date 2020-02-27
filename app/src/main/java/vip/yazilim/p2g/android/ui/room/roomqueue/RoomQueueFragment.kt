@@ -21,12 +21,12 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.SwipeToDeleteCallback
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -109,7 +109,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> {
-        Log.v(GeneralConstants.LOG_TAG, "data updated $it")
+        Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
 

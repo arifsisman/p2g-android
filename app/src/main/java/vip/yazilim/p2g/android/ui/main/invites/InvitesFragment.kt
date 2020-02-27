@@ -28,6 +28,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -37,10 +38,6 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  */
 class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invites),
     InvitesAdapter.OnItemClickListener {
-
-    companion object {
-        private val TAG = this::class.simpleName
-    }
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
