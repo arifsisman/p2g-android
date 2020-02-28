@@ -138,6 +138,10 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     }
 
     private fun setupSlidingUpPanel() {
+        slidingUpPanel.setFadeOnClickListener {
+            slidingUpPanel.panelState = COLLAPSED
+        }
+
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
             override fun onPanelSlide(view: View, v: Float) {}
@@ -167,14 +171,6 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 }
             }
         })
-
-        //TODO
-//        slidingUpPanel.setFadeOnClickListener {
-//            View.OnClickListener {
-//                slidingUpPanel.panelState =
-//                    COLLAPSED
-//            }
-//        }
 
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
