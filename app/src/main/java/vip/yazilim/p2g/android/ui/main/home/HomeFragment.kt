@@ -63,7 +63,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         recyclerView.adapter = adapter
 
         button_create_room.setOnClickListener { createRoomButtonEvent() }
-        swipeContainer.setOnRefreshListener { refreshRoomsEvent() }
+        swipeRefreshContainer.setOnRefreshListener { refreshRoomsEvent() }
     }
 
     // Observer
@@ -269,13 +269,13 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         object : Callback<MutableList<RoomModelSimplified>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
                 adapter.update(obj)
                 adapter.roomModelsFull = obj
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
         })
 

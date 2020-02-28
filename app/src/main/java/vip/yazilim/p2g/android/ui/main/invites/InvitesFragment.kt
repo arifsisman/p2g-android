@@ -77,7 +77,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
-        swipeContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
+        swipeRefreshContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
 
 //        // Swipe left for delete
 //        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
@@ -213,13 +213,13 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
                 UIHelper.showSnackBarShort(root, "Rooms Invites cannot refreshed")
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<RoomInviteModel>) {
                 adapter.update(obj)
                 adapter.roomInviteModelsFull.addAll(obj)
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
         })
 }

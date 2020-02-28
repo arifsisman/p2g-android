@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.daimajia.swipe.SwipeLayout
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
@@ -20,7 +22,7 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
 class RoomQueueAdapter(
     var songs: MutableList<Song>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<RoomQueueAdapter.MViewHolder>() {
+) : RecyclerSwipeAdapter<RoomQueueAdapter.MViewHolder>() {
 
     private lateinit var view: View
 
@@ -73,6 +75,10 @@ class RoomQueueAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
         view = LayoutInflater.from(parent.context).inflate(R.layout.row_song, parent, false)
         return MViewHolder(view)
+    }
+
+    override fun getSwipeLayoutResourceId(position: Int): Int {
+        return R.id.swipeLayout
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {

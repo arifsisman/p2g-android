@@ -6,19 +6,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.daimajia.swipe.SwipeLayout
+import com.daimajia.swipe.SwipeLayout.SwipeListener
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import kotlinx.android.synthetic.main.dialog_spotify_search.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
+import kotlinx.android.synthetic.main.swipe_room_queue.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -26,7 +24,6 @@ import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
-import vip.yazilim.p2g.android.ui.SwipeToDeleteCallback
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -44,11 +41,12 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     private lateinit var adapter: RoomQueueAdapter
 
+//    private lateinit var swipeLayout: SwipeLayout
+
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var mDialogView: View
 
     override fun setupUI() {
-        val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
@@ -71,22 +69,47 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         fab.setOnClickListener { showSearchDialog() }
 
         // Swipe left for delete
-        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val song = adapter.songs[viewHolder.adapterPosition]
-                onDelete(song)
-            }
-        }
-        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
-        swipeDeleteHelper.attachToRecyclerView(recyclerView)
+//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                val song = adapter.songs[viewHolder.adapterPosition]
+//                onDelete(song)
+//            }
+//        }
+//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
+//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
 
         (activity as RoomActivity).roomViewModel.songList.observe(this, renderRoomQueue)
 
-        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
-        swipeContainer.setOnRefreshListener {
+        swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
         }
 
+//        swipeLayout = (activity as RoomActivity).findViewById(R.id.swipeLayout)
+//        swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
+//        swipeLayout.addDrag(SwipeLayout.DragEdge.Right, activity?.findViewById(R.id.bottom_wrapper))
+//        swipeLayout.addSwipeListener(object : SwipeListener {
+//            override fun onClose(layout: SwipeLayout) { //when the SurfaceView totally cover the BottomView.
+//            }
+//
+//            override fun onUpdate(
+//                layout: SwipeLayout,
+//                leftOffset: Int,
+//                topOffset: Int
+//            ) { //you are swiping.
+//            }
+//
+//            override fun onStartOpen(layout: SwipeLayout) {}
+//            override fun onOpen(layout: SwipeLayout) { //when the BottomView totally show.
+//            }
+//
+//            override fun onStartClose(layout: SwipeLayout) {}
+//            override fun onHandRelease(
+//                layout: SwipeLayout,
+//                xvel: Float,
+//                yvel: Float
+//            ) { //when user's hand released.
+//            }
+//        })
     }
 
     private fun refreshQueueEvent() = request(
@@ -94,12 +117,12 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortSafe(root, "Rooms cannot refreshed")
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<Song>) {
                 adapter.update(obj)
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
         })
 
@@ -139,9 +162,9 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             AlertDialog.Builder(context, R.style.myFullscreenAlertDialogStyle).setView(mDialogView)
         val mAlertDialog = mBuilder.show()
 
-        val queryEditText = mDialogView.dialog_query
+        val queryEditText = mDialogView.dialogQuery
         val searchButton = mDialogView.dialog_search_button
-        val addButton = mDialogView.dialog_add_button
+        val addButton = mDialogView.addButton
         val cancelButton = mDialogView.dialog_cancel_button
 
         // For request focus and open keyboard
@@ -165,17 +188,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         // Click search
         searchButton.setOnClickListener {
             // Adapter start and update with requested search model
-            val recyclerView =
-                mDialogView.findViewById<View>(R.id.searchRecyclerView) as RecyclerView
-            recyclerView.layoutManager = LinearLayoutManager(activity)
-            recyclerView.setHasFixedSize(true)
+            searchRecyclerView.layoutManager = LinearLayoutManager(activity)
+            searchRecyclerView.setHasFixedSize(true)
 
             searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
-            recyclerView.adapter = searchAdapter
+            searchRecyclerView.adapter = searchAdapter
 
-            recyclerView.addItemDecoration(object : DividerItemDecoration(
-                recyclerView.context,
-                (recyclerView.layoutManager as LinearLayoutManager).orientation
+            searchRecyclerView.addItemDecoration(object : DividerItemDecoration(
+                searchRecyclerView.context,
+                (searchRecyclerView.layoutManager as LinearLayoutManager).orientation
             ) {})
 
             val query = queryEditText.text.toString()
@@ -194,12 +215,11 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                         searchButton.visibility = View.GONE
                         addButton.visibility = View.VISIBLE
 
-                        mDialogView.findViewById<EditText>(R.id.dialog_query).visibility = View.GONE
+                        dialogQuery.visibility = View.GONE
 
                         searchAdapter.update(obj)
 
                         // Search text query
-                        val searchText: TextView = mDialogView.findViewById(R.id.search_text)
                         val searchTextPlaceholder = "Search with query '${query}'"
                         searchText.text = searchTextPlaceholder
                         searchText.visibility = View.VISIBLE
@@ -231,8 +251,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         if (::searchAdapter.isInitialized && ::mDialogView.isInitialized) {
             val isAnyItemsSelected = searchAdapter.select(searchModel)
             if (isAnyItemsSelected != null) {
-                mDialogView.findViewById<Button>(R.id.dialog_add_button).isEnabled =
-                    isAnyItemsSelected
+                addButton.isEnabled = isAnyItemsSelected
             } else {
                 UIHelper.showSnackBarShortSafe(
                     mDialogView,
@@ -243,12 +262,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onSongClicked(view: View, song: Song) {
-        val popup = PopupMenu(activity, view)
-        popup.menuInflater?.inflate(R.menu.song_popup_menu, popup.menu)
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            popup.setForceShowIcon(true)
-        }
-        popup.show()
+//        val popup = PopupMenu(activity, view)
+//        popup.menuInflater?.inflate(R.menu.song_popup_menu, popup.menu)
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+//            popup.setForceShowIcon(true)
+//        }
+//        popup.show()
+
+
+        swipeLayout.open()
     }
 
 

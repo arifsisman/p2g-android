@@ -67,7 +67,7 @@ class FriendsFragment : FragmentBase(
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
-        swipeContainer.setOnRefreshListener {
+        swipeRefreshContainer.setOnRefreshListener {
             adapter.clearDataList()
             adapter.clearDataListFull()
             loadFriendRequestModel()
@@ -261,7 +261,7 @@ class FriendsFragment : FragmentBase(
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
 
             @Suppress("UNCHECKED_CAST")
@@ -277,14 +277,14 @@ class FriendsFragment : FragmentBase(
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShort(root, msg)
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendModel>) {
                 adapter.addAll(obj as MutableList<Any>)
                 adapter.adapterDataListFull.addAll(obj)
-                swipeContainer.isRefreshing = false
+                swipeRefreshContainer.isRefreshing = false
             }
         })
 
