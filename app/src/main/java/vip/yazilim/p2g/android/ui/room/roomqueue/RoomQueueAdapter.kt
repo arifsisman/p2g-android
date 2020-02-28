@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -59,6 +60,32 @@ class RoomQueueAdapter(
                     songVote.visibility = View.INVISIBLE
                 }
             }
+
+            (itemView as SwipeLayout).showMode = SwipeLayout.ShowMode.LayDown
+            itemView.addDrag(SwipeLayout.DragEdge.Left, itemView.findViewById(R.id.bottom_wrapper))
+//            swipeLayout.addSwipeListener(object : SwipeLayout.SwipeListener {
+//                override fun onClose(layout: SwipeLayout) { //when the SurfaceView totally cover the BottomView.
+//                }
+//
+//                override fun onUpdate(
+//                    layout: SwipeLayout,
+//                    leftOffset: Int,
+//                    topOffset: Int
+//                ) { //you are swiping.
+//                }
+//
+//                override fun onStartOpen(layout: SwipeLayout) {}
+//                override fun onOpen(layout: SwipeLayout) { //when the BottomView totally show.
+//                }
+//
+//                override fun onStartClose(layout: SwipeLayout) {}
+//                override fun onHandRelease(
+//                    layout: SwipeLayout,
+//                    xvel: Float,
+//                    yvel: Float
+//                ) { //when user's hand released.
+//                }
+//            })
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
@@ -78,7 +105,7 @@ class RoomQueueAdapter(
     }
 
     override fun getSwipeLayoutResourceId(position: Int): Int {
-        return R.id.swipeLayout
+        return R.id.row_song
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {

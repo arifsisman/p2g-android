@@ -16,7 +16,6 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import kotlinx.android.synthetic.main.dialog_spotify_search.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
-import kotlinx.android.synthetic.main.swipe_room_queue.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -84,9 +83,9 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             refreshQueueEvent()
         }
 
-//        swipeLayout = (activity as RoomActivity).findViewById(R.id.swipeLayout)
+//        swipeLayout = (activity as RoomActivity).findViewById(R.id.row_song)
 //        swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-//        swipeLayout.addDrag(SwipeLayout.DragEdge.Right, activity?.findViewById(R.id.bottom_wrapper))
+//        swipeLayout.addDrag(SwipeLayout.DragEdge.Left, activity?.findViewById(R.id.bottom_wrapper))
 //        swipeLayout.addSwipeListener(object : SwipeListener {
 //            override fun onClose(layout: SwipeLayout) { //when the SurfaceView totally cover the BottomView.
 //            }
@@ -270,7 +269,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 //        popup.show()
 
 
-        swipeLayout.open()
+//        swipeLayout.open()
     }
 
 
