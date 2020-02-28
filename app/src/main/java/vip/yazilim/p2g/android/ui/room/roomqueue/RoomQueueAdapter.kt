@@ -61,17 +61,17 @@ class RoomQueueAdapter(
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
-                clickListener.onSongClicked(song)
+                clickListener.onSongClicked(itemView, song)
             }
         }
     }
 
     interface OnItemClickListener {
-        fun onSongClicked(song: Song)
+        fun onSongClicked(view: View, song: Song)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_queue, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.row_song, parent, false)
         return MViewHolder(view)
     }
 

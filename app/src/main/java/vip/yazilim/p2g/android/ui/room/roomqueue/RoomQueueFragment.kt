@@ -1,12 +1,14 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.app.AlertDialog
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -240,7 +242,17 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         }
     }
 
-    override fun onSongClicked(song: Song) =
+    override fun onSongClicked(view: View, song: Song) {
+        val popup = PopupMenu(activity, view)
+        popup.menuInflater?.inflate(R.menu.song_popup_menu, popup.menu)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            popup.setForceShowIcon(true)
+        }
+        popup.show()
+    }
+
+
+    private fun playSong(song: Song) =
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }

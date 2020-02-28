@@ -88,5 +88,11 @@
     <string name="placeholder_room_name">Room Name</string>
     <string name="placeholder_room_name_expanded">Room:</string>
     <string name="placeholder_song_default_time">00:00</string>
+    <string name="description_play_song_button">Play song button</string>
+    <string name="description_delete_song_button">Delete song button</string>
+    <string name="placeholder_play_song">Play Song</string>
+    <string name="placeholder_upvote_song">Upvote Song</string>
+    <string name="placeholder_downvote_song">Downvote Song</string>
+    <string name="placeholder_delete_song">Delete Song</string>
 
 </resources>
