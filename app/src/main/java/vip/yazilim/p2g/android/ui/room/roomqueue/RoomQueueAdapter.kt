@@ -54,9 +54,7 @@ class RoomQueueAdapter(
                     songVote.setTextColor(Color.parseColor("#B91D1D"))
                 }
                 else -> {
-                    val songVotePlaceholder = "0"
-                    songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor("#808080"))
+                    songVote.visibility = View.INVISIBLE
                 }
             }
         }
