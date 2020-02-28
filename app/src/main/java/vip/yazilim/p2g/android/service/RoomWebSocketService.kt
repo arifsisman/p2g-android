@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
@@ -68,7 +68,7 @@ class RoomWebSocketService : Service() {
 
     private fun sendBroadcastSocketClosed() {
         val intent = Intent()
-        intent.action = ACTION_ROOM_SOCKET_CLOSED
+        intent.action = ACTION_ROOM_SOCKET_ERROR
         sendBroadcast(intent)
     }
 
@@ -113,7 +113,6 @@ class RoomWebSocketService : Service() {
                             Log.i(TAG, it.toString())
                         }
                         LifecycleEvent.Type.CLOSED -> {
-                            sendBroadcastSocketClosed()
                             Log.i(TAG, it.toString())
                         }
                         LifecycleEvent.Type.ERROR -> {

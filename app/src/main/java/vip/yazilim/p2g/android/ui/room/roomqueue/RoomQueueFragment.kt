@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
@@ -113,16 +112,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
-
-        val activity = (activity as RoomActivity)
-
-        if (it.isEmpty()) {
-            activity.slidingUpPanel.isEnabled = false
-            activity.slidingUpPanel.isTouchEnabled = false
-        } else {
-            activity.slidingUpPanel.isEnabled = true
-            activity.slidingUpPanel.isTouchEnabled = true
-        }
 
         adapter.update(it)
     }

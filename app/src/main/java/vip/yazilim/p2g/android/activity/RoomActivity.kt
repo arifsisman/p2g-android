@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
@@ -25,7 +26,7 @@ import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.enums.Role
@@ -51,6 +52,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
     lateinit var roomViewModel: RoomViewModel
     private lateinit var playerAdapter: PlayerAdapter
+    private lateinit var slidingUpPanel: SlidingUpPanelLayout
 
     @Volatile
     private var isPlaying = false
@@ -138,72 +140,73 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     }
 
     private fun setupSlidingUpPanel() {
+        slidingUpPanel = findViewById(R.id.slidingUpPanel)
+        slidingUpPanel.addPanelSlideListener(object :
+            SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelSlide(view: View, v: Float) {}
+
+            override fun onPanelStateChanged(
+                panel: View?,
+                previousState: SlidingUpPanelLayout.PanelState?,
+                newState: SlidingUpPanelLayout.PanelState?
+            ) {
+                when (newState) {
+                    DRAGGING -> {
+                        if (previousState == COLLAPSED) {
+                            fab.hide()
+                            showMaximizedPlayer()
+                        }
+                    }
+                    COLLAPSED -> {
+                        showMinimizedPlayer()
+                    }
+                    EXPANDED -> {
+                        fab.hide()
+                        showMaximizedPlayer()
+                    }
+                    else -> {
+                    }
+                }
+            }
+        })
+
+        slidingUpPanel.addPanelSlideListener(object :
+            SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelSlide(view: View, v: Float) {}
+
+            override fun onPanelStateChanged(
+                panel: View?,
+                previousState: SlidingUpPanelLayout.PanelState?,
+                newState: SlidingUpPanelLayout.PanelState?
+            ) {
+                when (newState) {
+                    DRAGGING -> {
+                        if (previousState == COLLAPSED) {
+                            fab.hide()
+                            showMaximizedPlayer()
+                        }
+                    }
+                    COLLAPSED -> {
+                        roomUser?.let { canUserAddAndControlSongs(it) }
+                        showMinimizedPlayer()
+                    }
+                    EXPANDED -> {
+                        fab.hide()
+                        showMaximizedPlayer()
+                    }
+                    else -> {
+                    }
+                }
+            }
+        })
+
         slidingUpPanel.setFadeOnClickListener {
-            slidingUpPanel.panelState = COLLAPSED
+            showMinimizedPlayer()
         }
-
-        slidingUpPanel.addPanelSlideListener(object :
-            SlidingUpPanelLayout.SimplePanelSlideListener() {
-            override fun onPanelSlide(view: View, v: Float) {}
-
-            override fun onPanelStateChanged(
-                panel: View?,
-                previousState: SlidingUpPanelLayout.PanelState?,
-                newState: SlidingUpPanelLayout.PanelState?
-            ) {
-                when (newState) {
-                    DRAGGING -> {
-                        if (previousState == COLLAPSED) {
-                            fab.hide()
-                            showMaximizedPlayer()
-                        }
-                    }
-                    COLLAPSED -> {
-                        roomUser?.let { canUserAddAndControlSongs(it) }
-                        showMinimizedPlayer()
-                    }
-                    EXPANDED -> {
-                        fab.hide()
-                        showMaximizedPlayer()
-                    }
-                    else -> {
-                    }
-                }
-            }
-        })
-
-        slidingUpPanel.addPanelSlideListener(object :
-            SlidingUpPanelLayout.SimplePanelSlideListener() {
-            override fun onPanelSlide(view: View, v: Float) {}
-
-            override fun onPanelStateChanged(
-                panel: View?,
-                previousState: SlidingUpPanelLayout.PanelState?,
-                newState: SlidingUpPanelLayout.PanelState?
-            ) {
-                when (newState) {
-                    DRAGGING -> {
-                        if (previousState == COLLAPSED) {
-                            fab.hide()
-                            showMaximizedPlayer()
-                        }
-                    }
-                    COLLAPSED -> {
-                        roomUser?.let { canUserAddAndControlSongs(it) }
-                        showMinimizedPlayer()
-                    }
-                    EXPANDED -> {
-                        fab.hide()
-                        showMaximizedPlayer()
-                    }
-                    else -> {
-                    }
-                }
-            }
-        })
     }
 
     private fun setupPlayer() {
+        val playerRecyclerView: RecyclerView = findViewById(R.id.playerRecyclerView)
         playerRecyclerView.setHasFixedSize(true)
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -340,7 +343,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(ACTION_SONG_LIST_RECEIVED)
-        intentFilter.addAction(ACTION_ROOM_SOCKET_CLOSED)
+        intentFilter.addAction(ACTION_ROOM_SOCKET_ERROR)
         intentFilter.addAction(ACTION_ROOM_STATUS)
         registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -405,13 +408,16 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                 action.equals(ACTION_SONG_LIST_RECEIVED) -> {
                     val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
                     songListFromIntent?.let { songList ->
-                        roomViewModel.songList.value = songList
-
-                        val song = roomViewModel.getCurrentSong(songList)
-                        roomViewModel.playerSong.value = song
+                        if (songList.isNullOrEmpty()) {
+                            roomViewModel.songList.value = mutableListOf()
+                            roomViewModel.playerSong.value = null
+                        } else {
+                            roomViewModel.songList.value = songList
+                            roomViewModel.playerSong.value = roomViewModel.getCurrentSong(songList)
+                        }
                     }
                 }
-                action.equals(ACTION_SONG_LIST_RECEIVED) -> {
+                action.equals(ACTION_ROOM_SOCKET_ERROR) -> {
                     stopRoomWebSocketService(this)
                     startRoomWebSocketService(this)
                 }
