@@ -2,63 +2,65 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row_friend"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp"
-    android:focusable="true"
-    android:clickable="true">
+    tools:context=".activity.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/user_name"
+            android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/placeholder_user_name"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
+            app:layout_constraintStart_toEndOf="@+id/profilePhoto"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/room_name"
+            android:id="@+id/roomName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/user_name"
-            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            app:layout_constraintStart_toStartOf="@+id/userName"
+            app:layout_constraintTop_toBottomOf="@+id/userName"
             tools:text="@string/placeholder_room_name_expanded" />
 
         <TextView
-            android:id="@+id/room_song_status"
+            android:id="@+id/roomSongStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@string/placeholder_room_now_playing_song"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/room_name"
-            app:layout_constraintTop_toBottomOf="@+id/room_name" />
+            app:layout_constraintStart_toStartOf="@+id/roomName"
+            app:layout_constraintTop_toBottomOf="@+id/roomName" />
 
         <ImageView
-            android:id="@+id/lock_view"
+            android:id="@+id/lockImage"
             android:layout_width="19dp"
             android:layout_height="19dp"
             android:contentDescription="@string/description_lock_button"
-            app:layout_constraintBottom_toBottomOf="@+id/room_name"
+            app:layout_constraintBottom_toBottomOf="@+id/roomName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/room_name"
-            app:layout_constraintTop_toTopOf="@+id/room_name"
+            app:layout_constraintStart_toEndOf="@+id/roomName"
+            app:layout_constraintTop_toTopOf="@+id/roomName"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@android:drawable/ic_lock_lock" />
 
         <ImageView
-            android:id="@+id/profile_photo_image_view"
+            android:id="@+id/profilePhoto"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginStart="8dp"
@@ -71,19 +73,19 @@
             app:srcCompat="@drawable/ic_profile_image" />
 
         <ImageButton
-            android:id="@+id/join_button"
+            android:id="@+id/joinButton"
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:layout_margin="6dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_join_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/delete_button"
+            app:layout_constraintEnd_toStartOf="@+id/deleteButton"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_play_circle_outline_black_24dp" />
 
         <ImageButton
-            android:id="@+id/delete_button"
+            android:id="@+id/deleteButton"
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:layout_margin="8dp"
@@ -95,13 +97,13 @@
             app:srcCompat="@drawable/ic_delete_24dp" />
 
         <ImageView
-            android:id="@+id/online_status_online_image_view"
+            android:id="@+id/onlineStatus"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:contentDescription="@string/description_online_status"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/profile_photo_image_view"
-            app:layout_constraintEnd_toEndOf="@+id/profile_photo_image_view"
+            app:layout_constraintBottom_toBottomOf="@+id/profilePhoto"
+            app:layout_constraintEnd_toEndOf="@+id/profilePhoto"
             app:srcCompat="@android:drawable/presence_online" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

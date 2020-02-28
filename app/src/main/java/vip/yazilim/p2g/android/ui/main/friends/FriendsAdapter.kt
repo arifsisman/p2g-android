@@ -39,14 +39,14 @@ class FriendsAdapter(
 
     inner class FriendRequestViewHolder(itemView: View) :
         ViewHolderBase<FriendRequestModel>(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.user_name)
-        private val inviteDate: TextView = itemView.findViewById(R.id.invite_date)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        private val userName: TextView = itemView.findViewById(R.id.rUserName)
+        private val inviteDate: TextView = itemView.findViewById(R.id.rInviteDate)
+        private val profilePhoto: ImageView = itemView.findViewById(R.id.rProfilePhoto)
         private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.online_status_online_image_view)
+            itemView.findViewById(R.id.rOnlineStatus)
 
-        private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
-        private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
+        private val acceptButton: ImageButton = itemView.findViewById(R.id.rAcceptButton)
+        private val rejectButton: ImageButton = itemView.findViewById(R.id.rRejectButton)
 
         private fun bindEvent(
             friendRequestModel: FriendRequestModel,
@@ -71,9 +71,9 @@ class FriendsAdapter(
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profileImage)
+                    .into(profilePhoto)
             } else {
-                profileImage.setImageResource(R.drawable.ic_profile_image)
+                profilePhoto.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user?.onlineStatus) {
@@ -94,16 +94,16 @@ class FriendsAdapter(
     }
 
     inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.user_name)
-        private val roomName: TextView = itemView.findViewById(R.id.room_name)
-        private val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
+        private val userName: TextView = itemView.findViewById(R.id.userName)
+        private val roomName: TextView = itemView.findViewById(R.id.roomName)
+        private val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
+        private val profilePhoto: ImageView = itemView.findViewById(R.id.profilePhoto)
         private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.online_status_online_image_view)
-        private val lock: ImageView = itemView.findViewById(R.id.lock_view)
+            itemView.findViewById(R.id.onlineStatus)
+        private val lock: ImageView = itemView.findViewById(R.id.lockImage)
 
-        private val joinButton: ImageButton = itemView.findViewById(R.id.join_button)
-        private val deleteButton: ImageButton = itemView.findViewById(R.id.delete_button)
+        private val joinButton: ImageButton = itemView.findViewById(R.id.joinButton)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
 
         private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
@@ -123,9 +123,9 @@ class FriendsAdapter(
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profileImage)
+                    .into(profilePhoto)
             } else {
-                profileImage.setImageResource(R.drawable.ic_profile_image)
+                profilePhoto.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user?.onlineStatus) {

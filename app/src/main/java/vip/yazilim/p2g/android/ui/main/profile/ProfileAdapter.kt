@@ -30,11 +30,11 @@ class ProfileAdapter(
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val cardView: CardView = itemView.findViewById(R.id.profile_card_view)
         private val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
-        private val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
+        private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
+        private val flagImage: FlagImageView = itemView.findViewById(R.id.countryFlag)
         private val email: TextView = itemView.findViewById(R.id.email_text_view)
         private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.online_status_online_image_view)
+            itemView.findViewById(R.id.onlineStatus)
         private val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         private val friendCountsTextView: TextView =
             itemView.findViewById(R.id.friend_counts_text_view)

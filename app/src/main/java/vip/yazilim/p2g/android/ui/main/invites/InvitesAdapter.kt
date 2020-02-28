@@ -26,10 +26,10 @@ class InvitesAdapter(
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
-        private val roomName: TextView = itemView.findViewById(R.id.room_name)
-        private val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profile_photo_image_view)
-        private val onlineStatus: ImageView = itemView.findViewById(R.id.online_status_online_image_view)
+        private val roomName: TextView = itemView.findViewById(R.id.roomName)
+        private val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
+        private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
+        private val onlineStatus: ImageView = itemView.findViewById(R.id.onlineStatus)
         private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
         private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
 

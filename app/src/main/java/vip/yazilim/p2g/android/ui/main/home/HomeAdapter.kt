@@ -5,10 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.haipq.android.flagkit.FlagImageView
+import kotlinx.android.synthetic.main.row_home.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -26,12 +24,6 @@ class HomeAdapter(
     var roomModelsFull: MutableList<RoomModelSimplified> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val roomName: TextView = itemView.findViewById(R.id.room_name)
-        private val owner: TextView = itemView.findViewById(R.id.room_owner)
-        private val roomSongStatus: TextView = itemView.findViewById(R.id.room_song_status)
-        private val lock: ImageView = itemView.findViewById(R.id.lock_view)
-        private val flagImage: FlagImageView = itemView.findViewById(R.id.country_flag_image_view)
-
         fun bindEvent(roomModel: RoomModelSimplified, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(roomModel)
@@ -42,23 +34,23 @@ class HomeAdapter(
             val roomOwnerPlaceholder =
                 "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
 
-            roomName.text = roomModel.room?.name
-            owner.text = roomOwnerPlaceholder
+            itemView.roomName.text = roomModel.room?.name
+            itemView.roomOwner.text = roomOwnerPlaceholder
 
             if (roomModel.room?.privateFlag!!) {
-                lock.visibility = View.VISIBLE
+                itemView.lockImage.visibility = View.VISIBLE
             } else {
-                lock.visibility = View.GONE
+                itemView.lockImage.visibility = View.GONE
             }
 
             try {
-                flagImage.countryCode = roomModel.owner?.countryCode
+                itemView.countryFlag.countryCode = roomModel.owner?.countryCode
             } catch (exception: Exception) {
-                flagImage.visibility = View.GONE
+                itemView.countryFlag.visibility = View.GONE
             }
 
             val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
-            roomSongStatus.text = songStatus
+            itemView.roomSongStatus.text = songStatus
         }
     }
 

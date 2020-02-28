@@ -2,43 +2,45 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row_friend_request"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp"
     app:cardElevation="4dp"
-    android:focusable="true"
-    android:clickable="true">
+    tools:context=".activity.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/user_name"
+            android:id="@+id/rUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/placeholder_user_name"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
+            app:layout_constraintStart_toEndOf="@+id/rProfilePhoto"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/invite_date"
+            android:id="@+id/rInviteDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/profile_photo_image_view"
-            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            app:layout_constraintStart_toEndOf="@+id/rProfilePhoto"
+            app:layout_constraintTop_toBottomOf="@+id/rUserName"
             tools:text="@string/placeholder_friend_request_date" />
 
         <ImageView
-            android:id="@+id/profile_photo_image_view"
+            android:id="@+id/rProfilePhoto"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginStart="5dp"
@@ -50,19 +52,19 @@
             app:srcCompat="@drawable/ic_profile_image" />
 
         <ImageButton
-            android:id="@+id/accept_button"
+            android:id="@+id/rAcceptButton"
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:layout_margin="6dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/reject_button"
+            app:layout_constraintEnd_toStartOf="@+id/rRejectButton"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_accept_24dp" />
 
         <ImageButton
-            android:id="@+id/reject_button"
+            android:id="@+id/rRejectButton"
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:layout_margin="6dp"
@@ -74,13 +76,13 @@
             app:srcCompat="@drawable/ic_reject_24dp" />
 
         <ImageView
-            android:id="@+id/online_status_online_image_view"
+            android:id="@+id/rOnlineStatus"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:contentDescription="@string/description_online_status"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/profile_photo_image_view"
-            app:layout_constraintEnd_toEndOf="@+id/profile_photo_image_view"
+            app:layout_constraintBottom_toBottomOf="@+id/rProfilePhoto"
+            app:layout_constraintEnd_toEndOf="@+id/rProfilePhoto"
             app:srcCompat="@android:drawable/presence_online" />
 
         <View

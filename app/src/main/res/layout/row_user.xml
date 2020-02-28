@@ -15,7 +15,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/profile_photo_image_view"
+            android:id="@+id/profilePhoto"
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_marginTop="20dp"
@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view" />
+            app:layout_constraintTop_toBottomOf="@+id/profilePhoto" />
 
         <TextView
             android:id="@+id/friend_counts_text_view"
@@ -94,7 +94,7 @@
             app:layout_constraintTop_toBottomOf="@+id/member_since_text_view" />
 
         <ImageView
-            android:id="@+id/online_status_online_image_view"
+            android:id="@+id/onlineStatus"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_marginTop="18dp"
@@ -104,11 +104,11 @@
             app:layout_constraintEnd_toStartOf="@+id/user_name_text_view"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
+            app:layout_constraintTop_toBottomOf="@+id/profilePhoto"
             app:srcCompat="@android:drawable/presence_online" />
 
         <com.haipq.android.flagkit.FlagImageView
-            android:id="@+id/country_flag_image_view"
+            android:id="@+id/countryFlag"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -118,7 +118,7 @@
             android:paddingBottom="0dp"
             app:countryCode="FR"
             app:layout_constraintStart_toEndOf="@+id/user_name_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
+            app:layout_constraintTop_toBottomOf="@+id/profilePhoto"
             tools:src="@drawable/flag_de" />
 
         <TextView
