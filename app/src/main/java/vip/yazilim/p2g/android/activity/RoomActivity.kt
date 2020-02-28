@@ -411,6 +411,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
                         if (songList.isNullOrEmpty()) {
                             roomViewModel.songList.value = mutableListOf()
                             roomViewModel.playerSong.value = null
+                            roomViewModel._isEmptyList.postValue(true)
                         } else {
                             roomViewModel.songList.value = songList
                             roomViewModel.playerSong.value = roomViewModel.getCurrentSong(songList)

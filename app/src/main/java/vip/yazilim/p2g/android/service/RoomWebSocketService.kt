@@ -85,8 +85,9 @@ class RoomWebSocketService : Service() {
         Log.v(TAG, "onDestroy")
         unregisterReceiver(serviceReceiver)
 
-        if (this::roomWSClient.isInitialized) {
+        if (this::roomWSClient.isInitialized && roomWSClient.isConnected) {
             roomWSClient.disconnect()
+            if (!roomWSClient.isConnected) Log.v(TAG, "Disconnected from RoomWebSocket[$roomId]")
         }
     }
 
