@@ -13,8 +13,6 @@ import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutEmpty
 import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutError
@@ -39,6 +37,9 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invites),
     InvitesAdapter.OnItemClickListener {
 
+    private lateinit var viewModel: InvitesViewModel
+    private lateinit var adapter: InvitesAdapter
+
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val roomInviteModel = intent?.getParcelableExtra<RoomInviteModel>("roomInviteModel")
@@ -48,9 +49,6 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
             }
         }
     }
-
-    private lateinit var viewModel: InvitesViewModel
-    private lateinit var adapter: InvitesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,14 +71,12 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
 
 
     override fun setupUI() {
-        val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = InvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
-        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
 
 //        // Swipe left for delete

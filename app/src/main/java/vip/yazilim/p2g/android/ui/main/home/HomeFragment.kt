@@ -10,12 +10,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
@@ -60,16 +57,12 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     override fun setupUI() {
-        val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
-        val createRoomButton: Button = root.findViewById(R.id.button_create_room)
-        createRoomButton.setOnClickListener { createRoomButtonEvent() }
-
-        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        button_create_room.setOnClickListener { createRoomButtonEvent() }
         swipeContainer.setOnRefreshListener { refreshRoomsEvent() }
     }
 

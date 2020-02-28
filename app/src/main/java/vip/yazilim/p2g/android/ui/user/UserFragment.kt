@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.UserActivity
@@ -52,7 +51,6 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
     }
 
     override fun setupUI() {
-        val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = UserAdapter(userModel, null, 0)

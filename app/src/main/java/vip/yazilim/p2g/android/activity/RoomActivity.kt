@@ -50,9 +50,7 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     var roomUser: RoomUser? = null
 
     lateinit var roomViewModel: RoomViewModel
-
-    lateinit var playerAdapter: PlayerAdapter
-    lateinit var slidingUpPanel: SlidingUpPanelLayout
+    private lateinit var playerAdapter: PlayerAdapter
 
     @Volatile
     private var isPlaying = false

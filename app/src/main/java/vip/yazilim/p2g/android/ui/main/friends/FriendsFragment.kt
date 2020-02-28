@@ -14,8 +14,6 @@ import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.layout_recycler_view_base.layoutEmpty
@@ -62,7 +60,6 @@ class FriendsFragment : FragmentBase(
 
 
     override fun setupUI() {
-        val recyclerView = root.findViewById<View>(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
@@ -70,7 +67,6 @@ class FriendsFragment : FragmentBase(
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
-        val swipeContainer = root.findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener {
             adapter.clearDataList()
             adapter.clearDataListFull()

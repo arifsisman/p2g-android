@@ -41,10 +41,13 @@ abstract class FragmentBase(private var viewModelBase: ViewModelBase, var layout
             this.container = container
         }
 
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupViewModel()
         setupUI()
-
-        return root
     }
 
     abstract fun setupUI()
