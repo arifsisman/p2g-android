@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.util.helper
 
 import android.annotation.SuppressLint
+import org.threeten.bp.Clock
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
@@ -22,6 +23,10 @@ class TimeHelper {
         @SuppressLint("SimpleDateFormat")
         fun Int.getHumanReadableTimestamp(): String {
             return (SimpleDateFormat("mm:ss")).format(this)
+        }
+
+        fun getLocalDateTimeZonedUTC(): LocalDateTime {
+            return LocalDateTime.now(Clock.systemUTC())
         }
     }
 }

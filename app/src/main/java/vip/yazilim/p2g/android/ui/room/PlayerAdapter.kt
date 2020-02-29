@@ -12,13 +12,13 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import org.threeten.bp.Duration
-import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 
 
 /**
@@ -69,8 +69,8 @@ class PlayerAdapter(
                     }
                     SongStatus.PLAYING.songStatus -> {
                         val passed =
-                            Duration.between(song.playingTime, LocalDateTime.now()).toMillis()
-                                .toInt()
+                            Duration.between(song.playingTime, getLocalDateTimeZonedUTC())
+                                .toMillis().toInt()
                         currentMs =
                             when {
                                 passed > song.durationMs -> {

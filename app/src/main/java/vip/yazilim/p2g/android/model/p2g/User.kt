@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.model.p2g
 import android.os.Parcel
 import android.os.Parcelable
 import org.threeten.bp.LocalDateTime
+import vip.yazilim.p2g.android.util.helper.TimeHelper
 
 /**
  * @author mustafaarifsisman - 21.01.2020
@@ -20,7 +21,7 @@ data class User(
     var spotifyProductType: String? = "",
     var showActivityFlag: Boolean = false,
     var showFriendsFlag: Boolean = false,
-    var creationDate: LocalDateTime? = LocalDateTime.now()
+    var creationDate: LocalDateTime? = TimeHelper.getLocalDateTimeZonedUTC()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),

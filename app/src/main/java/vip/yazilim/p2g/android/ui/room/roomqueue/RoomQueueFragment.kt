@@ -158,7 +158,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortRoom(mDialogView, msg)
+                        UIHelper.showSnackBarShort(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {

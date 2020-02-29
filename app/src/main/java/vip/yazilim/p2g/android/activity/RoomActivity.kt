@@ -22,7 +22,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.row_player.*
 import org.threeten.bp.Duration
-import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -39,6 +38,7 @@ import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
@@ -254,7 +254,8 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
             if (song.playingTime != null) {
                 val passed =
-                    Duration.between(song.playingTime, LocalDateTime.now()).toMillis().toInt()
+                    Duration.between(song.playingTime, getLocalDateTimeZonedUTC()).toMillis()
+                        .toInt()
                 songCurrentMs = when {
                     passed > song.durationMs -> {
                         song.durationMs
