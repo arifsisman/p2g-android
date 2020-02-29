@@ -108,21 +108,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         adapter.update(it)
     }
 
-    private fun onDelete(song: Song) {
-        val position = adapter.songs.indexOf(song)
-        adapter.remove(song)
-
-        request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                UIHelper.showSnackBarShortSafe(root, msg)
-                adapter.add(song, position)
-            }
-        })
-    }
-
     private fun showSearchDialog() {
         mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder =
@@ -231,23 +216,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
-        println(song.songName)
-    }
-
-    override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
-        println(song.songName)
-    }
-
-    override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
-        println(song.songName)
-    }
-
-    override fun onDeleteClicked(view: SwipeLayout, song: Song) {
-        println(song.songName)
-    }
-
-
-    private fun playSong(song: Song) =
+        view.close()
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
@@ -256,5 +225,44 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 UIHelper.showSnackBarShortSafe(root, msg)
             }
         })
+    }
 
+    override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
+        view.close()
+        request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
+            override fun onSuccess(obj: Int) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShortSafe(root, msg)
+            }
+        })
+    }
+
+    override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
+        view.close()
+        request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
+            override fun onSuccess(obj: Int) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShortSafe(root, msg)
+            }
+        })
+    }
+
+    override fun onDeleteClicked(view: SwipeLayout, song: Song) {
+        val position = adapter.songs.indexOf(song)
+        adapter.remove(song)
+        view.close()
+        request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShortSafe(root, msg)
+                adapter.add(song, position)
+            }
+        })
+    }
 }

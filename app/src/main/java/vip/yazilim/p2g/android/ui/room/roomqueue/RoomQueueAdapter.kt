@@ -81,9 +81,9 @@ class RoomQueueAdapter(
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
             playButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
-            upvoteButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
-            downvoteButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
-            deleteButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
+            upvoteButton.setOnClickListener { clickListener.onUpvoteClicked(swipeLayout, song) }
+            downvoteButton.setOnClickListener { clickListener.onDownvoteClicked(swipeLayout, song) }
+            deleteButton.setOnClickListener { clickListener.onDeleteClicked(swipeLayout, song) }
         }
 
         fun bindItemManager(position: Int) {
