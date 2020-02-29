@@ -19,24 +19,29 @@
 
         <TextView
             android:id="@+id/rUserName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
             android:text="@string/placeholder_user_name"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/rProfilePhoto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/rInviteDate"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:paddingStart="60dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/rProfilePhoto"
             app:layout_constraintTop_toBottomOf="@+id/rUserName"
+            tools:layout_editor_absoluteX="61dp"
             tools:text="@string/placeholder_friend_request_date" />
 
         <ImageView
@@ -55,7 +60,7 @@
             android:id="@+id/rAcceptButton"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:layout_margin="6dp"
+            android:layout_margin="4dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -67,7 +72,7 @@
             android:id="@+id/rRejectButton"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:layout_margin="6dp"
+            android:layout_margin="4dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_reject_button"
             app:layout_constraintBottom_toBottomOf="parent"

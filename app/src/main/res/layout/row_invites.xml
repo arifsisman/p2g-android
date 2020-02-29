@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp"
-    app:cardElevation="4dp"
-    android:focusable="true"
-    android:clickable="true">
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,10 +17,12 @@
 
         <TextView
             android:id="@+id/room_inviter"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="50dp"
+            android:singleLine="true"
             android:text="@string/placeholder_room_inviter"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/profilePhoto"
@@ -28,19 +30,23 @@
 
         <TextView
             android:id="@+id/roomName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="50dp"
+            android:singleLine="true"
             app:layout_constraintStart_toEndOf="@+id/profilePhoto"
             app:layout_constraintTop_toBottomOf="@+id/room_inviter"
             tools:text="@string/placeholder_room_name_expanded" />
 
         <TextView
             android:id="@+id/roomSongStatus"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="50dp"
+            android:singleLine="true"
             android:text="@string/placeholder_room_now_playing_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profilePhoto"
@@ -62,7 +68,7 @@
             android:id="@+id/accept_button"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
+            android:layout_margin="4dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -74,7 +80,7 @@
             android:id="@+id/reject_button"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
+            android:layout_margin="4dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_reject_button"
             app:layout_constraintBottom_toBottomOf="parent"

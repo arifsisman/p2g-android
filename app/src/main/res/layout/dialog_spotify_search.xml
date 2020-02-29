@@ -31,7 +31,10 @@
 
         <TextView
             android:id="@+id/searchText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:layout_height="wrap_content"
             android:text="@string/placeholder_search_query"
             android:textStyle="bold"

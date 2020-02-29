@@ -14,21 +14,26 @@
 
         <TextView
             android:id="@+id/search_model_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="4dp"
             android:maxLines="1"
+            android:paddingStart="55dp"
+            android:paddingEnd="35dp"
+            android:singleLine="true"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/search_model_image"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/search_model_image"
             tools:text="@string/placeholder_search_model_name" />
 
         <TextView
             android:id="@+id/search_model_type_and_artists"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:paddingStart="55dp"
+            android:paddingEnd="35dp"
+            android:singleLine="true"
             android:text="@string/placeholder_search_model_artists"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/search_model_name"

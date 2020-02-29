@@ -19,24 +19,24 @@
 
         <TextView
             android:id="@+id/roomName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="30dp"
+            android:singleLine="true"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
             tools:text="@string/placeholder_room_name" />
 
         <TextView
             android:id="@+id/roomOwner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="30dp"
+            android:singleLine="true"
             android:text="@string/placeholder_room_owner"
             app:layout_constraintBottom_toTopOf="@+id/roomSongStatus"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,11 +46,12 @@
 
         <TextView
             android:id="@+id/roomSongStatus"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="30dp"
+            android:singleLine="true"
             android:text="@string/placeholder_room_now_playing_song"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,15 +60,13 @@
 
         <ImageView
             android:id="@+id/lockImage"
-            android:layout_width="19dp"
-            android:layout_height="19dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/description_lock_button"
-            app:layout_constraintBottom_toBottomOf="@+id/roomName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/roomName"
-            app:layout_constraintTop_toTopOf="@+id/roomName"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintBottom_toBottomOf="@+id/roomOwner"
+            app:layout_constraintEnd_toEndOf="@+id/countryFlag"
+            app:layout_constraintStart_toStartOf="@+id/countryFlag"
+            app:layout_constraintTop_toTopOf="@+id/roomOwner"
             app:srcCompat="@android:drawable/ic_lock_lock" />
 
         <com.haipq.android.flagkit.FlagImageView

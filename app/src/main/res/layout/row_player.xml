@@ -30,20 +30,26 @@
 
         <TextView
             android:id="@+id/song_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="15dp"
+            android:paddingStart="65dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
             android:text="@string/placeholder_song_name"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/song_image"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/song_artists"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="65dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
             android:text="@string/placeholder_song_artists"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/song_name"
             app:layout_constraintTop_toBottomOf="@+id/song_name" />
 
@@ -69,9 +75,13 @@
 
         <TextView
             android:id="@+id/song_name_exp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             android:text="@string/placeholder_song_name"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -81,8 +91,12 @@
 
         <TextView
             android:id="@+id/song_artists_exp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             android:paddingBottom="5dp"
             android:text="@string/placeholder_song_artists"
             android:textSize="16sp"
@@ -115,7 +129,6 @@
                     android:id="@+id/seek_bar_exp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:progressTint="@color/spotifyGreenColor"
@@ -205,7 +218,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-
                     android:layout_marginEnd="26dp"
                     android:text="x:xx"
                     android:textSize="12sp"

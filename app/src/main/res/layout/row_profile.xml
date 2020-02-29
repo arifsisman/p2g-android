@@ -11,7 +11,7 @@
     app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
@@ -30,7 +30,9 @@
             android:id="@+id/user_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="12dp"
+            android:layout_marginEnd="25dp"
             android:text="@string/placeholder_name"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -79,6 +81,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:maxLines="1"
             android:text="@string/placeholder_song_and_room_status"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -86,27 +90,37 @@
 
         <TextView
             android:id="@+id/email_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
             android:text="@string/placeholder_email"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/member_since_text_view" />
 
         <TextView
             android:id="@+id/anthem_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
+
             android:text="@string/placeholder_anthem"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spotify_id_text_view" />
 
         <TextView
             android:id="@+id/spotify_id_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
             android:text="@string/placeholder_spotify_account_id"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/email_text_view" />
@@ -141,11 +155,16 @@
 
         <TextView
             android:id="@+id/member_since_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+
             android:layout_marginTop="16dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
+
             android:text="@string/placeholder_member_since"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/separator2" />
 
