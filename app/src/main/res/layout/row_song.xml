@@ -8,9 +8,8 @@
 
     <LinearLayout
         android:background="#66ddff00"
-        android:id="@+id/bottom_wrapper"
+        android:id="@+id/song_event_holder"
         android:layout_width="100dp"
-        android:weightSum="1"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
     </LinearLayout>
@@ -18,9 +17,6 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
         app:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout

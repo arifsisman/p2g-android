@@ -1,17 +1,13 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.app.AlertDialog
-import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.daimajia.swipe.SwipeLayout
-import com.daimajia.swipe.SwipeLayout.SwipeListener
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
@@ -38,20 +34,21 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener {
 
+    private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomQueueAdapter
-
-//    private lateinit var swipeLayout: SwipeLayout
 
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var mDialogView: View
 
     override fun setupUI() {
+        roomActivity = activity as RoomActivity
+
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // QueueAdapter
         adapter = RoomQueueAdapter(
-            (activity as RoomActivity).roomViewModel.songList.value ?: mutableListOf()
+            roomActivity.roomViewModel.songList.value ?: mutableListOf()
             , this
         )
         adapter.setHasStableIds(true)
@@ -67,52 +64,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val fab: ExtendedFloatingActionButton = activity?.findViewById(R.id.fab)!!
         fab.setOnClickListener { showSearchDialog() }
 
-        // Swipe left for delete
-//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val song = adapter.songs[viewHolder.adapterPosition]
-//                onDelete(song)
-//            }
-//        }
-//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
-//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
-
-        (activity as RoomActivity).roomViewModel.songList.observe(this, renderRoomQueue)
+        roomActivity.roomViewModel.songList.observe(this, renderRoomQueue)
 
         swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
         }
-
-//        swipeLayout = (activity as RoomActivity).findViewById(R.id.row_song)
-//        swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-//        swipeLayout.addDrag(SwipeLayout.DragEdge.Left, activity?.findViewById(R.id.bottom_wrapper))
-//        swipeLayout.addSwipeListener(object : SwipeListener {
-//            override fun onClose(layout: SwipeLayout) { //when the SurfaceView totally cover the BottomView.
-//            }
-//
-//            override fun onUpdate(
-//                layout: SwipeLayout,
-//                leftOffset: Int,
-//                topOffset: Int
-//            ) { //you are swiping.
-//            }
-//
-//            override fun onStartOpen(layout: SwipeLayout) {}
-//            override fun onOpen(layout: SwipeLayout) { //when the BottomView totally show.
-//            }
-//
-//            override fun onStartClose(layout: SwipeLayout) {}
-//            override fun onHandRelease(
-//                layout: SwipeLayout,
-//                xvel: Float,
-//                yvel: Float
-//            ) { //when user's hand released.
-//            }
-//        })
     }
 
     private fun refreshQueueEvent() = request(
-        (activity as RoomActivity).room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
+        roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortSafe(root, "Rooms cannot refreshed")
@@ -229,7 +189,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         addButton.setOnClickListener {
             val selectedSearchModels = searchAdapter.selectedSearchModels
 
-            request((activity as RoomActivity).room?.id?.let {
+            request(roomActivity.room?.id?.let {
                 Singleton.apiClient().addSongToRoom(it, selectedSearchModels)
             }, object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {

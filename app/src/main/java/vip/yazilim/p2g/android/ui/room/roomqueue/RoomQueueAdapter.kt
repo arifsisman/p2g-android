@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -28,6 +28,9 @@ class RoomQueueAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
+        private val eventHolder: LinearLayout = itemView.findViewById(R.id.song_event_holder)
+
         private val songName: TextView = itemView.findViewById(R.id.song_name)
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
@@ -61,31 +64,34 @@ class RoomQueueAdapter(
                 }
             }
 
-            (itemView as SwipeLayout).showMode = SwipeLayout.ShowMode.LayDown
-            itemView.addDrag(SwipeLayout.DragEdge.Left, itemView.findViewById(R.id.bottom_wrapper))
-//            swipeLayout.addSwipeListener(object : SwipeLayout.SwipeListener {
-//                override fun onClose(layout: SwipeLayout) { //when the SurfaceView totally cover the BottomView.
-//                }
-//
-//                override fun onUpdate(
-//                    layout: SwipeLayout,
-//                    leftOffset: Int,
-//                    topOffset: Int
-//                ) { //you are swiping.
-//                }
-//
-//                override fun onStartOpen(layout: SwipeLayout) {}
-//                override fun onOpen(layout: SwipeLayout) { //when the BottomView totally show.
-//                }
-//
-//                override fun onStartClose(layout: SwipeLayout) {}
-//                override fun onHandRelease(
-//                    layout: SwipeLayout,
-//                    xvel: Float,
-//                    yvel: Float
-//                ) { //when user's hand released.
-//                }
-//            })
+            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
+//            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, eventHolder)
+
+            swipeLayout.addSwipeListener(object : SwipeLayout.SwipeListener {
+                override fun onClose(layout: SwipeLayout) {
+                    println("close")
+                }
+
+                override fun onUpdate(
+                    layout: SwipeLayout,
+                    leftOffset: Int,
+                    topOffset: Int
+                ) {
+                }
+
+                override fun onStartOpen(layout: SwipeLayout) {}
+                override fun onOpen(layout: SwipeLayout) {
+                    println("open")
+                }
+
+                override fun onStartClose(layout: SwipeLayout) {}
+                override fun onHandRelease(
+                    layout: SwipeLayout,
+                    xvel: Float,
+                    yvel: Float
+                ) {
+                }
+            })
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
