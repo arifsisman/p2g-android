@@ -65,44 +65,23 @@ class RoomQueueAdapter(
             }
 
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-//            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, eventHolder)
-
-            swipeLayout.addSwipeListener(object : SwipeLayout.SwipeListener {
-                override fun onClose(layout: SwipeLayout) {
-                    println("close")
-                }
-
-                override fun onUpdate(
-                    layout: SwipeLayout,
-                    leftOffset: Int,
-                    topOffset: Int
-                ) {
-                }
-
-                override fun onStartOpen(layout: SwipeLayout) {}
-                override fun onOpen(layout: SwipeLayout) {
-                    println("open")
-                }
-
-                override fun onStartClose(layout: SwipeLayout) {}
-                override fun onHandRelease(
-                    layout: SwipeLayout,
-                    xvel: Float,
-                    yvel: Float
-                ) {
-                }
-            })
+            swipeLayout.isRightSwipeEnabled = false
+            swipeLayout.isClickToClose = true
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, eventHolder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener {
-                clickListener.onSongClicked(itemView, song)
-            }
+//            itemView.setOnClickListener { clickListener.onSongClicked(itemView, song) }
         }
     }
 
     interface OnItemClickListener {
-        fun onSongClicked(view: View, song: Song)
+        //        fun onSongClicked(view: View, song: Song)
+        fun onPlayClicked(view: SwipeLayout, song: Song)
+
+        fun onUpvoteClicked(view: SwipeLayout, song: Song)
+        fun onDownvoteClicked(view: SwipeLayout, song: Song)
+        fun onDeleteClicked(view: SwipeLayout, song: Song)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {

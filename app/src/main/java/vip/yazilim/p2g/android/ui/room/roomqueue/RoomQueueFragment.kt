@@ -8,6 +8,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.daimajia.swipe.SwipeLayout
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
@@ -220,16 +221,20 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         }
     }
 
-    override fun onSongClicked(view: View, song: Song) {
-//        val popup = PopupMenu(activity, view)
-//        popup.menuInflater?.inflate(R.menu.song_popup_menu, popup.menu)
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-//            popup.setForceShowIcon(true)
-//        }
-//        popup.show()
+    override fun onPlayClicked(view: SwipeLayout, song: Song) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
+    override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
-//        swipeLayout.open()
+    override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onDeleteClicked(view: SwipeLayout, song: Song) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
