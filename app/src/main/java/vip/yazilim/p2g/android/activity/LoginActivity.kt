@@ -14,8 +14,6 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
-import vip.yazilim.p2g.android.constant.ErrorConstants.SPOTIFY_PRODUCT_TYPE_ERROR
-import vip.yazilim.p2g.android.constant.GeneralConstants.PREMIUM_PRODUCT_TYPE
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
@@ -128,16 +126,11 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onSuccess(obj: User) {
-                if (obj.spotifyProductType != PREMIUM_PRODUCT_TYPE) {
-                    UIHelper.showToastLong(this@LoginActivity, SPOTIFY_PRODUCT_TYPE_ERROR)
+                existingRoomCheck()
 
-                } else {
-                    existingRoomCheck()
-
-//                        db.insertData(obj)
-                    UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
-                    startMainActivity(obj, tokenModel)
-                }
+//                db.insertData(obj)
+                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
+                startMainActivity(obj, tokenModel)
             }
         })
 

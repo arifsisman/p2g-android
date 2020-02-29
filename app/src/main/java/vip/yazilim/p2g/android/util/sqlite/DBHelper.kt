@@ -97,10 +97,7 @@ class DBHelper(context: Context) :
         contentValues.put(COL_USER_ONLINE_STATUS, user.onlineStatus)
         contentValues.put(COL_USER_COUNTRY_CODE, user.countryCode)
         contentValues.put(COL_USER_IMAGE_URL, user.imageUrl)
-        contentValues.put(COL_USER_ANTHEM, user.anthem)
-        contentValues.put(COL_USER_SPOTIFY_PRODUCT_TYPE, user.spotifyProductType)
-        contentValues.put(COL_USER_SHOW_ACTIVITY_FLAG, user.showActivityFlag)
-        contentValues.put(COL_USER_SHOW_FRIENDS_FLAG, user.showFriendsFlag)
+        contentValues.put(COL_USER_ANTHEM, user.anthemSongId)
         contentValues.put(COL_USER_CREATION_DATE, user.creationDate?.format(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
@@ -141,12 +138,6 @@ class DBHelper(context: Context) :
                 val userCountryCode = result.getString(result.getColumnIndex(COL_USER_COUNTRY_CODE))
                 val userImageUrl = result.getString(result.getColumnIndex(COL_USER_IMAGE_URL))
                 val userAnthem = result.getString(result.getColumnIndex(COL_USER_ANTHEM))
-                val userSpotifyProductType =
-                    result.getString(result.getColumnIndex(COL_USER_SPOTIFY_PRODUCT_TYPE))
-                val userShowActivityFlag =
-                    result.getInt(result.getColumnIndex(COL_USER_SHOW_ACTIVITY_FLAG)) > 0
-                val userShowFriendsFlag =
-                    result.getInt(result.getColumnIndex(COL_USER_SHOW_FRIENDS_FLAG)) > 0
                 val userCreationDate =
                     LocalDateTime.parse(
                         result.getString(
@@ -165,9 +156,6 @@ class DBHelper(context: Context) :
                     userCountryCode,
                     userImageUrl,
                     userAnthem,
-                    userSpotifyProductType,
-                    userShowActivityFlag,
-                    userShowFriendsFlag,
                     userCreationDate
                 )
                 userList.add(user)

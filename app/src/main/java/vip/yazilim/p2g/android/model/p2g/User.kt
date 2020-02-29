@@ -17,10 +17,7 @@ data class User(
     var onlineStatus: String? = "",
     var countryCode: String? = "",
     var imageUrl: String? = "",
-    var anthem: String? = "",
-    var spotifyProductType: String? = "",
-    var showActivityFlag: Boolean = false,
-    var showFriendsFlag: Boolean = false,
+    var anthemSongId: String? = "",
     var creationDate: LocalDateTime? = TimeHelper.getLocalDateTimeZonedUTC()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -32,9 +29,6 @@ data class User(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte(),
         parcel.readSerializable() as? LocalDateTime
     )
 
@@ -46,10 +40,7 @@ data class User(
         parcel.writeString(onlineStatus)
         parcel.writeString(countryCode)
         parcel.writeString(imageUrl)
-        parcel.writeString(anthem)
-        parcel.writeString(spotifyProductType)
-        parcel.writeByte(if (showActivityFlag) 1 else 0)
-        parcel.writeByte(if (showFriendsFlag) 1 else 0)
+        parcel.writeString(anthemSongId)
         parcel.writeSerializable(creationDate)
     }
 

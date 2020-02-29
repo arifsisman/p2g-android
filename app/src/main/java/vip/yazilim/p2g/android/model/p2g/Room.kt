@@ -16,9 +16,6 @@ class Room(
     var privateFlag: Boolean,
     var password: String?,
     var maxUsers: Int,
-    var usersAllowedQueueFlag: Boolean,
-    var usersAllowedControlFlag: Boolean,
-    var showRoomActivityFlag: Boolean,
     var activeFlag: Boolean,
     var countryCode: String?
 ) : Parcelable {
@@ -31,9 +28,6 @@ class Room(
         parcel.readString(),
         parcel.readInt(),
         parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte(),
-        parcel.readByte() != 0.toByte(),
         parcel.readString()
     )
 
@@ -45,9 +39,6 @@ class Room(
         parcel.writeByte(if (privateFlag) 1 else 0)
         parcel.writeString(password)
         parcel.writeInt(maxUsers)
-        parcel.writeByte(if (usersAllowedQueueFlag) 1 else 0)
-        parcel.writeByte(if (usersAllowedControlFlag) 1 else 0)
-        parcel.writeByte(if (showRoomActivityFlag) 1 else 0)
         parcel.writeByte(if (activeFlag) 1 else 0)
         parcel.writeString(countryCode)
     }

@@ -10,13 +10,11 @@ import android.os.Parcelable
 data class UserDevice(
     var id: String?,
     var userId: String?,
-    var platform: String?,
     var deviceName: String?,
     var deviceType: String?,
     var activeFlag: Boolean
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -27,7 +25,6 @@ data class UserDevice(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
         parcel.writeString(userId)
-        parcel.writeString(platform)
         parcel.writeString(deviceName)
         parcel.writeString(deviceType)
         parcel.writeByte(if (activeFlag) 1 else 0)

@@ -53,7 +53,7 @@ class UserAdapter(
                 val profileSongAndRoomStatusPlaceholder =
                     "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room?.name}"
                 val profileAnthemPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
+                    "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val memberSincePlaceholder =
                     "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.getFormattedFull()}"
 
@@ -75,7 +75,7 @@ class UserAdapter(
                 userName.text = profileNamePlaceholder
                 memberSince.text = memberSincePlaceholder
 
-                if (user.anthem == null) {
+                if (user.anthemSongId == null) {
                     anthem.visibility = View.GONE
                 } else {
                     anthem.visibility = View.VISIBLE

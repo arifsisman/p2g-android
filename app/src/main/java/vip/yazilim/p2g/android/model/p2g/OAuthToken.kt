@@ -9,11 +9,9 @@ import android.os.Parcelable
  */
 data class OAuthToken(
     var userId: String?,
-    var accessToken: String?,
-    var refreshToken: String?
+    var accessToken: String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
         parcel.readString(),
         parcel.readString()
     )
@@ -21,7 +19,6 @@ data class OAuthToken(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(userId)
         parcel.writeString(accessToken)
-        parcel.writeString(refreshToken)
     }
 
     override fun describeContents(): Int {

@@ -55,7 +55,7 @@ class ProfileAdapter(
                 val profileSongAndRoomStatusPlaceholder =
                     "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${userModel.room?.name}"
                 val profileAnthemPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthem}"
+                    "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val profileSpotifyAccountIdPlaceholder =
                     "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
 
@@ -78,7 +78,7 @@ class ProfileAdapter(
                 memberSince.text = memberSincePlaceholder
                 email.text = profileEmailPlaceholder
 
-                if (user.anthem == null) {
+                if (user.anthemSongId == null) {
                     anthem.visibility = View.GONE
                 } else {
                     anthem.visibility = View.VISIBLE

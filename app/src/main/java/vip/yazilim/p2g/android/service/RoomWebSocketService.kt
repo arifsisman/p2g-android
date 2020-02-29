@@ -115,10 +115,11 @@ class RoomWebSocketService : Service() {
                         }
                         LifecycleEvent.Type.CLOSED -> {
                             Log.i(TAG, it.toString())
+                            sendBroadcastSocketClosed()
                         }
                         LifecycleEvent.Type.ERROR -> {
-                            sendBroadcastSocketClosed()
                             Log.i(TAG, it.toString())
+                            sendBroadcastSocketClosed()
                         }
                         else -> Log.i(TAG, it.toString())
                     }
