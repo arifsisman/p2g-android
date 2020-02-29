@@ -231,30 +231,42 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         })
     }
 
-    //TODO check from db song was voted before
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
+        val db = (activity as RoomActivity).db
         view.close()
-        request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
-            override fun onSuccess(obj: Int) {
-            }
 
-            override fun onError(msg: String) {
-                UIHelper.showSnackBarShortSafe(root, msg)
-            }
-        })
+        if (db.isVotedBefore(song)) {
+            UIHelper.showSnackBarShortSafe(root, "Song voted before")
+        } else {
+            request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
+                override fun onSuccess(obj: Int) {
+                    db.insertVotedSong(song)
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortSafe(root, msg)
+                }
+            })
+        }
     }
 
-    //TODO check from db song was voted before
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
+        val db = (activity as RoomActivity).db
         view.close()
-        request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
-            override fun onSuccess(obj: Int) {
-            }
 
-            override fun onError(msg: String) {
-                UIHelper.showSnackBarShortSafe(root, msg)
-            }
-        })
+        if (db.isVotedBefore(song)) {
+            UIHelper.showSnackBarShortSafe(root, "Song voted before")
+        } else {
+            request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
+                override fun onSuccess(obj: Int) {
+                    db.insertVotedSong(song)
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortSafe(root, msg)
+                }
+            })
+        }
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {

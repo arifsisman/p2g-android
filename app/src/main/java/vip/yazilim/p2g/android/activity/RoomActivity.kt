@@ -41,11 +41,14 @@ import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
+import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import java.util.concurrent.TimeUnit
 
 
 class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
     PlayerAdapter.OnSeekBarChangeListener {
+    val db by lazy { DBHelper(this) }
+
     var room: Room? = null
     var roomModel: RoomModel? = null
     var roomUser: RoomUser? = null
