@@ -28,7 +28,7 @@ interface Play2GetherWebApi {
     fun getUserDevices(): Call<Response<MutableList<UserDevice>>>
 
     @PUT("/api/spotify/user/device")
-    fun setUserDevice(): Call<Response<Boolean>>
+    fun saveUsersActiveDevice(@Body userDevice: UserDevice): Call<Response<UserDevice>>
 
 
     // Room API

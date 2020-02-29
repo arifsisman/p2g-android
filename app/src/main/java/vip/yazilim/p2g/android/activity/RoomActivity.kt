@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -22,7 +21,6 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
-import kotlinx.android.synthetic.main.dialog_select_device.view.*
 import kotlinx.android.synthetic.main.row_player.*
 import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.R
@@ -392,7 +390,7 @@ class RoomActivity : AppCompatActivity(),
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
                 val mBuilder = AlertDialog.Builder(this@RoomActivity).setView(deviceDialogView)
-                val mAlertDialog = mBuilder.show()
+                mBuilder.show()
 
                 // Adapter start and update with requested search model
                 val selectDeviceRecyclerView: RecyclerView =
@@ -409,9 +407,6 @@ class RoomActivity : AppCompatActivity(),
                 ) {})
 
                 deviceAdapter.update(obj)
-
-                val cancelButton: Button = deviceDialogView.dialog_cancel_button
-                cancelButton.setOnClickListener { mAlertDialog.cancel() }
             }
 
             override fun onError(msg: String) {
@@ -624,8 +619,17 @@ class RoomActivity : AppCompatActivity(),
         }
     }
 
-    override fun onDeviceClicked(userDevice: UserDevice) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onDeviceClicked(userDevice: UserDevice) =
+        request(
+            Singleton.apiClient().saveUsersActiveDevice(userDevice),
+            object : Callback<UserDevice> {
+                override fun onSuccess(obj: UserDevice) {
+                    UIHelper.showSnackBarShortRoom(viewPager, "Active device changed.")
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortRoom(viewPager, msg)
+                }
+            })
 
 }

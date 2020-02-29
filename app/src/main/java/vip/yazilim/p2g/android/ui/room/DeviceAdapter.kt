@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.ui.room
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.UserDevice
@@ -19,13 +20,16 @@ class DeviceAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val deviceName: TextView = itemView.findViewById(R.id.device_name)
+        private val deviceType: TextView = itemView.findViewById(R.id.device_type)
 
         fun bindEvent(searchModel: UserDevice, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onDeviceClicked(searchModel) }
         }
 
         fun bindView(userDevice: UserDevice) {
-
+            deviceName.text = userDevice.deviceName
+            deviceType.text = userDevice.deviceType
         }
     }
 
