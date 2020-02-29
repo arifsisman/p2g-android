@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
@@ -65,7 +65,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         ) {})
 
         // Search with floating action button
-        val fab: ExtendedFloatingActionButton = activity?.findViewById(R.id.fab)!!
+        val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
         fab.setOnClickListener { showSearchDialog() }
 
         roomActivity.roomViewModel.songList.observe(this, renderRoomQueue)
