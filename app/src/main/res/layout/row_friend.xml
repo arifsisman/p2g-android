@@ -82,7 +82,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/deleteButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_play_circle_outline_black_24dp" />
+            app:srcCompat="@drawable/ic_play_circle_filled_black_24dp" />
 
         <ImageButton
             android:id="@+id/deleteButton"

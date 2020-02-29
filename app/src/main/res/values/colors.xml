@@ -10,4 +10,6 @@
 
     <color name="spotifyGreenColor">#1DB954</color>
     <color name="negativeColor">#B91D1D</color>
+
+    <color name="blackColor">#000000</color>
 </resources>

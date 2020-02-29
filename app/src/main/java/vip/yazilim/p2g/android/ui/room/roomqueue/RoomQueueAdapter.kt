@@ -67,7 +67,7 @@ class RoomQueueAdapter(
                 }
             }
 
-            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
+            swipeLayout.showMode = SwipeLayout.ShowMode.PullOut
             swipeLayout.isRightSwipeEnabled = false
             swipeLayout.isClickToClose = true
             swipeLayout.addDrag(SwipeLayout.DragEdge.Left, eventHolder)

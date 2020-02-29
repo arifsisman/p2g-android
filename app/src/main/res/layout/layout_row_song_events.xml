@@ -6,21 +6,22 @@
     android:orientation="horizontal">
 
     <ImageButton
-        android:id="@+id/swipePlayButton"
-        android:layout_width="30dp"
+        android:id="@+id/swipeDeleteButton"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
+        android:background="@color/blackColor"
         android:contentDescription="@string/description_upvote_song_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/swipeUpvoteButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_play_circle_outline_black_24dp" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_delete_white_24dp" />
 
     <ImageButton
         android:id="@+id/swipeDownvoteButton"
-        android:layout_width="30dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
+        android:background="@color/negativeColor"
         android:contentDescription="@string/description_downvote_song_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/swipePlayButton"
@@ -29,9 +30,9 @@
 
     <ImageButton
         android:id="@+id/swipeUpvoteButton"
-        android:layout_width="30dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
+        android:background="@color/spotifyGreenColor"
         android:contentDescription="@string/description_upvote_song_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/swipeDownvoteButton"
@@ -40,14 +41,14 @@
         app:srcCompat="@drawable/ic_upvote_24dp" />
 
     <ImageButton
-        android:id="@+id/swipeDeleteButton"
-        android:layout_width="30dp"
+        android:id="@+id/swipePlayButton"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
+        android:background="@color/blackColor"
         android:contentDescription="@string/description_upvote_song_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/swipeUpvoteButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_delete_24dp" />
+        app:srcCompat="@drawable/ic_play_circle_filled_white_24dp" />
+
 </LinearLayout>
