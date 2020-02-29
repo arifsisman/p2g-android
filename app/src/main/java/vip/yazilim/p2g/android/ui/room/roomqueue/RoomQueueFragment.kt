@@ -215,6 +215,10 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         }
     }
 
+    override fun onItemClicked(view: SwipeLayout, song: Song) {
+        view.toggle()
+    }
+
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
@@ -227,6 +231,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         })
     }
 
+    //TODO check from db song was voted before
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
         request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
@@ -239,6 +244,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         })
     }
 
+    //TODO check from db song was voted before
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
         request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {

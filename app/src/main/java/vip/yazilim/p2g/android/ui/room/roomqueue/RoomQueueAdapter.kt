@@ -69,17 +69,19 @@ class RoomQueueAdapter(
                     songVote.setTextColor(Color.parseColor("#B91D1D"))
                 }
                 else -> {
-                    songVote.visibility = View.INVISIBLE
+                    val songVotePlaceholder = "0"
+                    songVote.text = songVotePlaceholder
+                    songVote.setTextColor(Color.parseColor("#808080"))
                 }
             }
 
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-            swipeLayout.isRightSwipeEnabled = false
             swipeLayout.isClickToClose = true
-            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, eventHolder)
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, eventHolder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener { clickListener.onItemClicked(swipeLayout, song) }
             playButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
             upvoteButton.setOnClickListener { clickListener.onUpvoteClicked(swipeLayout, song) }
             downvoteButton.setOnClickListener { clickListener.onDownvoteClicked(swipeLayout, song) }
@@ -92,6 +94,7 @@ class RoomQueueAdapter(
     }
 
     interface OnItemClickListener {
+        fun onItemClicked(view: SwipeLayout, song: Song)
         fun onPlayClicked(view: SwipeLayout, song: Song)
         fun onUpvoteClicked(view: SwipeLayout, song: Song)
         fun onDownvoteClicked(view: SwipeLayout, song: Song)
