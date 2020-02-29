@@ -79,7 +79,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortSafe(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortRoom(root, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -158,7 +158,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortSafe(mDialogView, msg)
+                        UIHelper.showSnackBarShortRoom(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -194,7 +194,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    UIHelper.showSnackBarShortSafe(root, msg)
+                    UIHelper.showSnackBarShortRoom(root, msg)
                 }
             })
         }
@@ -207,7 +207,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             if (isAnyItemsSelected != null) {
                 mDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
-                UIHelper.showSnackBarShortSafe(
+                UIHelper.showSnackBarShortRoom(
                     mDialogView,
                     "10 songs or 1 Album/Playlist can be added in each search!"
                 )
@@ -226,7 +226,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortSafe(root, msg)
+                UIHelper.showSnackBarShortRoom(root, msg)
             }
         })
     }
@@ -236,7 +236,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         view.close()
 
         if (db.isVotedBefore(song)) {
-            UIHelper.showSnackBarShortSafe(root, "Song voted before")
+            UIHelper.showSnackBarShortRoom(root, "Song voted before")
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
@@ -244,7 +244,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortSafe(root, msg)
+                    UIHelper.showSnackBarShortRoom(root, msg)
                 }
             })
         }
@@ -255,7 +255,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         view.close()
 
         if (db.isVotedBefore(song)) {
-            UIHelper.showSnackBarShortSafe(root, "Song voted before")
+            UIHelper.showSnackBarShortRoom(root, "Song voted before")
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
@@ -263,7 +263,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortSafe(root, msg)
+                    UIHelper.showSnackBarShortRoom(root, msg)
                 }
             })
         }
@@ -278,7 +278,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortSafe(root, msg)
+                UIHelper.showSnackBarShortRoom(root, msg)
                 adapter.add(song, position)
             }
         })

@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -56,10 +57,14 @@ class UIHelper {
         }
 
         // For showing SnackBar in view which is not casted FrameLayout.LayoutParams
-        fun showSnackBarShortSafe(view: View?, message: String) {
+        fun showSnackBarShortRoom(view: View?, message: String) {
             val snack: Snackbar? =
                 view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            snack?.show()
+            val snackView = snack?.view
+            val params = snackView?.layoutParams as CoordinatorLayout.LayoutParams
+            params.gravity = Gravity.TOP
+            snackView.layoutParams = params
+            snack.show()
         }
 
         fun showSnackBarShort(view: View?, message: String) {
