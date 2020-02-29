@@ -42,7 +42,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     private lateinit var adapter: RoomQueueAdapter
 
     private lateinit var searchAdapter: SearchAdapter
-    private lateinit var mDialogView: View
+    private lateinit var searchDialogView: View
 
     override fun setupUI() {
         roomActivity = activity as RoomActivity
@@ -109,15 +109,16 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     private fun showSearchDialog() {
-        mDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
+        searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder =
-            AlertDialog.Builder(context, R.style.myFullscreenAlertDialogStyle).setView(mDialogView)
+            AlertDialog.Builder(context, R.style.myFullscreenAlertDialogStyle)
+                .setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
 
-        val queryEditText = mDialogView.dialogQuery
-        val searchButton = mDialogView.dialog_search_button
-        val addButton = mDialogView.addButton
-        val cancelButton = mDialogView.dialog_cancel_button
+        val queryEditText = searchDialogView.dialogQuery
+        val searchButton = searchDialogView.dialog_search_button
+        val addButton = searchDialogView.addButton
+        val cancelButton = searchDialogView.dialog_cancel_button
 
         // For request focus and open keyboard
         queryEditText.requestFocus()
@@ -140,7 +141,8 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         // Click search
         searchButton.setOnClickListener {
             // Adapter start and update with requested search model
-            val searchRecyclerView: RecyclerView = mDialogView.findViewById(R.id.searchRecyclerView)
+            val searchRecyclerView: RecyclerView =
+                searchDialogView.findViewById(R.id.searchRecyclerView)
             searchRecyclerView.layoutManager = LinearLayoutManager(activity)
             searchRecyclerView.setHasFixedSize(true)
 
@@ -158,7 +160,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShort(searchDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -168,12 +170,13 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                         searchButton.visibility = View.GONE
                         addButton.visibility = View.VISIBLE
 
-                        mDialogView.findViewById<EditText>(R.id.dialogQuery).visibility = View.GONE
+                        searchDialogView.findViewById<EditText>(R.id.dialogQuery).visibility =
+                            View.GONE
 
                         searchAdapter.update(obj)
 
                         // Search text query
-                        val searchText: TextView = mDialogView.findViewById(R.id.searchText)
+                        val searchText: TextView = searchDialogView.findViewById(R.id.searchText)
                         val searchTextPlaceholder = "Search with query '${query}'"
                         searchText.text = searchTextPlaceholder
                         searchText.visibility = View.VISIBLE
@@ -202,13 +205,13 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
-        if (::searchAdapter.isInitialized && ::mDialogView.isInitialized) {
+        if (::searchAdapter.isInitialized && ::searchDialogView.isInitialized) {
             val isAnyItemsSelected = searchAdapter.select(searchModel)
             if (isAnyItemsSelected != null) {
-                mDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
+                searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
                 UIHelper.showSnackBarShortRoom(
-                    mDialogView,
+                    searchDialogView,
                     "10 songs or 1 Album/Playlist can be added in each search!"
                 )
             }

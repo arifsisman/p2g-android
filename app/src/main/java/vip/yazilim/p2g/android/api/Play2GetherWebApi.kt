@@ -25,7 +25,7 @@ interface Play2GetherWebApi {
     fun getUserModelMe(): Call<Response<UserModel>>
 
     @GET("/api/spotify/user/device")
-    fun getUserDevices(): Call<Response<List<UserDevice>>>
+    fun getUserDevices(): Call<Response<MutableList<UserDevice>>>
 
     @PUT("/api/spotify/user/device")
     fun setUserDevice(): Call<Response<Boolean>>
