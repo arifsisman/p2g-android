@@ -5,12 +5,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import kotlinx.android.synthetic.main.dialog_spotify_search.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
@@ -98,6 +101,10 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
 
+        if (it.isNullOrEmpty()) {
+            (activity as RoomActivity).roomViewModel._isEmptyList.postValue(true)
+        }
+
         adapter.update(it)
     }
 
@@ -148,6 +155,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         // Click search
         searchButton.setOnClickListener {
             // Adapter start and update with requested search model
+            val searchRecyclerView: RecyclerView = mDialogView.findViewById(R.id.searchRecyclerView)
             searchRecyclerView.layoutManager = LinearLayoutManager(activity)
             searchRecyclerView.setHasFixedSize(true)
 
@@ -175,11 +183,12 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                         searchButton.visibility = View.GONE
                         addButton.visibility = View.VISIBLE
 
-                        dialogQuery.visibility = View.GONE
+                        mDialogView.findViewById<EditText>(R.id.dialogQuery).visibility = View.GONE
 
                         searchAdapter.update(obj)
 
                         // Search text query
+                        val searchText: TextView = mDialogView.findViewById(R.id.searchText)
                         val searchTextPlaceholder = "Search with query '${query}'"
                         searchText.text = searchTextPlaceholder
                         searchText.visibility = View.VISIBLE
@@ -211,7 +220,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         if (::searchAdapter.isInitialized && ::mDialogView.isInitialized) {
             val isAnyItemsSelected = searchAdapter.select(searchModel)
             if (isAnyItemsSelected != null) {
-                addButton.isEnabled = isAnyItemsSelected
+                mDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
                 UIHelper.showSnackBarShortSafe(
                     mDialogView,
