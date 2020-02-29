@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -39,6 +40,11 @@ class RoomQueueAdapter(
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
         private val songVote: TextView = itemView.findViewById(R.id.song_vote)
 
+        private val playButton: ImageButton = itemView.findViewById(R.id.swipePlayButton)
+        private val upvoteButton: ImageButton = itemView.findViewById(R.id.swipeUpvoteButton)
+        private val downvoteButton: ImageButton = itemView.findViewById(R.id.swipeDownvoteButton)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.swipeDeleteButton)
+
         fun bindView(song: Song) {
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
@@ -67,14 +73,17 @@ class RoomQueueAdapter(
                 }
             }
 
-            swipeLayout.showMode = SwipeLayout.ShowMode.PullOut
+            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
             swipeLayout.isRightSwipeEnabled = false
             swipeLayout.isClickToClose = true
             swipeLayout.addDrag(SwipeLayout.DragEdge.Left, eventHolder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
-//            itemView.setOnClickListener { clickListener.onSongClicked(itemView, song) }
+            playButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
+            upvoteButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
+            downvoteButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
+            deleteButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
         }
 
         fun bindItemManager(position: Int) {
@@ -83,9 +92,7 @@ class RoomQueueAdapter(
     }
 
     interface OnItemClickListener {
-        //        fun onSongClicked(view: View, song: Song)
         fun onPlayClicked(view: SwipeLayout, song: Song)
-
         fun onUpvoteClicked(view: SwipeLayout, song: Song)
         fun onDownvoteClicked(view: SwipeLayout, song: Song)
         fun onDeleteClicked(view: SwipeLayout, song: Song)

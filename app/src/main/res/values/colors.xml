@@ -12,4 +12,5 @@
     <color name="negativeColor">#B91D1D</color>
 
     <color name="blackColor">#000000</color>
+    <color name="whiteColor">#FFFFFF</color>
 </resources>
