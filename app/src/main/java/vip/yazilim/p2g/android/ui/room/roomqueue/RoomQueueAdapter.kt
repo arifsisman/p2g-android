@@ -10,11 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
+import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
+
 
 /**
  * @author mustafaarifsisman - 20.02.2020
@@ -26,6 +28,7 @@ class RoomQueueAdapter(
 ) : RecyclerSwipeAdapter<RoomQueueAdapter.MViewHolder>() {
 
     private lateinit var view: View
+    private var itemManager = SwipeItemRecyclerMangerImpl(this)
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
@@ -73,6 +76,10 @@ class RoomQueueAdapter(
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
 //            itemView.setOnClickListener { clickListener.onSongClicked(itemView, song) }
         }
+
+        fun bindItemManager(position: Int) {
+            itemManager.bindView(itemView, position)
+        }
     }
 
     interface OnItemClickListener {
@@ -96,6 +103,7 @@ class RoomQueueAdapter(
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
         holder.bindView(songs[position])
         holder.bindEvent(songs[position], itemClickListener)
+        holder.bindItemManager(position)
     }
 
     override fun getItemCount(): Int {
