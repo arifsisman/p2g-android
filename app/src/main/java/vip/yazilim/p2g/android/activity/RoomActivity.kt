@@ -287,6 +287,9 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.select_device -> {
+                selectDevice()
+            }
             R.id.clear_queue -> {
                 clearQueue()
             }
@@ -375,6 +378,17 @@ class RoomActivity : AppCompatActivity(), PlayerAdapter.OnItemClickListener,
             .setPositiveButton("Yes", dialogClickListener)
             .setNegativeButton("No", dialogClickListener)
             .show()
+    }
+
+    private fun selectDevice() {
+        request(Singleton.apiClient().getUserDevices(), object : Callback<List<UserDevice>> {
+            override fun onSuccess(obj: List<UserDevice>) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShortRoom(viewPager, msg)
+            }
+        })
     }
 
 

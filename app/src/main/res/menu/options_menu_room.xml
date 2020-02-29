@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/select_device"
+        android:title="@string/title_select_device" />
+
+    <item
         android:id="@+id/clear_queue"
         android:title="@string/title_clear_queue" />
 

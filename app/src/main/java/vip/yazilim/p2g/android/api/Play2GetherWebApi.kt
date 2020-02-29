@@ -24,6 +24,12 @@ interface Play2GetherWebApi {
     @GET("/api/user/me/model")
     fun getUserModelMe(): Call<Response<UserModel>>
 
+    @GET("/api/spotify/user/device")
+    fun getUserDevices(): Call<Response<List<UserDevice>>>
+
+    @PUT("/api/spotify/user/device")
+    fun setUserDevice(): Call<Response<Boolean>>
+
 
     // Room API
     @POST("/api/room/create/{roomName}")
