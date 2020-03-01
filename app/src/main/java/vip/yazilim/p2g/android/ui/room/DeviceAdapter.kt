@@ -22,6 +22,7 @@ class DeviceAdapter(
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val deviceName: TextView = itemView.findViewById(R.id.device_name)
         private val deviceType: TextView = itemView.findViewById(R.id.device_type)
+        private val activeBar: View = itemView.findViewById(R.id.divider)
 
         fun bindEvent(searchModel: UserDevice, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onDeviceClicked(searchModel) }
@@ -30,6 +31,9 @@ class DeviceAdapter(
         fun bindView(userDevice: UserDevice) {
             deviceName.text = userDevice.deviceName
             deviceType.text = userDevice.deviceType
+
+            if (userDevice.activeFlag) activeBar.visibility =
+                View.VISIBLE else activeBar.visibility = View.INVISIBLE
         }
     }
 

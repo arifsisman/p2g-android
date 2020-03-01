@@ -61,6 +61,8 @@ class RoomActivity : AppCompatActivity(),
     private lateinit var playerAdapter: PlayerAdapter
     private lateinit var slidingUpPanel: SlidingUpPanelLayout
 
+    private lateinit var deviceDialog: AlertDialog
+
     @Volatile
     private var isPlaying = false
     @Volatile
@@ -390,7 +392,7 @@ class RoomActivity : AppCompatActivity(),
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
                 val mBuilder = AlertDialog.Builder(this@RoomActivity).setView(deviceDialogView)
-                mBuilder.show()
+                deviceDialog = mBuilder.show()
 
                 // Adapter start and update with requested search model
                 val selectDeviceRecyclerView: RecyclerView =
@@ -619,7 +621,11 @@ class RoomActivity : AppCompatActivity(),
         }
     }
 
-    override fun onDeviceClicked(userDevice: UserDevice) =
+    override fun onDeviceClicked(userDevice: UserDevice) {
+        if (::deviceDialog.isInitialized) {
+            deviceDialog.dismiss()
+        }
+
         request(
             Singleton.apiClient().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
@@ -631,5 +637,6 @@ class RoomActivity : AppCompatActivity(),
                     UIHelper.showSnackBarShortRoom(viewPager, msg)
                 }
             })
+    }
 
 }

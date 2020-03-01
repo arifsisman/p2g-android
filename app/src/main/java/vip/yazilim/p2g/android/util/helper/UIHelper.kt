@@ -62,7 +62,7 @@ class UIHelper {
                 view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             val snackView = snack?.view
             val params = snackView?.layoutParams as CoordinatorLayout.LayoutParams
-            params.gravity = Gravity.TOP
+            params.gravity = Gravity.BOTTOM
             snackView.layoutParams = params
             snack.show()
         }
