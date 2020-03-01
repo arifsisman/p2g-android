@@ -20,6 +20,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -96,16 +97,26 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     // Observer
-    private val renderRoomQueue = Observer<MutableList<Song>> {
-        Log.v(TAG, "data updated $it")
+    private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
+        Log.v(TAG, "data updated $songList")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
 
-        if (it.isNullOrEmpty()) {
+        if (songList.isNullOrEmpty()) {
             (activity as RoomActivity).roomViewModel._isEmptyList.postValue(true)
+        } else {
+            var hasNext = false
+
+            songList.forEach { song ->
+                if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
+                    hasNext = true
+                }
+            }
+
+            (activity as RoomActivity).skipFlag = hasNext
         }
 
-        adapter.update(it)
+        adapter.update(songList)
     }
 
     private fun showSearchDialog() {
@@ -219,7 +230,9 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onItemClicked(view: SwipeLayout, song: Song) {
-        view.toggle()
+        if (view.openStatus != SwipeLayout.Status.Open) {
+            view.toggle()
+        }
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {

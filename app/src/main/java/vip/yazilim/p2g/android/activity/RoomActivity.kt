@@ -69,6 +69,8 @@ class RoomActivity : AppCompatActivity(),
     private var isSeeking = false
     @Volatile
     private var songCurrentMs = 0
+    @Volatile
+    internal var skipFlag = false
 
     companion object {
         private const val PLAYER_TAG = "Player"
@@ -236,13 +238,24 @@ class RoomActivity : AppCompatActivity(),
                 songCurrentMs += 1000
                 if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs!!) {
                     isPlaying = false
+                    skipHelper()
                     Log.v(PLAYER_TAG, "Song is finished!")
                     runOnUiThread {
+                        song_current.text =
+                            roomViewModel.playerSong.value?.durationMs!!.getHumanReadableTimestamp()
                         playPause_button.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
                     }
                 }
             }
             TimeUnit.SECONDS.sleep(1)
+        }
+    }
+
+    private fun skipHelper() {
+        if (skipFlag && roomUser?.role.equals(Role.ROOM_OWNER.role)) {
+            Log.v(PLAYER_TAG, "Skipping next song.")
+            skipFlag = false
+            onNextClicked()
         }
     }
 
