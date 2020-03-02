@@ -1,11 +1,13 @@
 package vip.yazilim.p2g.android.ui.room
 
 import androidx.lifecycle.MutableLiveData
+import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.ViewModelBase
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
@@ -76,6 +78,40 @@ class RoomViewModel : ViewModelBase() {
             }
             else -> {
                 null
+            }
+        }
+    }
+
+    companion object {
+        fun getCurrentSongMs(song: Song?): Int {
+            if (song == null)
+                return 0
+
+            when (song.songStatus) {
+                SongStatus.PAUSED.songStatus -> {
+                    return if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
+                }
+                SongStatus.PLAYING.songStatus -> {
+                    val passed =
+                        Duration
+                            .between(song.playingTime, getLocalDateTimeZonedUTC())
+                            .toMillis()
+                            .toInt()
+                    return when {
+                        passed > song.durationMs -> {
+                            song.durationMs
+                        }
+                        song.currentMs > passed -> {
+                            song.currentMs
+                        }
+                        else -> {
+                            passed
+                        }
+                    }
+                }
+                else -> {
+                    return 0
+                }
             }
         }
     }

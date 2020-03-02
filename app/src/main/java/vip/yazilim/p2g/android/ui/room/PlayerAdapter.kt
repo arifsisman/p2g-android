@@ -11,14 +11,12 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
-import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 
 
 /**
@@ -61,33 +59,7 @@ class PlayerAdapter(
         fun bindView(song: Song?) {
             if (song != null) {
                 maxMs = song.durationMs
-
-                when (song.songStatus) {
-                    SongStatus.PAUSED.songStatus -> {
-                        currentMs =
-                            if (song.currentMs > song.durationMs) song.durationMs else song.currentMs
-                    }
-                    SongStatus.PLAYING.songStatus -> {
-                        val passed =
-                            Duration.between(song.playingTime, getLocalDateTimeZonedUTC())
-                                .toMillis().toInt()
-                        currentMs =
-                            when {
-                                passed > song.durationMs -> {
-                                    song.durationMs
-                                }
-                                song.currentMs > passed -> {
-                                    song.currentMs
-                                }
-                                else -> {
-                                    passed
-                                }
-                            }
-                    }
-                    else -> {
-                        currentMs = 0
-                    }
-                }
+                currentMs = RoomViewModel.getCurrentSongMs(song)
 
                 ///////////////////////
                 // Minimized views bind

@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.activity
 
 import android.app.AlertDialog
 import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -22,7 +23,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.row_player.*
-import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -40,7 +40,6 @@ import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
-import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
@@ -271,24 +270,7 @@ class RoomActivity : AppCompatActivity(),
         if (song != null) {
             isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
 
-            if (song.playingTime != null) {
-                val passed =
-                    Duration.between(song.playingTime, getLocalDateTimeZonedUTC()).toMillis()
-                        .toInt()
-                songCurrentMs = when {
-                    passed > song.durationMs -> {
-                        song.durationMs
-                    }
-                    song.currentMs > passed -> {
-                        song.currentMs
-                    }
-                    else -> {
-                        passed
-                    }
-                }
-            } else {
-                songCurrentMs = 0
-            }
+            songCurrentMs = RoomViewModel.getCurrentSongMs(song)
 
             Log.d(PLAYER_TAG, "Is ${song.songName} playing? = $isPlaying")
             Log.d(PLAYER_TAG, "CURRENT MS $songCurrentMs")
@@ -365,7 +347,12 @@ class RoomActivity : AppCompatActivity(),
         // start service and register service
         val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
         intent.putExtra("roomId", room?.id)
-        startService(intent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(ACTION_SONG_LIST_RECEIVED)

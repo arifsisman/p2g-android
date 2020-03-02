@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -24,8 +25,6 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  */
 class MainActivity : AppCompatActivity() {
 
-//    private val db by lazy { DBHelper(this) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,7 +47,12 @@ class MainActivity : AppCompatActivity() {
         intent.getParcelableExtra<User>("user")?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
             intent.putExtra("userId", it)
-            startService(intent)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
         }
     }
 
@@ -61,61 +65,11 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.logout -> {
                 request(Singleton.apiClient().logout(), null)
-
-//                db.deleteAllData()
                 val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
                 startActivity(loginIntent)
             }
         }
         return true
     }
-
-//    @SuppressLint("CheckResult")
-//    private fun connectRoomWebSocket(roomId: Long) {
-//        roomWSClient = getRoomWebSocketClient(roomId)
-//
-//        roomWSClient.connect()
-//
-//        roomWSClient.lifecycle()
-//            .subscribe({
-//                when (it.type) {
-//                    LifecycleEvent.Type.OPENED -> {
-//                        Log.i(TAG, it.toString())
-//                    }
-//                    LifecycleEvent.Type.CLOSED -> {
-//                        Log.i(TAG, it.toString())
-//                    }
-//                    LifecycleEvent.Type.ERROR -> {
-//                        Log.i(TAG, it.toString())
-//                    }
-//                    else -> Log.i(TAG, it.toString())
-//                }
-//            }, { t: Throwable? ->
-//                Log.d(TAG, t?.message.toString())
-//            })
-//
-//        roomWSClient.topic("/p2g/room/$roomId/messages")
-//            .subscribe({
-//                Log.d(TAG, it.payload)
-//            }, { t: Throwable? -> Log.d(TAG, t?.message.toString()) })
-//
-//        roomWSClient.topic("/p2g/room/$roomId/songs")
-//            .subscribe({
-//                Log.d(TAG, it.payload)
-//            }, { t: Throwable? -> Log.d(TAG, t?.message.toString()) })
-//
-//        roomWSClient.topic("/p2g/room/$roomId/status")
-//            .subscribe({
-//                Log.d(TAG, it.payload)
-//            }, { t: Throwable? -> Log.d(TAG, t?.message.toString()) })
-//
-//        val gsonBuilder = GsonBuilder()
-//        val gson = registerLocalDateTime(gsonBuilder).create()
-//
-//        val chatMessage = ChatMessage("TEST", "TEST", 1, "TEST", LocalDateTime.now())
-//        val chatMessageJson = gson.toJson(chatMessage)
-//
-//        roomWSClient.send("/p2g/room/$roomId", chatMessageJson).subscribe()
-//    }
 
 }
