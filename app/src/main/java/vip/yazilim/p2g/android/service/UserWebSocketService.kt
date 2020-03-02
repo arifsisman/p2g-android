@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.gson.GsonBuilder
 import ua.naiksoftware.stomp.StompClient
@@ -62,6 +63,12 @@ class UserWebSocketService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.v(TAG, "onCreate")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startMyOwnForeground()
+        } else {
+            startForeground(1, Notification())
+        }
 
         val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
         registerReceiver(serviceReceiver, intentFilter)
@@ -173,4 +180,29 @@ class UserWebSocketService : Service() {
         notificationManager.notify(0, notification)
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startMyOwnForeground() {
+        val NOTIFICATION_CHANNEL_ID = "vip.yazilim.p2g"
+        val channelName = "Play2Gether Invite Service"
+        val chan = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            channelName,
+            NotificationManager.IMPORTANCE_NONE
+        )
+        chan.lightColor = Color.BLUE
+        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+        val manager =
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+        manager.createNotificationChannel(chan)
+        val notificationBuilder =
+            NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notification = notificationBuilder.setOngoing(true)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("App is running in background")
+            .setPriority(NotificationManager.IMPORTANCE_MIN)
+            .setCategory(Notification.CATEGORY_SERVICE)
+            .build()
+        startForeground(2, notification)
+    }
 }
