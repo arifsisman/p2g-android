@@ -45,6 +45,8 @@ class RoomQueueAdapter(
         private val downvoteButton: ImageButton = itemView.findViewById(R.id.swipeDownvoteButton)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.swipeDeleteButton)
 
+        private val isPlaying: View = itemView.findViewById(R.id.divider)
+
         fun bindView(song: Song) {
             songName.text = song.songName
             songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
@@ -73,6 +75,12 @@ class RoomQueueAdapter(
                     songVote.text = songVotePlaceholder
                     songVote.setTextColor(Color.parseColor("#808080"))
                 }
+            }
+
+            if (song.songStatus == SongStatus.PLAYING.songStatus) {
+                isPlaying.visibility = View.VISIBLE
+            } else {
+                isPlaying.visibility = View.INVISIBLE
             }
 
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
@@ -118,10 +126,6 @@ class RoomQueueAdapter(
 
     override fun getItemCount(): Int {
         return songs.size
-    }
-
-    override fun getItemId(position: Int): Long {
-        return songs[position].id
     }
 
     fun update(data: MutableList<Song>) {

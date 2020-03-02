@@ -56,7 +56,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             roomActivity.roomViewModel.songList.value ?: mutableListOf()
             , this
         )
-        adapter.setHasStableIds(true)
+
         recyclerView.adapter = adapter
 
         // recyclerView divider
@@ -235,21 +235,19 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         }
     }
 
-    override fun onPlayClicked(view: SwipeLayout, song: Song) {
-        view.close()
+    override fun onPlayClicked(view: SwipeLayout, song: Song) =
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
+
             }
 
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortRoom(root, msg)
             }
         })
-    }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         val db = (activity as RoomActivity).db
-        view.close()
 
         if (db.isVotedBefore(song)) {
             UIHelper.showSnackBarShortRoom(root, "Song voted before")
@@ -268,7 +266,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         val db = (activity as RoomActivity).db
-        view.close()
 
         if (db.isVotedBefore(song)) {
             UIHelper.showSnackBarShortRoom(root, "Song voted before")
@@ -288,7 +285,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
-        view.close()
+
         request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
@@ -299,4 +296,5 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
         })
     }
+
 }
