@@ -19,42 +19,47 @@
         android:backgroundTint="@color/spotifyGreenColor"
         android:drawablePadding="8dp"
         android:padding="8dp"
-        android:text="@string/login_button_text"
+        android:text="@string/placeholder_login_button"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         app:icon="@drawable/spotify_icon"
+        android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.88" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/app_name_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="196dp"
         android:text="@string/app_name"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/spotify_login_btn"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_view"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/logo_view" />
 
     <ImageView
         android:id="@+id/logo_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="28dp"
-        android:contentDescription="@string/logo"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/description_logo_of_play2gether"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@drawable/ic_logo" />
+
+    <TextView
+        android:id="@+id/app_desc_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/placeholder_app_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_name_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

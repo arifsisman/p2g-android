@@ -7,19 +7,26 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="vip.yazilim.p2g.android.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:name="vip.yazilim.p2g.android.ui.main.home.HomeFragment"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="vip.yazilim.p2g.android.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_invites"
+        android:name="vip.yazilim.p2g.android.ui.main.invites.InvitesFragment"
+        android:label="@string/title_room_invites"
+        tools:layout="@layout/fragment_invites" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="vip.yazilim.p2g.android.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_friends"
+        android:name="vip.yazilim.p2g.android.ui.main.friends.FriendsFragment"
+        android:label="@string/title_friends"
+        tools:layout="@layout/fragment_friends" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="vip.yazilim.p2g.android.ui.main.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
 </navigation>

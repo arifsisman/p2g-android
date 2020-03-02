@@ -1,18 +1,101 @@
 <resources>
+    <!--Eng. Titles-->
     <string name="app_name">Play2Gether</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_rooms">Rooms</string>
+    <string name="title_room">Room</string>
+    <string name="title_friends">Friends</string>
+    <string name="title_profile">Profile</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="login_button_text">Login with Spotify</string>
-    <string name="logout">Logout</string>
-    <string name="logo">Logo</string>
+    <string name="title_activity_room">RoomActivity</string>
+    <string name="title_room_invites">Room Invites</string>
+    <string name="title_search_room">Search Room</string>
+    <string name="title_logout">Logout</string>
+    <string name="title_leave">Leave Room</string>
+    <string name="title_invites">Invites</string>
+    <string name="title_queue">Queue</string>
+    <string name="title_users">Users</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_invite">Invite</string>
+    <string name="title_clear_queue">Clear Room Queue</string>
+    <string name="title_select_device">Select Playback Device</string>
+
+
+    <!--Eng. Hints-->
+    <string name="hint_room_password_optional">Room Password (Optional)</string>
+    <string name="hint_room_password_required">Room Password</string>
+
+    <!--Eng. Descriptions-->
+    <string name="description_profile_image">Profile Image</string>
+    <string name="description_online_status">Online Status Image</string>
+    <string name="description_lock_button">Private Room Image</string>
+    <string name="description_music_note">Music Note Image</string>
+    <string name="description_error_image">Error Image</string>
+    <string name="description_logo_of_play2gether">Logo of Play2Gether</string>
+    <string name="description_country_flag_image">Country Flag Image</string>
+    <string name="description_join_button">Join Button</string>
+    <string name="description_ignore_button">Ignore Button</string>
+    <string name="description_accept_button">Accept Button</string>
+    <string name="description_reject_button">Reject Button</string>
+    <string name="description_song_cover_image">Song cover image</string>
+    <string name="description_upvote_song_button">Upvote song button</string>
+    <string name="description_downvote_song_button">Downvote song button</string>
+    <string name="description_play_button">Play button</string>
+    <string name="description_next_button">Next button</string>
+    <string name="description_previous_button">Previous button</string>
+    <string name="description_repeat_button">Replay button</string>
+    <string name="description_search_model_cover_image">Search Model Cover Image</string>
+    <string name="description_friend_request_icon">Friend Request Icon</string>
+
+
+    <!--Eng. Placeholders-->
+    <string name="placeholder_cancel">Cancel</string>
+    <string name="placeholder_login_button">Login with Spotify</string>
+    <string name="placeholder_create_room">Create New Room</string>
+    <string name="placeholder_join_room">Join Room</string>
+    <string name="placeholder_an_error_occurred">An error occurred</string>
+    <string name="placeholder_empty_list">Nothing found here…</string>
+    <string name="placeholder_email">Email:</string>
+    <string name="placeholder_room_owner">Room Owner:</string>
+    <string name="placeholder_room_now_playing_song">Now Playing:</string>
+    <string name="placeholder_room_paused_song">Paused:</string>
+    <string name="placeholder_room_next_song">Next Song:</string>
+    <string name="placeholder_room_song_not_found">No song found in the room</string>
+    <string name="placeholder_room_user_not_found">Not in any room</string>
+    <string name="placeholder_name">Name</string>
+    <string name="placeholder_friend_counts"> Friends</string>
+    <string name="placeholder_song_and_room_status">Song and Room Status</string>
+    <string name="placeholder_song_and_room_status_helper">In</string>
+    <string name="placeholder_spotify_account_id">Spotify Account ID:</string>
+    <string name="placeholder_anthem">Anthem:</string>
+    <string name="placeholder_settings">Settings</string>
+    <string name="placeholder_set_anthem">Set Anthem</string>
+    <string name="placeholder_app_description">Listen to Spotify with your friends</string>
+    <string name="placeholder_room_inviter">From</string>
+    <string name="placeholder_member_since">Member since</string>
+    <string name="placeholder_user_name">Username</string>
+    <string name="placeholder_friend_request_date">Request Date:</string>
+    <string name="placeholder_song_artists">Song Artists</string>
+    <string name="placeholder_song_name">Song Name</string>
+    <string name="placeholder_song_vote">0</string>
+    <string name="placeholder_add_song">Add song</string>
+    <string name="placeholder_search_spotify">Search</string>
+    <string name="placeholder_search_spotify_expanded">Song, Album, Playlist, Artist…</string>
+    <string name="placeholder_search_model_name">Search Model Name</string>
+    <string name="placeholder_search_model_artists">Search Model Artists</string>
+    <string name="placeholder_search_model_type">Model Type</string>
+    <string name="placeholder_add_song_to_room">Add</string>
+    <string name="placeholder_search_query">Search Query</string>
+    <string name="placeholder_room_name">Room Name</string>
+    <string name="placeholder_room_name_expanded">Room:</string>
+    <string name="placeholder_song_default_time">00:00</string>
+    <string name="description_play_song_button">Play song button</string>
+    <string name="description_delete_song_button">Delete song button</string>
+    <string name="placeholder_play_song">Play Song</string>
+    <string name="placeholder_upvote_song">Upvote Song</string>
+    <string name="placeholder_downvote_song">Downvote Song</string>
+    <string name="placeholder_delete_song">Delete Song</string>
+    <string name="placeholder_device_name">Device Name</string>
+    <string name="placeholder_device_type">Device Type</string>
+
 </resources>
