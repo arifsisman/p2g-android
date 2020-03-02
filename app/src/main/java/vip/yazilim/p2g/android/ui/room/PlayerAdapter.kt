@@ -41,6 +41,9 @@ class PlayerAdapter(
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
         private val seekBar: SeekBar = itemView.findViewById(R.id.seek_bar)
+        private val playPauseButtonMini: ImageButton =
+            itemView.findViewById(R.id.playPause_button_mini)
+
 
         // Expanded views
         private val songNameExp: TextView = itemView.findViewById(R.id.song_name_exp)
@@ -107,8 +110,10 @@ class PlayerAdapter(
                 ////////////////////////
                 if (song.songStatus == SongStatus.PLAYING.songStatus) {
                     playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
                 } else {
                     playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
                 }
 
                 if (song.repeatFlag) {
@@ -136,6 +141,7 @@ class PlayerAdapter(
             seekBarChangeListener: OnSeekBarChangeListener
         ) {
             playPauseButton.setOnClickListener { clickListener.onPlayPauseClicked() }
+            playPauseButtonMini.setOnClickListener { clickListener.onPlayPauseClicked() }
             nextButton.setOnClickListener { clickListener.onNextClicked() }
             previousButton.setOnClickListener { clickListener.onPreviousClicked() }
             repeatButton.setOnClickListener { clickListener.onRepeatClicked() }

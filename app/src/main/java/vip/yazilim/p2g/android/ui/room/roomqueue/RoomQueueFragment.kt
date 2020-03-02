@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
@@ -44,6 +45,8 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var searchDialogView: View
+
+    private val viewPager by lazy { (activity as RoomActivity).viewPager }
 
     override fun setupUI() {
         roomActivity = activity as RoomActivity
@@ -80,7 +83,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortRoom(viewPager, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -208,7 +211,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    UIHelper.showSnackBarShortRoom(root, msg)
+                    UIHelper.showSnackBarShortRoom(viewPager, msg)
                 }
             })
         }
@@ -242,7 +245,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(root, msg)
+                UIHelper.showSnackBarShortRoom(viewPager, msg)
             }
         })
 
@@ -250,7 +253,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val db = (activity as RoomActivity).db
 
         if (db.isVotedBefore(song)) {
-            UIHelper.showSnackBarShortRoom(root, "Song voted before")
+            UIHelper.showSnackBarShortRoom(viewPager, "Song voted before")
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
@@ -258,7 +261,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortRoom(root, msg)
+                    UIHelper.showSnackBarShortRoom(viewPager, msg)
                 }
             })
         }
@@ -268,7 +271,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val db = (activity as RoomActivity).db
 
         if (db.isVotedBefore(song)) {
-            UIHelper.showSnackBarShortRoom(root, "Song voted before")
+            UIHelper.showSnackBarShortRoom(viewPager, "Song voted before")
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
@@ -276,7 +279,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortRoom(root, msg)
+                    UIHelper.showSnackBarShortRoom(viewPager, msg)
                 }
             })
         }

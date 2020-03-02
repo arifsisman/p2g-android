@@ -243,6 +243,7 @@ class RoomActivity : AppCompatActivity(),
                         song_current.text =
                             roomViewModel.playerSong.value?.durationMs!!.getHumanReadableTimestamp()
                         playPause_button.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                        playPause_button_mini.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
                     }
                 }
             }
@@ -489,9 +490,11 @@ class RoomActivity : AppCompatActivity(),
             return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
                 fab.show()
                 playerController.visibility = View.VISIBLE
+                playPause_button_mini.visibility = View.VISIBLE
                 true
             } else {
                 fab.hide()
+                playPause_button_mini.visibility = View.GONE
                 playerController.visibility = View.GONE
                 false
             }
