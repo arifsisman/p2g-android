@@ -289,6 +289,9 @@ class RoomActivity : AppCompatActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.sync_with_room -> {
+                syncWithRoom(roomUser)
+            }
             R.id.select_device -> {
                 selectDevice()
             }
@@ -305,8 +308,22 @@ class RoomActivity : AppCompatActivity(),
         return true
     }
 
+    private fun syncWithRoom(roomUser: RoomUser?) {
+        request(
+            roomUser?.let { Singleton.apiClient().syncWithRoom(it) },
+            object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                    UIHelper.showSnackBarShortRoom(viewPager, "Playback synced with room")
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortRoom(viewPager, msg)
+                }
+            })
+    }
+
     override fun onBackPressed() {
-        leaveRoom()
+        showMinimizedPlayer()
     }
 
     override fun onDestroy() {

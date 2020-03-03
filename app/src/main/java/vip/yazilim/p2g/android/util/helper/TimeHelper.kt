@@ -22,6 +22,10 @@ class TimeHelper {
             return DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm").format(this)
         }
 
+        fun ZonedDateTime.getFormattedCompact(): String {
+            return DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm").format(this)
+        }
+
         @SuppressLint("SimpleDateFormat")
         fun Int.getHumanReadableTimestamp(): String {
             return (SimpleDateFormat("mm:ss")).format(this)

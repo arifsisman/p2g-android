@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/sync_with_room"
+        android:title="@string/title_sync_with_room" />
+
+    <item
         android:id="@+id/select_device"
         android:title="@string/title_select_device" />
 

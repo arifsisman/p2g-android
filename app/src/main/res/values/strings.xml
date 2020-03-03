@@ -11,14 +11,14 @@
     <string name="title_room_invites">Room Invites</string>
     <string name="title_search_room">Search Room</string>
     <string name="title_logout">Logout</string>
-    <string name="title_leave">Leave Room</string>
+    <string name="title_leave">Leave room</string>
     <string name="title_invites">Invites</string>
     <string name="title_queue">Queue</string>
     <string name="title_users">Users</string>
     <string name="title_chat">Chat</string>
     <string name="title_invite">Invite</string>
-    <string name="title_clear_queue">Clear Room Queue</string>
-    <string name="title_select_device">Select Playback Device</string>
+    <string name="title_clear_queue">Clear room queue</string>
+    <string name="title_select_device">Select playback device</string>
 
 
     <!--Eng. Hints-->
@@ -97,5 +97,6 @@
     <string name="placeholder_delete_song">Delete Song</string>
     <string name="placeholder_device_name">Device Name</string>
     <string name="placeholder_device_type">Device Type</string>
+    <string name="title_sync_with_room">Sync with room</string>
 
 </resources>
