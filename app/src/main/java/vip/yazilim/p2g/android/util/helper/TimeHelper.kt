@@ -1,10 +1,7 @@
 package vip.yazilim.p2g.android.util.helper
 
 import android.annotation.SuppressLint
-import org.threeten.bp.Clock
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.*
 import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 
@@ -39,8 +36,8 @@ class TimeHelper {
             return LocalDateTime.now(Clock.systemDefaultZone())
         }
 
-        fun LocalDateTime.toLocalZoned(): ZonedDateTime {
-            return ZonedDateTime.of(this, ZoneId.of(Clock.systemDefaultZone().toString()))
+        fun LocalDateTime.toZonedDateTime(): ZonedDateTime {
+            return this.atZone(ZoneOffset.UTC).withZoneSameInstant(ZoneId.systemDefault())
         }
     }
 }
