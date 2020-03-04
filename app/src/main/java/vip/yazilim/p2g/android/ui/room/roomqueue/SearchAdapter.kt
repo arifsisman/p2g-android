@@ -56,12 +56,7 @@ class SearchAdapter(
             }
 
             val isChecked = selectedSearchModels.contains(searchModel)
-            if (isChecked) {
-                checkBox.isChecked = isChecked
-                checkBox.visibility = View.VISIBLE
-            } else {
-                checkBox.visibility = View.GONE
-            }
+            checkBox.isChecked = isChecked
         }
     }
 

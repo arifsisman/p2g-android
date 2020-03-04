@@ -224,7 +224,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             if (isAnyItemsSelected != null) {
                 searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
-                UIHelper.showSnackBarShortRoom(
+                UIHelper.showSnackBarShort(
                     searchDialogView,
                     "10 songs or 1 Album/Playlist can be added in each search!"
                 )
