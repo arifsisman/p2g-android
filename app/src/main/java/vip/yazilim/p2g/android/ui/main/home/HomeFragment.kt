@@ -62,7 +62,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         adapter = HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
-        button_create_room.setOnClickListener { createRoomButtonEvent() }
+        fab.setOnClickListener { createRoomButtonEvent() }
         swipeRefreshContainer.setOnRefreshListener { refreshRoomsEvent() }
     }
 

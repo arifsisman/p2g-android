@@ -3,14 +3,13 @@
     android:shape="rectangle" >
 
     <!-- View background color -->
-    <solid
-        android:color="@color/backgroundColor" >
+    <solid android:color="@color/colorBackground">
     </solid>
 
     <!-- View ic_border color and width -->
     <stroke
         android:width="0.1dp"
-        android:color="@color/primaryLightColor" >
+        android:color="@color/colorPrimaryLight">
     </stroke>
 
 </shape>

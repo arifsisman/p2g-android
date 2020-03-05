@@ -73,7 +73,7 @@
                 style="@style/Divider.Vertical"
                 android:layout_width="4dp"
                 android:layout_height="57dp"
-                android:background="@color/spotifyGreenColor"
+                android:background="@color/colorSpotifyGreen"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
