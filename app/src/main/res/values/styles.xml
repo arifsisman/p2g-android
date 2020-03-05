@@ -1,22 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/primaryLightColor</item>
 
-        <item name="colorPrimaryVariant">#000000</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorOnSecondary">#FFFFFF</item>
-        <item name="colorError">#F44336</item>
-        <item name="colorOnError">#FFFFFF</item>
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#212121</item>
-
-        <item name="android:colorBackground">@color/backgroundColor</item>
-        <item name="colorOnBackground">#212121</item>
     </style>
 
     <style name="Divider">
@@ -34,10 +21,7 @@
     </style>
 
     //no actionbar, but status bar exists
-
-    <style name="myFullscreenAlertDialogStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        //change button text color
-        <item name="colorAccent">@color/primaryColor</item>
+    <style name="myFullscreenAlertDialogStyle" parent="Theme.AppCompat.NoActionBar">
     </style>
 
 </resources>

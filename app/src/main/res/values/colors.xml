@@ -5,11 +5,13 @@
     <color name="primaryDarkColor">#000000</color>
     <color name="primaryTextColor">#FFFFFF</color>
     <color name="secondaryTextColor">#BDBDBD</color>
-    <color name="backgroundColor">#FFFFFF</color>
+    <color name="backgroundColor">#141414</color>
     <color name="spotifyGreenColor">#1DB954</color>
     <color name="negativeColor">#B91D1D</color>
+
     <color name="blackColor">#000000</color>
     <color name="whiteColor">#FFFFFF</color>
+    <color name="secondaryWhiteColor">#BDBDBD</color>
     <color name="playerColor">#F0F0F0</color>
 
 </resources>
