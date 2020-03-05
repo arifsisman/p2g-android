@@ -68,7 +68,7 @@ class RoomQueueAdapter(
                 song.votes < 0 -> {
                     val songVotePlaceholder = song.votes.toString()
                     songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor("#B91D1D"))
+                    songVote.setTextColor(Color.parseColor("#D10000"))
                 }
                 else -> {
                     val songVotePlaceholder = "0"

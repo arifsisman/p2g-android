@@ -61,7 +61,7 @@
             android:id="@+id/lockImage"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:contentDescription="@string/description_lock_button"
             app:layout_constraintEnd_toEndOf="@+id/joinButton"
             app:layout_constraintStart_toStartOf="@+id/joinButton"

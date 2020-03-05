@@ -3,17 +3,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:buttonStyle">@style/ButtonHome</item>
+        <item name="actionBarSize">50dp</item>
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-
         <item name="colorAccent">@color/colorSpotifyGreen</item>
 
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorSurface">#FFFFFF</item>
         <item name="colorOnSurface">#FFFFFF</item>
-
     </style>
+
 
     <style name="Divider">
         <item name="android:background">?android:attr/listDivider</item>
@@ -35,7 +36,7 @@
 
     <style name="ButtonHome">
         <item name="android:background">@color/colorSpotifyGreen</item>
-        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textColor">@color/colorWhite</item>
     </style>
 
 </resources>

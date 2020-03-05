@@ -346,7 +346,7 @@ class RoomActivity : AppCompatActivity(),
         }
 
         AlertDialog.Builder(this)
-            .setMessage("Are you sure you want leave room ? \n(If you are owner of the room, it will be closed)")
+            .setMessage("Are you sure you want leave room ?")
             .setPositiveButton("Yes", dialogClickListener)
             .setNegativeButton("No", dialogClickListener)
             .show()
