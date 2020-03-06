@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/swipePlayButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_downvote_24dp"
+        app:srcCompat="@drawable/ic_thumb_down_black_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 
@@ -52,7 +52,7 @@
         app:layout_constraintStart_toEndOf="@+id/swipeDownvoteButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_upvote_24dp"
+        app:srcCompat="@drawable/ic_thumb_up_white_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 
@@ -68,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/swipePlayButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
+        app:srcCompat="@drawable/ic_play_arrow_black_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 

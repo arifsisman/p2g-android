@@ -9,6 +9,7 @@
     android:gravity="bottom"
     sothree:umanoPanelHeight="65dp"
     sothree:umanoShadowHeight="0dp"
+    sothree:umanoFadeColor="@android:color/transparent"
     tools:context=".activity.RoomActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

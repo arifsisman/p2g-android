@@ -110,10 +110,10 @@ class PlayerAdapter(
                 ////////////////////////
                 if (song.songStatus == SongStatus.PLAYING.songStatus) {
                     playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_white_64dp)
-                    playPauseButtonMini.setImageResource(R.drawable.ic_pause_circle_filled_white_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_pause_white_24dp)
                 } else {
                     playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
-                    playPauseButtonMini.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
                 }
 
                 if (song.repeatFlag) {
