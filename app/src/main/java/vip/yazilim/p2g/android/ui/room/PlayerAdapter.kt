@@ -92,6 +92,9 @@ class PlayerAdapter(
                 // Image views bind
                 ///////////////////////
                 if (song.imageUrl != null) {
+                    songImage.visibility = View.VISIBLE
+                    songImageExp.visibility = View.VISIBLE
+
                     GlideApp.with(view)
                         .load(song.imageUrl)
                         .into(songImage)
@@ -100,8 +103,8 @@ class PlayerAdapter(
                         .load(song.imageUrl)
                         .into(songImageExp)
                 } else {
-                    songImage.setImageResource(R.mipmap.ic_launcher)
-                    songImageExp.setImageResource(R.mipmap.ic_launcher)
+                    songImage.visibility = View.INVISIBLE
+                    songImageExp.visibility = View.GONE
                 }
 
 
@@ -141,7 +144,7 @@ class PlayerAdapter(
             seekBarChangeListener: OnSeekBarChangeListener
         ) {
             playPauseButton.setOnClickListener { clickListener.onPlayPauseClicked() }
-            playPauseButtonMini.setOnClickListener { clickListener.onPlayPauseClicked() }
+            playPauseButtonMini.setOnClickListener { clickListener.onPlayPauseMiniClicked() }
             nextButton.setOnClickListener { clickListener.onNextClicked() }
             previousButton.setOnClickListener { clickListener.onPreviousClicked() }
             repeatButton.setOnClickListener { clickListener.onRepeatClicked() }
@@ -173,6 +176,7 @@ class PlayerAdapter(
 
     interface OnItemClickListener {
         fun onPlayerMiniClicked()
+        fun onPlayPauseMiniClicked()
         fun onPlayPauseClicked()
         fun onNextClicked()
         fun onPreviousClicked()

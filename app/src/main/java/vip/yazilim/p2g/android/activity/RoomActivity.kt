@@ -566,6 +566,16 @@ class RoomActivity : AppCompatActivity(),
         slidingUpPanel.panelState = EXPANDED
     }
 
+    override fun onPlayPauseMiniClicked() =
+        request(room?.id?.let { Singleton.apiClient().playPause(it) }, object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
+
+            override fun onError(msg: String) {
+                UIHelper.showSnackBarShortRoom(viewPager, msg)
+            }
+        })
+
     override fun onPlayerMiniClicked() {
         showMaximizedPlayer()
     }
