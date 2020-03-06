@@ -125,8 +125,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder =
-            AlertDialog.Builder(context, R.style.myFullscreenAlertDialogStyle)
-                .setView(searchDialogView)
+            AlertDialog.Builder(context, R.style.fullScreenAppTheme).setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
 
         val queryEditText = searchDialogView.dialogQuery

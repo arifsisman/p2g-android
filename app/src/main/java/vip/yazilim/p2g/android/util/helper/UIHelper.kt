@@ -19,14 +19,14 @@ class UIHelper {
         fun showToastShort(context: Context?, message: String) {
             val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
 
-            toast.setGravity(Gravity.BOTTOM, 0, 200)
+            toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
         }
 
         fun showToastLong(context: Context?, message: String) {
             val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
 
-            toast.setGravity(Gravity.BOTTOM, 0, 200)
+            toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
         }
 

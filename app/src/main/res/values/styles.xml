@@ -15,6 +15,7 @@
         <item name="colorOnSurface">#FFFFFF</item>
     </style>
 
+    <style name="fullScreenAppTheme" parent="Theme.AppCompat.NoActionBar" />
 
     <style name="Divider">
         <item name="android:background">?android:attr/listDivider</item>
@@ -28,10 +29,6 @@
     <style name="Divider.Vertical" parent="Divider">
         <item name="android:layout_width">1dp</item>
         <item name="android:layout_height">match_parent</item>
-    </style>
-
-    //no actionbar, but status bar exists
-    <style name="myFullscreenAlertDialogStyle" parent="Theme.AppCompat.NoActionBar">
     </style>
 
     <style name="ButtonHome">
