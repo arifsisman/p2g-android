@@ -36,6 +36,7 @@ class HomeAdapter(
 
             itemView.roomName.text = roomModel.room?.name
             itemView.roomOwner.text = roomOwnerPlaceholder
+            itemView.userCount.text = roomModel.userCount.toString()
 
             if (roomModel.room?.privateFlag!!) {
                 itemView.lockImage.visibility = View.VISIBLE

@@ -14,7 +14,8 @@ data class RoomModel(
     var userList: List<User>?,
     var roomUserList: List<RoomUser>?,
     var songList: List<Song>?,
-    var invitedUserList: List<User>?
+    var invitedUserList: List<User>?,
+    var userCount: Int
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(Room::class.java.classLoader),
@@ -22,7 +23,8 @@ data class RoomModel(
         parcel.createTypedArrayList(User),
         parcel.createTypedArrayList(RoomUser),
         parcel.createTypedArrayList(Song),
-        parcel.createTypedArrayList(User)
+        parcel.createTypedArrayList(User),
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -32,6 +34,7 @@ data class RoomModel(
         parcel.writeTypedList(roomUserList)
         parcel.writeTypedList(songList)
         parcel.writeTypedList(invitedUserList)
+        parcel.writeInt(userCount)
     }
 
     override fun describeContents(): Int {

@@ -10,18 +10,21 @@ import android.os.Parcelable
 data class RoomModelSimplified(
     var room: Room?,
     var owner: User?,
-    var song: Song?
+    var song: Song?,
+    var userCount: Int
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(Room::class.java.classLoader),
         parcel.readParcelable(User::class.java.classLoader),
-        parcel.readParcelable(Song::class.java.classLoader)
+        parcel.readParcelable(Song::class.java.classLoader),
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(room, flags)
         parcel.writeParcelable(owner, flags)
         parcel.writeParcelable(song, flags)
+        parcel.writeInt(userCount)
     }
 
     override fun describeContents(): Int {
