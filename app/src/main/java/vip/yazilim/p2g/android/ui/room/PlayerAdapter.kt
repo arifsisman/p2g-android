@@ -119,7 +119,7 @@ class PlayerAdapter(
                 if (song.repeatFlag) {
                     repeatButton.setColorFilter(Color.parseColor("#1DB954"))
                 } else {
-                    repeatButton.setColorFilter(Color.parseColor("#000000"))
+                    repeatButton.setColorFilter(Color.parseColor("#FFFFFF"))
                 }
 
             } else {
