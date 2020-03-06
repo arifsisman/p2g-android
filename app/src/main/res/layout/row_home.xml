@@ -60,14 +60,14 @@
 
         <ImageView
             android:id="@+id/lockImage"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:contentDescription="@string/description_lock_button"
             app:layout_constraintBottom_toBottomOf="@+id/roomOwner"
             app:layout_constraintEnd_toEndOf="@+id/countryFlag"
             app:layout_constraintStart_toStartOf="@+id/countryFlag"
             app:layout_constraintTop_toTopOf="@+id/roomOwner"
-            app:srcCompat="@android:drawable/ic_lock_lock" />
+            app:srcCompat="@drawable/ic_lock_white_24dp" />
 
         <com.haipq.android.flagkit.FlagImageView
             android:id="@+id/countryFlag"

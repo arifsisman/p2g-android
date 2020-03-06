@@ -41,7 +41,7 @@
             android:layout_marginBottom="10dp"
             android:src="@drawable/spotify_icon"
             android:visibility="invisible"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/colorSpotifyGreen"
             app:borderWidth="0dp"
             app:elevation="6dp" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -50,7 +50,7 @@
         android:id="@+id/playerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPlayer"
+        android:background="@color/colorPrimary"
         android:nestedScrollingEnabled="false"
         android:overScrollMode="never"
         app:layout_constraintEnd_toEndOf="parent"

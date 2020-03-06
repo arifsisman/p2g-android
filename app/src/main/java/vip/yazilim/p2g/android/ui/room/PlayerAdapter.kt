@@ -109,11 +109,11 @@ class PlayerAdapter(
                 // Controller views bind
                 ////////////////////////
                 if (song.songStatus == SongStatus.PLAYING.songStatus) {
-                    playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
-                    playPauseButtonMini.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
+                    playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_white_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_pause_circle_filled_white_64dp)
                 } else {
-                    playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
-                    playPauseButtonMini.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                    playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
                 }
 
                 if (song.repeatFlag) {

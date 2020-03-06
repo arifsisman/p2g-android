@@ -59,14 +59,14 @@
 
         <ImageView
             android:id="@+id/lockImage"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="6dp"
             android:contentDescription="@string/description_lock_button"
             app:layout_constraintEnd_toEndOf="@+id/joinButton"
             app:layout_constraintStart_toStartOf="@+id/joinButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_lock_lock" />
+            app:srcCompat="@drawable/ic_lock_white_24dp" />
 
         <ImageView
             android:id="@+id/profilePhoto"
@@ -91,7 +91,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/deleteButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_play_circle_filled_black_24dp" />
+            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp" />
 
         <ImageButton
             android:id="@+id/deleteButton"
@@ -103,7 +103,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_delete_24dp" />
+            app:srcCompat="@drawable/ic_delete_white_24dp" />
 
         <ImageView
             android:id="@+id/onlineStatus"

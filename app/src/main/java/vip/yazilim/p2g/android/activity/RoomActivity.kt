@@ -242,8 +242,8 @@ class RoomActivity : AppCompatActivity(),
                     runOnUiThread {
                         song_current.text =
                             roomViewModel.playerSong.value?.durationMs!!.getHumanReadableTimestamp()
-                        playPause_button.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
-                        playPause_button_mini.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                        playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                        playPause_button_mini.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
                     }
                 }
             }
