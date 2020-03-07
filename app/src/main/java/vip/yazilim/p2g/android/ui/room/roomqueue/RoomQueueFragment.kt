@@ -80,7 +80,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(recyclerView, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortBottom(container, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -170,7 +170,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(searchDialogView, msg)
+                        UIHelper.showSnackBarShortBottom(searchDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -207,7 +207,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    UIHelper.showSnackBarShortTop(recyclerView, msg)
+                    UIHelper.showSnackBarShortBottom(container, msg)
                 }
             })
         }
@@ -240,7 +240,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(recyclerView, msg)
+                UIHelper.showSnackBarShortBottom(container, msg)
             }
         })
 
@@ -248,16 +248,16 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val db = (activity as RoomActivity).db
 
         if ((activity as RoomActivity).room?.let { db.isVotedBefore(it, song) }!!) {
-            UIHelper.showSnackBarShortTop(recyclerView, "Song voted before")
+            UIHelper.showSnackBarShortBottom(container, "Song voted before")
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     (activity as RoomActivity).room?.let { db.insertVotedSong(it, song) }
-                    UIHelper.showSnackBarShortTop(recyclerView, "${song.songName} upvoted.")
+                    UIHelper.showSnackBarShortBottom(container, "${song.songName} upvoted.")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(recyclerView, msg)
+                    UIHelper.showSnackBarShortBottom(container, msg)
                 }
             })
         }
@@ -267,16 +267,16 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val db = (activity as RoomActivity).db
 
         if ((activity as RoomActivity).room?.let { db.isVotedBefore(it, song) }!!) {
-            UIHelper.showSnackBarShortTop(recyclerView, "Song voted before")
+            UIHelper.showSnackBarShortBottom(container, "Song voted before")
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     (activity as RoomActivity).room?.let { db.insertVotedSong(it, song) }
-                    UIHelper.showSnackBarShortTop(recyclerView, "${song.songName} downvoted.")
+                    UIHelper.showSnackBarShortBottom(container, "${song.songName} downvoted.")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(recyclerView, msg)
+                    UIHelper.showSnackBarShortBottom(container, msg)
                 }
             })
         }
@@ -291,7 +291,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                UIHelper.showSnackBarShortBottom(root, msg)
                 adapter.add(song, position)
             }
         })

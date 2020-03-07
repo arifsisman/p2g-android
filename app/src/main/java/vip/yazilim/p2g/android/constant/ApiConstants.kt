@@ -6,9 +6,8 @@ package vip.yazilim.p2g.android.constant
  */
 object ApiConstants {
 
-    private const val HOST = "142.93.239.61"
-
-    //        private const val HOST = "192.168.1.150"
+    //    private const val HOST = "142.93.239.61"
+    private const val HOST = "192.168.1.150"
     private const val PORT = "8080"
     const val BASE_URL = "http://$HOST:$PORT"
     const val BASE_API_URL = "http://$HOST:$PORT/api/"

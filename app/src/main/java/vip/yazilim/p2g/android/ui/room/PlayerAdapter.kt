@@ -128,6 +128,9 @@ class PlayerAdapter(
                 }
 
             } else {
+                songImage.visibility = View.INVISIBLE
+                songImageExp.visibility = View.GONE
+
                 songName.text = ""
                 songArtists.text = ""
                 songImage.setImageResource(R.drawable.sample_cover_image)
