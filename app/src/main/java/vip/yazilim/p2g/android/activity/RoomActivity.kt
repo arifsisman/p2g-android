@@ -70,6 +70,8 @@ class RoomActivity : AppCompatActivity(),
     private var songCurrentMs = 0
     @Volatile
     internal var skipFlag = false
+    @Volatile
+    lateinit var playerSong: Song
 
     companion object {
         private const val PLAYER_TAG = "Player"
@@ -255,7 +257,11 @@ class RoomActivity : AppCompatActivity(),
         if (skipFlag && roomUser?.role.equals(Role.ROOM_OWNER.role)) {
             Log.v(PLAYER_TAG, "Skipping next song.")
             skipFlag = false
-            onNextClicked()
+            if (::playerSong.isInitialized && playerSong.repeatFlag) {
+                onSeekPerformed(0)
+            } else {
+                onNextClicked()
+            }
         }
     }
 
@@ -271,6 +277,7 @@ class RoomActivity : AppCompatActivity(),
         if (song != null) {
             isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
 
+            playerSong = song
             songCurrentMs = RoomViewModel.getCurrentSongMs(song)
 
             Log.d(PLAYER_TAG, "Is ${song.songName} playing? = $isPlaying")
@@ -668,5 +675,4 @@ class RoomActivity : AppCompatActivity(),
                 }
             })
     }
-
 }

@@ -24,6 +24,7 @@
             android:paddingBottom="0dp"
             android:progressTint="@color/colorSpotifyGreen"
             android:splitTrack="false"
+            android:thumbTint="@android:color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
