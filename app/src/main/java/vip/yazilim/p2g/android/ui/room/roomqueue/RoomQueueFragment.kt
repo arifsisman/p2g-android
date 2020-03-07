@@ -247,12 +247,12 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         val db = (activity as RoomActivity).db
 
-        if (db.isVotedBefore(song)) {
+        if ((activity as RoomActivity).room?.let { db.isVotedBefore(it, song) }!!) {
             UIHelper.showSnackBarShortTop(recyclerView, "Song voted before")
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(song)
+                    (activity as RoomActivity).room?.let { db.insertVotedSong(it, song) }
                     UIHelper.showSnackBarShortTop(recyclerView, "${song.songName} upvoted.")
                 }
 
@@ -266,12 +266,12 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         val db = (activity as RoomActivity).db
 
-        if (db.isVotedBefore(song)) {
+        if ((activity as RoomActivity).room?.let { db.isVotedBefore(it, song) }!!) {
             UIHelper.showSnackBarShortTop(recyclerView, "Song voted before")
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(song)
+                    (activity as RoomActivity).room?.let { db.insertVotedSong(it, song) }
                     UIHelper.showSnackBarShortTop(recyclerView, "${song.songName} downvoted.")
                 }
 
