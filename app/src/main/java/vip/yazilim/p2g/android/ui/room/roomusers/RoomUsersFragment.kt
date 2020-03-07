@@ -132,6 +132,10 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
+                    UIHelper.showSnackBarShortBottom(
+                        container,
+                        "Friend request sent to ${roomUserModel.user?.name}"
+                    )
                 }
 
                 override fun onError(msg: String) {

@@ -5,10 +5,10 @@ package vip.yazilim.p2g.android.constant.enums
  * @contact mustafaarifsisman@gmail.com
  */
 enum class Role(val role: String) {
-    UNDEFINED("undefined"),
-    P2G_USER("p2g_user"),
-    ROOM_USER("room_user"),
-    ROOM_MODERATOR("room_moderator"),
-    ROOM_ADMIN("room_admin"),
-    ROOM_OWNER("room_owner");
+    UNDEFINED("Undefined"),
+    P2G_USER("P2G_User"),
+    ROOM_USER("User"),
+    ROOM_MODERATOR("Moderator"),
+    ROOM_ADMIN("Admin"),
+    ROOM_OWNER("Owner");
 }
