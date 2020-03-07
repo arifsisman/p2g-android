@@ -234,7 +234,9 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         }
     }
 
-    override fun onPlayClicked(view: SwipeLayout, song: Song) =
+    override fun onPlayClicked(view: SwipeLayout, song: Song) {
+        view.close()
+
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
@@ -243,8 +245,10 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 UIHelper.showSnackBarShortBottom(container, msg)
             }
         })
+    }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
+        view.close()
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
@@ -264,6 +268,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
+        view.close()
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
@@ -283,6 +288,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
+        view.close()
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 

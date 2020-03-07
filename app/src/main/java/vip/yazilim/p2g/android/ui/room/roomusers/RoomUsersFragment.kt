@@ -95,7 +95,9 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         }
     }
 
-    override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) =
+    override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
+        view.close()
+
         request(
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
             object : Callback<RoomUser> {
@@ -110,8 +112,11 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     UIHelper.showSnackBarShortBottom(container, msg)
                 }
             })
+    }
 
-    override fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) =
+    override fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
+        view.close()
+
         request(
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().demoteUser(it) },
             object : Callback<RoomUser> {
@@ -126,8 +131,11 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     UIHelper.showSnackBarShortBottom(container, msg)
                 }
             })
+    }
 
-    override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) =
+    override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
+        view.close()
+
         request(
             roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
             object : Callback<Boolean> {
@@ -142,4 +150,5 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     UIHelper.showSnackBarShortBottom(container, msg)
                 }
             })
+    }
 }

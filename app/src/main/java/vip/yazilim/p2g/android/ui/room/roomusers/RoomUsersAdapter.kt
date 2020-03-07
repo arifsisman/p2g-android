@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.ui.room.roomusers
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import com.daimajia.swipe.SwipeLayout
@@ -29,10 +28,9 @@ class RoomUsersAdapter(
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_user_model)
-        private val eventHolder: LinearLayout = itemView.findViewById(R.id.user_event_holder)
-
         fun bindView(roomUserModel: RoomUserModel) {
+            itemView.row_user_model.close(false)
+
             val user = roomUserModel.user
             val roomUser = roomUserModel.roomUser
 
@@ -65,28 +63,33 @@ class RoomUsersAdapter(
                 }
             }
 
-            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-            swipeLayout.isClickToClose = true
-            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, eventHolder)
+            itemView.row_user_model.showMode = SwipeLayout.ShowMode.LayDown
+            itemView.row_user_model.isClickToClose = true
+            itemView.row_user_model.addDrag(SwipeLayout.DragEdge.Right, itemView.user_event_holder)
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(swipeLayout, roomUserModel) }
+            itemView.setOnClickListener {
+                clickListener.onItemClicked(
+                    itemView.row_user_model,
+                    roomUserModel
+                )
+            }
             itemView.swipePromoteButton.setOnClickListener {
                 clickListener.onPromoteClicked(
-                    swipeLayout,
+                    itemView.row_user_model,
                     roomUserModel
                 )
             }
             itemView.swipeDemoteButton.setOnClickListener {
                 clickListener.onDemoteClicked(
-                    swipeLayout,
+                    itemView.row_user_model,
                     roomUserModel
                 )
             }
             itemView.swipeAddButton.setOnClickListener {
                 clickListener.onAddClicked(
-                    swipeLayout,
+                    itemView.row_user_model,
                     roomUserModel
                 )
             }

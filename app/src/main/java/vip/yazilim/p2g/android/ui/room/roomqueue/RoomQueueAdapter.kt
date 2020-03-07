@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
@@ -34,10 +33,9 @@ class RoomQueueAdapter(
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
-        private val eventHolder: LinearLayout = itemView.findViewById(R.id.song_event_holder)
-
         fun bindView(song: Song) {
+            itemView.row_song.close(false)
+
             itemView.song_name.text = song.songName
             itemView.song_artists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
@@ -67,34 +65,34 @@ class RoomQueueAdapter(
                 }
             }
 
-            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-            swipeLayout.isClickToClose = true
-            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, eventHolder)
+            itemView.row_song.showMode = SwipeLayout.ShowMode.LayDown
+            itemView.row_song.isClickToClose = true
+            itemView.row_song.addDrag(SwipeLayout.DragEdge.Right, itemView.song_event_holder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(swipeLayout, song) }
+            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_song, song) }
             itemView.swipePlayButton.setOnClickListener {
                 clickListener.onPlayClicked(
-                    swipeLayout,
+                    itemView.row_song,
                     song
                 )
             }
             itemView.swipeUpvoteButton.setOnClickListener {
                 clickListener.onUpvoteClicked(
-                    swipeLayout,
+                    itemView.row_song,
                     song
                 )
             }
             itemView.swipeDownvoteButton.setOnClickListener {
                 clickListener.onDownvoteClicked(
-                    swipeLayout,
+                    itemView.row_song,
                     song
                 )
             }
             itemView.swipeDeleteButton.setOnClickListener {
                 clickListener.onDeleteClicked(
-                    swipeLayout,
+                    itemView.row_song,
                     song
                 )
             }
