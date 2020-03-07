@@ -26,7 +26,9 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -63,6 +65,14 @@ class RoomWebSocketService : Service() {
         val intent = Intent()
         intent.action = ACTION_SONG_LIST_RECEIVED
         intent.putParcelableArrayListExtra("songList", ArrayList<Parcelable>(songList))
+        sendBroadcast(intent)
+    }
+
+    private fun sendBroadcastUserList(userList: MutableList<RoomUserModel>) {
+        Log.v(TAG, "Sending broadcastUserList to activity")
+        val intent = Intent()
+        intent.action = ACTION_USER_LIST_RECEIVED
+        intent.putParcelableArrayListExtra("userList", ArrayList<Parcelable>(userList))
         sendBroadcast(intent)
     }
 
@@ -110,6 +120,7 @@ class RoomWebSocketService : Service() {
         roomId?.run {
             connectWebSocket(this)
             subscribeRoomSongs("/p2g/room/${this}/songs")
+            subscribeRoomUsers("/p2g/room/${this}/users")
             subscribeRoomStatus("/p2g/room/${this}/status")
         }
 
@@ -156,6 +167,23 @@ class RoomWebSocketService : Service() {
                     val songList = gson.fromJson<MutableList<Song>>(json)
 
                     sendBroadcastSongList(songList)
+                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
+        }
+    }
+
+    private fun subscribeRoomUsers(usersPath: String) {
+        roomWSClient.run {
+            topic(usersPath)
+                .subscribe({
+                    val json = it.payload
+                    Log.v(TAG, json)
+
+                    val gsonBuilder = GsonBuilder()
+                    val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
+
+                    val userList = gson.fromJson<MutableList<RoomUserModel>>(json)
+
+                    sendBroadcastUserList(userList)
                 }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }
     }

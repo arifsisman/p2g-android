@@ -94,6 +94,10 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
+                    UIHelper.showSnackBarShortBottom(
+                        container,
+                        "${roomUserModel.user?.name}'s role updated as ${obj.role}"
+                    )
                 }
 
                 override fun onError(msg: String) {
@@ -106,6 +110,10 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().demoteUser(it) },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
+                    UIHelper.showSnackBarShortBottom(
+                        container,
+                        "${roomUserModel.user?.name}'s role updated as ${obj.role}"
+                    )
                 }
 
                 override fun onError(msg: String) {

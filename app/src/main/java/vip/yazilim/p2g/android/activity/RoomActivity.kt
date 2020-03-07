@@ -29,6 +29,7 @@ import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
@@ -388,6 +389,7 @@ class RoomActivity : AppCompatActivity(),
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(ACTION_SONG_LIST_RECEIVED)
+        intentFilter.addAction(ACTION_USER_LIST_RECEIVED)
         intentFilter.addAction(ACTION_ROOM_SOCKET_ERROR)
         intentFilter.addAction(ACTION_ROOM_STATUS)
         registerReceiver(broadcastReceiver, intentFilter)
@@ -508,6 +510,13 @@ class RoomActivity : AppCompatActivity(),
                         startActivity(leaveIntent)
 
                         stopRoomWebSocketService(this)
+                    }
+                }
+                action.equals(ACTION_USER_LIST_RECEIVED) -> {
+                    val userListFromIntent =
+                        intent?.getParcelableArrayListExtra<RoomUserModel>("userList")
+                    userListFromIntent.let { userList ->
+                        roomViewModel.roomUserList.value = userList
                     }
                 }
             }
