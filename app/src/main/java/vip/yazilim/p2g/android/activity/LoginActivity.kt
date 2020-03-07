@@ -123,21 +123,12 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onSuccess(obj: User) {
-                existingRoomCheck()
-                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
-                startMainActivity(obj, tokenModel)
+                existingRoomCheck(obj, tokenModel)
             }
         })
 
 
-    private fun startMainActivity(user: User, tokenModel: TokenModel) {
-        val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-        startMainIntent.putExtra("user", user)
-        startMainIntent.putExtra("tokenModel", tokenModel)
-        startActivity(startMainIntent)
-    }
-
-    private fun existingRoomCheck() = request(
+    private fun existingRoomCheck(user: User, tokenModel: TokenModel) = request(
         Singleton.apiClient().getRoomModelMe(),
         object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
@@ -147,8 +138,12 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError(msg: String) {
+                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${user.name}")
+                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                startMainIntent.putExtra("user", user)
+                startMainIntent.putExtra("tokenModel", tokenModel)
+                startActivity(startMainIntent)
             }
-
         })
 
 }
