@@ -21,7 +21,7 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomUsersAdapter(
-    var roomUserModels: MutableList<RoomUserModel>,
+    var roomUserModelList: MutableList<RoomUserModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerSwipeAdapter<RoomUsersAdapter.MViewHolder>() {
 
@@ -114,18 +114,18 @@ class RoomUsersAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bindView(roomUserModels[position])
-        holder.bindEvent(roomUserModels[position], itemClickListener)
+        holder.bindView(roomUserModelList[position])
+        holder.bindEvent(roomUserModelList[position], itemClickListener)
         holder.bindItemManager(position)
     }
 
     override fun getItemCount(): Int {
-        return roomUserModels.size
+        return roomUserModelList.size
     }
 
     fun update(data: MutableList<RoomUserModel>) {
         //todo sort by role
-        roomUserModels = data
+        roomUserModelList = data
         notifyDataSetChanged()
     }
 

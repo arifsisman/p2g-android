@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_song"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingStart="1dp"
+    android:paddingEnd="1dp">
 
     <include
         android:id="@+id/song_event_holder"
@@ -40,9 +42,9 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="60dp"
                 android:paddingEnd="15dp"
+                android:singleLine="true"
                 android:text="@string/placeholder_song_artists"
                 android:textSize="12sp"
-                android:singleLine="true"
                 app:layout_constraintStart_toStartOf="@+id/song_name"
                 app:layout_constraintTop_toBottomOf="@+id/song_name" />
 

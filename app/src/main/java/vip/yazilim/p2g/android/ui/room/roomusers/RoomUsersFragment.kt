@@ -37,7 +37,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // QueueAdapter
-        adapter = RoomUsersAdapter(roomViewModel.roomUserList.value ?: mutableListOf(), this)
+        adapter = RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this)
 
         recyclerView.adapter = adapter
 
@@ -47,7 +47,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             (recyclerView.layoutManager as LinearLayoutManager).orientation
         ) {})
 
-        roomViewModel.roomUserList.observe(this, renderRoomUsers)
+        roomViewModel.roomUserModelList.observe(this, renderRoomUserModelList)
 
         swipeRefreshContainer.setOnRefreshListener {
             refreshUsersEvent()
@@ -61,12 +61,18 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     }
 
     // Observer
-    private val renderRoomUsers = Observer<MutableList<RoomUserModel>> { roomUserModels ->
+    private val renderRoomUserModelList = Observer<MutableList<RoomUserModel>> { roomUserModels ->
         Log.v(TAG, "data updated $roomUserModels")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
 
         adapter.update(roomUserModels)
+
+        roomUserModels.forEach {
+            if (it.user?.id == roomViewModel.roomUserModel.value?.user?.id) {
+                roomViewModel.roomUserModel.postValue(it)
+            }
+        }
     }
 
     private fun refreshUsersEvent() = request(

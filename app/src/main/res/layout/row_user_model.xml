@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_user_model"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingStart="1dp"
+    android:paddingEnd="1dp">
 
     <include
         android:id="@+id/user_event_holder"

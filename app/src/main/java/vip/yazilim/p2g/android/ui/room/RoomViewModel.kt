@@ -22,8 +22,11 @@ class RoomViewModel : ViewModelBase() {
     private val _playerSong = MutableLiveData<Song>()
     val playerSong: MutableLiveData<Song> = _playerSong
 
-    private val _roomUserList = MutableLiveData<MutableList<RoomUserModel>>()
-    val roomUserList: MutableLiveData<MutableList<RoomUserModel>> = _roomUserList
+    private val _roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
+    val roomUserModelList: MutableLiveData<MutableList<RoomUserModel>> = _roomUserModelList
+
+    private val _roomUserModel = MutableLiveData<RoomUserModel>()
+    val roomUserModel: MutableLiveData<RoomUserModel> = _roomUserModel
 
     fun loadSongs(roomId: Long) {
         _isViewLoading.postValue(true)
@@ -66,10 +69,27 @@ class RoomViewModel : ViewModelBase() {
                     if (obj.isEmpty()) {
                         _isEmptyList.postValue(true)
                     } else {
-                        _roomUserList.value = obj
+                        _roomUserModelList.value = obj
+
+                        obj.forEach {
+                            if (it.user?.id == roomUserModel.value?.user?.id) {
+                                roomUserModel.value = it
+                            }
+                        }
                     }
                 }
             })
+    }
+
+    fun loadRoomUserMe() {
+        request(Singleton.apiClient().getRoomUserModelMe(), object : Callback<RoomUserModel> {
+            override fun onSuccess(obj: RoomUserModel) {
+                _roomUserModel.value = obj
+            }
+
+            override fun onError(msg: String) {
+            }
+        })
     }
 
     fun getCurrentSong(songList: MutableList<Song>): Song? {

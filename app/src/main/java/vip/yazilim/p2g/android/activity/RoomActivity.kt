@@ -56,7 +56,6 @@ class RoomActivity : AppCompatActivity(),
 
     var room: Room? = null
     var roomModel: RoomModel? = null
-    var roomUser: RoomUser? = null
 
     lateinit var roomViewModel: RoomViewModel
     private lateinit var playerAdapter: PlayerAdapter
@@ -95,7 +94,7 @@ class RoomActivity : AppCompatActivity(),
         setupPlayer()
         Thread(playerTimer).start()
 
-        getRoomUserMe()
+        roomViewModel.loadRoomUserMe()
         room?.id?.let { roomViewModel.loadSongs(it) }
         room?.id?.let { roomViewModel.loadRoomUsers(it) }
     }
@@ -115,7 +114,8 @@ class RoomActivity : AppCompatActivity(),
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> roomUser?.let { canUserAddAndControlSongs(it) }
+                    0 -> {
+                    }
                     else -> fab.hide()
                 }
             }
@@ -157,6 +157,7 @@ class RoomActivity : AppCompatActivity(),
 
     private fun setupViewModel() {
         roomViewModel.playerSong.observe(this, renderPlayerSong)
+        roomViewModel.roomUserModel.observe(this, renderRoomUserModel)
     }
 
     private fun setupSlidingUpPanel() {
@@ -207,7 +208,7 @@ class RoomActivity : AppCompatActivity(),
                         }
                     }
                     COLLAPSED -> {
-                        roomUser?.let { canUserAddAndControlSongs(it) }
+                        roomViewModel.roomUserModel.value?.let { canUserAddAndControlSongs(it.roomUser) }
                         showMinimizedPlayer()
                     }
                     EXPANDED -> {
@@ -262,7 +263,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun skipHelper() {
-        if (skipFlag && roomUser?.role.equals(Role.ROOM_OWNER.role)) {
+        if (skipFlag && roomViewModel.roomUserModel.value?.roomUser?.role.equals(Role.ROOM_OWNER.role)) {
             Log.v(PLAYER_TAG, "Skipping next song.")
             skipFlag = false
             if (::playerSong.isInitialized && playerSong.repeatFlag) {
@@ -278,7 +279,7 @@ class RoomActivity : AppCompatActivity(),
             ViewModelProvider(this, RoomViewModelFactory()).get(RoomViewModel::class.java)
     }
 
-    // Observer
+    // Observers
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
 
@@ -296,6 +297,10 @@ class RoomActivity : AppCompatActivity(),
         }
     }
 
+    private val renderRoomUserModel = Observer<RoomUserModel> { roomUserModel ->
+        canUserAddAndControlSongs(roomUserModel.roomUser)
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
@@ -305,7 +310,7 @@ class RoomActivity : AppCompatActivity(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sync_with_room -> {
-                syncWithRoom(roomUser)
+                syncWithRoom(roomViewModel.roomUserModel.value?.roomUser)
             }
             R.id.select_device -> {
                 selectDevice()
@@ -465,20 +470,6 @@ class RoomActivity : AppCompatActivity(),
         })
     }
 
-    private fun getRoomUserMe() {
-        // Get room user to decide role and show control & add song events
-
-        request(Singleton.apiClient().getRoomUserMe(), object : Callback<RoomUser> {
-            override fun onSuccess(obj: RoomUser) {
-                roomUser = obj
-                canUserAddAndControlSongs(obj)
-            }
-
-            override fun onError(msg: String) {
-            }
-        })
-    }
-
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
@@ -516,7 +507,7 @@ class RoomActivity : AppCompatActivity(),
                     val userListFromIntent =
                         intent?.getParcelableArrayListExtra<RoomUserModel>("userList")
                     userListFromIntent.let { userList ->
-                        roomViewModel.roomUserList.value = userList
+                        roomViewModel.roomUserModelList.value = userList
                     }
                 }
             }
