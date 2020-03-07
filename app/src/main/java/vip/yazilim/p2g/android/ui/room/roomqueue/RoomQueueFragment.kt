@@ -82,11 +82,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         roomViewModel.isEmptyList.observe(this, emptyListObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        roomActivity.room?.id?.let { roomViewModel.loadSongs(it) }
-    }
-
     private fun refreshQueueEvent() = request(
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {

@@ -11,6 +11,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
@@ -59,11 +60,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         roomViewModel.isEmptyList.observe(this, emptyListObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        roomActivity.room?.id?.let { roomViewModel.loadRoomUsers(it) }
-    }
-
     // Observer
     private val renderRoomUsers = Observer<MutableList<RoomUserModel>> { roomUserModels ->
         Log.v(TAG, "data updated $roomUserModels")
@@ -88,18 +84,44 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         })
 
     override fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        TODO("Not yet implemented")
+        if (view.openStatus != SwipeLayout.Status.Open) {
+            view.toggle()
+        }
     }
 
-    override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        TODO("Not yet implemented")
-    }
+    override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) =
+        request(
+            roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
+            object : Callback<RoomUser> {
+                override fun onSuccess(obj: RoomUser) {
+                }
 
-    override fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        TODO("Not yet implemented")
-    }
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortBottom(container, msg)
+                }
+            })
 
-    override fun onAddAsFriendClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        TODO("Not yet implemented")
-    }
+    override fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) =
+        request(
+            roomUserModel.roomUser?.id?.let { Singleton.apiClient().demoteUser(it) },
+            object : Callback<RoomUser> {
+                override fun onSuccess(obj: RoomUser) {
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortBottom(container, msg)
+                }
+            })
+
+    override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) =
+        request(
+            roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
+            object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
+
+                override fun onError(msg: String) {
+                    UIHelper.showSnackBarShortBottom(container, msg)
+                }
+            })
 }

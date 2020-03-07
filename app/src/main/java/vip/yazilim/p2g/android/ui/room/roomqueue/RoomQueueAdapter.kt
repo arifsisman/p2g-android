@@ -4,14 +4,13 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
+import kotlinx.android.synthetic.main.layout_row_song_events.view.*
+import kotlinx.android.synthetic.main.row_song.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ColorCodes.NEGATIVE_RED
 import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
@@ -38,53 +37,35 @@ class RoomQueueAdapter(
         private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
         private val eventHolder: LinearLayout = itemView.findViewById(R.id.song_event_holder)
 
-        private val songName: TextView = itemView.findViewById(R.id.song_name)
-        private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
-        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
-        private val songVote: TextView = itemView.findViewById(R.id.song_vote)
-
-        private val playButton: ImageButton = itemView.findViewById(R.id.swipePlayButton)
-        private val upvoteButton: ImageButton = itemView.findViewById(R.id.swipeUpvoteButton)
-        private val downvoteButton: ImageButton = itemView.findViewById(R.id.swipeDownvoteButton)
-        private val deleteButton: ImageButton = itemView.findViewById(R.id.swipeDeleteButton)
-
-        private val isPlaying: View = itemView.findViewById(R.id.divider)
-
         fun bindView(song: Song) {
-            songName.text = song.songName
-            songArtists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
+            itemView.song_name.text = song.songName
+            itemView.song_artists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
 
             if (song.imageUrl != null) {
                 GlideApp.with(view)
                     .load(song.imageUrl)
-                    .into(songImage)
+                    .into(itemView.song_image)
             } else {
-                songImage.setImageResource(R.mipmap.ic_launcher)
+                itemView.song_image.setImageResource(R.mipmap.ic_launcher)
             }
 
             when {
                 song.votes > 0 -> {
                     val songVotePlaceholder = song.votes.toString()
-                    songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor(SPOTIFY_GREEN))
+                    itemView.song_vote.text = songVotePlaceholder
+                    itemView.song_vote.setTextColor(Color.parseColor(SPOTIFY_GREEN))
                 }
                 song.votes < 0 -> {
                     val songVotePlaceholder = song.votes.toString()
-                    songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor(NEGATIVE_RED))
+                    itemView.song_vote.text = songVotePlaceholder
+                    itemView.song_vote.setTextColor(Color.parseColor(NEGATIVE_RED))
                 }
                 else -> {
                     val songVotePlaceholder = "0"
-                    songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor(WHITE))
+                    itemView.song_vote.text = songVotePlaceholder
+                    itemView.song_vote.setTextColor(Color.parseColor(WHITE))
                 }
             }
-
-//            if (song.songStatus == SongStatus.PLAYING.songStatus) {
-//                isPlaying.visibility = View.VISIBLE
-//            } else {
-//                isPlaying.visibility = View.INVISIBLE
-//            }
 
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
             swipeLayout.isClickToClose = true
@@ -93,10 +74,30 @@ class RoomQueueAdapter(
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onItemClicked(swipeLayout, song) }
-            playButton.setOnClickListener { clickListener.onPlayClicked(swipeLayout, song) }
-            upvoteButton.setOnClickListener { clickListener.onUpvoteClicked(swipeLayout, song) }
-            downvoteButton.setOnClickListener { clickListener.onDownvoteClicked(swipeLayout, song) }
-            deleteButton.setOnClickListener { clickListener.onDeleteClicked(swipeLayout, song) }
+            itemView.swipePlayButton.setOnClickListener {
+                clickListener.onPlayClicked(
+                    swipeLayout,
+                    song
+                )
+            }
+            itemView.swipeUpvoteButton.setOnClickListener {
+                clickListener.onUpvoteClicked(
+                    swipeLayout,
+                    song
+                )
+            }
+            itemView.swipeDownvoteButton.setOnClickListener {
+                clickListener.onDownvoteClicked(
+                    swipeLayout,
+                    song
+                )
+            }
+            itemView.swipeDeleteButton.setOnClickListener {
+                clickListener.onDeleteClicked(
+                    swipeLayout,
+                    song
+                )
+            }
         }
 
         fun bindItemManager(position: Int) {

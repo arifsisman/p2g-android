@@ -89,11 +89,14 @@ class RoomActivity : AppCompatActivity(),
         setupViewModelBase()
         setupRoomModel()
         startRoomWebSocketService(broadcastReceiver)
-        getRoomUserMe()
         setupViewModel()
         setupSlidingUpPanel()
         setupPlayer()
         Thread(playerTimer).start()
+
+        getRoomUserMe()
+        room?.id?.let { roomViewModel.loadSongs(it) }
+        room?.id?.let { roomViewModel.loadRoomUsers(it) }
     }
 
     // Setups
