@@ -2,12 +2,14 @@ package vip.yazilim.p2g.android.util.helper
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.snackbar.Snackbar
+import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
 
 
 /**
@@ -51,6 +53,7 @@ class UIHelper {
                 val params = snackView?.layoutParams as FrameLayout.LayoutParams
                 params.gravity = Gravity.TOP
                 snackView.layoutParams = params
+                snackView.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
             } catch (e: Exception) {
                 snack?.show()
             }
@@ -64,6 +67,7 @@ class UIHelper {
             val params = snackView?.layoutParams as CoordinatorLayout.LayoutParams
             params.gravity = Gravity.BOTTOM
             snackView.layoutParams = params
+            snackView.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
             snack.show()
         }
 
@@ -74,13 +78,15 @@ class UIHelper {
             val params = snackView?.layoutParams as FrameLayout.LayoutParams
             params.gravity = Gravity.TOP
             snackView.layoutParams = params
+            snackView.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
             snack.show()
         }
 
         fun showPlayerError(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             snack?.anchorView = view
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
             snack?.show()
         }
 

@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
+import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -120,9 +122,9 @@ class PlayerAdapter(
                 }
 
                 if (song.repeatFlag) {
-                    repeatButton.setColorFilter(Color.parseColor("#1DB954"))
+                    repeatButton.setColorFilter(Color.parseColor(SPOTIFY_GREEN))
                 } else {
-                    repeatButton.setColorFilter(Color.parseColor("#FFFFFF"))
+                    repeatButton.setColorFilter(Color.parseColor(WHITE))
                 }
 
             } else {

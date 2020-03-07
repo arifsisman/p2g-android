@@ -240,7 +240,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     override fun onPlayClicked(view: SwipeLayout, song: Song) =
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
-
             }
 
             override fun onError(msg: String) {
@@ -257,6 +256,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     db.insertVotedSong(song)
+                    UIHelper.showSnackBarShortRoom(viewPager, "${song.songName} upvoted.")
                 }
 
                 override fun onError(msg: String) {
@@ -275,6 +275,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     db.insertVotedSong(song)
+                    UIHelper.showSnackBarShortRoom(viewPager, "${song.songName} downvoted.")
                 }
 
                 override fun onError(msg: String) {

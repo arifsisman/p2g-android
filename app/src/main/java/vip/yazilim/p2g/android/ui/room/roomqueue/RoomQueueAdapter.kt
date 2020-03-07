@@ -13,6 +13,9 @@ import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.ColorCodes.NEGATIVE_RED
+import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
+import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -63,25 +66,25 @@ class RoomQueueAdapter(
                 song.votes > 0 -> {
                     val songVotePlaceholder = song.votes.toString()
                     songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor("#1DB954"))
+                    songVote.setTextColor(Color.parseColor(SPOTIFY_GREEN))
                 }
                 song.votes < 0 -> {
                     val songVotePlaceholder = song.votes.toString()
                     songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor("#D10000"))
+                    songVote.setTextColor(Color.parseColor(NEGATIVE_RED))
                 }
                 else -> {
                     val songVotePlaceholder = "0"
                     songVote.text = songVotePlaceholder
-                    songVote.setTextColor(Color.parseColor("#FFFFFF"))
+                    songVote.setTextColor(Color.parseColor(WHITE))
                 }
             }
 
-            if (song.songStatus == SongStatus.PLAYING.songStatus) {
-                isPlaying.visibility = View.VISIBLE
-            } else {
-                isPlaying.visibility = View.INVISIBLE
-            }
+//            if (song.songStatus == SongStatus.PLAYING.songStatus) {
+//                isPlaying.visibility = View.VISIBLE
+//            } else {
+//                isPlaying.visibility = View.INVISIBLE
+//            }
 
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
             swipeLayout.isClickToClose = true

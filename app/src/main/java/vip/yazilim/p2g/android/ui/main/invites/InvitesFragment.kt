@@ -76,35 +76,6 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
 
         // SwipeRefreshLayout
         swipeRefreshContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
-
-//        // Swipe left for delete
-//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
-//                onReject(roomInviteModel)
-//                adapter.remove(roomInviteModel)
-//            }
-//        }
-//
-//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
-//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
-//
-//        // Swipe right for accept
-//        val swipeAcceptHandler = object : SwipeToAcceptCallback(
-//            ContextCompat.getDrawable(
-//                this.context!!,
-//                R.drawable.ic_check_white_24dp
-//            )!!, Color.parseColor("#1DB954")
-//        ) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
-//                onAccept(roomInviteModel)
-//                adapter.remove(roomInviteModel)
-//            }
-//        }
-//
-//        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
-//        swipeAcceptHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observers
