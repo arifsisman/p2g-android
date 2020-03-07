@@ -313,11 +313,11 @@ class RoomActivity : AppCompatActivity(),
             roomUser?.let { Singleton.apiClient().syncWithRoom(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    UIHelper.showSnackBarShortRoom(viewPager, "Playback synced with room")
+                    UIHelper.showSnackBarShortBottom(viewPager, "Playback synced with room")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortRoom(viewPager, msg)
+                    UIHelper.showSnackBarShortBottom(viewPager, msg)
                 }
             })
     }
@@ -390,7 +390,7 @@ class RoomActivity : AppCompatActivity(),
                             }
 
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShortRoom(viewPager, msg)
+                                UIHelper.showSnackBarShortBottom(viewPager, msg)
                             }
                         })
                 }
@@ -430,7 +430,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(viewPager, msg)
+                UIHelper.showSnackBarShortBottom(viewPager, msg)
             }
         })
     }
@@ -572,7 +572,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(viewPager, msg)
+                UIHelper.showSnackBarShortBottom(viewPager, msg)
             }
         })
 
@@ -586,7 +586,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showPlayerError(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
             }
         })
 
@@ -596,7 +596,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showPlayerError(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
             }
         })
 
@@ -606,7 +606,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showPlayerError(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
             }
         })
 
@@ -616,7 +616,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showPlayerError(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
             }
         })
 
@@ -626,7 +626,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showPlayerError(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
             }
         })
 
@@ -660,11 +660,11 @@ class RoomActivity : AppCompatActivity(),
             Singleton.apiClient().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
-                    UIHelper.showSnackBarShortRoom(viewPager, "Active device changed.")
+                    UIHelper.showSnackBarShortBottom(viewPager, "Active device changed.")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortRoom(viewPager, msg)
+                    UIHelper.showSnackBarShortBottom(viewPager, msg)
                 }
             })
     }

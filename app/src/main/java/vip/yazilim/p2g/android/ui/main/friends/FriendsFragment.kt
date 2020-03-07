@@ -130,7 +130,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -154,7 +154,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -167,7 +167,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -194,7 +194,7 @@ class FriendsFragment : FragmentBase(
                         },
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShort(root, msg)
+                                UIHelper.showSnackBarShortTop(root, msg)
                             }
 
                             override fun onSuccess(obj: Boolean) {
@@ -223,7 +223,7 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendRequestModel(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -239,7 +239,7 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriends(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -255,7 +255,7 @@ class FriendsFragment : FragmentBase(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -303,7 +303,7 @@ class FriendsFragment : FragmentBase(
                 room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortTop(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {

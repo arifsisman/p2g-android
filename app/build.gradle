@@ -92,6 +92,9 @@ dependencies {
     // AndroidSwipeLayout
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 
+    // TopSnackBar
+    implementation 'com.androidadvance:topsnackbar:1.1.1'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

@@ -134,7 +134,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -153,7 +153,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -181,7 +181,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShort(root, "Rooms Invites cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, "Rooms Invites cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 

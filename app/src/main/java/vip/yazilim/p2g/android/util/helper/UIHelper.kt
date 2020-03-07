@@ -5,9 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.snackbar.Snackbar
 import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
 
@@ -46,43 +45,36 @@ class UIHelper {
         }
 
 
-        fun showSnackBarLong(view: View?, message: String) {
+        fun showSnackBarLongBottom(view: View?, message: String) {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG) }
             val snackView = snack?.view
-            try {
-                val params = snackView?.layoutParams as FrameLayout.LayoutParams
-                params.gravity = Gravity.TOP
-                snackView.layoutParams = params
-                snackView.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
-            } catch (e: Exception) {
-                snack?.show()
-            }
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snack?.show()
         }
 
-        // For showing SnackBar in view which is not casted FrameLayout.LayoutParams
-        fun showSnackBarShortRoom(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+        fun showSnackBarLongTop(view: View?, message: String) {
+            val snack: TSnackbar? = view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_LONG) }
             val snackView = snack?.view
-            val params = snackView?.layoutParams as CoordinatorLayout.LayoutParams
-            params.gravity = Gravity.BOTTOM
-            snackView.layoutParams = params
-            snackView.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
-            snack.show()
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snack?.show()
         }
 
-        fun showSnackBarShort(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+        fun showSnackBarShortBottom(view: View?, message: String) {
+            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             val snackView = snack?.view
-            val params = snackView?.layoutParams as FrameLayout.LayoutParams
-            params.gravity = Gravity.TOP
-            snackView.layoutParams = params
-            snackView.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
-            snack.show()
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snack?.show()
         }
 
-        fun showPlayerError(view: View?, message: String) {
+        fun showSnackBarShortTop(view: View?, message: String) {
+            val snack: TSnackbar? =
+                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snack?.show()
+        }
+
+        fun showSnackBarPlayerAnchored(view: View?, message: String) {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             snack?.anchorView = view
             val snackView = snack?.view

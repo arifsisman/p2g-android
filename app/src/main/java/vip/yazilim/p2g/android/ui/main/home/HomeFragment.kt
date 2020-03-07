@@ -133,7 +133,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         roomModelSimplified.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -184,7 +184,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortTop(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
@@ -239,7 +239,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 object : Callback<Room> {
                     override fun onError(msg: String) {
                         Log.d(TAG, "Room can not created")
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortTop(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: Room) {
@@ -268,7 +268,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         Singleton.apiClient().getSimplifiedRoomModels(),
         object : Callback<MutableList<RoomModelSimplified>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
