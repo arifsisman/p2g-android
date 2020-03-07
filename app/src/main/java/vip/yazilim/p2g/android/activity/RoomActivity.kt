@@ -39,6 +39,7 @@ import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
+import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -64,12 +65,16 @@ class RoomActivity : AppCompatActivity(),
 
     @Volatile
     private var isPlaying = false
+
     @Volatile
     private var isSeeking = false
+
     @Volatile
     private var songCurrentMs = 0
+
     @Volatile
     internal var skipFlag = false
+
     @Volatile
     lateinit var playerSong: Song
 
@@ -89,7 +94,6 @@ class RoomActivity : AppCompatActivity(),
         setupSlidingUpPanel()
         setupPlayer()
         Thread(playerTimer).start()
-        room?.id?.let { roomViewModel.loadSongs(it) }
     }
 
     // Setups
@@ -534,8 +538,8 @@ class RoomActivity : AppCompatActivity(),
                 0 -> { // RoomQueueFragment
                     RoomQueueFragment(roomViewModel)
                 }
-                1 -> { //TODO RoomUsersFragment
-                    RoomQueueFragment(roomViewModel)
+                1 -> {
+                    RoomUsersFragment(roomViewModel)
                 }
                 2 -> { //TODO RoomChatFragment
                     RoomQueueFragment(roomViewModel)

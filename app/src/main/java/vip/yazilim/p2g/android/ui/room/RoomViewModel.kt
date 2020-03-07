@@ -5,6 +5,7 @@ import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
@@ -20,6 +21,9 @@ class RoomViewModel : ViewModelBase() {
 
     private val _playerSong = MutableLiveData<Song>()
     val playerSong: MutableLiveData<Song> = _playerSong
+
+    private val _roomUserList = MutableLiveData<MutableList<RoomUserModel>>()
+    val roomUserList: MutableLiveData<MutableList<RoomUserModel>> = _roomUserList
 
     fun loadSongs(roomId: Long) {
         _isViewLoading.postValue(true)
@@ -40,6 +44,29 @@ class RoomViewModel : ViewModelBase() {
                     } else {
                         _songList.value = obj
                         _playerSong.value = getCurrentSong(obj)
+                    }
+                }
+            })
+    }
+
+    fun loadRoomUsers(roomId: Long) {
+        _isViewLoading.postValue(true)
+
+        request(
+            Singleton.apiClient().getRoomUserModels(roomId),
+            object : Callback<MutableList<RoomUserModel>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
+
+                override fun onSuccess(obj: MutableList<RoomUserModel>) {
+                    _isViewLoading.postValue(false)
+
+                    if (obj.isEmpty()) {
+                        _isEmptyList.postValue(true)
+                    } else {
+                        _roomUserList.value = obj
                     }
                 }
             })

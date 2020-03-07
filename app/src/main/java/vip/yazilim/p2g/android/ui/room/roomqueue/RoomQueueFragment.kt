@@ -53,7 +53,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
         // QueueAdapter
         adapter = RoomQueueAdapter(
-            roomActivity.roomViewModel.songList.value ?: mutableListOf()
+            roomViewModel.songList.value ?: mutableListOf()
             , this
         )
 
@@ -69,11 +69,22 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
         fab.setOnClickListener { showSearchDialog() }
 
-        roomActivity.roomViewModel.songList.observe(this, renderRoomQueue)
+        roomViewModel.songList.observe(this, renderRoomQueue)
 
         swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
         }
+    }
+
+    override fun setupViewModel() {
+        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
+        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
+        roomViewModel.isEmptyList.observe(this, emptyListObserver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        roomActivity.room?.id?.let { roomViewModel.loadSongs(it) }
     }
 
     private fun refreshQueueEvent() = request(
@@ -90,12 +101,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
         })
 
-    override fun setupViewModel() {
-        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
-        roomViewModel.isEmptyList.observe(this, emptyListObserver)
-    }
-
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
         Log.v(TAG, "data updated $songList")
@@ -103,7 +108,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         layoutEmpty.visibility = View.GONE
 
         if (songList.isNullOrEmpty()) {
-            (activity as RoomActivity).roomViewModel._isEmptyList.postValue(true)
+            roomViewModel._isEmptyList.postValue(true)
         } else {
             var hasNext = false
 
@@ -113,7 +118,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 }
             }
 
-            (activity as RoomActivity).skipFlag = hasNext
+            roomActivity.skipFlag = hasNext
         }
 
         adapter.update(songList)
@@ -245,14 +250,14 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         })
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
-        val db = (activity as RoomActivity).db
+        val db = roomActivity.db
 
-        if ((activity as RoomActivity).room?.let { db.isVotedBefore(it, song) }!!) {
+        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
             UIHelper.showSnackBarShortBottom(container, "Song voted before")
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    (activity as RoomActivity).room?.let { db.insertVotedSong(it, song) }
+                    roomActivity.room?.let { db.insertVotedSong(it, song) }
                     UIHelper.showSnackBarShortBottom(container, "${song.songName} upvoted.")
                 }
 
@@ -264,14 +269,14 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
-        val db = (activity as RoomActivity).db
+        val db = roomActivity.db
 
-        if ((activity as RoomActivity).room?.let { db.isVotedBefore(it, song) }!!) {
+        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
             UIHelper.showSnackBarShortBottom(container, "Song voted before")
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    (activity as RoomActivity).room?.let { db.insertVotedSong(it, song) }
+                    roomActivity.room?.let { db.insertVotedSong(it, song) }
                     UIHelper.showSnackBarShortBottom(container, "${song.songName} downvoted.")
                 }
 

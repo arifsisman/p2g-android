@@ -98,5 +98,6 @@
     <string name="placeholder_device_name">Device Name</string>
     <string name="placeholder_device_type">Device Type</string>
     <string name="title_sync_with_room">Sync with room</string>
+    <string name="placeholder_user_role">User Role</string>
 
 </resources>
