@@ -57,9 +57,9 @@
     <string name="placeholder_empty_list">Nothing found here…</string>
     <string name="placeholder_email">Email:</string>
     <string name="placeholder_room_owner">Owner:</string>
-    <string name="placeholder_room_now_playing_song">Now Playing:</string>
+    <string name="placeholder_room_now_playing_song">Playing:</string>
     <string name="placeholder_room_paused_song">Paused:</string>
-    <string name="placeholder_room_next_song">Next Song:</string>
+    <string name="placeholder_room_next_song">Next:</string>
     <string name="placeholder_room_song_not_found">No song found in the room</string>
     <string name="placeholder_room_user_not_found">Not in any room</string>
     <string name="placeholder_name">Name</string>
