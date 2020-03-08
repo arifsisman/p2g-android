@@ -23,7 +23,7 @@ data class Song(
     var currentMs: Int,
     var repeatFlag: Boolean,
     var votes: Int
-) : Parcelable {
+) : Parcelable, Cloneable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readLong(),
@@ -70,5 +70,24 @@ data class Song(
         override fun newArray(size: Int): Array<Song?> {
             return arrayOfNulls(size)
         }
+    }
+
+    public override fun clone(): Any {
+        return Song(
+            this.id,
+            this.roomId,
+            this.songId,
+            this.songName,
+            this.albumName,
+            this.artistNames,
+            this.imageUrl,
+            this.durationMs,
+            this.songStatus,
+            this.queuedTime,
+            this.playingTime,
+            this.currentMs,
+            this.repeatFlag,
+            this.votes
+        )
     }
 }

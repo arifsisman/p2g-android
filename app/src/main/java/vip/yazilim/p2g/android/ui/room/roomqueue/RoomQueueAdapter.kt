@@ -131,7 +131,8 @@ class RoomQueueAdapter(
     }
 
     fun update(data: MutableList<Song>) {
-        songs = data.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
+        val songList = data.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
+        songs = songList.sortByActive()
         notifyDataSetChanged()
     }
 
@@ -160,6 +161,23 @@ class RoomQueueAdapter(
         notifyItemRangeChanged(position, size)
 
         songs.remove(song)
+    }
+
+    private fun MutableList<Song>.sortByActive(): MutableList<Song> {
+        var index: Int? = null
+        var activeSong: Song? = null
+        this.forEach {
+            if (it.songStatus == SongStatus.PLAYING.songStatus || it.songStatus == SongStatus.PAUSED.songStatus) {
+                activeSong = it.clone() as Song
+                index = this.indexOf(it)
+                return@forEach
+            }
+        }
+
+        index?.let { this.removeAt(it) }
+        activeSong?.let { this.add(0, it) }
+
+        return this
     }
 
 }
