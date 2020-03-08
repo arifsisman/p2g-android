@@ -56,7 +56,7 @@
     <string name="placeholder_an_error_occurred">An error occurred</string>
     <string name="placeholder_empty_list">Nothing found here…</string>
     <string name="placeholder_email">Email:</string>
-    <string name="placeholder_room_owner">Room Owner:</string>
+    <string name="placeholder_room_owner">Owner:</string>
     <string name="placeholder_room_now_playing_song">Now Playing:</string>
     <string name="placeholder_room_paused_song">Paused:</string>
     <string name="placeholder_room_next_song">Next Song:</string>

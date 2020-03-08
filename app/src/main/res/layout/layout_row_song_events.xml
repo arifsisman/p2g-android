@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
     android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/swipeDeleteButton"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@color/colorBlack"
+        android:layout_marginEnd="0.5dp"
+        android:background="@color/colorPrimaryLight"
         android:clickable="true"
         android:contentDescription="@string/description_upvote_song_button"
         android:focusable="true"
@@ -19,7 +21,7 @@
         app:layout_constraintStart_toEndOf="@+id/swipeUpvoteButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_delete_white_24dp"
+        app:srcCompat="@drawable/ic_delete_black_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 
@@ -27,7 +29,8 @@
         android:id="@+id/swipeDownvoteButton"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@color/colorNegative"
+        android:layout_marginEnd="0.5dp"
+        android:background="@color/colorPrimaryLight"
         android:clickable="true"
         android:contentDescription="@string/description_downvote_song_button"
         android:focusable="true"
@@ -43,7 +46,8 @@
         android:id="@+id/swipeUpvoteButton"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@color/colorSpotifyGreen"
+        android:layout_marginEnd="0.5dp"
+        android:background="@color/colorPrimaryLight"
         android:clickable="true"
         android:contentDescription="@string/description_upvote_song_button"
         android:focusable="true"
@@ -60,7 +64,7 @@
         android:id="@+id/swipePlayButton"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@color/colorWhite"
+        android:background="@color/colorPrimaryLight"
         android:clickable="true"
         android:contentDescription="@string/description_downvote_song_button"
         android:focusable="true"
@@ -68,7 +72,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/swipePlayButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_play_circle_filled_black_24dp"
+        app:srcCompat="@drawable/ic_play_arrow_white_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 

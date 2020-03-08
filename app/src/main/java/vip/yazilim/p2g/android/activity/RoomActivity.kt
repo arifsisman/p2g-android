@@ -114,8 +114,7 @@ class RoomActivity : AppCompatActivity(),
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> {
-                    }
+                    0 -> canUserAddAndControlSongs(roomViewModel.roomUserModel.value?.roomUser)
                     else -> fab.hide()
                 }
             }
