@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.ui.room.roomusers
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,12 @@ import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import kotlinx.android.synthetic.main.layout_row_user_events.view.*
 import kotlinx.android.synthetic.main.row_user_model.view.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.ColorCodes.CYAN
+import vip.yazilim.p2g.android.constant.ColorCodes.GREEN
+import vip.yazilim.p2g.android.constant.ColorCodes.RED
+import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 
@@ -37,6 +43,21 @@ class RoomUsersAdapter(
             if (user != null && roomUser != null) {
                 itemView.user_name.text = user.name
                 itemView.user_role.text = roomUser.role
+
+                when {
+                    roomUser.role.equals(Role.ROOM_OWNER.role) -> {
+                        itemView.user_role.setTextColor(Color.parseColor(RED))
+                    }
+                    roomUser.role.equals(Role.ROOM_ADMIN.role) -> {
+                        itemView.user_role.setTextColor(Color.parseColor(CYAN))
+                    }
+                    roomUser.role.equals(Role.ROOM_MODERATOR.role) -> {
+                        itemView.user_role.setTextColor(Color.parseColor(GREEN))
+                    }
+                    roomUser.role.equals(Role.ROOM_USER.role) -> {
+                        itemView.user_role.setTextColor(Color.parseColor(WHITE))
+                    }
+                }
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)
