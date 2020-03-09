@@ -100,7 +100,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
         Log.v(TAG, "data updated $songList")
         layoutError.visibility = View.GONE
-        layoutEmpty.visibility = View.GONE
 
         if (songList.isNullOrEmpty()) {
             roomViewModel._isEmptyList.postValue(true)

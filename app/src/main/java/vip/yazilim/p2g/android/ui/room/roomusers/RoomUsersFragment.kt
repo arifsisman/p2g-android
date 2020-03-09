@@ -64,7 +64,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     private val renderRoomUserModelList = Observer<MutableList<RoomUserModel>> { roomUserModels ->
         Log.v(TAG, "data updated $roomUserModels")
         layoutError.visibility = View.GONE
-        layoutEmpty.visibility = View.GONE
 
         adapter.update(roomUserModels)
 

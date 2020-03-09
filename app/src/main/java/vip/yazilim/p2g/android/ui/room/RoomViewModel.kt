@@ -42,12 +42,8 @@ class RoomViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<Song>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _songList.value = obj
-                        _playerSong.value = getCurrentSong(obj)
-                    }
+                    _songList.value = obj
+                    _playerSong.value = getCurrentSong(obj)
                 }
             })
     }
@@ -66,17 +62,14 @@ class RoomViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<RoomUserModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _roomUserModelList.value = obj
+                    _roomUserModelList.value = obj
 
-                        obj.forEach {
-                            if (it.user?.id == roomUserModel.value?.user?.id) {
-                                roomUserModel.value = it
-                            }
+                    obj.forEach {
+                        if (it.user?.id == roomUserModel.value?.user?.id) {
+                            roomUserModel.value = it
                         }
                     }
+
                 }
             })
     }
