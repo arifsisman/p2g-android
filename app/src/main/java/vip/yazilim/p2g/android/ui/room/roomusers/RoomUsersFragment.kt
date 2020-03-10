@@ -11,7 +11,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.model.p2g.RoomUser
+import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
@@ -57,7 +57,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     override fun setupViewModel() {
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
-        roomViewModel.isEmptyList.observe(this, emptyListObserver)
     }
 
     // Observer

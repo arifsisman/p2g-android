@@ -5,8 +5,8 @@ import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
-import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 import vip.yazilim.p2g.android.util.refrofit.Singleton

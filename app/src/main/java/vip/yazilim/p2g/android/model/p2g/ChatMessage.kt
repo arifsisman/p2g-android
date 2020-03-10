@@ -1,32 +1,29 @@
-package vip.yazilim.p2g.android.model.websocket
+package vip.yazilim.p2g.android.model.p2g
 
 import android.os.Parcel
 import android.os.Parcelable
-import org.threeten.bp.LocalDateTime
+import com.stfalcon.chatkit.commons.models.IMessage
+import com.stfalcon.chatkit.commons.models.IUser
+import vip.yazilim.p2g.android.entity.RoomUser
+import java.util.*
 
 /**
  * @author mustafaarifsisman - 24.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
 data class ChatMessage(
-    var userId: String?,
-    var userName: String?,
-    var roomId: Long,
+    var roomUser: RoomUser?,
     var message: String?,
-    var timestamp: LocalDateTime?
-) : Parcelable {
+    var timestamp: Date?
+) : IMessage, Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readParcelable(RoomUser::class.java.classLoader),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readLong(),
-        parcel.readString(),
-        parcel.readSerializable() as LocalDateTime
+        parcel.readSerializable() as Date
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(userId)
-        parcel.writeString(userName)
-        parcel.writeLong(roomId)
+        parcel.writeParcelable(roomUser, flags)
         parcel.writeString(message)
         parcel.writeSerializable(timestamp)
     }
@@ -44,6 +41,21 @@ data class ChatMessage(
             return arrayOfNulls(size)
         }
     }
+
+    override fun getId(): String? {
+        return this.roomUser?.userId + timestamp?.time
+    }
+
+    override fun getUser(): IUser? {
+        return this.roomUser
+    }
+
+    override fun getText(): String? {
+        return this.message
+    }
+
+    override fun getCreatedAt(): Date? {
+        return this.timestamp
+    }
+
 }
-
-

@@ -23,9 +23,9 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
-import vip.yazilim.p2g.android.model.p2g.Room
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
-import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper

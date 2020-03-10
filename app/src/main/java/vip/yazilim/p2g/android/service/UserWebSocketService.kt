@@ -20,7 +20,7 @@ import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
-import vip.yazilim.p2g.android.model.p2g.RoomInvite
+import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG

@@ -28,8 +28,8 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVED
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
-import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient

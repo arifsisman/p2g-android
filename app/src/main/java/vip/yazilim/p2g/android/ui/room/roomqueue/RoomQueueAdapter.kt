@@ -15,7 +15,7 @@ import vip.yazilim.p2g.android.constant.ColorCodes.NEGATIVE_RED
 import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.model.p2g.Song
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 

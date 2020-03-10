@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.model.p2g
+package vip.yazilim.p2g.android.entity
 
 import android.os.Parcel
 import android.os.Parcelable

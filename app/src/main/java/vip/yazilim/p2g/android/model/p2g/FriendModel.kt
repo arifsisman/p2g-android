@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.model.p2g
 
 import android.os.Parcel
 import android.os.Parcelable
+import vip.yazilim.p2g.android.entity.Song
 
 /**
  * @author mustafaarifsisman - 17.02.2020

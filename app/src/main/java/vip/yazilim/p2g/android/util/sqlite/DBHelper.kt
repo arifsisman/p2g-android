@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
-import vip.yazilim.p2g.android.model.p2g.Room
-import vip.yazilim.p2g.android.model.p2g.Song
-import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 
 /**

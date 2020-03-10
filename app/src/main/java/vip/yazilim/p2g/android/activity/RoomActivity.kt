@@ -33,12 +33,19 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIV
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.RoomUser
+import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.entity.UserDevice
+import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.DeviceAdapter
 import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
+import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
@@ -209,7 +216,9 @@ class RoomActivity : AppCompatActivity(),
                         }
                     }
                     COLLAPSED -> {
-                        roomViewModel.roomUserModel.value?.let { canUserAddAndControlSongs(it.roomUser) }
+                        if (viewPager.currentItem == 0) {
+                            roomViewModel.roomUserModel.value?.let { canUserAddAndControlSongs(it.roomUser) }
+                        }
                         showMinimizedPlayer()
                     }
                     EXPANDED -> {
@@ -552,15 +561,19 @@ class RoomActivity : AppCompatActivity(),
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> { // RoomQueueFragment
+//                    showMinimizedPlayer()
                     RoomQueueFragment(roomViewModel)
                 }
                 1 -> {
+//                    showMinimizedPlayer()
                     RoomUsersFragment(roomViewModel)
                 }
-                2 -> { //TODO RoomChatFragment
-                    RoomQueueFragment(roomViewModel)
+                2 -> {
+//                    showMinimizedPlayer()
+                    RoomChatFragment(roomViewModel)
                 }
                 3 -> { //TODO RoomInviteFragment
+//                    showMinimizedPlayer()
                     RoomQueueFragment(roomViewModel)
                 }
                 else -> throw IllegalArgumentException()

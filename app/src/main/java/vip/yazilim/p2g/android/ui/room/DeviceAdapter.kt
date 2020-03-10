@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.model.p2g.UserDevice
+import vip.yazilim.p2g.android.entity.UserDevice
 
 /**
  * @author mustafaarifsisman - 29.02.2020

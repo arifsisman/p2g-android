@@ -21,8 +21,8 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
-import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -79,7 +79,6 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     override fun setupViewModel() {
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
-        roomViewModel.isEmptyList.observe(this, emptyListObserver)
     }
 
     private fun refreshQueueEvent() = request(

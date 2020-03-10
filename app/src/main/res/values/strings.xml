@@ -99,5 +99,6 @@
     <string name="placeholder_device_type">Device Type</string>
     <string name="title_sync_with_room">Sync with room</string>
     <string name="placeholder_user_role">User Role</string>
+    <string name="hint_enter_a_message">Type a message…</string>
 
 </resources>

@@ -1,7 +1,8 @@
-package vip.yazilim.p2g.android.model.p2g
+package vip.yazilim.p2g.android.entity
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.stfalcon.chatkit.commons.models.IUser
 import org.threeten.bp.LocalDateTime
 
 /**
@@ -12,13 +13,17 @@ data class RoomUser(
     var id: Long,
     var roomId: Long,
     var userId: String?,
+    var userName: String?,
+    var userImageUrl: String?,
     var role: String?,
     var joinDate: LocalDateTime?,
     var activeFlag: Boolean
-) : Parcelable {
+) : Parcelable, IUser {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readLong(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readSerializable() as? LocalDateTime,
@@ -29,6 +34,8 @@ data class RoomUser(
         parcel.writeLong(id)
         parcel.writeLong(roomId)
         parcel.writeString(userId)
+        parcel.writeString(userName)
+        parcel.writeString(userImageUrl)
         parcel.writeString(role)
         parcel.writeSerializable(joinDate)
         parcel.writeByte(if (activeFlag) 1 else 0)
@@ -46,5 +53,17 @@ data class RoomUser(
         override fun newArray(size: Int): Array<RoomUser?> {
             return arrayOfNulls(size)
         }
+    }
+
+    override fun getId(): String? {
+        return this.userId
+    }
+
+    override fun getName(): String? {
+        return this.userName
+    }
+
+    override fun getAvatar(): String? {
+        return this.userImageUrl
     }
 }
