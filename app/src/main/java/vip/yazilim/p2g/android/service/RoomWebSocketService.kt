@@ -154,6 +154,17 @@ class RoomWebSocketService : Service() {
         }
     }
 
+//    private fun socketOnErrorHandler(roomId: Long) {
+//        roomWSClient = WebSocketClient.getRoomWebSocketClient(roomId)
+//        roomWSClient.reconnect()
+//
+//        if (roomWSClient.isConnected) {
+//            subscribeRoomSongs("/p2g/room/${this}/songs")
+//            subscribeRoomUsers("/p2g/room/${this}/users")
+//            subscribeRoomStatus("/p2g/room/${this}/status")
+//        }
+//    }
+
     private fun subscribeRoomSongs(songsPath: String) {
         roomWSClient.run {
             topic(songsPath)

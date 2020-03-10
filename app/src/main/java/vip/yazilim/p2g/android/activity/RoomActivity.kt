@@ -78,6 +78,8 @@ class RoomActivity : AppCompatActivity(),
     @Volatile
     lateinit var playerSong: Song
 
+    private var roomWsReconnectCounter = 0
+
     companion object {
         private const val PLAYER_TAG = "Player"
     }
@@ -407,6 +409,7 @@ class RoomActivity : AppCompatActivity(),
                         room?.id?.let { Singleton.apiClient().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
+                                UIHelper.showSnackBarShortBottom(viewPager, "Room queue cleared.")
                             }
 
                             override fun onError(msg: String) {
@@ -487,13 +490,24 @@ class RoomActivity : AppCompatActivity(),
                     }
                 }
                 action.equals(ACTION_ROOM_SOCKET_ERROR) -> {
-                    stopRoomWebSocketService(this)
-                    startRoomWebSocketService(this)
+                    if (roomWsReconnectCounter < 22) {
+                        stopRoomWebSocketService(this)
+                        startRoomWebSocketService(this)
+                        roomWsReconnectCounter++
+                    } else {
+                        UIHelper.showSnackBarShortBottomIndefinite(
+                            viewPager,
+                            "Connection to room closed, please restart Play2Gether App."
+                        )
+                    }
                 }
                 action.equals(ACTION_ROOM_STATUS) -> {
                     val status: String? = intent?.getStringExtra("roomStatus")
                     if (status.equals(RoomStatus.CLOSED.status)) {
-                        UIHelper.showToastLong(context, "Room ${room?.name} by ${room?.ownerId}")
+                        UIHelper.showToastLong(
+                            context,
+                            "Room ${room?.name} ${RoomStatus.CLOSED.status} by ${room?.ownerId}"
+                        )
                         request(Singleton.apiClient().leaveRoom(), null)
 
                         val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
