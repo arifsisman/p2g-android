@@ -100,19 +100,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         Log.v(TAG, "data updated $songList")
         layoutError.visibility = View.GONE
 
-        if (songList.isNullOrEmpty()) {
-            roomViewModel._isEmptyList.postValue(true)
-        } else {
-            var hasNext = false
+        var hasNext = false
 
-            songList.forEach { song ->
-                if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
-                    hasNext = true
-                }
+        songList.forEach { song ->
+            if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
+                hasNext = true
             }
-
-            roomActivity.skipFlag = hasNext
         }
+
+        roomActivity.skipFlag = hasNext
 
         adapter.update(songList)
     }

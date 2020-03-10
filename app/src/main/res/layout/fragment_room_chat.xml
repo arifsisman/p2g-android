@@ -1,4 +1,4 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragmentRoomChat"
     android:layout_width="match_parent"
@@ -8,22 +8,18 @@
         android:id="@+id/messagesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/input" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
         android:layout_above="@+id/input"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/gray" />
+        app:incomingAvatarHeight="56dp"
+        app:incomingAvatarWidth="56dp"
+        app:incomingDefaultBubbleColor="@color/colorSpotifyGreen"
+        app:outcomingDefaultBubbleColor="@color/colorSpotifyGreen"
+        app:outcomingTimeTextColor="@color/white" />
 
     <com.stfalcon.chatkit.messages.MessageInput
         android:id="@+id/input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
         android:background="@color/colorPrimaryDark"
         app:inputButtonBackground="@drawable/bg_custom_layout_send"
         app:inputButtonDefaultIconColor="@color/white"
@@ -31,4 +27,4 @@
         app:inputHint="@string/hint_enter_a_message"
         app:inputTextColor="@color/white" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

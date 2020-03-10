@@ -308,7 +308,9 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private val renderRoomUserModel = Observer<RoomUserModel> { roomUserModel ->
-        canUserAddAndControlSongs(roomUserModel.roomUser)
+        if (viewPager.currentItem == 0) {
+            canUserAddAndControlSongs(roomUserModel.roomUser)
+        }
     }
 
 

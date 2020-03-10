@@ -14,7 +14,7 @@ import java.util.*
 data class ChatMessage(
     var roomUser: RoomUser?,
     var message: String?,
-    var timestamp: Date?
+    var timestamp: Date
 ) : IMessage, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(RoomUser::class.java.classLoader),
@@ -43,7 +43,7 @@ data class ChatMessage(
     }
 
     override fun getId(): String? {
-        return this.roomUser?.userId + timestamp?.time
+        return this.roomUser?.userId + timestamp.time
     }
 
     override fun getUser(): IUser? {
@@ -54,7 +54,7 @@ data class ChatMessage(
         return this.message
     }
 
-    override fun getCreatedAt(): Date? {
+    override fun getCreatedAt(): Date {
         return this.timestamp
     }
 
