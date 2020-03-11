@@ -29,6 +29,7 @@
         app:inputButtonDefaultIconColor="@color/white"
         app:inputButtonDefaultIconDisabledColor="@color/colorPrimaryDark"
         app:inputHint="@string/hint_enter_a_message"
+        app:inputTextSize="16dp"
         app:inputTextColor="@color/white" />
 
 </RelativeLayout>

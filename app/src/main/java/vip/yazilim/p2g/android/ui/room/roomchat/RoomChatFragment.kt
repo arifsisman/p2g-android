@@ -5,6 +5,7 @@ import android.os.Handler
 import androidx.lifecycle.Observer
 import com.bumptech.glide.request.RequestOptions
 import com.stfalcon.chatkit.commons.ImageLoader
+import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesListAdapter
 import kotlinx.android.synthetic.main.fragment_room_chat.*
@@ -38,7 +39,9 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
                 .into(imageView)
         }
 
-        messagesAdapter = MessagesListAdapter<ChatMessage>(senderId, imageLoader)
+        val holdersConfig = MessageHolders()
+        holdersConfig.setIncomingTextLayout(R.layout.row_incoming_message)
+        messagesAdapter = MessagesListAdapter<ChatMessage>(senderId, holdersConfig, imageLoader)
         messagesList.setAdapter(messagesAdapter)
 
         messageInput = input
