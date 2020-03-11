@@ -7,9 +7,11 @@ package vip.yazilim.p2g.android.constant
 object WebSocketActions {
     const val ACTION_STRING_SERVICE = "ToService"
     const val ACTION_STRING_ACTIVITY = "ToActivity"
-    const val ACTION_SONG_LIST_RECEIVED = "SongListReceived"
-    const val ACTION_USER_LIST_RECEIVED = "UserListReceived"
-    const val ACTION_ROOM_SOCKET_ERROR = "RoomSocketClosed"
+    const val ACTION_SONG_LIST_RECEIVE = "SongListReceive"
+    const val ACTION_USER_LIST_RECEIVE = "UserListReceive"
+    const val ACTION_ROOM_SOCKET_ERROR = "RoomSocketClose"
     const val ACTION_ROOM_STATUS = "RoomStatus"
-    const val ACTION_ROOM_INVITE = "RoomInviteReceived"
+    const val ACTION_ROOM_INVITE = "RoomInviteReceive"
+    const val ACTION_MESSAGE_SEND = "MessageSend"
+    const val ACTION_MESSAGE_RECEIVE = "MessageReceive"
 }

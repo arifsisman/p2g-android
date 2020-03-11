@@ -21,14 +21,15 @@ import com.google.gson.reflect.TypeToken
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -42,6 +43,8 @@ import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 class RoomWebSocketService : Service() {
     private var roomId: Long? = null
     private lateinit var roomWSClient: StompClient
+    private val gsonBuilder = GsonBuilder()
+    private val gson: Gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -49,30 +52,43 @@ class RoomWebSocketService : Service() {
 
     private val serviceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.v(TAG, "Sending broadcast to activity")
-            sendBroadcast()
+            when (intent?.action) {
+                ACTION_MESSAGE_SEND -> {
+                    Log.v(TAG, "Sending chatMessage")
+                    val chatMessage = intent.getParcelableExtra<ChatMessage>(ACTION_MESSAGE_SEND)
+                    roomWSClient.send("/p2g/room/${this}/messages", gson.toJson(chatMessage))
+                }
+            }
         }
-    }
-
-    private fun sendBroadcast() {
-        val intent = Intent()
-        intent.action = ACTION_STRING_ACTIVITY
-        sendBroadcast(intent)
     }
 
     private fun sendBroadcastSongList(songList: MutableList<Song>) {
         Log.v(TAG, "Sending broadcastSongList to activity")
         val intent = Intent()
-        intent.action = ACTION_SONG_LIST_RECEIVED
-        intent.putParcelableArrayListExtra("songList", ArrayList<Parcelable>(songList))
+        intent.action = ACTION_SONG_LIST_RECEIVE
+        intent.putParcelableArrayListExtra(
+            ACTION_SONG_LIST_RECEIVE,
+            ArrayList<Parcelable>(songList)
+        )
         sendBroadcast(intent)
     }
 
     private fun sendBroadcastUserList(userList: MutableList<RoomUserModel>) {
         Log.v(TAG, "Sending broadcastUserList to activity")
         val intent = Intent()
-        intent.action = ACTION_USER_LIST_RECEIVED
-        intent.putParcelableArrayListExtra("userList", ArrayList<Parcelable>(userList))
+        intent.action = ACTION_USER_LIST_RECEIVE
+        intent.putParcelableArrayListExtra(
+            ACTION_USER_LIST_RECEIVE,
+            ArrayList<Parcelable>(userList)
+        )
+        sendBroadcast(intent)
+    }
+
+    private fun sendBroadcastChatMessage(chatMessage: ChatMessage) {
+        Log.v(TAG, "Sending broadcastChatMessage to activity")
+        val intent = Intent()
+        intent.action = ACTION_MESSAGE_RECEIVE
+        intent.putExtra(ACTION_MESSAGE_RECEIVE, chatMessage)
         sendBroadcast(intent)
     }
 
@@ -80,7 +96,7 @@ class RoomWebSocketService : Service() {
         Log.v(TAG, "Sending broadcastRoomStatus to activity")
         val intent = Intent()
         intent.action = ACTION_ROOM_STATUS
-        intent.putExtra("roomStatus", status)
+        intent.putExtra(ACTION_ROOM_STATUS, status)
         sendBroadcast(intent)
     }
 
@@ -100,7 +116,7 @@ class RoomWebSocketService : Service() {
             startForeground(2, Notification())
         }
 
-        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
+        val intentFilter = IntentFilter(ACTION_MESSAGE_SEND)
         registerReceiver(serviceReceiver, intentFilter)
     }
 
@@ -121,6 +137,7 @@ class RoomWebSocketService : Service() {
             connectWebSocket(this)
             subscribeRoomSongs("/p2g/room/${this}/songs")
             subscribeRoomUsers("/p2g/room/${this}/users")
+            subscribeRoomMessages("/p2g/room/${this}/messages")
             subscribeRoomStatus("/p2g/room/${this}/status")
         }
 
@@ -154,17 +171,6 @@ class RoomWebSocketService : Service() {
         }
     }
 
-//    private fun socketOnErrorHandler(roomId: Long) {
-//        roomWSClient = WebSocketClient.getRoomWebSocketClient(roomId)
-//        roomWSClient.reconnect()
-//
-//        if (roomWSClient.isConnected) {
-//            subscribeRoomSongs("/p2g/room/${this}/songs")
-//            subscribeRoomUsers("/p2g/room/${this}/users")
-//            subscribeRoomStatus("/p2g/room/${this}/status")
-//        }
-//    }
-
     private fun subscribeRoomSongs(songsPath: String) {
         roomWSClient.run {
             topic(songsPath)
@@ -189,12 +195,21 @@ class RoomWebSocketService : Service() {
                     val json = it.payload
                     Log.v(TAG, json)
 
-                    val gsonBuilder = GsonBuilder()
-                    val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
-
                     val userList = gson.fromJson<MutableList<RoomUserModel>>(json)
-
                     sendBroadcastUserList(userList)
+                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
+        }
+    }
+
+    private fun subscribeRoomMessages(messagesPath: String) {
+        roomWSClient.run {
+            topic(messagesPath)
+                .subscribe({
+                    val json = it.payload
+                    Log.v(TAG, json)
+
+                    val chatMessage = gson.fromJson<ChatMessage>(json)
+                    sendBroadcastChatMessage(chatMessage)
                 }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }
     }
@@ -206,9 +221,7 @@ class RoomWebSocketService : Service() {
                     val json = it.payload
                     Log.v(TAG, json)
 
-                    val gson = GsonBuilder().create()
                     val roomStatus = gson.fromJson<RoomStatus>(json)
-
                     sendBroadcastRoomStatus(roomStatus.status)
                 }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }

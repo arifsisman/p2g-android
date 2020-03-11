@@ -26,10 +26,11 @@ import kotlinx.android.synthetic.main.row_player.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVED
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
@@ -37,6 +38,7 @@ import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.entity.UserDevice
+import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
@@ -405,8 +407,8 @@ class RoomActivity : AppCompatActivity(),
         }
 
         val intentFilter = IntentFilter()
-        intentFilter.addAction(ACTION_SONG_LIST_RECEIVED)
-        intentFilter.addAction(ACTION_USER_LIST_RECEIVED)
+        intentFilter.addAction(ACTION_SONG_LIST_RECEIVE)
+        intentFilter.addAction(ACTION_USER_LIST_RECEIVE)
         intentFilter.addAction(ACTION_ROOM_SOCKET_ERROR)
         intentFilter.addAction(ACTION_ROOM_STATUS)
         registerReceiver(broadcastReceiver, intentFilter)
@@ -485,10 +487,10 @@ class RoomActivity : AppCompatActivity(),
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val action = intent?.action
-            when {
-                action.equals(ACTION_SONG_LIST_RECEIVED) -> {
-                    val songListFromIntent = intent?.getParcelableArrayListExtra<Song>("songList")
+            when (intent?.action) {
+                ACTION_SONG_LIST_RECEIVE -> {
+                    val songListFromIntent =
+                        intent.getParcelableArrayListExtra<Song>(ACTION_SONG_LIST_RECEIVE)
                     songListFromIntent?.let { songList ->
                         if (songList.isNullOrEmpty()) {
                             roomViewModel.songList.value = mutableListOf()
@@ -500,7 +502,7 @@ class RoomActivity : AppCompatActivity(),
                         }
                     }
                 }
-                action.equals(ACTION_ROOM_SOCKET_ERROR) -> {
+                ACTION_ROOM_SOCKET_ERROR -> {
                     if (roomWsReconnectCounter < 22) {
                         stopRoomWebSocketService(this)
                         startRoomWebSocketService(this)
@@ -512,8 +514,8 @@ class RoomActivity : AppCompatActivity(),
                         )
                     }
                 }
-                action.equals(ACTION_ROOM_STATUS) -> {
-                    val status: String? = intent?.getStringExtra("roomStatus")
+                ACTION_ROOM_STATUS -> {
+                    val status: String? = intent.getStringExtra(ACTION_ROOM_STATUS)
                     if (status.equals(RoomStatus.CLOSED.status)) {
                         UIHelper.showToastLong(
                             context,
@@ -527,12 +529,17 @@ class RoomActivity : AppCompatActivity(),
                         stopRoomWebSocketService(this)
                     }
                 }
-                action.equals(ACTION_USER_LIST_RECEIVED) -> {
+                ACTION_USER_LIST_RECEIVE -> {
                     val userListFromIntent =
-                        intent?.getParcelableArrayListExtra<RoomUserModel>("userList")
+                        intent.getParcelableArrayListExtra<RoomUserModel>(ACTION_USER_LIST_RECEIVE)
                     userListFromIntent.let { userList ->
                         roomViewModel.roomUserModelList.value = userList
                     }
+                }
+                ACTION_MESSAGE_RECEIVE -> {
+                    val chatMessage: ChatMessage? =
+                        intent.getParcelableExtra(ACTION_MESSAGE_RECEIVE)
+                    chatMessage?.let { roomViewModel.roomMessages.add(it) }
                 }
             }
         }

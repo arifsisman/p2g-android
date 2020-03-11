@@ -6,6 +6,7 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
@@ -27,6 +28,8 @@ class RoomViewModel : ViewModelBase() {
 
     private val _roomUserModel = MutableLiveData<RoomUserModel>()
     val roomUserModel: MutableLiveData<RoomUserModel> = _roomUserModel
+
+    val roomMessages: MutableList<ChatMessage> = mutableListOf()
 
     fun loadSongs(roomId: Long) {
         _isViewLoading.postValue(true)
