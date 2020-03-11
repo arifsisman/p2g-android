@@ -56,7 +56,8 @@ class RoomWebSocketService : Service() {
                 ACTION_MESSAGE_SEND -> {
                     Log.v(TAG, "Sending chatMessage")
                     val chatMessage = intent.getParcelableExtra<ChatMessage>(ACTION_MESSAGE_SEND)
-                    roomWSClient.send("/p2g/room/${this}/messages", gson.toJson(chatMessage))
+                    roomWSClient.send("/p2g/room/${this}/send", gson.toJson(chatMessage))
+                        .subscribe()
                 }
             }
         }

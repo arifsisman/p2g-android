@@ -4,7 +4,10 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.stfalcon.chatkit.commons.models.IMessage
 import com.stfalcon.chatkit.commons.models.IUser
+import org.threeten.bp.DateTimeUtils
+import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.entity.RoomUser
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
 import java.util.*
 
 /**
@@ -14,12 +17,12 @@ import java.util.*
 data class ChatMessage(
     var roomUser: RoomUser?,
     var message: String?,
-    var timestamp: Date
+    var timestamp: LocalDateTime
 ) : IMessage, Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(RoomUser::class.java.classLoader),
         parcel.readString(),
-        parcel.readSerializable() as Date
+        parcel.readSerializable() as LocalDateTime
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -43,7 +46,7 @@ data class ChatMessage(
     }
 
     override fun getId(): String? {
-        return this.roomUser?.userId + timestamp.time
+        return this.roomUser?.userId + timestamp
     }
 
     override fun getUser(): IUser? {
@@ -55,7 +58,7 @@ data class ChatMessage(
     }
 
     override fun getCreatedAt(): Date {
-        return this.timestamp
+        return DateTimeUtils.toDate(timestamp.toZonedDateTime().toInstant())
     }
 
 }

@@ -13,6 +13,7 @@ import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
+import vip.yazilim.p2g.android.util.helper.TimeHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,7 +62,7 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
         val chatMessage = ChatMessage(
             roomViewModel.roomUserModel.value?.roomUser,
             input.toString(),
-            Date()
+            TimeHelper.getLocalDateTimeZonedUTC()
         )
 
         roomViewModel.roomMessages.add(chatMessage)
