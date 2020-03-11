@@ -43,6 +43,10 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
 
         val holdersConfig = MessageHolders()
         holdersConfig.setIncomingTextLayout(R.layout.row_incoming_message)
+        holdersConfig.setIncomingTextHolder(
+            CustomIncomingMessageViewHolder::class.java,
+            R.layout.row_incoming_message
+        )
 
         messagesAdapter = MessagesListAdapter<ChatMessage>(senderId, holdersConfig, imageLoader)
         messagesList.setAdapter(messagesAdapter)
@@ -94,11 +98,11 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
         messagesAdapter.addToStart(chatMessage, true)
     }
 
-    inner class CustomOutcomingMessageViewHolder(itemView: View?, payload: Any?) :
-        MessageHolders.OutcomingTextMessageViewHolder<ChatMessage?>(itemView, payload) {
-        fun onBind(chatMessage: ChatMessage) {
-            super.onBind(chatMessage)
-            itemView.messageAuthor.text = chatMessage.roomUser?.name ?: ""
+    class CustomIncomingMessageViewHolder(itemView: View?, payload: Any?) :
+        MessageHolders.IncomingTextMessageViewHolder<ChatMessage?>(itemView, payload) {
+        override fun onBind(message: ChatMessage?) {
+            super.onBind(message)
+            itemView.messageAuthor.text = message?.roomUser?.name ?: ""
         }
     }
 
