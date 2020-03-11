@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.ui.room.roomchat
 
 import android.content.Intent
 import android.os.Handler
+import android.view.View
 import androidx.lifecycle.Observer
 import com.bumptech.glide.request.RequestOptions
 import com.stfalcon.chatkit.commons.ImageLoader
@@ -9,6 +10,7 @@ import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesListAdapter
 import kotlinx.android.synthetic.main.fragment_room_chat.*
+import kotlinx.android.synthetic.main.row_incoming_message.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -41,6 +43,7 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
 
         val holdersConfig = MessageHolders()
         holdersConfig.setIncomingTextLayout(R.layout.row_incoming_message)
+
         messagesAdapter = MessagesListAdapter<ChatMessage>(senderId, holdersConfig, imageLoader)
         messagesList.setAdapter(messagesAdapter)
 
@@ -89,6 +92,14 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
     private val renderNewMessage = Observer<ChatMessage> { chatMessage ->
         roomViewModel.messages.add(chatMessage)
         messagesAdapter.addToStart(chatMessage, true)
+    }
+
+    inner class CustomOutcomingMessageViewHolder(itemView: View?, payload: Any?) :
+        MessageHolders.OutcomingTextMessageViewHolder<ChatMessage?>(itemView, payload) {
+        fun onBind(chatMessage: ChatMessage) {
+            super.onBind(chatMessage)
+            itemView.messageAuthor.text = chatMessage.roomUser?.name ?: ""
+        }
     }
 
     private fun getMessageStringFormatter(): MessagesListAdapter.Formatter<ChatMessage>? {

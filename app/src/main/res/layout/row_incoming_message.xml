@@ -1,42 +1,46 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="16dp"
+    android:layout_marginLeft="12dp"
     android:layout_marginTop="8dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginRight="12dp"
     android:layout_marginBottom="8dp">
 
-    <ImageView
-        android:id="@id/messageUserAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:contentDescription="@string/description_profile_image"
-        android:src="@drawable/ic_profile_image" />
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@id/bubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="30dp"
-        android:layout_toEndOf="@id/messageUserAvatar"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/messageAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_user_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="4dp" />
+            android:text="@string/placeholder_user_message"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/messageAuthor" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@id/messageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:textAlignment="viewEnd"
+            app:layout_constraintStart_toEndOf="@+id/messageText"
+            app:layout_constraintTop_toTopOf="@+id/messageText"
+            tools:ignore="RtlSymmetry" />
 
-    <TextView
-        android:id="@id/messageTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bubble"
-        android:layout_alignEnd="@id/bubble"
-        android:layout_marginStart="16dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

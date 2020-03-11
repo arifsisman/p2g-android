@@ -15,8 +15,10 @@
         app:outcomingTimeTextSize="12sp"
         app:incomingAvatarHeight="56dp"
         app:incomingAvatarWidth="56dp"
-        app:incomingDefaultBubbleColor="@color/colorSpotifyGreen"
+        app:incomingDefaultBubbleColor="@color/colorPrimaryDark"
+        app:incomingTextColor="@color/white"
         app:outcomingDefaultBubbleColor="@color/colorSpotifyGreen"
+        app:incomingTimeTextColor="@color/white"
         app:outcomingTimeTextColor="@color/white" />
 
     <com.stfalcon.chatkit.messages.MessageInput
