@@ -29,7 +29,8 @@ class RoomViewModel : ViewModelBase() {
     private val _roomUserModel = MutableLiveData<RoomUserModel>()
     val roomUserModel: MutableLiveData<RoomUserModel> = _roomUserModel
 
-    val roomMessages: MutableList<ChatMessage> = mutableListOf()
+    var messages: MutableList<ChatMessage> = mutableListOf()
+    val newMessage: MutableLiveData<ChatMessage> = MutableLiveData<ChatMessage>()
 
     fun loadSongs(roomId: Long) {
         _isViewLoading.postValue(true)

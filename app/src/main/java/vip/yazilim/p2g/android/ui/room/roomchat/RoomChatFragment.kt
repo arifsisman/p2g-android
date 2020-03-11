@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.ui.room.roomchat
 
 import android.content.Intent
 import android.os.Handler
+import androidx.lifecycle.Observer
 import com.bumptech.glide.request.RequestOptions
 import com.stfalcon.chatkit.commons.ImageLoader
 import com.stfalcon.chatkit.messages.MessageInput
@@ -24,9 +25,6 @@ import java.util.*
  */
 class RoomChatFragment(var roomViewModel: RoomViewModel) :
     FragmentBase(roomViewModel, R.layout.fragment_room_chat) {
-
-//    private val TOTAL_MESSAGES_COUNT = 100
-//    private var lastLoadedDate: Date? = null
 
     private var senderId: String? = roomViewModel.roomUserModel.value?.roomUser?.userId
     private lateinit var messagesAdapter: MessagesListAdapter<ChatMessage>
@@ -51,6 +49,7 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun setupViewModel() {
+        roomViewModel.newMessage.observe(this, renderNewMessage)
     }
 
     override fun onResume() {
@@ -64,17 +63,13 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
             input.toString(),
             TimeHelper.getLocalDateTimeZonedUTC()
         )
-
-        roomViewModel.roomMessages.add(chatMessage)
-        messagesAdapter.addToStart(chatMessage, true)
         sendMessageToWebSocket(chatMessage)
-
         return true
     }
 
     private fun loadMessages() {
         Handler().postDelayed({
-            val messages: MutableList<ChatMessage>? = roomViewModel.roomMessages
+            val messages: MutableList<ChatMessage>? = roomViewModel.messages
             messages?.forEach {
                 messagesAdapter.upsert(it, true)
             }
@@ -86,6 +81,11 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
         intent.action = ACTION_MESSAGE_SEND
         intent.putExtra(ACTION_MESSAGE_SEND, chatMessage)
         activity?.sendBroadcast(intent)
+    }
+
+    private val renderNewMessage = Observer<ChatMessage> { chatMessage ->
+        roomViewModel.messages.add(chatMessage)
+        messagesAdapter.addToStart(chatMessage, true)
     }
 
     private fun getMessageStringFormatter(): MessagesListAdapter.Formatter<ChatMessage>? {

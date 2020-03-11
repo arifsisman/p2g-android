@@ -69,14 +69,13 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
         fab.setOnClickListener { showSearchDialog() }
 
-        roomViewModel.songList.observe(this, renderRoomQueue)
-
         swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
         }
     }
 
     override fun setupViewModel() {
+        roomViewModel.songList.observe(this, renderRoomQueue)
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
     }

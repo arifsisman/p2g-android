@@ -409,6 +409,7 @@ class RoomActivity : AppCompatActivity(),
         val intentFilter = IntentFilter()
         intentFilter.addAction(ACTION_SONG_LIST_RECEIVE)
         intentFilter.addAction(ACTION_USER_LIST_RECEIVE)
+        intentFilter.addAction(ACTION_MESSAGE_RECEIVE)
         intentFilter.addAction(ACTION_ROOM_SOCKET_ERROR)
         intentFilter.addAction(ACTION_ROOM_STATUS)
         registerReceiver(broadcastReceiver, intentFilter)
@@ -539,7 +540,7 @@ class RoomActivity : AppCompatActivity(),
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =
                         intent.getParcelableExtra(ACTION_MESSAGE_RECEIVE)
-                    chatMessage?.let { roomViewModel.roomMessages.add(it) }
+                    chatMessage?.let { roomViewModel.newMessage.postValue(chatMessage) }
                 }
             }
         }
@@ -569,22 +570,10 @@ class RoomActivity : AppCompatActivity(),
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> { // RoomQueueFragment
-//                    showMinimizedPlayer()
-                    RoomQueueFragment(roomViewModel)
-                }
-                1 -> {
-//                    showMinimizedPlayer()
-                    RoomUsersFragment(roomViewModel)
-                }
-                2 -> {
-//                    showMinimizedPlayer()
-                    RoomChatFragment(roomViewModel)
-                }
-                3 -> { //TODO RoomInviteFragment
-//                    showMinimizedPlayer()
-                    RoomQueueFragment(roomViewModel)
-                }
+                0 -> RoomQueueFragment(roomViewModel)
+                1 -> RoomUsersFragment(roomViewModel)
+                2 -> RoomChatFragment(roomViewModel)
+                3 -> RoomQueueFragment(roomViewModel) //TODO RoomInviteFragment
                 else -> throw IllegalArgumentException()
             }
         }
