@@ -12,6 +12,8 @@
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBottomNavDefault">#BDBDBD</color>
+
+    <color name="colorIncomingMessage">#191919</color>
     <color name="colorIncomingMessagePressed">#2C6C52</color>
 
 </resources>

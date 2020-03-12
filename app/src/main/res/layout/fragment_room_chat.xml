@@ -11,16 +11,25 @@
         android:layout_above="@+id/input"
         app:incomingAvatarHeight="20dp"
         app:incomingAvatarWidth="20dp"
-        app:incomingDefaultBubbleColor="@color/colorPrimaryDark"
+        app:incomingBubblePaddingBottom="8dp"
         app:incomingDefaultBubblePressedColor="@color/colorIncomingMessagePressed"
         app:incomingTextColor="@color/white"
         app:incomingTextSize="14sp"
+        app:incomingBubblePaddingLeft="12dp"
         app:incomingTimeTextColor="@color/white"
-        app:incomingTimeTextSize="12sp"
         app:outcomingDefaultBubbleColor="@color/colorSpotifyGreen"
         app:outcomingDefaultBubblePressedColor="@color/colorIncomingMessagePressed"
-        app:outcomingTextSize="14sp"
         app:outcomingTimeTextColor="@color/white"
+        app:incomingBubblePaddingRight="12dp"
+        app:incomingBubblePaddingTop="8dp"
+        app:incomingDefaultBubbleColor="@color/colorIncomingMessage"
+        app:incomingTimeTextSize="12sp"
+        app:outcomingBubblePaddingBottom="8dp"
+        app:outcomingBubblePaddingLeft="12dp"
+
+        app:outcomingBubblePaddingRight="12dp"
+        app:outcomingBubblePaddingTop="8dp"
+        app:outcomingTextSize="14sp"
         app:outcomingTimeTextSize="12sp" />
 
     <com.stfalcon.chatkit.messages.MessageInput
