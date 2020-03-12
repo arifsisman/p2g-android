@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="12dp"
@@ -15,24 +14,13 @@
         android:layout_marginEnd="30dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@id/messageUserAvatar"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:contentDescription="@string/description_profile_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/messageAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="10dp"
             android:text="@string/placeholder_user_name"
-            app:layout_constraintBottom_toBottomOf="@+id/messageUserAvatar"
-            app:layout_constraintStart_toEndOf="@+id/messageUserAvatar"
-            app:layout_constraintTop_toTopOf="@+id/messageUserAvatar" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@id/messageText"
@@ -46,15 +34,12 @@
         <TextView
             android:id="@id/messageTime"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:textAlignment="viewEnd"
-            android:textSize="12sp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bubble"
+            android:layout_alignEnd="@id/bubble"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/messageText"
-            app:layout_constraintTop_toTopOf="@+id/messageText"
-            tools:ignore="RtlSymmetry" />
-
+            app:layout_constraintTop_toBottomOf="@+id/messageText" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>
