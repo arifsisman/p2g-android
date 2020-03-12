@@ -172,34 +172,6 @@ class RoomActivity : AppCompatActivity(),
 
     private fun setupSlidingUpPanel() {
         slidingUpPanel = findViewById(R.id.slidingUpPanel)
-        slidingUpPanel.addPanelSlideListener(object :
-            SlidingUpPanelLayout.SimplePanelSlideListener() {
-            override fun onPanelSlide(view: View, v: Float) {}
-
-            override fun onPanelStateChanged(
-                panel: View?,
-                previousState: SlidingUpPanelLayout.PanelState?,
-                newState: SlidingUpPanelLayout.PanelState?
-            ) {
-                when (newState) {
-                    DRAGGING -> {
-                        if (previousState == COLLAPSED) {
-                            fab.hide()
-                            showMaximizedPlayer()
-                        }
-                    }
-                    COLLAPSED -> {
-                        showMinimizedPlayer()
-                    }
-                    EXPANDED -> {
-                        fab.hide()
-                        showMaximizedPlayer()
-                    }
-                    else -> {
-                    }
-                }
-            }
-        })
 
         slidingUpPanel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
@@ -266,7 +238,7 @@ class RoomActivity : AppCompatActivity(),
                         song_current.text =
                             roomViewModel.playerSong.value?.durationMs!!.getHumanReadableTimestamp()
                         playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
-                        playPause_button_mini.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                        playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
                     }
                 }
             }
