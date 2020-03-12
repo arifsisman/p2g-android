@@ -15,32 +15,41 @@
         android:layout_marginEnd="30dp"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@id/messageUserAvatar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@string/description_profile_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/messageAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="10dp"
             android:text="@string/placeholder_user_name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/messageUserAvatar"
+            app:layout_constraintStart_toEndOf="@+id/messageUserAvatar"
+            app:layout_constraintTop_toTopOf="@+id/messageUserAvatar" />
 
         <TextView
             android:id="@id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:text="@string/placeholder_user_message"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/messageAuthor"
             app:layout_constraintTop_toBottomOf="@+id/messageAuthor" />
 
         <TextView
             android:id="@id/messageTime"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
+            android:layout_height="match_parent"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:textSize="12sp"
             android:textAlignment="viewEnd"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageText"
             app:layout_constraintTop_toTopOf="@+id/messageText"
