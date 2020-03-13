@@ -343,11 +343,11 @@ class RoomActivity : AppCompatActivity(),
             roomUser?.let { Singleton.apiClient().syncWithRoom(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    UIHelper.showSnackBarShortBottom(viewPager, "Playback synced with room")
+                    UIHelper.showSnackBarShortTop(viewPager, "Playback synced with room")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortBottom(viewPager, msg)
+                    UIHelper.showSnackBarShortTop(viewPager, msg)
                 }
             })
     }
@@ -423,11 +423,11 @@ class RoomActivity : AppCompatActivity(),
                         room?.id?.let { Singleton.apiClient().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
-                                UIHelper.showSnackBarShortBottom(viewPager, "Room queue cleared.")
+                                UIHelper.showSnackBarShortTop(viewPager, "Room queue cleared.")
                             }
 
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShortBottom(viewPager, msg)
+                                UIHelper.showSnackBarShortTop(viewPager, msg)
                             }
                         })
                 }
@@ -467,7 +467,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortBottom(viewPager, msg)
+                UIHelper.showSnackBarShortTop(viewPager, msg)
             }
         })
     }
@@ -509,7 +509,7 @@ class RoomActivity : AppCompatActivity(),
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
                     } else {
-                        UIHelper.showSnackBarShortBottomIndefinite(
+                        UIHelper.showSnackBarShortTopIndefinite(
                             viewPager,
                             "Connection to the room closed, please connect the room again."
                         )
@@ -610,7 +610,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortBottom(viewPager, msg)
+                UIHelper.showSnackBarShortTop(viewPager, msg)
             }
         })
 
@@ -698,11 +698,11 @@ class RoomActivity : AppCompatActivity(),
             Singleton.apiClient().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
-                    UIHelper.showSnackBarShortBottom(viewPager, "Active device changed.")
+                    UIHelper.showSnackBarShortTop(viewPager, "Active device changed.")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortBottom(viewPager, msg)
+                    UIHelper.showSnackBarShortTop(viewPager, msg)
                 }
             })
     }

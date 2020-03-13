@@ -77,7 +77,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortBottom(container, "Users cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, "Users cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -100,14 +100,14 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
-                    UIHelper.showSnackBarShortBottom(
-                        container,
+                    UIHelper.showSnackBarShortTop(
+                        root,
                         "${roomUserModel.user?.name}'s role updated as ${obj.role}"
                     )
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortBottom(container, msg)
+                    UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
     }
@@ -119,14 +119,14 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().demoteUser(it) },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
-                    UIHelper.showSnackBarShortBottom(
-                        container,
+                    UIHelper.showSnackBarShortTop(
+                        root,
                         "${roomUserModel.user?.name}'s role updated as ${obj.role}"
                     )
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortBottom(container, msg)
+                    UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
     }
@@ -138,14 +138,14 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    UIHelper.showSnackBarShortBottom(
-                        container,
+                    UIHelper.showSnackBarShortTop(
+                        root,
                         "Friend request sent to ${roomUserModel.user?.name}"
                     )
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortBottom(container, msg)
+                    UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
     }

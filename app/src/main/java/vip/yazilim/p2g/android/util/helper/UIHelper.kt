@@ -66,14 +66,6 @@ class UIHelper {
             snack?.show()
         }
 
-        fun showSnackBarShortBottomIndefinite(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_INDEFINITE) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
-            snack?.show()
-        }
-
         fun showSnackBarShortTop(view: View?, message: String) {
             val snack: TSnackbar? =
                 view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
@@ -90,6 +82,22 @@ class UIHelper {
             snack?.show()
         }
 
+        fun showSnackBarShortBottomIndefinite(view: View?, message: String) {
+            val snack: Snackbar? =
+                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_INDEFINITE) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snack?.show()
+        }
+
+        fun showSnackBarShortTopIndefinite(view: View?, message: String) {
+            val snack: TSnackbar? =
+                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_INDEFINITE) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snack?.show()
+        }
+
         fun dpFromPx(context: Context, px: Float): Float {
             return px / context.resources.displayMetrics.density
         }
@@ -97,6 +105,7 @@ class UIHelper {
         fun pxFromDp(context: Context, dp: Float): Float {
             return dp * context.resources.displayMetrics.density
         }
+
     }
 }
 
