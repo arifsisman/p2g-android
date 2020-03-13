@@ -153,7 +153,7 @@ class RoomActivity : AppCompatActivity(),
 
     private fun setPlayerVisibility(show: Boolean) {
         val transition: Transition = Slide(Gravity.BOTTOM)
-        transition.duration = 500
+        transition.duration = 300
         transition.addTarget(R.id.playerRecyclerView)
         TransitionManager.beginDelayedTransition(slidingUpPanel, transition)
 

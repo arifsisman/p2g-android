@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
+    sothree:umanoOverlay="true"
     sothree:umanoFadeColor="@android:color/transparent"
     sothree:umanoPanelHeight="62dp"
     sothree:umanoShadowHeight="0dp"
@@ -40,13 +41,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="55dp"
             android:src="@drawable/spotify_icon"
             android:visibility="invisible"
             app:backgroundTint="@color/colorSpotifyGreen"
             app:borderWidth="0dp"
-            app:elevation="6dp" />
+            app:elevation="6dp"
+            app:layout_anchor="@+id/viewPager"
+            app:layout_anchorGravity="end|bottom"
+            app:useCompatPadding="true" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
