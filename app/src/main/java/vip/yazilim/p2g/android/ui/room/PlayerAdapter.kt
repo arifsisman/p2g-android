@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
+import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
@@ -122,7 +122,7 @@ class PlayerAdapter(
                 }
 
                 if (song.repeatFlag) {
-                    repeatButton.setColorFilter(Color.parseColor(SPOTIFY_GREEN))
+                    repeatButton.setColorFilter(Color.parseColor(ACCENT_BLUE))
                 } else {
                     repeatButton.setColorFilter(Color.parseColor(WHITE))
                 }

@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.Toast
 import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.snackbar.Snackbar
-import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
+import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 
 
 /**
@@ -48,21 +48,21 @@ class UIHelper {
         fun showSnackBarLongBottom(view: View?, message: String) {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 
         fun showSnackBarLongTop(view: View?, message: String) {
             val snack: TSnackbar? = view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_LONG) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 
         fun showSnackBarShortBottom(view: View?, message: String) {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 
@@ -70,7 +70,7 @@ class UIHelper {
             val snack: TSnackbar? =
                 view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 
@@ -78,7 +78,7 @@ class UIHelper {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             snack?.anchorView = view
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 
@@ -86,7 +86,7 @@ class UIHelper {
             val snack: Snackbar? =
                 view?.let { Snackbar.make(it, message, Snackbar.LENGTH_INDEFINITE) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 
@@ -94,7 +94,7 @@ class UIHelper {
             val snack: TSnackbar? =
                 view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_INDEFINITE) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(SPOTIFY_GREEN))
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
         }
 

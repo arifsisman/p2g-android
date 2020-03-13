@@ -17,7 +17,7 @@
         app:incomingTextSize="14sp"
         app:incomingBubblePaddingLeft="12dp"
         app:incomingTimeTextColor="@color/white"
-        app:outcomingDefaultBubbleColor="@color/colorSpotifyGreen"
+        app:outcomingDefaultBubbleColor="@color/colorAccentBlue"
         app:outcomingDefaultBubblePressedColor="@color/colorIncomingMessagePressed"
         app:outcomingTimeTextColor="@color/white"
         app:incomingBubblePaddingRight="12dp"

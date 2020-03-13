@@ -5,6 +5,7 @@ package vip.yazilim.p2g.android.constant
  * @contact mustafaarifsisman@gmail.com
  */
 object ColorCodes {
+    const val ACCENT_BLUE = "#1D95B9"
     const val SPOTIFY_GREEN = "#1DB954"
     const val NEGATIVE_RED = "#D10000"
     const val WHITE = "#FFFFFF"

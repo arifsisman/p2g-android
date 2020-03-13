@@ -7,7 +7,7 @@
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorSpotifyGreen</item>
+        <item name="colorAccent">@color/colorAccentBlue</item>
 
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorSurface">#FFFFFF</item>
@@ -31,7 +31,7 @@
     </style>
 
     <style name="ButtonHome">
-        <item name="android:background">@color/colorSpotifyGreen</item>
+        <item name="android:background">@color/colorAccentBlue</item>
         <item name="android:textColor">@color/colorWhite</item>
     </style>
 

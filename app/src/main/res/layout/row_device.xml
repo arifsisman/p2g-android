@@ -47,7 +47,7 @@
             style="@style/Divider.Vertical"
             android:layout_width="3dp"
             android:layout_height="50dp"
-            android:background="@color/colorSpotifyGreen"
+            android:background="@color/colorAccentBlue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
