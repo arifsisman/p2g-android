@@ -618,7 +618,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayer(playerController, msg)
             }
         })
 
@@ -628,7 +628,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayer(playerController, msg)
             }
         })
 
@@ -638,7 +638,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayer(playerController, msg)
             }
         })
 
@@ -648,7 +648,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayer(playerController, msg)
             }
         })
 
@@ -658,7 +658,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayerAnchored(seek_bar_exp, msg)
+                UIHelper.showSnackBarPlayer(playerController, msg)
             }
         })
 
