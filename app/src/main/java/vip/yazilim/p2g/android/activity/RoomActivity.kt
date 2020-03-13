@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -135,6 +136,8 @@ class RoomActivity : AppCompatActivity(),
                         setPlayerVisibility(false)
                     }
                 }
+
+                closeKeyboard()
             }
 
             override fun onPageScrollStateChanged(state: Int) {}
@@ -151,8 +154,8 @@ class RoomActivity : AppCompatActivity(),
         transition.duration = 500
         transition.addTarget(R.id.playerRecyclerView)
         TransitionManager.beginDelayedTransition(parent, transition)
-        player.visibility = if (show) View.VISIBLE else View.INVISIBLE
         (parent as SlidingUpPanelLayout).panelState = if (show) COLLAPSED else HIDDEN
+        player.visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 
     private fun setupRoomModel() {
@@ -200,25 +203,24 @@ class RoomActivity : AppCompatActivity(),
                 previousState: SlidingUpPanelLayout.PanelState?,
                 newState: SlidingUpPanelLayout.PanelState?
             ) {
-                when (newState) {
-                    DRAGGING -> {
-                        if (previousState == COLLAPSED) {
-                            fab.hide()
-                            if (viewPager.currentItem == 0)
+                if (viewPager.currentItem == 0) {
+                    when (newState) {
+                        DRAGGING -> {
+                            if (previousState == COLLAPSED) {
+                                fab.hide()
                                 showMaximizedPlayer()
+                            }
                         }
-                    }
-                    COLLAPSED -> {
-                        if (viewPager.currentItem == 0) {
+                        COLLAPSED -> {
                             roomViewModel.roomUserModel.value?.let { canUserAddAndControlSongs(it.roomUser) }
+                            showMinimizedPlayer()
                         }
-                        showMinimizedPlayer()
-                    }
-                    EXPANDED -> {
-                        fab.hide()
-                        showMaximizedPlayer()
-                    }
-                    else -> {
+                        EXPANDED -> {
+                            fab.hide()
+                            showMaximizedPlayer()
+                        }
+                        else -> {
+                        }
                     }
                 }
             }
@@ -700,5 +702,11 @@ class RoomActivity : AppCompatActivity(),
                     UIHelper.showSnackBarShortBottom(viewPager, msg)
                 }
             })
+    }
+
+    fun closeKeyboard() {
+        val inputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }
