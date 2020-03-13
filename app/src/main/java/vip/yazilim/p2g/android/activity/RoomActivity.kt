@@ -58,6 +58,7 @@ import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
+import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import java.util.concurrent.TimeUnit
 
@@ -500,6 +501,7 @@ class RoomActivity : AppCompatActivity(),
                 ACTION_ROOM_SOCKET_ERROR -> {
                     if (roomWsReconnectCounter < 22) {
                         stopRoomWebSocketService(this)
+                        TokenAuthenticator.refreshToken()
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
                     } else {
