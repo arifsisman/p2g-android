@@ -5,7 +5,10 @@ import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +74,7 @@ class RoomActivity : AppCompatActivity(),
     lateinit var roomViewModel: RoomViewModel
     private lateinit var playerAdapter: PlayerAdapter
     private lateinit var slidingUpPanel: SlidingUpPanelLayout
+    private lateinit var playerRecyclerView: RecyclerView
 
     private lateinit var deviceDialog: AlertDialog
 
@@ -148,14 +152,13 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun setPlayerVisibility(show: Boolean) {
-        val player = findViewById<View>(R.id.playerRecyclerView)
-        val parent: ViewGroup = findViewById(R.id.slidingUpPanel)
         val transition: Transition = Slide(Gravity.BOTTOM)
         transition.duration = 500
         transition.addTarget(R.id.playerRecyclerView)
-        TransitionManager.beginDelayedTransition(parent, transition)
-        (parent as SlidingUpPanelLayout).panelState = if (show) COLLAPSED else HIDDEN
-        player.visibility = if (show) View.VISIBLE else View.INVISIBLE
+        TransitionManager.beginDelayedTransition(slidingUpPanel, transition)
+
+        slidingUpPanel.panelState = if (show) COLLAPSED else HIDDEN
+        playerRecyclerView.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun setupRoomModel() {
@@ -232,7 +235,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun setupPlayer() {
-        val playerRecyclerView: RecyclerView = findViewById(R.id.playerRecyclerView)
+        playerRecyclerView = findViewById(R.id.playerRecyclerView)
         playerRecyclerView.setHasFixedSize(true)
         playerRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -508,7 +511,7 @@ class RoomActivity : AppCompatActivity(),
                     } else {
                         UIHelper.showSnackBarShortBottomIndefinite(
                             viewPager,
-                            "Connection to room closed, please restart Play2Gether App."
+                            "Connection to the room closed, please connect the room again."
                         )
                     }
                 }

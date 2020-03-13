@@ -7,15 +7,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
+    sothree:umanoFadeColor="@android:color/transparent"
     sothree:umanoPanelHeight="62dp"
     sothree:umanoShadowHeight="0dp"
-    sothree:umanoFadeColor="@android:color/transparent"
     tools:context=".activity.RoomActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
