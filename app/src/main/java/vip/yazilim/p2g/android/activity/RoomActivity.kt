@@ -71,12 +71,12 @@ class RoomActivity : AppCompatActivity(),
     var room: Room? = null
     var roomModel: RoomModel? = null
 
-    lateinit var roomViewModel: RoomViewModel
+    private lateinit var roomViewModel: RoomViewModel
     private lateinit var playerAdapter: PlayerAdapter
     private lateinit var slidingUpPanel: SlidingUpPanelLayout
     private lateinit var playerRecyclerView: RecyclerView
-
     private lateinit var deviceDialog: AlertDialog
+    private var roomWsReconnectCounter = 0
 
     @Volatile
     private var isPlaying = false
@@ -92,8 +92,6 @@ class RoomActivity : AppCompatActivity(),
 
     @Volatile
     lateinit var playerSong: Song
-
-    private var roomWsReconnectCounter = 0
 
     companion object {
         private const val PLAYER_TAG = "Player"
@@ -209,7 +207,7 @@ class RoomActivity : AppCompatActivity(),
                 if (viewPager.currentItem == 0) {
                     when (newState) {
                         DRAGGING -> {
-                            if (previousState == COLLAPSED) {
+                            if (previousState != EXPANDED && slidingUpPanel.isDirty) {
                                 fab.hide()
                                 showMaximizedPlayer()
                             }
