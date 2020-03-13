@@ -216,10 +216,6 @@ class RoomActivity : AppCompatActivity(),
                             roomViewModel.roomUserModel.value?.let { canUserAddAndControlSongs(it.roomUser) }
                             showMinimizedPlayer()
                         }
-                        EXPANDED -> {
-                            fab.hide()
-                            showMaximizedPlayer()
-                        }
                         else -> {
                         }
                     }

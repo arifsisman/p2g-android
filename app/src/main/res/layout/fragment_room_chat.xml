@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
-        app:inputButtonBackground="@drawable/bg_custom_layout_send"
+        app:inputButtonBackground="@drawable/ic_custom_send_bg"
         app:inputButtonDefaultIconColor="@color/white"
         app:inputButtonDefaultIconDisabledColor="@color/colorPrimary"
         app:inputHint="@string/hint_enter_a_message"
