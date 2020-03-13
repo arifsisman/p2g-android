@@ -14,7 +14,6 @@ data class RoomUser(
     var roomId: Long,
     var userId: String?,
     var userName: String?,
-    var userImageUrl: String?,
     var role: String?,
     var joinDate: LocalDateTime?,
     var activeFlag: Boolean
@@ -22,7 +21,6 @@ data class RoomUser(
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readLong(),
-        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -35,7 +33,6 @@ data class RoomUser(
         parcel.writeLong(roomId)
         parcel.writeString(userId)
         parcel.writeString(userName)
-        parcel.writeString(userImageUrl)
         parcel.writeString(role)
         parcel.writeSerializable(joinDate)
         parcel.writeByte(if (activeFlag) 1 else 0)
@@ -64,6 +61,6 @@ data class RoomUser(
     }
 
     override fun getAvatar(): String? {
-        return this.userImageUrl
+        return null
     }
 }

@@ -5,9 +5,7 @@ import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -18,6 +16,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
@@ -125,8 +126,14 @@ class RoomActivity : AppCompatActivity(),
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> canUserAddAndControlSongs(roomViewModel.roomUserModel.value?.roomUser)
-                    else -> fab.hide()
+                    0 -> {
+                        canUserAddAndControlSongs(roomViewModel.roomUserModel.value?.roomUser)
+                        setPlayerVisibility(true)
+                    }
+                    else -> {
+                        fab.hide()
+                        setPlayerVisibility(false)
+                    }
                 }
             }
 
@@ -135,6 +142,17 @@ class RoomActivity : AppCompatActivity(),
 
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.bringToFront()
+    }
+
+    private fun setPlayerVisibility(show: Boolean) {
+        val player = findViewById<View>(R.id.playerRecyclerView)
+        val parent: ViewGroup = findViewById(R.id.slidingUpPanel)
+        val transition: Transition = Slide(Gravity.BOTTOM)
+        transition.duration = 500
+        transition.addTarget(R.id.playerRecyclerView)
+        TransitionManager.beginDelayedTransition(parent, transition)
+        player.visibility = if (show) View.VISIBLE else View.INVISIBLE
+        (parent as SlidingUpPanelLayout).panelState = if (show) COLLAPSED else HIDDEN
     }
 
     private fun setupRoomModel() {
@@ -186,7 +204,8 @@ class RoomActivity : AppCompatActivity(),
                     DRAGGING -> {
                         if (previousState == COLLAPSED) {
                             fab.hide()
-                            showMaximizedPlayer()
+                            if (viewPager.currentItem == 0)
+                                showMaximizedPlayer()
                         }
                     }
                     COLLAPSED -> {
