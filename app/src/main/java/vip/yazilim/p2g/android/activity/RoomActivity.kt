@@ -348,7 +348,11 @@ class RoomActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        showMinimizedPlayer()
+        if (viewPager.currentItem == 0 && slidingUpPanel.panelState != COLLAPSED) {
+            showMinimizedPlayer()
+        } else {
+            leaveRoom()
+        }
     }
 
     override fun onDestroy() {
