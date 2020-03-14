@@ -6,6 +6,7 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
@@ -28,6 +29,9 @@ class RoomViewModel : ViewModelBase() {
 
     private val _roomUserModel = MutableLiveData<RoomUserModel>()
     val roomUserModel: MutableLiveData<RoomUserModel> = _roomUserModel
+
+    private val _roomInviteUserList = MutableLiveData<MutableList<User>>()
+    val inviteUserList: MutableLiveData<MutableList<User>> = _roomInviteUserList
 
     var messages: MutableList<ChatMessage> = mutableListOf()
     val newMessage: MutableLiveData<ChatMessage> = MutableLiveData<ChatMessage>()
@@ -87,6 +91,24 @@ class RoomViewModel : ViewModelBase() {
             override fun onError(msg: String) {
             }
         })
+    }
+
+    fun loadRoomInviteUsers() {
+        _isViewLoading.postValue(true)
+
+        request(
+            Singleton.apiClient().getAllUsers(),
+            object : Callback<MutableList<User>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
+
+                override fun onSuccess(obj: MutableList<User>) {
+                    _isViewLoading.postValue(false)
+                    _roomInviteUserList.value = obj
+                }
+            })
     }
 
     fun getCurrentSong(songList: MutableList<Song>): Song? {

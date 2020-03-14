@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -156,9 +153,9 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog
         mAlertDialog = mBuilder.show()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if password is empty
         roomPasswordEditText.addTextChangedListener(object : TextWatcher {
@@ -211,6 +208,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
         val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
         val mAlertDialog = mBuilder.show()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val roomNameEditText = mDialogView.dialog_room_name
         val roomPasswordEditText = mDialogView.dialog_room_password
@@ -218,7 +216,6 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // For request focus and open keyboard
         roomNameEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if name is empty
         roomNameEditText.addTextChangedListener(object : TextWatcher {

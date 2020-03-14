@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -279,9 +276,9 @@ class FriendsFragment : FragmentBase(
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog
         mAlertDialog = mBuilder.show()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if password is empty
         roomPasswordEditText.addTextChangedListener(object : TextWatcher {

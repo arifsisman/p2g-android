@@ -16,6 +16,9 @@ interface Play2GetherWebApi {
     @GET("/api/user/{id}")
     fun getUser(@Path("id") userId: String): Call<Response<User>>
 
+    @GET("/api/user/")
+    fun getAllUsers(): Call<Response<MutableList<User>>>
+
     @PUT("/api/user/")
     fun updateUser(@Body user: User): Call<Response<User>>
 

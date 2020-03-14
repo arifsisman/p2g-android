@@ -4,9 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.request.RequestOptions
 import com.daimajia.swipe.SwipeLayout
+import kotlinx.android.synthetic.main.item_room_invite.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.entity.User
+import vip.yazilim.p2g.android.util.glide.GlideApp
 
 /**
  * @author mustafaarifsisman - 14.03.2020
@@ -21,12 +24,20 @@ class RoomInviteAdapter(
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindView(user: User) {
+            itemView.user_name.text = user.name
 
+            if (user.imageUrl != null) {
+                GlideApp.with(view)
+                    .load(user.imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(itemView.user_image)
+            } else {
+                itemView.user_image.setImageResource(R.drawable.ic_profile_image)
+            }
         }
 
         fun bindEvent(user: User, clickListener: OnItemClickListener) {
         }
-
     }
 
     interface OnItemClickListener {

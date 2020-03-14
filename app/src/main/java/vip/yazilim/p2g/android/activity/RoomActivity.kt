@@ -53,6 +53,7 @@ import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
+import vip.yazilim.p2g.android.ui.room.roominvite.RoomInviteFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
@@ -569,7 +570,7 @@ class RoomActivity : AppCompatActivity(),
                 0 -> RoomQueueFragment(roomViewModel)
                 1 -> RoomUsersFragment(roomViewModel)
                 2 -> RoomChatFragment(roomViewModel)
-                3 -> RoomQueueFragment(roomViewModel) //TODO RoomInviteFragment
+                3 -> RoomInviteFragment(roomViewModel)
                 else -> throw IllegalArgumentException()
             }
         }
