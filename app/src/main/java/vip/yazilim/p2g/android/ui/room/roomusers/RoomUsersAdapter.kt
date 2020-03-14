@@ -10,7 +10,7 @@ import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import kotlinx.android.synthetic.main.layout_row_user_events.view.*
-import kotlinx.android.synthetic.main.row_user_model.view.*
+import kotlinx.android.synthetic.main.row_room_user_model.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ColorCodes.CYAN
 import vip.yazilim.p2g.android.constant.ColorCodes.GREEN
@@ -26,7 +26,7 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomUsersAdapter(
-    var roomUserModelList: MutableList<RoomUserModel>,
+    private var roomUserModelList: MutableList<RoomUserModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerSwipeAdapter<RoomUsersAdapter.MViewHolder>() {
 
@@ -129,7 +129,8 @@ class RoomUsersAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_user_model, parent, false)
+        view =
+            LayoutInflater.from(parent.context).inflate(R.layout.row_room_user_model, parent, false)
         return MViewHolder(view)
     }
 
@@ -148,7 +149,6 @@ class RoomUsersAdapter(
     }
 
     fun update(data: MutableList<RoomUserModel>) {
-        //todo sort by role
         roomUserModelList = data
         notifyDataSetChanged()
     }

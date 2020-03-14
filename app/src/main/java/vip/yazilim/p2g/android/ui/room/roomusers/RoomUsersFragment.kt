@@ -36,9 +36,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        // QueueAdapter
         adapter = RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this)
-
         recyclerView.adapter = adapter
 
         // recyclerView divider
