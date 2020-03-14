@@ -9,7 +9,7 @@ import com.stfalcon.chatkit.commons.ImageLoader
 import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessagesListAdapter
 import kotlinx.android.synthetic.main.fragment_room_chat.*
-import kotlinx.android.synthetic.main.row_incoming_message.view.*
+import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -40,10 +40,10 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
         }
 
         val holdersConfig = MessageHolders()
-        holdersConfig.setIncomingTextLayout(R.layout.row_incoming_message)
+        holdersConfig.setIncomingTextLayout(R.layout.item_incoming_message)
         holdersConfig.setIncomingTextHolder(
             CustomIncomingMessageViewHolder::class.java,
-            R.layout.row_incoming_message
+            R.layout.item_incoming_message
         )
 
         messagesAdapter = MessagesListAdapter<ChatMessage>(senderId, holdersConfig, imageLoader)

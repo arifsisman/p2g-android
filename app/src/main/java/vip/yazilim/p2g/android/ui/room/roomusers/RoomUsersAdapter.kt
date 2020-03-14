@@ -9,8 +9,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
+import kotlinx.android.synthetic.main.item_room_user_model.view.*
 import kotlinx.android.synthetic.main.layout_row_user_events.view.*
-import kotlinx.android.synthetic.main.row_room_user_model.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ColorCodes.CYAN
 import vip.yazilim.p2g.android.constant.ColorCodes.GREEN
@@ -130,7 +130,8 @@ class RoomUsersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
         view =
-            LayoutInflater.from(parent.context).inflate(R.layout.row_room_user_model, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_room_user_model, parent, false)
         return MViewHolder(view)
     }
 

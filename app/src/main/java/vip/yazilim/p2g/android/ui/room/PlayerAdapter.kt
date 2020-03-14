@@ -161,7 +161,7 @@ class PlayerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_player, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_player, parent, false)
         return PlayerViewHolder(view)
     }
 

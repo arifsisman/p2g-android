@@ -122,7 +122,7 @@ class ProfileAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_profile, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_profile, parent, false)
         return MViewHolder(view)
     }
 

@@ -27,7 +27,7 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
-import kotlinx.android.synthetic.main.row_player.*
+import kotlinx.android.synthetic.main.item_player.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request

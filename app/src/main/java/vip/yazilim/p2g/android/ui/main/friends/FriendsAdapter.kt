@@ -178,12 +178,12 @@ class FriendsAdapter(
         return when (viewType) {
             TYPE_REQUEST -> {
                 view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.row_friend_request, parent, false)
+                    .inflate(R.layout.item_friend_request, parent, false)
                 FriendRequestViewHolder(view)
             }
             TYPE_FRIEND -> {
                 view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.row_friend, parent, false)
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
                 FriendViewHolder(view)
             }
             else -> throw IllegalArgumentException("Invalid view type")

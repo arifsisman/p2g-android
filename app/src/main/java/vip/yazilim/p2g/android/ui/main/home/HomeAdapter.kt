@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.row_home.view.*
+import kotlinx.android.synthetic.main.item_home.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -60,7 +60,7 @@ class HomeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_home, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_home, parent, false)
         return MViewHolder(view)
     }
 

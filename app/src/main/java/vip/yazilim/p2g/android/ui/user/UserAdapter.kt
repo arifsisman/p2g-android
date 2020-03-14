@@ -129,7 +129,7 @@ class UserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_user, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
         return MViewHolder(view)
     }
 

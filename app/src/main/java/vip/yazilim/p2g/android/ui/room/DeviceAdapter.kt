@@ -42,7 +42,7 @@ class DeviceAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_device, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_device, parent, false)
         return MViewHolder(view)
     }
 

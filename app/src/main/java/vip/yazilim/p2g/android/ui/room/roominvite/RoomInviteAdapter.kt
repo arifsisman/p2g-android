@@ -35,7 +35,7 @@ class RoomInviteAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_room_invite, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_room_invite, parent, false)
         return MViewHolder(view)
     }
 
