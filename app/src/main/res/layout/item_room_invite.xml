@@ -8,8 +8,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="4dp"
+    app:cardElevation="0dp"
     tools:context=".activity.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,16 +47,16 @@
             android:id="@+id/invite_button"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:layout_margin="4dp"
+            android:layout_marginEnd="16dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_accept_24dp" />
+            app:srcCompat="@drawable/ic_insert_invitation_white_24dp" />
 
         <ImageView
-            android:id="@+id/rOnlineStatus"
+            android:id="@+id/online_status"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:contentDescription="@string/description_online_status"

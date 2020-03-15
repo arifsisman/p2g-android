@@ -6,11 +6,12 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.daimajia.swipe.SwipeLayout
 import kotlinx.android.synthetic.main.fragment_room_invite.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
@@ -72,12 +73,26 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
         adapter.update(userList)
     }
 
-    override fun onItemClicked(view: SwipeLayout, user: User) {
-        TODO("Not yet implemented")
+    override fun onItemClicked(view: View, user: User) {
+        val roomId = (activity as RoomActivity).room?.id
+        val userId = user.id
+
+        if (roomId != null && userId != null) {
+            request(Singleton.apiClient().inviteUser(roomId, userId),
+                object : Callback<RoomInvite> {
+                    override fun onSuccess(obj: RoomInvite) {
+                        UIHelper.showSnackBarShortTop(root, "${user.name} invited to room.")
+                    }
+
+                    override fun onError(msg: String) {
+                        UIHelper.showSnackBarShortTop(root, msg)
+                    }
+                })
+        }
     }
 
-    override fun onInviteClicked(view: SwipeLayout, user: User) {
-        TODO("Not yet implemented")
+    override fun onInviteClicked(view: View, user: User) {
+        onItemClicked(view, user)
     }
 
 }

@@ -505,6 +505,10 @@ class RoomActivity : AppCompatActivity(),
                         TokenAuthenticator.refreshToken()
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
+                        UIHelper.showSnackBarShortTop(
+                            viewPager,
+                            "Trying to reconnect the room."
+                        )
                     } else {
                         UIHelper.showSnackBarShortTopIndefinite(
                             viewPager,
