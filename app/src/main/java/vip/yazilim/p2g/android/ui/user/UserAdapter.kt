@@ -51,13 +51,16 @@ class UserAdapter(
         fun bindView(user: User?, room: Room?) {
             if (user != null) {
                 val profileNamePlaceholder = user.name
-                val profileSongAndRoomStatusPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room?.name}"
                 val profileAnthemPlaceholder =
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val memberSincePlaceholder =
                     "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.toZonedDateTime()
                         ?.getFormattedFull()}"
+                val profileSongAndRoomStatusPlaceholder = if (room?.name != null) {
+                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room.name}"
+                } else {
+                    view.resources.getString(R.string.placeholder_room_user_not_found)
+                }
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)

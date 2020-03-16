@@ -52,6 +52,7 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
             }
 
             override fun onSuccess(obj: MutableList<User>) {
+                roomViewModel.inviteUserList.value = obj
                 adapter.update(obj)
                 swipeRefreshContainer.isRefreshing = false
             }

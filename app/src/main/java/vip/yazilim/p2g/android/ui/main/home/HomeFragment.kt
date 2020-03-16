@@ -44,7 +44,6 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     override fun onResume() {
         super.onResume()
-        adapter.clear()
         viewModel.loadRooms()
     }
 
