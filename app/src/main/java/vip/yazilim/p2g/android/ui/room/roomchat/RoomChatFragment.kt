@@ -32,7 +32,7 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
     private lateinit var messagesAdapter: MessagesListAdapter<ChatMessage>
 
     override fun setupUI() {
-        val imageLoader = ImageLoader { imageView, url, payload ->
+        val imageLoader = ImageLoader { imageView, url, _ ->
             GlideApp.with(imageView)
                 .load(url)
                 .apply(RequestOptions.circleCropTransform())

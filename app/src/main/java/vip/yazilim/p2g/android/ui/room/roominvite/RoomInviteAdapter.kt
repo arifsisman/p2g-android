@@ -3,6 +3,8 @@ package vip.yazilim.p2g.android.ui.room.roominvite
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.item_room_invite.view.*
@@ -18,8 +20,9 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
 class RoomInviteAdapter(
     private var userList: MutableList<User>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<RoomInviteAdapter.MViewHolder>() {
+) : RecyclerView.Adapter<RoomInviteAdapter.MViewHolder>(), Filterable {
 
+    var userListFull: MutableList<User> = mutableListOf()
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -84,6 +87,37 @@ class RoomInviteAdapter(
     fun update(data: MutableList<User>) {
         userList = data
         notifyDataSetChanged()
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+
+            override fun performFiltering(constraint: CharSequence?): FilterResults? {
+                val filteredList: MutableList<User> = mutableListOf()
+                val charString = constraint.toString()
+
+                if (constraint == null || charString.isEmpty()) {
+                    filteredList.addAll(userListFull)
+                } else {
+                    val filter = constraint.toString().trim()
+
+                    userListFull.forEach {
+                        if (it.name?.contains(filter, true)!!) {
+                            filteredList.add(it)
+                        }
+                    }
+                }
+
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
+                update(filterResults.values as MutableList<User>)
+            }
+        }
     }
 
 }

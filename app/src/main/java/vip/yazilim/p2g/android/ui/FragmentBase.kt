@@ -3,7 +3,9 @@ package vip.yazilim.p2g.android.ui
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -82,24 +84,9 @@ abstract class FragmentBase(private var viewModelBase: ViewModelBase, var layout
         layoutError?.visibility = View.GONE
     }
 
-    // Custom functions using in fragments
-    fun setMenuItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            if (item !== exception) item.isVisible = visible
-        }
-    }
-
-    fun showKeyboard() {
-        val inputMethodManager =
-            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-    }
-
     fun closeKeyboard() {
         val inputMethodManager =
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
-
 }

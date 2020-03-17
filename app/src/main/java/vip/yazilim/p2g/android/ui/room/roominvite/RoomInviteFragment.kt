@@ -2,7 +2,10 @@ package vip.yazilim.p2g.android.ui.room.roominvite
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +44,37 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
         ) {})
 
         swipeRefreshContainer.setOnRefreshListener { refreshRoomInviteUsers() }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView: SearchView = searchItem?.actionView as SearchView
+
+        searchView.queryHint = "Search User"
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                searchView.isFocusable = true
+                searchView.requestFocus()
+                searchView.requestFocusFromTouch()
+
+                searchView.isIconified = false
+                searchView.visibility = View.VISIBLE
+                UIHelper.setMenuItemsVisibility(menu, searchItem, false)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                searchView.clearFocus()
+                searchView.setQuery("", false)
+                adapter.filter.filter("")
+                searchView.isIconified = true
+                searchView.visibility = View.VISIBLE
+                UIHelper.setMenuItemsVisibility(menu, searchItem, true)
+                return true
+            }
+        })
     }
 
     private fun refreshRoomInviteUsers() = request(

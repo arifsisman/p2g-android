@@ -26,6 +26,7 @@ import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.setMenuItemsVisibility
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
