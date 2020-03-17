@@ -27,7 +27,6 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.setMenuItemsVisibility
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -108,9 +107,6 @@ class FriendsFragment : FragmentBase(
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 searchView.requestFocus()
-                searchView.isIconified = false
-                searchView.visibility = View.VISIBLE
-                setMenuItemsVisibility(menu, searchItem, false)
                 return true
             }
 
@@ -118,9 +114,6 @@ class FriendsFragment : FragmentBase(
                 searchView.clearFocus()
                 searchView.setQuery("", false)
                 adapter.filter.filter("")
-                searchView.isIconified = true
-                searchView.visibility = View.VISIBLE
-                setMenuItemsVisibility(menu, searchItem, true)
                 return true
             }
         })
