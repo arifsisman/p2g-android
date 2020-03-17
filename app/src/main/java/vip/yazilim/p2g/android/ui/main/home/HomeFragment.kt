@@ -90,20 +90,6 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 return true
             }
         })
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchView.requestFocus()
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                searchView.clearFocus()
-                searchView.setQuery("", false)
-                adapter.filter.filter("")
-                return true
-            }
-        })
     }
 
     override fun onItemClicked(roomModel: RoomModelSimplified) {

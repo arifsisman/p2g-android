@@ -2,9 +2,7 @@ package vip.yazilim.p2g.android.ui.room.roominvite
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -37,7 +35,6 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
         adapter = RoomInviteAdapter(roomViewModel.inviteUserList.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
-        // recyclerView divider
         recyclerView.addItemDecoration(object : DividerItemDecoration(
             recyclerView.context,
             (recyclerView.layoutManager as LinearLayoutManager).orientation
@@ -46,23 +43,33 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
         swipeRefreshContainer.setOnRefreshListener { refreshRoomInviteUsers() }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        setHasOptionsMenu(true)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.options_menu_room_invites, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+
         val searchItem = menu.findItem(R.id.action_search)
-        val searchView: SearchView = searchItem?.actionView as SearchView
+        val searchView = searchItem?.actionView as SearchView
 
         searchView.queryHint = "Search User"
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchView.requestFocus()
-                return true
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                Log.d("queryText", query)
+                return false
             }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                searchView.clearFocus()
-                searchView.setQuery("", false)
-                adapter.filter.filter("")
+            override fun onQueryTextChange(newText: String): Boolean {
+                Log.d("queryText", newText)
+                adapter.filter.filter(newText)
                 return true
             }
         })
@@ -96,6 +103,7 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
     private val renderRoomInviteUsers = Observer<MutableList<User>> { userList ->
         Log.v(TAG, "data updated $userList")
         layoutError.visibility = View.GONE
+        adapter.userListFull = userList
         adapter.update(userList)
     }
 

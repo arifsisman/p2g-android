@@ -5,11 +5,13 @@ import android.content.*
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -76,7 +78,6 @@ class RoomActivity : AppCompatActivity(),
     private lateinit var slidingUpPanel: SlidingUpPanelLayout
     private lateinit var playerRecyclerView: RecyclerView
     private lateinit var deviceDialog: AlertDialog
-    private lateinit var menu: ContextMenu
     private var roomWsReconnectCounter = 0
 
     @Volatile
@@ -115,19 +116,6 @@ class RoomActivity : AppCompatActivity(),
         room?.id?.let { roomViewModel.loadRoomUsers(it) }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (viewPager.currentItem == 3) {
-            menu?.findItem(R.id.sync_with_room)?.isVisible = false
-            menu?.findItem(R.id.select_device)?.isVisible = false
-        } else {
-            val searchItem = menu?.findItem(R.id.action_search)
-            val searchView: SearchView = searchItem?.actionView as SearchView
-            searchItem.isVisible = false
-            searchView.visibility = View.GONE
-        }
-        return super.onPrepareOptionsMenu(menu)
-    }
-
     // Setups
     private fun setupViewPager() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
@@ -153,7 +141,6 @@ class RoomActivity : AppCompatActivity(),
                     }
                 }
 
-                invalidateOptionsMenu()
                 closeKeyboard()
             }
 

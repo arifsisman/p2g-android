@@ -2,6 +2,8 @@ package vip.yazilim.p2g.android.ui.room.roomchat
 
 import android.content.Intent
 import android.os.Handler
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import com.bumptech.glide.request.RequestOptions
@@ -57,6 +59,12 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
 
     override fun setupViewModel() {
         roomViewModel.newMessage.observe(this, renderNewMessage)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.options_menu_room, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onResume() {

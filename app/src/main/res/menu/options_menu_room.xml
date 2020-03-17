@@ -15,13 +15,6 @@
         android:title="@string/title_select_device" />
 
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
-        android:title="@string/title_search_user"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
-
-    <item
         android:id="@+id/clear_queue"
         android:title="@string/title_clear_queue" />
 

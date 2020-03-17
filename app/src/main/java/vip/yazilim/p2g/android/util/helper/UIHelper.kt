@@ -33,7 +33,7 @@ class UIHelper {
             toast.show()
         }
 
-        fun showErrorDialog(context: Context, message: String) {
+        fun showErrorDialog(context: Context, message: String): AlertDialog? {
             val dialogBuilder = AlertDialog.Builder(context)
 
             dialogBuilder.setMessage(message)
@@ -44,6 +44,8 @@ class UIHelper {
             val alert = dialogBuilder.create()
             alert.setTitle("Error")
             alert.show()
+
+            return alert
         }
 
 

@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -219,6 +221,12 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 )
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.options_menu_room, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onItemClicked(view: SwipeLayout, song: Song) {
