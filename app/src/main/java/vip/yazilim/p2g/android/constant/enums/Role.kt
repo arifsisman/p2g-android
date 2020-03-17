@@ -8,7 +8,7 @@ enum class Role(val role: String) {
     UNDEFINED("Undefined"),
     P2G_USER("P2G_User"),
     ROOM_USER("User"),
-    ROOM_MODERATOR("Moderator"),
+    ROOM_DJ("DJ"),
     ROOM_ADMIN("Admin"),
     ROOM_OWNER("Owner");
 }
