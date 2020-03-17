@@ -20,8 +20,8 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
+import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
-import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -76,35 +76,6 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
 
         // SwipeRefreshLayout
         swipeRefreshContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
-
-//        // Swipe left for delete
-//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
-//                onReject(roomInviteModel)
-//                adapter.remove(roomInviteModel)
-//            }
-//        }
-//
-//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
-//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
-//
-//        // Swipe right for accept
-//        val swipeAcceptHandler = object : SwipeToAcceptCallback(
-//            ContextCompat.getDrawable(
-//                this.context!!,
-//                R.drawable.ic_check_white_24dp
-//            )!!, Color.parseColor("#1DB954")
-//        ) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val roomInviteModel = adapter.roomInviteModels[viewHolder.adapterPosition]
-//                onAccept(roomInviteModel)
-//                adapter.remove(roomInviteModel)
-//            }
-//        }
-//
-//        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
-//        swipeAcceptHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observers
@@ -163,7 +134,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -182,7 +153,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -210,7 +181,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShort(root, "Rooms Invites cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, "Rooms Invites cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 

@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +19,11 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants
-import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.RoomUser
+import vip.yazilim.p2g.android.model.p2g.FriendModel
+import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -72,41 +73,6 @@ class FriendsFragment : FragmentBase(
             loadFriends()
         }
 
-//        // Swipe left for delete
-//        val swipeDeleteHandler = object : SwipeToDeleteCallback(context) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val data = adapter.adapterDataList[viewHolder.adapterPosition]
-//                if (data is FriendModel) {
-//                    onDeleteClicked(data)
-//                } else if (data is FriendRequestModel) {
-//                    onRejectClicked(data)
-//                }
-//            }
-//        }
-//
-//        val swipeDeleteHelper = ItemTouchHelper(swipeDeleteHandler)
-//        swipeDeleteHelper.attachToRecyclerView(recyclerView)
-//
-//        // Swipe right for accept
-//        val swipeAcceptHandler = object : SwipeToAcceptCallback(
-//            ContextCompat.getDrawable(
-//                this.context!!,
-//                R.drawable.ic_check_white_24dp
-//            )!!, Color.parseColor("#1DB954")
-//        ) {
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val data = adapter.adapterDataList[viewHolder.adapterPosition]
-//                if (data is FriendModel) {
-//                    onJoinClicked(data.userModel?.room)
-//                } else if (data is FriendRequestModel) {
-//                    onAcceptClicked(data)
-//                }
-//                adapter.remove(data)
-//            }
-//        }
-//
-//        val swipeAcceptHelper = ItemTouchHelper(swipeAcceptHandler)
-//        swipeAcceptHelper.attachToRecyclerView(recyclerView)
     }
 
     // Observer
@@ -165,7 +131,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -189,7 +155,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -202,7 +168,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -229,7 +195,7 @@ class FriendsFragment : FragmentBase(
                         },
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShort(root, msg)
+                                UIHelper.showSnackBarShortTop(root, msg)
                             }
 
                             override fun onSuccess(obj: Boolean) {
@@ -258,7 +224,7 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendRequestModel(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -274,7 +240,7 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriends(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -290,7 +256,7 @@ class FriendsFragment : FragmentBase(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -310,9 +276,9 @@ class FriendsFragment : FragmentBase(
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog
         mAlertDialog = mBuilder.show()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if password is empty
         roomPasswordEditText.addTextChangedListener(object : TextWatcher {
@@ -338,7 +304,7 @@ class FriendsFragment : FragmentBase(
                 room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortTop(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {

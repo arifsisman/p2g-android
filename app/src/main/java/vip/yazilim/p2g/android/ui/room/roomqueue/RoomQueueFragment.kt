@@ -21,8 +21,8 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
-import vip.yazilim.p2g.android.model.p2g.Song
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -53,10 +53,10 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
         // QueueAdapter
         adapter = RoomQueueAdapter(
-            roomActivity.roomViewModel.songList.value ?: mutableListOf()
+            roomViewModel.songList.value ?: mutableListOf()
             , this
         )
-        adapter.setHasStableIds(true)
+
         recyclerView.adapter = adapter
 
         // recyclerView divider
@@ -69,18 +69,22 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
         fab.setOnClickListener { showSearchDialog() }
 
-        roomActivity.roomViewModel.songList.observe(this, renderRoomQueue)
-
         swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
         }
+    }
+
+    override fun setupViewModel() {
+        roomViewModel.songList.observe(this, renderRoomQueue)
+        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
+        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
     }
 
     private fun refreshQueueEvent() = request(
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -90,31 +94,20 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             }
         })
 
-    override fun setupViewModel() {
-        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
-        roomViewModel.isEmptyList.observe(this, emptyListObserver)
-    }
-
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
         Log.v(TAG, "data updated $songList")
         layoutError.visibility = View.GONE
-        layoutEmpty.visibility = View.GONE
 
-        if (songList.isNullOrEmpty()) {
-            (activity as RoomActivity).roomViewModel._isEmptyList.postValue(true)
-        } else {
-            var hasNext = false
+        var hasNext = false
 
-            songList.forEach { song ->
-                if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
-                    hasNext = true
-                }
+        songList.forEach { song ->
+            if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
+                hasNext = true
             }
-
-            (activity as RoomActivity).skipFlag = hasNext
         }
+
+        roomActivity.skipFlag = hasNext
 
         adapter.update(songList)
     }
@@ -122,8 +115,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder =
-            AlertDialog.Builder(context, R.style.myFullscreenAlertDialogStyle)
-                .setView(searchDialogView)
+            AlertDialog.Builder(context, R.style.fullScreenAppTheme).setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
 
         val queryEditText = searchDialogView.dialogQuery
@@ -171,7 +163,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().search(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(searchDialogView, msg)
+                        UIHelper.showSnackBarShortTop(searchDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -208,7 +200,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    UIHelper.showSnackBarShortRoom(root, msg)
+                    UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
         }
@@ -221,7 +213,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             if (isAnyItemsSelected != null) {
                 searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
-                UIHelper.showSnackBarShortRoom(
+                UIHelper.showSnackBarShortTop(
                     searchDialogView,
                     "10 songs or 1 Album/Playlist can be added in each search!"
                 )
@@ -237,66 +229,71 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
+
         request(Singleton.apiClient().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
         })
     }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
-        val db = (activity as RoomActivity).db
         view.close()
+        val db = roomActivity.db
 
-        if (db.isVotedBefore(song)) {
-            UIHelper.showSnackBarShortRoom(root, "Song voted before")
+        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
+            UIHelper.showSnackBarShortTop(root, "Song voted before")
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(song)
+                    roomActivity.room?.let { db.insertVotedSong(it, song) }
+                    UIHelper.showSnackBarShortTop(root, "${song.songName} upvoted.")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortRoom(root, msg)
+                    UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
         }
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
-        val db = (activity as RoomActivity).db
         view.close()
+        val db = roomActivity.db
 
-        if (db.isVotedBefore(song)) {
-            UIHelper.showSnackBarShortRoom(root, "Song voted before")
+        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
+            UIHelper.showSnackBarShortTop(root, "Song voted before")
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(song)
+                    roomActivity.room?.let { db.insertVotedSong(it, song) }
+                    UIHelper.showSnackBarShortTop(root, "${song.songName} downvoted.")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortRoom(root, msg)
+                    UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
         }
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
+        view.close()
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
-        view.close()
+
         request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortRoom(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
                 adapter.add(song, position)
             }
         })
     }
+
 }

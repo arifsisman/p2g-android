@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.model.p2g.UserDevice
+import vip.yazilim.p2g.android.entity.UserDevice
 
 /**
  * @author mustafaarifsisman - 29.02.2020
@@ -42,7 +42,7 @@ class DeviceAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_device, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_device, parent, false)
         return MViewHolder(view)
     }
 

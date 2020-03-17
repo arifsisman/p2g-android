@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -14,7 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
@@ -28,6 +28,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        intent.getParcelableExtra<User>("user")?.id?.let {
+            val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
+            intent.putExtra("userId", it)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
+        }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
 
         // Bind views
         val navView: BottomNavigationView = nav_view
@@ -43,17 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        intent.getParcelableExtra<User>("user")?.id?.let {
-            val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
-            intent.putExtra("userId", it)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {
-                startService(intent)
-            }
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

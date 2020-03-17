@@ -2,12 +2,13 @@ package vip.yazilim.p2g.android.util.helper
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.snackbar.Snackbar
+import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 
 
 /**
@@ -19,14 +20,14 @@ class UIHelper {
         fun showToastShort(context: Context?, message: String) {
             val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
 
-            toast.setGravity(Gravity.BOTTOM, 0, 200)
+            toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
         }
 
         fun showToastLong(context: Context?, message: String) {
             val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
 
-            toast.setGravity(Gravity.BOTTOM, 0, 200)
+            toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
         }
 
@@ -44,44 +45,65 @@ class UIHelper {
         }
 
 
-        fun showSnackBarLong(view: View?, message: String) {
+        fun showSnackBarLongBottom(view: View?, message: String) {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG) }
             val snackView = snack?.view
-            try {
-                val params = snackView?.layoutParams as FrameLayout.LayoutParams
-                params.gravity = Gravity.TOP
-                snackView.layoutParams = params
-            } catch (e: Exception) {
-                snack?.show()
-            }
-        }
-
-        // For showing SnackBar in view which is not casted FrameLayout.LayoutParams
-        fun showSnackBarShortRoom(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            val params = snackView?.layoutParams as CoordinatorLayout.LayoutParams
-            params.gravity = Gravity.BOTTOM
-            snackView.layoutParams = params
-            snack.show()
-        }
-
-        fun showSnackBarShort(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            val params = snackView?.layoutParams as FrameLayout.LayoutParams
-            params.gravity = Gravity.TOP
-            snackView.layoutParams = params
-            snack.show()
-        }
-
-        fun showPlayerError(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            snack?.anchorView = view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
             snack?.show()
+        }
+
+        fun showSnackBarLongTop(view: View?, message: String) {
+            val snack: TSnackbar? = view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_LONG) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun showSnackBarShortBottom(view: View?, message: String) {
+            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun showSnackBarShortTop(view: View?, message: String) {
+            val snack: TSnackbar? =
+                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun showSnackBarPlayer(view: View?, message: String) {
+            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
+            snack?.anchorView = view
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun showSnackBarShortBottomIndefinite(view: View?, message: String) {
+            val snack: Snackbar? =
+                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_INDEFINITE) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun showSnackBarShortTopIndefinite(view: View?, message: String) {
+            val snack: TSnackbar? =
+                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_INDEFINITE) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun dpFromPx(context: Context, px: Float): Float {
+            return px / context.resources.displayMetrics.density
+        }
+
+        fun pxFromDp(context: Context, dp: Float): Float {
+            return dp * context.resources.displayMetrics.density
         }
 
     }

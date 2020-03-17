@@ -8,7 +8,6 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
-import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -17,8 +16,8 @@ import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -39,15 +38,13 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        supportActionBar?.hide()
+
         // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
         SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
 
-        spotify_login_btn.setOnClickListener {
-            getAuthorizationCodeFromSpotify()
-        }
-
-        spotify_login_btn.performClick()
+        getAuthorizationCodeFromSpotify()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -126,23 +123,12 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onSuccess(obj: User) {
-                existingRoomCheck()
-
-//                db.insertData(obj)
-                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${obj.name}")
-                startMainActivity(obj, tokenModel)
+                existingRoomCheck(obj, tokenModel)
             }
         })
 
 
-    private fun startMainActivity(user: User, tokenModel: TokenModel) {
-        val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-        startMainIntent.putExtra("user", user)
-        startMainIntent.putExtra("tokenModel", tokenModel)
-        startActivity(startMainIntent)
-    }
-
-    private fun existingRoomCheck() = request(
+    private fun existingRoomCheck(user: User, tokenModel: TokenModel) = request(
         Singleton.apiClient().getRoomModelMe(),
         object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
@@ -152,8 +138,12 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError(msg: String) {
+                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${user.name}")
+                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                startMainIntent.putExtra("user", user)
+                startMainIntent.putExtra("tokenModel", tokenModel)
+                startActivity(startMainIntent)
             }
-
         })
 
 }

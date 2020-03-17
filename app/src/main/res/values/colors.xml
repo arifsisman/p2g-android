@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryColor">#212121</color>
-    <color name="primaryLightColor">#484848</color>
-    <color name="primaryDarkColor">#000000</color>
-    <color name="primaryTextColor">#FFFFFF</color>
-    <color name="secondaryTextColor">#BDBDBD</color>
-    <color name="backgroundColor">#FFFFFF</color>
-    <color name="spotifyGreenColor">#1DB954</color>
-    <color name="negativeColor">#B91D1D</color>
-    <color name="blackColor">#000000</color>
-    <color name="whiteColor">#FFFFFF</color>
-    <color name="playerColor">#F0F0F0</color>
+    <color name="colorPrimary">#161616</color>
+    <color name="colorPrimaryDark">#121212</color>
+    <color name="colorPrimaryLight">#9A9A9A</color>
+    <color name="colorPrimaryText">#FFFFFF</color>
+    <color name="colorSecondaryTab">#BDBDBD</color>
+    <color name="colorBackground">#141414</color>
+    <color name="colorAccentBlue">#1D95B9</color>
+    <color name="colorSpotifyGreen">#1DB954</color>
+    <color name="colorNegative">#D10000</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="colorBottomNavDefault">#BDBDBD</color>
+    <color name="colorTabBarDefault">#202020</color>
+
+    <color name="colorIncomingMessagePressed">#2C6C52</color>
 
 </resources>

@@ -8,14 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
+import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
-import vip.yazilim.p2g.android.model.p2g.Room
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedCompact
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
 
 
 /**
@@ -62,7 +63,8 @@ class FriendsAdapter(
             val user = item.friendRequestUserModel?.user
 
             val inviteDatePlaceholder =
-                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.getFormattedCompact()}"
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.toZonedDateTime()
+                    ?.getFormattedCompact()}"
 
             userName.text = user?.name
             inviteDate.text = inviteDatePlaceholder
@@ -176,12 +178,12 @@ class FriendsAdapter(
         return when (viewType) {
             TYPE_REQUEST -> {
                 view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.row_friend_request, parent, false)
+                    .inflate(R.layout.item_friend_request, parent, false)
                 FriendRequestViewHolder(view)
             }
             TYPE_FRIEND -> {
                 view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.row_friend, parent, false)
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
                 FriendViewHolder(view)
             }
             else -> throw IllegalArgumentException("Invalid view type")

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row_song"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="1dp"
+    android:paddingEnd="1dp">
+
+    <include
+        android:id="@+id/song_event_holder"
+        layout="@layout/layout_row_song_events"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/song_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="60dp"
+                android:paddingEnd="15dp"
+                android:singleLine="true"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/song_image"
+                app:layout_constraintTop_toTopOf="@+id/song_image"
+                tools:text="@string/placeholder_song_name" />
+
+            <TextView
+                android:id="@+id/song_artists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="60dp"
+                android:paddingEnd="15dp"
+                android:singleLine="true"
+                android:text="@string/placeholder_song_artists"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/song_name"
+                app:layout_constraintTop_toBottomOf="@+id/song_name" />
+
+            <ImageView
+                android:id="@+id/song_image"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="6dp"
+                android:contentDescription="@string/description_song_cover_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/song_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/placeholder_song_vote"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/song_image" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</com.daimajia.swipe.SwipeLayout>
+
+

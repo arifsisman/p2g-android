@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/sync_with_room"
+        android:icon="@drawable/ic_sync_white_24dp"
+        app:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/title_sync_with_room" />
 
     <item
         android:id="@+id/select_device"
+        android:icon="@drawable/ic_devices_white_24dp"
+        app:showAsAction="collapseActionView|ifRoom"
         android:title="@string/title_select_device" />
 
     <item

@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.ColorCodes.NEGATIVE_RED
 
 /**
  * @author mustafaarifsisman - 19.02.2020
@@ -22,7 +23,7 @@ abstract class SwipeToDeleteCallback(context: Context?) :
     private val intrinsicWidth = deleteIcon.intrinsicWidth
     private val intrinsicHeight = deleteIcon.intrinsicHeight
     private val background = ColorDrawable()
-    private val backgroundColor = Color.parseColor("#B91D1D")
+    private val backgroundColor = Color.parseColor(NEGATIVE_RED)
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
     override fun onMove(

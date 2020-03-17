@@ -26,24 +26,7 @@ class TokenAuthenticator : Authenticator {
             SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
         if (refreshToken == TokenConstants.UNDEFINED) return null
 
-        spotifyRequest(
-            SpotifyApiClient.build().refreshExpiredToken(
-                SpotifyConstants.CLIENT_ID,
-                SpotifyConstants.CLIENT_SECRET,
-                SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
-                refreshToken!!
-            ), object : Callback<TokenModel> {
-                override fun onError(msg: String) {
-                }
-
-                override fun onSuccess(obj: TokenModel) {
-                    SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
-                    SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.access_token)
-                    obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
-                    Log.d(TAG, "Token refreshed. New access token is: $obj.access_token")
-                    Singleton.buildApi()
-                }
-            })
+        refreshToken()
 
         val updatedToken: String? =
             SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
@@ -62,6 +45,30 @@ class TokenAuthenticator : Authenticator {
         fun updateAccessTokenOnPlay2Gether(accessToken: String) = request(
             ApiClient.build().updateAccessToken(accessToken), null
         )
+
+        fun refreshToken() {
+            val refreshToken =
+                SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
+
+            spotifyRequest(
+                SpotifyApiClient.build().refreshExpiredToken(
+                    SpotifyConstants.CLIENT_ID,
+                    SpotifyConstants.CLIENT_SECRET,
+                    SpotifyConstants.GRANT_TYPE_REFRESH_TOKEN_REQUEST,
+                    refreshToken!!
+                ), object : Callback<TokenModel> {
+                    override fun onError(msg: String) {
+                    }
+
+                    override fun onSuccess(obj: TokenModel) {
+                        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
+                        SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.access_token)
+                        obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
+                        Log.d(TAG, "Token refreshed. New access token is: $obj.access_token")
+                        Singleton.buildApi()
+                    }
+                })
+        }
     }
 }
 

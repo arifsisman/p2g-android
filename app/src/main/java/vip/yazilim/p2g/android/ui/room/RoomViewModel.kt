@@ -5,7 +5,10 @@ import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.model.p2g.Song
+import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.entity.User
+import vip.yazilim.p2g.android.model.p2g.ChatMessage
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -21,6 +24,18 @@ class RoomViewModel : ViewModelBase() {
     private val _playerSong = MutableLiveData<Song>()
     val playerSong: MutableLiveData<Song> = _playerSong
 
+    private val _roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
+    val roomUserModelList: MutableLiveData<MutableList<RoomUserModel>> = _roomUserModelList
+
+    private val _roomUserModel = MutableLiveData<RoomUserModel>()
+    val roomUserModel: MutableLiveData<RoomUserModel> = _roomUserModel
+
+    private val _roomInviteUserList = MutableLiveData<MutableList<User>>()
+    val inviteUserList: MutableLiveData<MutableList<User>> = _roomInviteUserList
+
+    var messages: MutableList<ChatMessage> = mutableListOf()
+    val newMessage: MutableLiveData<ChatMessage> = MutableLiveData<ChatMessage>()
+
     fun loadSongs(roomId: Long) {
         _isViewLoading.postValue(true)
 
@@ -35,12 +50,63 @@ class RoomViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<Song>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _songList.value = obj
-                        _playerSong.value = getCurrentSong(obj)
+                    _songList.value = obj
+                    _playerSong.value = getCurrentSong(obj)
+                }
+            })
+    }
+
+    fun loadRoomUsers(roomId: Long) {
+        _isViewLoading.postValue(true)
+
+        request(
+            Singleton.apiClient().getRoomUserModels(roomId),
+            object : Callback<MutableList<RoomUserModel>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
+
+                override fun onSuccess(obj: MutableList<RoomUserModel>) {
+                    _isViewLoading.postValue(false)
+
+                    _roomUserModelList.value = obj
+
+                    obj.forEach {
+                        if (it.user?.id == roomUserModel.value?.user?.id) {
+                            roomUserModel.value = it
+                        }
                     }
+
+                }
+            })
+    }
+
+    fun loadRoomUserMe() {
+        request(Singleton.apiClient().getRoomUserModelMe(), object : Callback<RoomUserModel> {
+            override fun onSuccess(obj: RoomUserModel) {
+                _roomUserModel.value = obj
+            }
+
+            override fun onError(msg: String) {
+            }
+        })
+    }
+
+    fun loadRoomInviteUsers() {
+        _isViewLoading.postValue(true)
+
+        request(
+            Singleton.apiClient().getAllUsers(),
+            object : Callback<MutableList<User>> {
+                override fun onError(msg: String) {
+                    _isViewLoading.postValue(false)
+                    _onMessageError.postValue(msg)
+                }
+
+                override fun onSuccess(obj: MutableList<User>) {
+                    _isViewLoading.postValue(false)
+                    _roomInviteUserList.value = obj
                 }
             })
     }

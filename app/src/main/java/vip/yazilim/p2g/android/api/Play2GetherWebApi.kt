@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.api
 import retrofit2.Call
 import retrofit2.http.*
 import vip.yazilim.p2g.android.api.generic.Response
+import vip.yazilim.p2g.android.entity.*
 import vip.yazilim.p2g.android.model.p2g.*
 
 /**
@@ -14,6 +15,9 @@ interface Play2GetherWebApi {
     // User API
     @GET("/api/user/{id}")
     fun getUser(@Path("id") userId: String): Call<Response<User>>
+
+    @GET("/api/user/")
+    fun getAllUsers(): Call<Response<MutableList<User>>>
 
     @PUT("/api/user/")
     fun updateUser(@Body user: User): Call<Response<User>>
@@ -33,7 +37,10 @@ interface Play2GetherWebApi {
 
     // Room API
     @POST("/api/room/create/{roomName}")
-    fun createRoom(@Path("roomName") roomName: String, @Body roomPassword: String): Call<Response<Room>>
+    fun createRoom(
+        @Path("roomName") roomName: String,
+        @Body roomPassword: String
+    ): Call<Response<Room>>
 
     @GET("/api/room/{id}")
     fun getRoom(@Path("id") roomId: Long): Call<Response<Room>>
@@ -60,7 +67,10 @@ interface Play2GetherWebApi {
     fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<Response<RoomModelSimplified>>
 
     @POST("/api/room/{roomId}/invite/{userId}")
-    fun inviteUser(@Path("roomId") roomId: Long, @Path("userId") userId: String): Call<Response<RoomInvite>>
+    fun inviteUser(
+        @Path("roomId") roomId: Long,
+        @Path("userId") userId: String
+    ): Call<Response<RoomInvite>>
 
     @POST("/api/room/invite/accept")
     fun acceptInvite(@Body roomInvite: RoomInvite): Call<Response<RoomUser>>
@@ -78,20 +88,22 @@ interface Play2GetherWebApi {
     fun getRoomUsers(@Path("id") roomId: Long): Call<Response<List<User>>>
 
     @PUT("/api/room/user/{id}/promote")
-    fun promoteUser(@Path("id") roomId: String): Call<Response<RoomUser>>
+    fun promoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
 
     @PUT("/api/room/user/{id}/demote")
-    fun demoteUser(@Path("id") roomId: String): Call<Response<RoomUser>>
+    fun demoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
 
     @GET("/api/room/invite/model")
     fun getRoomInviteModels(): Call<Response<MutableList<RoomInviteModel>>>
 
-    @GET("/api/room/user/me")
-    fun getRoomUserMe(): Call<Response<RoomUser>>
+    @GET("/api/room/{id}/roomUserModels")
+    fun getRoomUserModels(@Path("id") roomId: Long): Call<Response<MutableList<RoomUserModel>>>
 
     @POST("/api/room/{roomId}/queue/clear")
     fun clearQueue(@Path("roomId") roomId: Long): Call<Response<Boolean>>
 
+    @GET("/api/room/user/me")
+    fun getRoomUserModelMe(): Call<Response<RoomUserModel>>
 
     // Song API
     @GET("/api/song/{id}")
@@ -101,7 +113,10 @@ interface Play2GetherWebApi {
     fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<MutableList<Song>>>
 
     @POST("/api/song/{roomId}")
-    fun addSongToRoom(@Path("roomId") roomId: Long, @Body searchModelList: List<SearchModel>): Call<Response<Boolean>>
+    fun addSongToRoom(
+        @Path("roomId") roomId: Long,
+        @Body searchModelList: List<SearchModel>
+    ): Call<Response<Boolean>>
 
     @DELETE("/api/song/{songId}")
     fun removeSongFromRoom(@Path("songId") songId: Long): Call<Response<Boolean>>
@@ -183,6 +198,9 @@ interface Play2GetherWebApi {
 
     @POST("/api/spotify/player/{id}/repeat")
     fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>
+
+    @POST("/api/spotify/player/sync")
+    fun syncWithRoom(@Body roomUser: RoomUser): Call<Response<Boolean>>
 
 
     // Spotify API

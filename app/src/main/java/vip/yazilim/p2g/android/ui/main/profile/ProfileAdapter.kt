@@ -14,6 +14,7 @@ import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedFull
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -45,19 +46,25 @@ class ProfileAdapter(
 
         fun bindView(userModel: UserModel) {
             val user = userModel.user
+            val room = userModel.room
 
             if (user != null) {
                 val profileNamePlaceholder = user.name
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.getFormattedFull()}"
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.toZonedDateTime()
+                        ?.getFormattedFull()}"
                 val profileEmailPlaceholder =
                     "${view.resources.getString(R.string.placeholder_email)} ${user.email}"
-                val profileSongAndRoomStatusPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${userModel.room?.name}"
                 val profileAnthemPlaceholder =
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val profileSpotifyAccountIdPlaceholder =
                     "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
+
+                val profileSongAndRoomStatusPlaceholder = if (room?.name != null) {
+                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room.name}"
+                } else {
+                    view.resources.getString(R.string.placeholder_room_user_not_found)
+                }
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)
@@ -120,7 +127,7 @@ class ProfileAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_profile, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_profile, parent, false)
         return MViewHolder(view)
     }
 

@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,9 +20,9 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
-import vip.yazilim.p2g.android.model.p2g.Room
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
-import vip.yazilim.p2g.android.model.p2g.RoomUser
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -47,7 +44,6 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     override fun onResume() {
         super.onResume()
-        adapter.clear()
         viewModel.loadRooms()
     }
 
@@ -62,7 +58,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         adapter = HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
-        button_create_room.setOnClickListener { createRoomButtonEvent() }
+        fab.setOnClickListener { createRoomButtonEvent() }
         swipeRefreshContainer.setOnRefreshListener { refreshRoomsEvent() }
     }
 
@@ -80,7 +76,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
-        searchView.queryHint = "Search Room or Room Owner"
+        searchView.queryHint = "Search Room or Owner"
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -133,7 +129,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         roomModelSimplified.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, msg)
+                UIHelper.showSnackBarShortTop(root, msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -156,9 +152,9 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog
         mAlertDialog = mBuilder.show()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if password is empty
         roomPasswordEditText.addTextChangedListener(object : TextWatcher {
@@ -184,7 +180,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortTop(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
@@ -211,6 +207,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
         val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
         val mAlertDialog = mBuilder.show()
+        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val roomNameEditText = mDialogView.dialog_room_name
         val roomPasswordEditText = mDialogView.dialog_room_password
@@ -218,7 +215,6 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
         // For request focus and open keyboard
         roomNameEditText.requestFocus()
-        showKeyboard()
 
         // For disable create button if name is empty
         roomNameEditText.addTextChangedListener(object : TextWatcher {
@@ -239,7 +235,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 object : Callback<Room> {
                     override fun onError(msg: String) {
                         Log.d(TAG, "Room can not created")
-                        UIHelper.showSnackBarShort(mDialogView, msg)
+                        UIHelper.showSnackBarShortTop(mDialogView, msg)
                     }
 
                     override fun onSuccess(obj: Room) {
@@ -268,7 +264,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         Singleton.apiClient().getSimplifiedRoomModels(),
         object : Callback<MutableList<RoomModelSimplified>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShort(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 

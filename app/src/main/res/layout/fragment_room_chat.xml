@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragmentRoomChat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.stfalcon.chatkit.messages.MessagesList
+        android:id="@+id/messagesList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/input"
+        app:incomingAvatarHeight="20dp"
+        app:incomingAvatarWidth="20dp"
+        app:incomingBubblePaddingBottom="8dp"
+        app:incomingDefaultBubblePressedColor="@color/colorIncomingMessagePressed"
+        app:incomingTextColor="@color/white"
+        app:incomingTextSize="14sp"
+        app:incomingBubblePaddingLeft="12dp"
+        app:incomingTimeTextColor="@color/white"
+        app:outcomingDefaultBubbleColor="@color/colorAccentBlue"
+        app:outcomingDefaultBubblePressedColor="@color/colorIncomingMessagePressed"
+        app:outcomingTimeTextColor="@color/white"
+        app:incomingBubblePaddingRight="12dp"
+        app:incomingBubblePaddingTop="8dp"
+        app:incomingDefaultBubbleColor="@color/colorPrimary"
+        app:incomingTimeTextSize="12sp"
+        app:outcomingBubblePaddingBottom="8dp"
+        app:outcomingBubblePaddingLeft="12dp"
+
+        app:outcomingBubblePaddingRight="12dp"
+        app:outcomingBubblePaddingTop="8dp"
+        app:outcomingTextSize="14sp"
+        app:outcomingTimeTextSize="12sp" />
+
+    <com.stfalcon.chatkit.messages.MessageInput
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        app:inputButtonBackground="@drawable/ic_custom_send_bg"
+        app:inputButtonDefaultIconColor="@color/white"
+        app:inputButtonDefaultIconDisabledColor="@color/colorPrimary"
+        app:inputHint="@string/hint_enter_a_message"
+        app:inputTextColor="@color/white"
+        app:inputTextSize="16dp" />
+
+</RelativeLayout>

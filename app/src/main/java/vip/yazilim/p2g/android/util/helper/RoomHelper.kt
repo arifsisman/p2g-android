@@ -3,7 +3,7 @@ package vip.yazilim.p2g.android.util.helper
 import android.view.View
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.model.p2g.Song
+import vip.yazilim.p2g.android.entity.Song
 
 /**
  * @author mustafaarifsisman - 11.02.2020

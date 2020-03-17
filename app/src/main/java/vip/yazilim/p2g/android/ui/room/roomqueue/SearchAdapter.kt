@@ -56,12 +56,7 @@ class SearchAdapter(
             }
 
             val isChecked = selectedSearchModels.contains(searchModel)
-            if (isChecked) {
-                checkBox.isChecked = isChecked
-                checkBox.visibility = View.VISIBLE
-            } else {
-                checkBox.visibility = View.GONE
-            }
+            checkBox.isChecked = isChecked
         }
     }
 
@@ -70,7 +65,7 @@ class SearchAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_search, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false)
         return MViewHolder(view)
     }
 

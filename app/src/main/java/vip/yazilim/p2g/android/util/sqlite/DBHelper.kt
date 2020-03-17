@@ -6,8 +6,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
-import vip.yazilim.p2g.android.model.p2g.Song
-import vip.yazilim.p2g.android.model.p2g.User
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.Song
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 
 /**
@@ -42,6 +43,7 @@ class DBHelper(context: Context) :
     private val COL_ACCESS_TOKEN = "access_token"
     private val COL_INSERT_DATE = "insert_timestamp"
 
+    private val COL_ROOM_ID = "room_id"
     private val COL_SONG_ID = "song_id"
 
     companion object {
@@ -77,7 +79,8 @@ class DBHelper(context: Context) :
 //        db?.execSQL(createTokenTable)
 
         val createSongVoteTable = "CREATE TABLE $VOTE_TABLE_NAME (" +
-                "$COL_ID INTEGER PRIMARY KEY, " +
+                "$COL_ID INTEGER PRIMARY KEY," +
+                "$COL_ROOM_ID TEXT," +
                 "$COL_SONG_ID TEXT)"
 
         db?.execSQL(createSongVoteTable)
@@ -103,16 +106,18 @@ class DBHelper(context: Context) :
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }
 
-    fun insertVotedSong(song: Song) {
+    fun insertVotedSong(room: Room, song: Song) {
         val sqliteDB = this.writableDatabase
         val contentValues = ContentValues()
+        contentValues.put(COL_ROOM_ID, room.id)
         contentValues.put(COL_SONG_ID, song.id)
         sqliteDB.insert(VOTE_TABLE_NAME, null, contentValues)
     }
 
-    fun isVotedBefore(song: Song): Boolean {
+    fun isVotedBefore(room: Room, song: Song): Boolean {
         val sqliteDB = readableDatabase
-        val query = "SELECT * FROM $VOTE_TABLE_NAME WHERE ${COL_SONG_ID}=${song.id}"
+        val query =
+            "SELECT * FROM $VOTE_TABLE_NAME WHERE ${COL_SONG_ID}=${song.id} AND ${COL_ROOM_ID}=${room.id}"
         val result = sqliteDB.rawQuery(query, null)
 
         val count = result.count

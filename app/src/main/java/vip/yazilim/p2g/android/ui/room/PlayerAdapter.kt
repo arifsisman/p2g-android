@@ -12,8 +12,10 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
+import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.model.p2g.Song
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
@@ -41,6 +43,9 @@ class PlayerAdapter(
         private val songArtists: TextView = itemView.findViewById(R.id.song_artists)
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
         private val seekBar: SeekBar = itemView.findViewById(R.id.seek_bar)
+        private val playPauseButtonMini: ImageButton =
+            itemView.findViewById(R.id.playPause_button_mini)
+
 
         // Expanded views
         private val songNameExp: TextView = itemView.findViewById(R.id.song_name_exp)
@@ -89,6 +94,9 @@ class PlayerAdapter(
                 // Image views bind
                 ///////////////////////
                 if (song.imageUrl != null) {
+                    songImage.visibility = View.VISIBLE
+                    songImageExp.visibility = View.VISIBLE
+
                     GlideApp.with(view)
                         .load(song.imageUrl)
                         .into(songImage)
@@ -97,8 +105,8 @@ class PlayerAdapter(
                         .load(song.imageUrl)
                         .into(songImageExp)
                 } else {
-                    songImage.setImageResource(R.mipmap.ic_launcher)
-                    songImageExp.setImageResource(R.mipmap.ic_launcher)
+                    songImage.visibility = View.INVISIBLE
+                    songImageExp.visibility = View.GONE
                 }
 
 
@@ -106,18 +114,23 @@ class PlayerAdapter(
                 // Controller views bind
                 ////////////////////////
                 if (song.songStatus == SongStatus.PLAYING.songStatus) {
-                    playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_black_64dp)
+                    playPauseButton.setImageResource(R.drawable.ic_pause_circle_filled_white_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_pause_white_24dp)
                 } else {
-                    playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_black_64dp)
+                    playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                    playPauseButtonMini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
                 }
 
                 if (song.repeatFlag) {
-                    repeatButton.setColorFilter(Color.parseColor("#1DB954"))
+                    repeatButton.setColorFilter(Color.parseColor(ACCENT_BLUE))
                 } else {
-                    repeatButton.setColorFilter(Color.parseColor("#000000"))
+                    repeatButton.setColorFilter(Color.parseColor(WHITE))
                 }
 
             } else {
+                songImage.visibility = View.INVISIBLE
+                songImageExp.visibility = View.GONE
+
                 songName.text = ""
                 songArtists.text = ""
                 songImage.setImageResource(R.drawable.sample_cover_image)
@@ -136,6 +149,7 @@ class PlayerAdapter(
             seekBarChangeListener: OnSeekBarChangeListener
         ) {
             playPauseButton.setOnClickListener { clickListener.onPlayPauseClicked() }
+            playPauseButtonMini.setOnClickListener { clickListener.onPlayPauseMiniClicked() }
             nextButton.setOnClickListener { clickListener.onNextClicked() }
             previousButton.setOnClickListener { clickListener.onPreviousClicked() }
             repeatButton.setOnClickListener { clickListener.onRepeatClicked() }
@@ -147,7 +161,7 @@ class PlayerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_player, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_player, parent, false)
         return PlayerViewHolder(view)
     }
 
@@ -167,6 +181,7 @@ class PlayerAdapter(
 
     interface OnItemClickListener {
         fun onPlayerMiniClicked()
+        fun onPlayPauseMiniClicked()
         fun onPlayPauseClicked()
         fun onNextClicked()
         fun onPreviousClicked()

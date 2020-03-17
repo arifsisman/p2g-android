@@ -12,13 +12,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
-import vip.yazilim.p2g.android.model.p2g.Room
+import vip.yazilim.p2g.android.entity.Room
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
-import vip.yazilim.p2g.android.model.p2g.User
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedFull
+import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
 
 /**
  * @author mustafaarifsisman - 11.02.2020
@@ -50,12 +51,16 @@ class UserAdapter(
         fun bindView(user: User?, room: Room?) {
             if (user != null) {
                 val profileNamePlaceholder = user.name
-                val profileSongAndRoomStatusPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room?.name}"
                 val profileAnthemPlaceholder =
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.getFormattedFull()}"
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.toZonedDateTime()
+                        ?.getFormattedFull()}"
+                val profileSongAndRoomStatusPlaceholder = if (room?.name != null) {
+                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room.name}"
+                } else {
+                    view.resources.getString(R.string.placeholder_room_user_not_found)
+                }
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)
@@ -127,7 +132,7 @@ class UserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.row_user, parent, false)
+        view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
         return MViewHolder(view)
     }
 

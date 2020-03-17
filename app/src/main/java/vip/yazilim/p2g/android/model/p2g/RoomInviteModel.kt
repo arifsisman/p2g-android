@@ -2,6 +2,8 @@ package vip.yazilim.p2g.android.model.p2g
 
 import android.os.Parcel
 import android.os.Parcelable
+import vip.yazilim.p2g.android.entity.RoomInvite
+import vip.yazilim.p2g.android.entity.User
 
 /**
  * @author mustafaarifsisman - 02.02.2020
