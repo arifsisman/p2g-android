@@ -209,7 +209,7 @@ class RoomActivity : AppCompatActivity(),
                 if (viewPager.currentItem == 0) {
                     when (newState) {
                         DRAGGING -> {
-                            if (previousState == COLLAPSED && previousState != EXPANDED && slidingUpPanel.isDirty) {
+                            if (previousState == COLLAPSED) {
                                 fab.hide()
                                 showMaximizedPlayer()
                             }
