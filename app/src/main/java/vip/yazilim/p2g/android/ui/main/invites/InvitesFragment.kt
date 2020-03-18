@@ -10,7 +10,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -103,28 +103,6 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
                 Log.d("queryText", newText)
-                return true
-            }
-        })
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchView.requestFocus()
-                searchView.isIconified = false
-                searchView.isIconifiedByDefault = false
-                searchView.visibility = View.VISIBLE
-                setMenuItemsVisibility(menu, searchItem, false)
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                searchView.clearFocus()
-                searchView.setQuery("", false)
-                adapter.filter.filter("")
-                searchView.isIconified = true
-                searchView.isIconifiedByDefault = true
-                searchView.visibility = View.VISIBLE
-                setMenuItemsVisibility(menu, searchItem, true)
                 return true
             }
         })

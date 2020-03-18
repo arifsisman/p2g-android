@@ -1,6 +1,8 @@
 package vip.yazilim.p2g.android.ui.room.roomusers
 
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -55,6 +57,12 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     override fun setupViewModel() {
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.options_menu_room, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     // Observer

@@ -47,7 +47,7 @@
             android:id="@+id/invite_button"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="12dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/description_accept_button"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -119,7 +119,10 @@ class LoginActivity : AppCompatActivity() {
         Singleton.apiClient().login(),
         object : Callback<User> {
             override fun onError(msg: String) {
-                UIHelper.showErrorDialog(this@LoginActivity, msg)
+                val alert = UIHelper.showErrorDialog(this@LoginActivity, msg)
+                alert?.setOnCancelListener {
+                    getAuthorizationCodeFromSpotify()
+                }
             }
 
             override fun onSuccess(obj: User) {

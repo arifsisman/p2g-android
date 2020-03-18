@@ -101,5 +101,6 @@
     <string name="placeholder_user_role">User Role</string>
     <string name="hint_enter_a_message">Type a message…</string>
     <string name="placeholder_user_message">Message</string>
+    <string name="title_search_user">Search User</string>
 
 </resources>

@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.androidadvance.topsnackbar.TSnackbar
@@ -31,7 +33,7 @@ class UIHelper {
             toast.show()
         }
 
-        fun showErrorDialog(context: Context, message: String) {
+        fun showErrorDialog(context: Context, message: String): AlertDialog? {
             val dialogBuilder = AlertDialog.Builder(context)
 
             dialogBuilder.setMessage(message)
@@ -42,6 +44,8 @@ class UIHelper {
             val alert = dialogBuilder.create()
             alert.setTitle("Error")
             alert.show()
+
+            return alert
         }
 
 
@@ -106,6 +110,12 @@ class UIHelper {
             return dp * context.resources.displayMetrics.density
         }
 
+        fun setMenuItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+            for (i in 0 until menu.size()) {
+                val item = menu.getItem(i)
+                if (item !== exception) item.isVisible = visible
+            }
+        }
     }
 }
 

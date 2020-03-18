@@ -51,7 +51,7 @@ class RoomUsersAdapter(
                     roomUser.role.equals(Role.ROOM_ADMIN.role) -> {
                         itemView.user_role.setTextColor(Color.parseColor(CYAN))
                     }
-                    roomUser.role.equals(Role.ROOM_MODERATOR.role) -> {
+                    roomUser.role.equals(Role.ROOM_DJ.role) -> {
                         itemView.user_role.setTextColor(Color.parseColor(GREEN))
                     }
                     roomUser.role.equals(Role.ROOM_USER.role) -> {

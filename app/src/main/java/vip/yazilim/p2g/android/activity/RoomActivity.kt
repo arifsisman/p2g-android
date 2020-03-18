@@ -209,7 +209,7 @@ class RoomActivity : AppCompatActivity(),
                 if (viewPager.currentItem == 0) {
                     when (newState) {
                         DRAGGING -> {
-                            if (previousState == COLLAPSED && previousState != EXPANDED && slidingUpPanel.isDirty) {
+                            if (previousState == COLLAPSED) {
                                 fab.hide()
                                 showMaximizedPlayer()
                             }
@@ -551,7 +551,7 @@ class RoomActivity : AppCompatActivity(),
     // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
         if (roomUser != null) {
-            return if (roomUser.role == Role.ROOM_MODERATOR.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
+            return if (roomUser.role == Role.ROOM_DJ.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
                 fab.show()
                 playerController.visibility = View.VISIBLE
                 playPause_button_mini.visibility = View.VISIBLE

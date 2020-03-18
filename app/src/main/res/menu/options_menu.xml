@@ -10,6 +10,6 @@
         android:icon="@drawable/ic_search"
         android:title="@string/title_search_room"
         app:showAsAction="collapseActionView|always"
-        app:actionViewClass="android.widget.SearchView" />
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
 </menu>

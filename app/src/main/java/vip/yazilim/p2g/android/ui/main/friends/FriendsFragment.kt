@@ -8,7 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
@@ -100,28 +100,6 @@ class FriendsFragment : FragmentBase(
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
                 Log.d("queryText", newText)
-                return true
-            }
-        })
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchView.requestFocus()
-                searchView.isIconified = false
-                searchView.isIconifiedByDefault = false
-                searchView.visibility = View.VISIBLE
-                setMenuItemsVisibility(menu, searchItem, false)
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                searchView.clearFocus()
-                searchView.setQuery("", false)
-                adapter.filter.filter("")
-                searchView.isIconified = true
-                searchView.isIconifiedByDefault = true
-                searchView.visibility = View.VISIBLE
-                setMenuItemsVisibility(menu, searchItem, true)
                 return true
             }
         })

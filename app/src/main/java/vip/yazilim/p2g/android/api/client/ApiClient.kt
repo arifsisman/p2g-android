@@ -7,6 +7,7 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import vip.yazilim.p2g.android.api.Play2GetherWebApi
 import vip.yazilim.p2g.android.constant.ApiConstants.BASE_URL
 import vip.yazilim.p2g.android.constant.TokenConstants
@@ -27,6 +28,7 @@ object ApiClient {
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
         val builder: Retrofit.Builder = Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
         val retrofit: Retrofit = builder.client(httpClient.build()).build()
 
