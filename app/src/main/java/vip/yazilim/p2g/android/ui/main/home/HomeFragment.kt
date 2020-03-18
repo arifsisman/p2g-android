@@ -95,10 +95,10 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     override fun onItemClicked(roomModel: RoomModelSimplified) {
         val room: Room? = roomModel.room
 
-        if (room?.password?.isNotEmpty()!!) {
-            joinPrivateRoomEvent(roomModel)
-        } else {
+        if (room?.password == null) {
             joinRoomEvent(roomModel)
+        } else {
+            joinPrivateRoomEvent(roomModel)
         }
 
     }
@@ -167,6 +167,8 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                         closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
+                        intent.putExtra("roomModelSimplified", roomModel)
+                        intent.putExtra("roomUser", obj)
                         startActivity(intent)
                     }
                 })
