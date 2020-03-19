@@ -50,7 +50,9 @@
         </activity>
 
         <service android:name=".service.UserWebSocketService" />
-        <service android:name=".service.RoomWebSocketService" />
+        <service
+            android:name=".service.RoomWebSocketService"
+            android:stopWithTask="true" />
 
     </application>
 

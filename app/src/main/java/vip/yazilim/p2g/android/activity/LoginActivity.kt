@@ -32,7 +32,6 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 class LoginActivity : AppCompatActivity() {
 
     private var mCall: Call? = null
-//    private val db by lazy { DBHelper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
