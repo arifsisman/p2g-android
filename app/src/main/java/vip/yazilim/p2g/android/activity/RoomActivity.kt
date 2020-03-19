@@ -56,6 +56,7 @@ import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
 import vip.yazilim.p2g.android.ui.room.roominvite.RoomInviteFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
+import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -388,7 +389,11 @@ class RoomActivity : AppCompatActivity(),
         stopServiceIntent.putExtra("roomId", room?.id)
         stopService(stopServiceIntent)
 
-        unregisterReceiver(broadcastReceiver)
+        try {
+            unregisterReceiver(broadcastReceiver)
+        } catch (e: Exception) {
+            Log.d(TAG, "Room Web Socket not registered.")
+        }
     }
 
     private fun startRoomWebSocketService(broadcastReceiver: BroadcastReceiver) {
