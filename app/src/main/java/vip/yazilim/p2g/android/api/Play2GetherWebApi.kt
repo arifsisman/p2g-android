@@ -61,7 +61,7 @@ interface Play2GetherWebApi {
     fun getRoomModel(@Path("id") roomId: Long): Call<Response<RoomModel>>
 
     @GET("/api/room/model/me")
-    fun getRoomModelMe(): Call<Response<RoomModel>>
+    fun checkUserInRoom(): Call<Response<RoomModel>>
 
     @GET("/api/room/smodel/{id}")
     fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<Response<RoomModelSimplified>>

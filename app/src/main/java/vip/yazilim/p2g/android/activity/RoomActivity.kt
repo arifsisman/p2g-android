@@ -357,11 +357,6 @@ class RoomActivity : AppCompatActivity(),
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        request(Singleton.apiClient().leaveRoom(), null)
-    }
-
     private fun leaveRoom() {
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
