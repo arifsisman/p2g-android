@@ -22,7 +22,7 @@ import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -63,7 +63,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     // Observer
-    private val renderRoomModels = Observer<MutableList<RoomModelSimplified>> {
+    private val renderRoomModels = Observer<MutableList<RoomModel>> {
         Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
@@ -92,7 +92,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         })
     }
 
-    override fun onItemClicked(roomModel: RoomModelSimplified) {
+    override fun onItemClicked(roomModel: RoomModel) {
         val room: Room? = roomModel.room
 
         if (room?.password == null) {
@@ -103,8 +103,8 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModelSimplified: RoomModelSimplified) = request(
-        roomModelSimplified.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
+    private fun joinRoomEvent(roomModel: RoomModel) = request(
+        roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, msg)
@@ -114,14 +114,14 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModelSimplified", roomModelSimplified)
+                intent.putExtra("roomModelSimplified", roomModel)
                 intent.putExtra("roomUser", obj)
                 startActivity(intent)
             }
         })
 
 
-    private fun joinPrivateRoomEvent(roomModel: RoomModelSimplified) {
+    private fun joinPrivateRoomEvent(roomModel: RoomModel) {
         val room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
@@ -241,14 +241,14 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     private fun refreshRoomsEvent() = request(
-        Singleton.apiClient().getSimplifiedRoomModels(),
-        object : Callback<MutableList<RoomModelSimplified>> {
+        Singleton.apiClient().getRoomModels(),
+        object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
                 swipeRefreshContainer.isRefreshing = false
             }
 
-            override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
+            override fun onSuccess(obj: MutableList<RoomModel>) {
                 adapter.update(obj)
                 adapter.roomModelsFull = obj
                 swipeRefreshContainer.isRefreshing = false

@@ -8,7 +8,7 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_home.view.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
@@ -16,21 +16,21 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class HomeAdapter(
-    private var roomModels: MutableList<RoomModelSimplified>,
+    private var roomModels: MutableList<RoomModel>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<HomeAdapter.MViewHolder>(), Filterable {
 
     private lateinit var view: View
-    var roomModelsFull: MutableList<RoomModelSimplified> = mutableListOf()
+    var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindEvent(roomModel: RoomModelSimplified, clickListener: OnItemClickListener) {
+        fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(roomModel)
             }
         }
 
-        fun bindView(roomModel: RoomModelSimplified){
+        fun bindView(roomModel: RoomModel) {
             val roomOwnerPlaceholder =
                 "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
 
@@ -56,7 +56,7 @@ class HomeAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(roomModel: RoomModelSimplified)
+        fun onItemClicked(roomModel: RoomModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
@@ -74,7 +74,7 @@ class HomeAdapter(
         return roomModels.size
     }
 
-    fun update(data: MutableList<RoomModelSimplified>) {
+    fun update(data: MutableList<RoomModel>) {
         roomModels = data
         notifyDataSetChanged()
     }
@@ -89,7 +89,7 @@ class HomeAdapter(
         return object : Filter() {
 
             override fun performFiltering(constraint: CharSequence?): FilterResults? {
-                val filteredList: MutableList<RoomModelSimplified> = mutableListOf()
+                val filteredList: MutableList<RoomModel> = mutableListOf()
                 val charString = constraint.toString()
 
                 if (constraint == null || charString.isEmpty()) {
@@ -113,7 +113,7 @@ class HomeAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                update(filterResults.values as MutableList<RoomModelSimplified>)
+                update(filterResults.values as MutableList<RoomModel>)
             }
         }
     }

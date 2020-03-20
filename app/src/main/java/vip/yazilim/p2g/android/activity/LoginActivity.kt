@@ -131,7 +131,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) = request(
-        Singleton.apiClient().checkUserInRoom(),
+        Singleton.apiClient().getRoomModelMe(),
         object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
                 val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)

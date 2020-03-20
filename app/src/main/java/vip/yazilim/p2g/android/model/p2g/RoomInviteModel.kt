@@ -11,12 +11,12 @@ import vip.yazilim.p2g.android.entity.User
  */
 data class RoomInviteModel(
     var roomInvite: RoomInvite?,
-    var roomModel: RoomModelSimplified?,
+    var roomModel: RoomModel?,
     var inviter: User?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readParcelable(RoomInvite::class.java.classLoader),
-        parcel.readParcelable(RoomModelSimplified::class.java.classLoader),
+        parcel.readParcelable(RoomModel::class.java.classLoader),
         parcel.readParcelable(User::class.java.classLoader)
     )
 

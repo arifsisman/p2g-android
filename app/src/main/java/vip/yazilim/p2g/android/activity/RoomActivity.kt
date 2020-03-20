@@ -45,7 +45,6 @@ import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.entity.UserDevice
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.DeviceAdapter
@@ -166,7 +165,7 @@ class RoomActivity : AppCompatActivity(),
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
         val roomModelSimplifiedFromIntent =
-            intent.getParcelableExtra<RoomModelSimplified>("roomModelSimplified")
+            intent.getParcelableExtra<RoomModel>("roomModelSimplified")
 
         when {
             roomFromIntent != null -> {

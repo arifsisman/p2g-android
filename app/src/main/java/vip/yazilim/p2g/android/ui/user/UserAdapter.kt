@@ -14,7 +14,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.User
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -27,7 +27,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
  */
 class UserAdapter(
     private var userModel: UserModel?,
-    private var roomModel: RoomModelSimplified?,
+    private var roomModel: RoomModel?,
     private var friendCounts: Int
 ) :
     RecyclerView.Adapter<UserAdapter.MViewHolder>() {
@@ -140,7 +140,7 @@ class UserAdapter(
         return 1
     }
 
-    fun update(data: RoomModelSimplified) {
+    fun update(data: RoomModel) {
         roomModel = data
         notifyDataSetChanged()
     }
