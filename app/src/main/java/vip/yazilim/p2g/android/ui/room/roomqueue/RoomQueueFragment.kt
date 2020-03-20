@@ -116,8 +116,9 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
-        val mBuilder =
-            AlertDialog.Builder(context, R.style.fullScreenAppTheme).setView(searchDialogView)
+        val mBuilder = AlertDialog
+            .Builder(context, R.style.fullScreenAppTheme)
+            .setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
 
         val queryEditText = searchDialogView.dialogQuery
@@ -162,7 +163,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             val query = queryEditText.text.toString()
 
             request(
-                Singleton.apiClient().search(query),
+                Singleton.apiClient().searchSpotify(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
                         UIHelper.showSnackBarShortTop(searchDialogView, msg)

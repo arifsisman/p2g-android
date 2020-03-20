@@ -140,6 +140,9 @@ interface Play2GetherWebApi {
     @PUT("/api/user/friends/{id}/ignore")
     fun ignore(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
 
+    @GET("/api/user/search/name/{query}")
+    fun searchUser(@Path("query") query: String): Call<Response<MutableList<User>>>
+
 
     // Spotify Authorization API
     @GET("/api/spotify/login")
@@ -177,7 +180,7 @@ interface Play2GetherWebApi {
 
     // Spotify Search API
     @GET("/api/spotify/search/{query}")
-    fun search(@Path("query") query: String): Call<Response<MutableList<SearchModel>>>
+    fun searchSpotify(@Path("query") query: String): Call<Response<MutableList<SearchModel>>>
 
 
     // Spotify Device API

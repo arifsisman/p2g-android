@@ -2,24 +2,32 @@ package vip.yazilim.p2g.android.ui.room.roomusers
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
+import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
+import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.entity.RoomUser
+import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
+import vip.yazilim.p2g.android.ui.room.roominvite.RoomInviteAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -30,10 +38,14 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  */
 class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     FragmentBase(roomViewModel, R.layout.fragment_room_users),
-    RoomUsersAdapter.OnItemClickListener {
+    RoomUsersAdapter.OnItemClickListener,
+    RoomInviteAdapter.OnItemClickListener {
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomUsersAdapter
+
+    private lateinit var inviteAdapter: RoomInviteAdapter
+    private lateinit var inviteDialogView: View
 
     override fun setupUI() {
         roomActivity = activity as RoomActivity
@@ -55,6 +67,8 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         swipeRefreshContainer.setOnRefreshListener {
             refreshUsersEvent()
         }
+
+        fab_invite.setOnClickListener { showInviteDialog() }
     }
 
     override fun setupViewModel() {
@@ -95,6 +109,71 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                 swipeRefreshContainer.isRefreshing = false
             }
         })
+
+    private fun showInviteDialog() {
+        inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
+
+        val mBuilder = AlertDialog
+            .Builder(context, R.style.fullScreenAppTheme)
+            .setView(inviteDialogView)
+        val mAlertDialog = mBuilder.show()
+
+        val queryEditText = inviteDialogView.dialogQuery
+        val searchButton = inviteDialogView.dialog_search_button
+        val cancelButton = inviteDialogView.dialog_cancel_button
+
+        // For disable create button if name is empty
+        queryEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                searchButton.isEnabled = s.length > 2
+            }
+        })
+
+        cancelButton.setOnClickListener {
+            mAlertDialog.cancel()
+            queryEditText.clearFocus()
+        }
+
+        searchButton.setOnClickListener {
+            // Adapter start and update with requested search model
+            val inviteRecyclerView: RecyclerView =
+                inviteDialogView.findViewById(R.id.inviteRecyclerView)
+            inviteRecyclerView.layoutManager = LinearLayoutManager(activity)
+            inviteRecyclerView.setHasFixedSize(true)
+
+            inviteAdapter = RoomInviteAdapter(mutableListOf(), this@RoomUsersFragment)
+            inviteRecyclerView.adapter = inviteAdapter
+
+            inviteRecyclerView.addItemDecoration(object : DividerItemDecoration(
+                inviteRecyclerView.context,
+                (inviteRecyclerView.layoutManager as LinearLayoutManager).orientation
+            ) {})
+
+            val query = queryEditText.text.toString()
+
+            request(
+                Singleton.apiClient().searchUser(query),
+                object : Callback<MutableList<User>> {
+                    override fun onError(msg: String) {
+                        UIHelper.showSnackBarShortTop(inviteDialogView, msg)
+                    }
+
+                    override fun onSuccess(obj: MutableList<User>) {
+                        closeKeyboard()
+                        inviteAdapter.update(obj)
+
+                        // Search text query
+                        val searchText: TextView = inviteDialogView.findViewById(R.id.searchText)
+                        val searchTextPlaceholder = "Search with query '${query}'"
+                        searchText.text = searchTextPlaceholder
+                        searchText.visibility = View.VISIBLE
+                    }
+                })
+        }
+
+    }
 
     override fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         if (view.openStatus != SwipeLayout.Status.Open) {
@@ -189,5 +268,27 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     UIHelper.showSnackBarShortTop(root, msg)
                 }
             })
+    }
+
+    override fun onItemClicked(view: View, user: User) {
+        val roomId = (activity as RoomActivity).room?.id
+        val userId = user.id
+
+        if (roomId != null && userId != null) {
+            request(Singleton.apiClient().inviteUser(roomId, userId),
+                object : Callback<RoomInvite> {
+                    override fun onSuccess(obj: RoomInvite) {
+                        UIHelper.showSnackBarShortTop(root, "${user.name} invited to room.")
+                    }
+
+                    override fun onError(msg: String) {
+                        UIHelper.showSnackBarShortTop(root, msg)
+                    }
+                })
+        }
+    }
+
+    override fun onInviteClicked(view: View, user: User) {
+        onItemClicked(view, user)
     }
 }

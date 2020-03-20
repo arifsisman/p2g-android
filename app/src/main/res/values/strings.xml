@@ -102,5 +102,6 @@
     <string name="hint_enter_a_message">Type a message…</string>
     <string name="placeholder_user_message">Message</string>
     <string name="title_search_user">Search User</string>
+    <string name="placeholder_invite_user">Search with username…</string>
 
 </resources>
