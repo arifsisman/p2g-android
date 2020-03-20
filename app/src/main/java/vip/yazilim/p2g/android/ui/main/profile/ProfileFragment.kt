@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
@@ -25,6 +26,8 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -39,7 +42,7 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupMainViewModel()
+//        super.setupMainViewModel()
         viewModel.userModel.observe(this, renderUser)
         viewModel.friendCountsMe.observe(this, renderFriendsCount)
     }

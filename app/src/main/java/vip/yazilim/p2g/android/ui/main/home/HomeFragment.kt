@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
@@ -42,6 +43,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -50,7 +52,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupMainViewModel()
+//        super.setupMainViewModel()
         viewModel.roomModels.observe(this, renderRoomModels)
     }
 

@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
@@ -53,6 +54,8 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
         val intentFilter = IntentFilter(ACTION_ROOM_INVITE)
         activity?.registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -64,7 +67,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupMainViewModel()
+//        super.setupMainViewModel()
         viewModel.roomInviteModel.observe(this, renderRoomInviteModel)
     }
 

@@ -33,7 +33,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupViewModelBase()
+        mainViewModel =
+            ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
 
         intent.getParcelableExtra<User>("user")?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
@@ -45,11 +46,6 @@ class MainActivity : AppCompatActivity() {
                 startService(intent)
             }
         }
-    }
-
-    private fun setupViewModelBase() {
-        mainViewModel =
-            ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

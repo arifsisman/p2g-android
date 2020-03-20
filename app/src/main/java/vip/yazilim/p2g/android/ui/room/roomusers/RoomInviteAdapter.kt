@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.ui.room
+package vip.yazilim.p2g.android.ui.room.roomusers
 
 import android.view.LayoutInflater
 import android.view.View

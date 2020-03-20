@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -43,6 +44,8 @@ class FriendsFragment : FragmentBase(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -54,7 +57,7 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupMainViewModel()
+//        super.setupMainViewModel()
         viewModel.friendRequestModel.observe(this, renderData)
     }
 
