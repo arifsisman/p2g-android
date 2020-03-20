@@ -156,10 +156,10 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onJoinClicked(room: Room?) {
-        if (room?.password?.isNotEmpty()!!) {
-            joinPrivateRoomEvent(room)
+        if (room?.password == null) {
+            room?.let { joinRoomEvent(it) }
         } else {
-            joinRoomEvent(room)
+            joinPrivateRoomEvent(room)
         }
     }
 
