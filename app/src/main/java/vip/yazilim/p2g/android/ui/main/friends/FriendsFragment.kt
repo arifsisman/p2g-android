@@ -89,17 +89,15 @@ class FriendsFragment : FragmentBase(
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
-        searchView.queryHint = "Search Friends"
+        searchView.queryHint = resources.getString(R.string.hint_search_friends)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("queryText", query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
-                Log.d("queryText", newText)
                 return true
             }
         })
@@ -186,9 +184,9 @@ class FriendsFragment : FragmentBase(
 
 
         AlertDialog.Builder(context)
-            .setMessage("Are you sure you want to delete friend ?")
-            .setPositiveButton("Yes", dialogClickListener)
-            .setNegativeButton("No", dialogClickListener)
+            .setMessage(resources.getString(R.string.info_delete_friend))
+            .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
+            .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
             .show()
     }
 

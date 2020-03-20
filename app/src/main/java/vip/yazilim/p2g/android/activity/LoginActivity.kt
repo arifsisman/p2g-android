@@ -55,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
             if (response.code != null) {
                 getTokensFromSpotify(response.code)
             } else {
-                val msg = "Can not get authorization code from Spotify"
+                val msg = resources.getString(R.string.err_authorization_code)
                 Log.d(TAG, msg)
                 UIHelper.showToastShort(this, msg)
             }
@@ -140,7 +140,8 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError(msg: String) {
-                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${user.name}")
+                val info = resources.getString(R.string.info_logged_in)
+                UIHelper.showToastLong(this@LoginActivity, "$info ${user.name}")
                 val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
                 startMainIntent.putExtra("user", user)
                 startMainIntent.putExtra("tokenModel", tokenModel)

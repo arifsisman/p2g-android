@@ -19,11 +19,15 @@
     <string name="title_invite">Invite</string>
     <string name="title_clear_queue">Clear room queue</string>
     <string name="title_select_device">Select playback device</string>
-
+    <string name="title_sync_with_room">Sync with room</string>
 
     <!--Eng. Hints-->
     <string name="hint_room_password_optional">Room Password (Optional)</string>
     <string name="hint_room_password_required">Room Password</string>
+    <string name="hint_enter_a_message">Type a message…</string>
+    <string name="hint_search_room">Search Room or Owner</string>
+    <string name="hint_search_friends">Search Friends</string>
+    <string name="hint_search_invites">Search Room Invites</string>
 
     <!--Eng. Descriptions-->
     <string name="description_profile_image">Profile Image</string>
@@ -46,7 +50,8 @@
     <string name="description_repeat_button">Replay button</string>
     <string name="description_search_model_cover_image">Search Model Cover Image</string>
     <string name="description_friend_request_icon">Friend Request Icon</string>
-
+    <string name="description_play_song_button">Play song button</string>
+    <string name="description_delete_song_button">Delete song button</string>
 
     <!--Eng. Placeholders-->
     <string name="placeholder_cancel">Cancel</string>
@@ -89,20 +94,49 @@
     <string name="placeholder_room_name">Room Name</string>
     <string name="placeholder_room_name_expanded">Room:</string>
     <string name="placeholder_song_default_time">00:00</string>
-    <string name="description_play_song_button">Play song button</string>
-    <string name="description_delete_song_button">Delete song button</string>
     <string name="placeholder_play_song">Play Song</string>
     <string name="placeholder_upvote_song">Upvote Song</string>
     <string name="placeholder_downvote_song">Downvote Song</string>
     <string name="placeholder_delete_song">Delete Song</string>
     <string name="placeholder_device_name">Device Name</string>
     <string name="placeholder_device_type">Device Type</string>
-    <string name="title_sync_with_room">Sync with room</string>
     <string name="placeholder_user_role">User Role</string>
-    <string name="hint_enter_a_message">Type a message…</string>
     <string name="placeholder_user_message">Message</string>
-    <string name="title_search_user">Search User</string>
     <string name="placeholder_invite_user">Search with username…</string>
     <string name="placeholder_close">Close</string>
+
+    <!--Eng. Errors-->
+    <string name="err_authorization_code">Can not get authorization code from Spotify</string>
+    <string name="err_room_websocket_reconnect">Trying to reconnect the room.</string>
+    <string name="err_room_websocket_closed">Connection to the room closed, please connect the room again.</string>
+    <string name="err_room_refresh">Rooms can not refreshed</string>
+    <string name="err_room_invites_refresh">Rooms Invites can not refreshed</string>
+    <string name="err_room_queue_refresh">Queue can not refreshed</string>
+    <string name="err_room_user_refresh">Users can not refreshed</string>
+    <string name="err_room_queue_add">10 songs or 1 Album/Playlist can be added in each search!</string>
+    <string name="err_song_vote">Song voted before</string>
+
+    <!--Eng. Infos-->
+    <string name="info_yes">Yes</string>
+    <string name="info_no">No</string>
+    <string name="info_logged_in">Logged in as</string>
+    <string name="info_sync">Playback synced with room</string>
+    <string name="info_not_playing">There is no song in the room</string>
+    <string name="info_leave_room">Are you sure you want leave room?</string>
+    <string name="info_clear_queue">Are you sure you want clear room queue?</string>
+    <string name="info_queue_cleared">Room queue cleared</string>
+    <string name="info_closed">closed</string>
+    <string name="info_device_change">Active device changed.</string>
+    <string name="info_delete_friend">Are you sure you want to delete friend?</string>
+    <string name="info_search_queue">Search with query</string>
+    <string name="info_search_invite">Search users with name</string>
+    <string name="info_song_upvoted">upvoted</string>
+    <string name="info_song_downvoted">downvoted</string>
+    <string name="info_promote_demote">\'s role updated as</string>
+    <string name="info_change_owner1">Are you sure you want make</string>
+    <string name="info_change_owner2">\'s Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)</string>
+    <string name="info_friend_request_send">Friend request sent to</string>
+    <string name="info_room_invite_send">invited to room.</string>
+
 
 </resources>

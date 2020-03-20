@@ -92,7 +92,10 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, "Users cannot refreshed")
+                UIHelper.showSnackBarShortTop(
+                    root,
+                    resources.getString(R.string.err_room_user_refresh)
+                )
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -162,7 +165,8 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
 
                         // Search text query
                         val searchText: TextView = inviteDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder = "Search users with name '${query}'"
+                        val searchTextPlaceholder =
+                            "${resources.getString(R.string.info_search_invite)} '${query}'"
                         searchText.text = searchTextPlaceholder
                         searchText.visibility = View.VISIBLE
                     }
@@ -205,7 +209,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                                 override fun onSuccess(obj: Boolean) {
                                     UIHelper.showSnackBarShortTop(
                                         root,
-                                        "${roomUserModel.user?.name}'s role updated as ${Role.ROOM_OWNER.role}"
+                                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${Role.ROOM_OWNER.role}"
                                     )
                                 }
 
@@ -218,9 +222,14 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             }
 
             AlertDialog.Builder(activity)
-                .setMessage("Are you sure you want make $userName's Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+                .setMessage(
+                    "${resources.getString(R.string.info_change_owner1)} $userName${resources.getString(
+                        R.string.info_change_owner2
+                    )}"
+                )
+                .setMessage(resources.getString(R.string.info_clear_queue))
+                .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
+                .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
                 .show()
         } else {
             request(
@@ -229,7 +238,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     override fun onSuccess(obj: RoomUser) {
                         UIHelper.showSnackBarShortTop(
                             root,
-                            "${roomUserModel.user?.name}'s role updated as ${obj.role}"
+                            "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
                         )
                     }
 
@@ -249,7 +258,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                 override fun onSuccess(obj: RoomUser) {
                     UIHelper.showSnackBarShortTop(
                         root,
-                        "${roomUserModel.user?.name}'s role updated as ${obj.role}"
+                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
                     )
                 }
 
@@ -268,7 +277,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                 override fun onSuccess(obj: Boolean) {
                     UIHelper.showSnackBarShortTop(
                         root,
-                        "Friend request sent to ${roomUserModel.user?.name}"
+                        "${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}"
                     )
                 }
 
@@ -288,7 +297,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     override fun onSuccess(obj: RoomInvite) {
                         UIHelper.showSnackBarShortTop(
                             inviteDialogView,
-                            "${user.name} invited to room."
+                            "${user.name} ${resources.getString(R.string.info_room_invite_send)}"
                         )
                     }
 

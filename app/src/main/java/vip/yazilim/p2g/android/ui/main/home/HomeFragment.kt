@@ -76,17 +76,15 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
-        searchView.queryHint = "Search Room or Owner"
+        searchView.queryHint = resources.getString(R.string.hint_search_room)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("queryText", query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
-                Log.d("queryText", newText)
                 return true
             }
         })
@@ -244,7 +242,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         Singleton.apiClient().getRoomModels(),
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_room_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 

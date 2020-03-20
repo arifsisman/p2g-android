@@ -20,7 +20,6 @@ class RoomInviteAdapter(
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<RoomInviteAdapter.MViewHolder>() {
 
-    var userListFull: MutableList<User> = mutableListOf()
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -82,7 +81,6 @@ class RoomInviteAdapter(
 
     fun clear() {
         userList.clear()
-        userListFull.clear()
         notifyDataSetChanged()
     }
 

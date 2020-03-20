@@ -17,8 +17,6 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.TimeHelper
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 /**
@@ -100,23 +98,6 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
         override fun onBind(message: ChatMessage?) {
             super.onBind(message)
             itemView.messageAuthor.text = message?.roomUser?.name ?: ""
-        }
-    }
-
-    private fun getMessageStringFormatter(): MessagesListAdapter.Formatter<ChatMessage>? {
-        return MessagesListAdapter.Formatter<ChatMessage> { message ->
-            val createdAt = SimpleDateFormat(
-                "MMM d, EEE 'at' h:mm a",
-                Locale.getDefault()
-            )
-                .format(message.createdAt)
-
-            var text: String? = message.text
-            if (text == null) text = "[attachment]"
-            String.format(
-                Locale.getDefault(), "%s: %s (%s)",
-                message.user?.name, text, createdAt
-            )
         }
     }
 

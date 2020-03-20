@@ -163,6 +163,7 @@ class RoomActivity : AppCompatActivity(),
     private fun setupRoomModel() {
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
+        //todo roomModelSimplified will change
         val roomModelSimplifiedFromIntent =
             intent.getParcelableExtra<RoomModel>("roomModelSimplified")
 
@@ -339,9 +340,15 @@ class RoomActivity : AppCompatActivity(),
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     if (obj) {
-                        UIHelper.showSnackBarShortTop(viewPager, "Playback synced with room")
+                        UIHelper.showSnackBarShortTop(
+                            viewPager,
+                            resources.getString(R.string.info_sync)
+                        )
                     } else {
-                        UIHelper.showSnackBarShortTop(viewPager, "There is no song in the room")
+                        UIHelper.showSnackBarShortTop(
+                            viewPager,
+                            resources.getString(R.string.info_not_playing)
+                        )
                     }
                 }
 
@@ -374,9 +381,9 @@ class RoomActivity : AppCompatActivity(),
         }
 
         AlertDialog.Builder(this)
-            .setMessage("Are you sure you want leave room ?")
-            .setPositiveButton("Yes", dialogClickListener)
-            .setNegativeButton("No", dialogClickListener)
+            .setMessage(resources.getString(R.string.info_leave_room))
+            .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
+            .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
             .show()
     }
 
@@ -421,7 +428,10 @@ class RoomActivity : AppCompatActivity(),
                         room?.id?.let { Singleton.apiClient().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
-                                UIHelper.showSnackBarShortTop(viewPager, "Room queue cleared.")
+                                UIHelper.showSnackBarShortTop(
+                                    viewPager,
+                                    resources.getString(R.string.info_queue_cleared)
+                                )
                             }
 
                             override fun onError(msg: String) {
@@ -433,9 +443,9 @@ class RoomActivity : AppCompatActivity(),
         }
 
         AlertDialog.Builder(this)
-            .setMessage("Are you sure you want clear room queue ?")
-            .setPositiveButton("Yes", dialogClickListener)
-            .setNegativeButton("No", dialogClickListener)
+            .setMessage(resources.getString(R.string.info_clear_queue))
+            .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
+            .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
             .show()
     }
 
@@ -509,21 +519,23 @@ class RoomActivity : AppCompatActivity(),
                         roomWsReconnectCounter++
                         UIHelper.showSnackBarShortTop(
                             viewPager,
-                            "Trying to reconnect the room."
+                            resources.getString(R.string.err_room_websocket_reconnect)
                         )
                     } else {
                         UIHelper.showSnackBarShortTopIndefinite(
                             viewPager,
-                            "Connection to the room closed, please connect the room again."
+                            resources.getString(R.string.err_room_websocket_closed)
                         )
                     }
                 }
                 ACTION_ROOM_STATUS -> {
                     val status: String? = intent.getStringExtra(ACTION_ROOM_STATUS)
                     if (status.equals(RoomStatus.CLOSED.status)) {
+                        val roomPlaceholder = resources.getString(R.string.title_room)
+                        val closedPlaceholder = resources.getString(R.string.info_closed)
                         UIHelper.showToastLong(
                             context,
-                            "Room ${room?.name} ${RoomStatus.CLOSED.status} by ${room?.ownerId}"
+                            "$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}"
                         )
                         request(Singleton.apiClient().leaveRoom(), null)
 
@@ -699,7 +711,10 @@ class RoomActivity : AppCompatActivity(),
             Singleton.apiClient().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
-                    UIHelper.showSnackBarShortTop(viewPager, "Active device changed.")
+                    UIHelper.showSnackBarShortTop(
+                        viewPager,
+                        resources.getString(R.string.info_device_change)
+                    )
                 }
 
                 override fun onError(msg: String) {
