@@ -1,5 +1,7 @@
 package vip.yazilim.p2g.android.ui.room.roomusers
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,6 +15,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -102,20 +105,52 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
-        request(
-            roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
-            object : Callback<RoomUser> {
-                override fun onSuccess(obj: RoomUser) {
-                    UIHelper.showSnackBarShortTop(
-                        root,
-                        "${roomUserModel.user?.name}'s role updated as ${obj.role}"
-                    )
-                }
+        if (roomUserModel.roomUser?.role == Role.ROOM_ADMIN.role) {
+            val userName = roomUserModel.roomUser?.userName
+            val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
+                when (ans) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        request(
+                            roomUserModel.roomUser?.id?.let {
+                                Singleton.apiClient().changeRoomOwner(it)
+                            },
+                            object : Callback<Boolean> {
+                                override fun onSuccess(obj: Boolean) {
+                                    UIHelper.showSnackBarShortTop(
+                                        root,
+                                        "${roomUserModel.user?.name}'s role updated as ${Role.ROOM_OWNER.role}"
+                                    )
+                                }
 
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
+                                override fun onError(msg: String) {
+                                    UIHelper.showSnackBarShortTop(root, msg)
+                                }
+                            })
+                    }
                 }
-            })
+            }
+
+            AlertDialog.Builder(activity)
+                .setMessage("Are you sure you want make $userName's Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener)
+                .show()
+        } else {
+            request(
+                roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
+                object : Callback<RoomUser> {
+                    override fun onSuccess(obj: RoomUser) {
+                        UIHelper.showSnackBarShortTop(
+                            root,
+                            "${roomUserModel.user?.name}'s role updated as ${obj.role}"
+                        )
+                    }
+
+                    override fun onError(msg: String) {
+                        UIHelper.showSnackBarShortTop(root, msg)
+                    }
+                })
+        }
     }
 
     override fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {

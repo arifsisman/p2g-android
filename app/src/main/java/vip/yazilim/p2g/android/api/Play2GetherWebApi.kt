@@ -82,6 +82,9 @@ interface Play2GetherWebApi {
     @PUT("/api/room/user/{id}/demote")
     fun demoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
 
+    @PUT("/api/room/user/{id}/makeOwner")
+    fun changeRoomOwner(@Path("id") roomUserId: Long): Call<Response<Boolean>>
+
     @GET("/api/room/user/me")
     fun getRoomUserModelMe(): Call<Response<RoomUserModel>>
 
@@ -90,7 +93,7 @@ interface Play2GetherWebApi {
     @GET("/api/room/{roomId}/queue")
     fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<MutableList<Song>>>
 
-    @POST("/api/{roomId}/queue")
+    @POST("/api/room/{roomId}/queue")
     fun addSongToRoom(
         @Path("roomId") roomId: Long,
         @Body searchModelList: List<SearchModel>
