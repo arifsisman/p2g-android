@@ -18,7 +18,7 @@ class FriendsViewModel : ViewModelBase() {
         _isViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getFriendRequestModel(),
+            Singleton.apiClient().getFriendRequestModels(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
@@ -41,7 +41,7 @@ class FriendsViewModel : ViewModelBase() {
         _isViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getFriends(),
+            Singleton.apiClient().getFriendModels(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)

@@ -122,8 +122,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         val searchButton = inviteDialogView.dialog_search_button
         val cancelButton = inviteDialogView.dialog_close_button
 
-        queryEditText.requestFocus()
-
         // For disable create button if name is empty
         queryEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -169,12 +167,24 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
 
                         // Search text query
                         val searchText: TextView = inviteDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder = "Search with query '${query}'"
+                        val searchTextPlaceholder = "Search users with name '${query}'"
                         searchText.text = searchTextPlaceholder
                         searchText.visibility = View.VISIBLE
                     }
                 })
         }
+
+        // Load friends
+        request(
+            Singleton.apiClient().getFriends(),
+            object : Callback<MutableList<User>> {
+                override fun onError(msg: String) {
+                }
+
+                override fun onSuccess(obj: MutableList<User>) {
+                    inviteAdapter.update(obj)
+                }
+            })
 
     }
 

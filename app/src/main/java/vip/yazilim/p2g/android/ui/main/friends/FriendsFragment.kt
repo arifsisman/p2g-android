@@ -199,7 +199,7 @@ class FriendsFragment : FragmentBase(
     }
 
     private fun loadFriendRequestModel() = request(
-        Singleton.apiClient().getFriendRequestModel(),
+        Singleton.apiClient().getFriendRequestModels(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, msg)
@@ -215,7 +215,7 @@ class FriendsFragment : FragmentBase(
 
 
     private fun loadFriends() = request(
-        Singleton.apiClient().getFriends(),
+        Singleton.apiClient().getFriendModels(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, msg)
