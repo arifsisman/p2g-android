@@ -103,5 +103,6 @@
     <string name="placeholder_user_message">Message</string>
     <string name="title_search_user">Search User</string>
     <string name="placeholder_invite_user">Search with username…</string>
+    <string name="placeholder_close">Close</string>
 
 </resources>

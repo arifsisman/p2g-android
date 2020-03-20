@@ -2,8 +2,9 @@ package vip.yazilim.p2g.android.ui.room.roominvite
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import androidx.appcompat.widget.SearchView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,29 +51,6 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
     ): View? {
         setHasOptionsMenu(true)
         return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.options_menu_room_invites, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-
-        val searchItem = menu.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-
-        searchView.queryHint = "Search User"
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("queryText", query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                Log.d("queryText", newText)
-                adapter.filter.filter(newText)
-                return true
-            }
-        })
     }
 
     private fun refreshRoomInviteUsers() = request(
@@ -123,10 +101,6 @@ class RoomInviteFragment(var roomViewModel: RoomViewModel) :
                     }
                 })
         }
-    }
-
-    override fun onInviteClicked(view: View, user: User) {
-        onItemClicked(view, user)
     }
 
 }

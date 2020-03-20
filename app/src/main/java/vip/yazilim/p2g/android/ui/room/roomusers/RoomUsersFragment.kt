@@ -120,7 +120,9 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
 
         val queryEditText = inviteDialogView.dialogQuery
         val searchButton = inviteDialogView.dialog_search_button
-        val cancelButton = inviteDialogView.dialog_cancel_button
+        val cancelButton = inviteDialogView.dialog_close_button
+
+        queryEditText.requestFocus()
 
         // For disable create button if name is empty
         queryEditText.addTextChangedListener(object : TextWatcher {
@@ -136,28 +138,29 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             queryEditText.clearFocus()
         }
 
+        // Adapter start and update with requested search model
+        val inviteRecyclerView: RecyclerView =
+            inviteDialogView.findViewById(R.id.inviteRecyclerView)
+        inviteRecyclerView.setHasFixedSize(true)
+        inviteRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        inviteAdapter = RoomInviteAdapter(mutableListOf(), this@RoomUsersFragment)
+        inviteAdapter.clear()
+        inviteRecyclerView.adapter = inviteAdapter
+
+        inviteRecyclerView.addItemDecoration(object : DividerItemDecoration(
+            inviteRecyclerView.context,
+            (inviteRecyclerView.layoutManager as LinearLayoutManager).orientation
+        ) {})
+
         searchButton.setOnClickListener {
-            // Adapter start and update with requested search model
-            val inviteRecyclerView: RecyclerView =
-                inviteDialogView.findViewById(R.id.inviteRecyclerView)
-            inviteRecyclerView.layoutManager = LinearLayoutManager(activity)
-            inviteRecyclerView.setHasFixedSize(true)
-
-            inviteAdapter = RoomInviteAdapter(mutableListOf(), this@RoomUsersFragment)
-            inviteRecyclerView.adapter = inviteAdapter
-
-            inviteRecyclerView.addItemDecoration(object : DividerItemDecoration(
-                inviteRecyclerView.context,
-                (inviteRecyclerView.layoutManager as LinearLayoutManager).orientation
-            ) {})
-
             val query = queryEditText.text.toString()
 
             request(
                 Singleton.apiClient().searchUser(query),
                 object : Callback<MutableList<User>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(inviteDialogView, msg)
+                        UIHelper.showSnackBarShortTop(inviteRecyclerView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<User>) {
@@ -278,17 +281,16 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             request(Singleton.apiClient().inviteUser(roomId, userId),
                 object : Callback<RoomInvite> {
                     override fun onSuccess(obj: RoomInvite) {
-                        UIHelper.showSnackBarShortTop(root, "${user.name} invited to room.")
+                        UIHelper.showSnackBarShortTop(
+                            inviteDialogView,
+                            "${user.name} invited to room."
+                        )
                     }
 
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(root, msg)
+                        UIHelper.showSnackBarShortTop(inviteDialogView, msg)
                     }
                 })
         }
-    }
-
-    override fun onInviteClicked(view: View, user: User) {
-        onItemClicked(view, user)
     }
 }
