@@ -5,8 +5,6 @@ import android.content.DialogInterface
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
@@ -26,8 +24,8 @@ import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.room.RoomInviteAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.ui.room.roominvite.RoomInviteAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -74,12 +72,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     override fun setupViewModel() {
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.options_menu_room, menu)
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     // Observer
@@ -142,7 +134,10 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         inviteRecyclerView.setHasFixedSize(true)
         inviteRecyclerView.layoutManager = LinearLayoutManager(activity)
 
-        inviteAdapter = RoomInviteAdapter(mutableListOf(), this@RoomUsersFragment)
+        inviteAdapter = RoomInviteAdapter(
+            mutableListOf(),
+            this@RoomUsersFragment
+        )
         inviteAdapter.clear()
         inviteRecyclerView.adapter = inviteAdapter
 

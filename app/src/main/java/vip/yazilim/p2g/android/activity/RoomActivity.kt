@@ -52,7 +52,6 @@ import vip.yazilim.p2g.android.ui.room.PlayerAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
-import vip.yazilim.p2g.android.ui.room.roominvite.RoomInviteFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -339,7 +338,11 @@ class RoomActivity : AppCompatActivity(),
             roomUser?.let { Singleton.apiClient().syncWithRoom(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    UIHelper.showSnackBarShortTop(viewPager, "Playback synced with room")
+                    if (obj) {
+                        UIHelper.showSnackBarShortTop(viewPager, "Playback synced with room")
+                    } else {
+                        UIHelper.showSnackBarShortTop(viewPager, "There is no song in the room")
+                    }
                 }
 
                 override fun onError(msg: String) {
@@ -573,7 +576,6 @@ class RoomActivity : AppCompatActivity(),
                 0 -> RoomQueueFragment(roomViewModel)
                 1 -> RoomUsersFragment(roomViewModel)
                 2 -> RoomChatFragment(roomViewModel)
-                3 -> RoomInviteFragment(roomViewModel)
                 else -> throw IllegalArgumentException()
             }
         }
@@ -581,8 +583,7 @@ class RoomActivity : AppCompatActivity(),
         private val tabTitles = arrayOf(
             R.string.title_queue,
             R.string.title_users,
-            R.string.title_chat,
-            R.string.title_invite
+            R.string.title_chat
         )
 
         override fun getPageTitle(position: Int): CharSequence? {
