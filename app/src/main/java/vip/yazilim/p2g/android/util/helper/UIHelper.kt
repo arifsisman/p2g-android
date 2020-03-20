@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.snackbar.Snackbar
@@ -116,6 +117,13 @@ class UIHelper {
                 if (item !== exception) item.isVisible = visible
             }
         }
+
+        fun Context.closeKeyboard() {
+            val inputMethodManager =
+                this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+        }
+
     }
 }
 

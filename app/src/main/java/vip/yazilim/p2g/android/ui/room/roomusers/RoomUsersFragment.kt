@@ -28,6 +28,7 @@ import vip.yazilim.p2g.android.ui.room.RoomInviteAdapter
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
@@ -35,7 +36,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomUsersFragment(var roomViewModel: RoomViewModel) :
-    FragmentBase(roomViewModel, R.layout.fragment_room_users),
+    FragmentBase(R.layout.fragment_room_users),
     RoomUsersAdapter.OnItemClickListener,
     RoomInviteAdapter.OnItemClickListener {
 
@@ -160,7 +161,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                     }
 
                     override fun onSuccess(obj: MutableList<User>) {
-                        closeKeyboard()
+                        context?.closeKeyboard()
                         inviteAdapter.update(obj)
 
                         // Search text query

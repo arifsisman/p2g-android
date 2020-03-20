@@ -12,6 +12,7 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 
 
@@ -19,9 +20,9 @@ import vip.yazilim.p2g.android.util.helper.TAG
  * @author mustafaarifsisman - 11.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
+class UserFragment : FragmentBase(R.layout.fragment_user) {
 
-    private lateinit var viewModel: UserViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var adapter: UserAdapter
     private var userModel: UserModel? = null
 
@@ -45,8 +46,8 @@ class UserFragment : FragmentBase(UserViewModel(), R.layout.fragment_user) {
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as UserViewModel
-        viewModel.friendCounts.observe(this, renderFriendsCount)
+        viewModel = super.setupMainViewModel()
+        viewModel.friendCountsMe.observe(this, renderFriendsCount)
         viewModel.roomModel.observe(this, renderRoomModel)
     }
 

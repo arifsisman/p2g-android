@@ -24,7 +24,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomChatFragment(var roomViewModel: RoomViewModel) :
-    FragmentBase(roomViewModel, R.layout.fragment_room_chat) {
+    FragmentBase(R.layout.fragment_room_chat) {
 
     private var senderId: String? = roomViewModel.roomUserModel.value?.roomUser?.userId
     private lateinit var messagesAdapter: MessagesListAdapter<ChatMessage>

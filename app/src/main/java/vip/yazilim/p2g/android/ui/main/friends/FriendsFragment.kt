@@ -25,18 +25,19 @@ import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class FriendsFragment : FragmentBase(
-    FriendsViewModel(),
     R.layout.fragment_friends
 ),
     FriendsAdapter.OnItemClickListener {
 
-    private lateinit var viewModel: FriendsViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var adapter: FriendsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +54,8 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as FriendsViewModel
-        viewModel.data.observe(this, renderData)
+        viewModel = super.setupMainViewModel()
+        viewModel.friendRequestModel.observe(this, renderData)
     }
 
 
@@ -62,7 +63,7 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.data.value ?: mutableListOf(), this, this)
+        adapter = FriendsAdapter(viewModel.friendRequestModel.value ?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
@@ -286,7 +287,7 @@ class FriendsFragment : FragmentBase(
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
                         mAlertDialog.dismiss()
-                        closeKeyboard()
+                        context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
                         startActivity(intent)
@@ -298,7 +299,7 @@ class FriendsFragment : FragmentBase(
         mDialogView.dialog_cancel_button.setOnClickListener {
             mAlertDialog.cancel()
             roomPasswordEditText.clearFocus()
-            closeKeyboard()
+            context?.closeKeyboard()
         }
     }
 }

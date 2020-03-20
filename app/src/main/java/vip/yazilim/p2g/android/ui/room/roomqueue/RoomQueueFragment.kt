@@ -27,6 +27,7 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -35,7 +36,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomQueueFragment(var roomViewModel: RoomViewModel) :
-    FragmentBase(roomViewModel, R.layout.fragment_room_queue),
+    FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener {
 
@@ -171,7 +172,7 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
-                        closeKeyboard()
+                        context?.closeKeyboard()
 
                         // Hide search bar, search button and show addButton
                         searchButton.visibility = View.GONE

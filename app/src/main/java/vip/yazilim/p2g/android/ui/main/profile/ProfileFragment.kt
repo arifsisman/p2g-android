@@ -10,15 +10,16 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 
 /**
  * @author mustafaarifsisman - 04.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profile) {
+class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
 
-    private lateinit var viewModel: ProfileViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ProfileAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,7 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
     override fun onResume() {
         super.onResume()
         viewModel.loadUserModel()
-        viewModel.loadFriendsCount()
+        viewModel.loadFriendsCountMe()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -38,9 +39,9 @@ class ProfileFragment : FragmentBase(ProfileViewModel(), R.layout.fragment_profi
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as ProfileViewModel
+        viewModel = super.setupMainViewModel()
         viewModel.userModel.observe(this, renderUser)
-        viewModel.friendCounts.observe(this, renderFriendsCount)
+        viewModel.friendCountsMe.observe(this, renderFriendsCount)
     }
 
     override fun setupUI() {

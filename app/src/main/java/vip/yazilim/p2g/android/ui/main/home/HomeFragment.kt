@@ -24,18 +24,20 @@ import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 04.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
+class HomeFragment : FragmentBase(R.layout.fragment_home),
     HomeAdapter.OnItemClickListener {
     private lateinit var adapter: HomeAdapter
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +50,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as HomeViewModel
+        viewModel = super.setupMainViewModel()
         viewModel.roomModels.observe(this, renderRoomModels)
     }
 
@@ -162,7 +164,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
                         mAlertDialog.dismiss()
-                        closeKeyboard()
+                        context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
                         intent.putExtra("roomModel", roomModel)
@@ -177,7 +179,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         mDialogView.dialog_cancel_button.setOnClickListener {
             mAlertDialog.cancel()
             roomPasswordEditText.clearFocus()
-            closeKeyboard()
+            context?.closeKeyboard()
         }
     }
 
@@ -218,7 +220,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
                     override fun onSuccess(obj: Room) {
                         Log.d(TAG, "Room created with ID: " + obj.id)
-                        closeKeyboard()
+                        context?.closeKeyboard()
                         mAlertDialog.dismiss()
 
                         val roomIntent = Intent(activity, RoomActivity::class.java)
@@ -234,7 +236,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             mAlertDialog.cancel()
             roomNameEditText.clearFocus()
             roomPasswordEditText.clearFocus()
-            closeKeyboard()
+            context?.closeKeyboard()
         }
     }
 
