@@ -229,7 +229,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                         R.string.info_change_owner2
                     )}"
                 )
-                .setMessage(resources.getString(R.string.info_clear_queue))
                 .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
                 .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
                 .show()

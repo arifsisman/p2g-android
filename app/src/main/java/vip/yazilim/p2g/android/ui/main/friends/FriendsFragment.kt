@@ -293,6 +293,8 @@ class FriendsFragment : FragmentBase(
                         context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
+                        intent.putExtra("roomUser", obj)
+                        intent.putExtra("room", room)
                         startActivity(intent)
                     }
                 })
