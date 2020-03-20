@@ -112,7 +112,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModelSimplified", roomModel)
+                intent.putExtra("roomModel", roomModel)
                 intent.putExtra("roomUser", obj)
                 startActivity(intent)
             }
@@ -165,7 +165,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                         closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
-                        intent.putExtra("roomModelSimplified", roomModel)
+                        intent.putExtra("roomModel", roomModel)
                         intent.putExtra("roomUser", obj)
                         startActivity(intent)
                     }

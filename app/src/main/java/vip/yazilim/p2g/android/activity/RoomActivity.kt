@@ -163,20 +163,12 @@ class RoomActivity : AppCompatActivity(),
     private fun setupRoomModel() {
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
-        //todo roomModelSimplified will change
-        val roomModelSimplifiedFromIntent =
-            intent.getParcelableExtra<RoomModel>("roomModelSimplified")
 
         when {
             roomFromIntent != null -> {
                 title = roomFromIntent.name
                 room = roomFromIntent
                 getRoomModel(roomFromIntent.id)
-            }
-            roomModelSimplifiedFromIntent != null -> {
-                title = roomModelSimplifiedFromIntent.room?.name
-                room = roomModelSimplifiedFromIntent.room
-                roomModelSimplifiedFromIntent.room?.id?.let { getRoomModel(it) }
             }
             roomModelFromIntent != null -> {
                 title = roomModelFromIntent.room?.name
