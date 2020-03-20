@@ -42,7 +42,7 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
     }
 
     override fun setupViewModel() {
-//        super.setupMainViewModel()
+        super.setupDefaultObservers(viewModel)
         viewModel.userModel.observe(this, renderUser)
         viewModel.friendCountsMe.observe(this, renderFriendsCount)
     }

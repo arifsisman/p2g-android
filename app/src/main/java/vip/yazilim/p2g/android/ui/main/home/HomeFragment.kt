@@ -52,7 +52,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     }
 
     override fun setupViewModel() {
-//        super.setupMainViewModel()
+        super.setupDefaultObservers(viewModel)
         viewModel.roomModels.observe(this, renderRoomModels)
     }
 

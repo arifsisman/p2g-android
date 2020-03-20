@@ -45,14 +45,11 @@ abstract class FragmentBase(var layout: Int) :
     abstract fun setupUI()
     abstract fun setupViewModel()
 
-    // Default ViewModelBase setup
-//    fun setupMainViewModel(): ViewModelBase {
-//        viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
-//        viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
-//        viewModelBase.isEmptyList.observe(this, emptyListObserver)
-//
-//        return viewModelBase
-//    }
+    fun setupDefaultObservers(viewModelBase: ViewModelBase) {
+        viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
+        viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
+        viewModelBase.isEmptyList.observe(this, emptyListObserver)
+    }
 
     // Default Observers
     val isViewLoadingObserver = Observer<Boolean> {

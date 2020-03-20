@@ -70,7 +70,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun setupViewModel() {
-//        super.setupMainViewModel()
+//        super.setupDefaultObservers(viewModel)
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
     }

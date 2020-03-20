@@ -67,7 +67,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun setupViewModel() {
-//        super.setupMainViewModel()
+        super.setupDefaultObservers(viewModel)
         viewModel.roomInviteModel.observe(this, renderRoomInviteModel)
     }
 

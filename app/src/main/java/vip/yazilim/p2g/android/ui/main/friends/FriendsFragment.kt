@@ -57,7 +57,7 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun setupViewModel() {
-//        super.setupMainViewModel()
+        super.setupDefaultObservers(viewModel)
         viewModel.friendRequestModel.observe(this, renderData)
     }
 

@@ -48,7 +48,7 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     }
 
     override fun setupViewModel() {
-//        super.setupMainViewModel()
+        super.setupDefaultObservers(viewModel)
         viewModel.friendCountsMe.observe(this, renderFriendsCount)
         viewModel.roomModel.observe(this, renderRoomModel)
     }
