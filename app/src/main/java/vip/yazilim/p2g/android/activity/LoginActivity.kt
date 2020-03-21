@@ -64,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         cancelCall()
+        request(Singleton.apiClient().logout(), null)
         super.onDestroy()
     }
 

@@ -67,11 +67,6 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-    override fun onDestroy() {
-        request(Singleton.apiClient().logout(), null)
-        super.onDestroy()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         return true
