@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
 import android.app.AlertDialog
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -9,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,7 +37,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 20.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomQueueFragment(var roomViewModel: RoomViewModel) :
+class RoomQueueFragment :
     FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener {
@@ -45,6 +47,13 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var searchDialogView: View
+
+    private lateinit var roomViewModel: RoomViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
+    }
 
     override fun setupUI() {
         roomActivity = activity as RoomActivity

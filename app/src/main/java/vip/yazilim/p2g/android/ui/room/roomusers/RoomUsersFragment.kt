@@ -2,12 +2,14 @@ package vip.yazilim.p2g.android.ui.room.roomusers
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +36,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 07.03.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomUsersFragment(var roomViewModel: RoomViewModel) :
+class RoomUsersFragment :
     FragmentBase(R.layout.fragment_room_users),
     RoomUsersAdapter.OnItemClickListener,
     RoomInviteAdapter.OnItemClickListener {
@@ -44,6 +46,13 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
 
     private lateinit var inviteAdapter: RoomInviteAdapter
     private lateinit var inviteDialogView: View
+
+    private lateinit var roomViewModel: RoomViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
+    }
 
     override fun setupUI() {
         roomActivity = activity as RoomActivity

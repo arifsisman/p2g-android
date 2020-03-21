@@ -1,9 +1,11 @@
 package vip.yazilim.p2g.android.ui.room.roomchat
 
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.request.RequestOptions
 import com.stfalcon.chatkit.commons.ImageLoader
 import com.stfalcon.chatkit.messages.MessageHolders
@@ -11,6 +13,7 @@ import com.stfalcon.chatkit.messages.MessagesListAdapter
 import kotlinx.android.synthetic.main.fragment_room_chat.*
 import kotlinx.android.synthetic.main.item_incoming_message.view.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -23,11 +26,18 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper
  * @author mustafaarifsisman - 10.03.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomChatFragment(var roomViewModel: RoomViewModel) :
+class RoomChatFragment :
     FragmentBase(R.layout.fragment_room_chat) {
 
-    private var senderId: String? = roomViewModel.roomUserModel.value?.roomUser?.userId
     private lateinit var messagesAdapter: MessagesListAdapter<ChatMessage>
+    private lateinit var senderId: String
+    private lateinit var roomViewModel: RoomViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
+        senderId = roomViewModel.roomUserModel.value?.roomUser?.userId.toString()
+    }
 
     override fun setupUI() {
         val imageLoader = ImageLoader { imageView, url, _ ->

@@ -577,9 +577,9 @@ class RoomActivity : AppCompatActivity(),
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> RoomQueueFragment(roomViewModel)
-                1 -> RoomUsersFragment(roomViewModel)
-                2 -> RoomChatFragment(roomViewModel)
+                0 -> RoomQueueFragment()
+                1 -> RoomUsersFragment()
+                2 -> RoomChatFragment()
                 else -> throw IllegalArgumentException()
             }
         }
