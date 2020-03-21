@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
@@ -27,7 +28,7 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity as MainActivity).get(MainViewModel::class.java)
     }
 
     override fun onResume() {

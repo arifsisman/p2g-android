@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -45,7 +46,7 @@ class FriendsFragment : FragmentBase(
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity as MainActivity).get(MainViewModel::class.java)
     }
 
     override fun onResume() {

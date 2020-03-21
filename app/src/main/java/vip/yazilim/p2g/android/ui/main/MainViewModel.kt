@@ -29,9 +29,6 @@ class MainViewModel : ViewModelBase() {
     private val _friendCountsMe = MutableLiveData<Int>()
     val friendCountsMe: LiveData<Int> = _friendCountsMe
 
-    private val _friendCounts = MutableLiveData<Int>()
-    val friendCounts: LiveData<Int> = _friendCounts
-
     private val _roomModel = MutableLiveData<RoomModel>()
     val roomModel: LiveData<RoomModel> = _roomModel
 
@@ -155,28 +152,4 @@ class MainViewModel : ViewModelBase() {
                 _friendCountsMe.value = obj
             }
         })
-
-    fun loadFriendsCount(userId: String) = request(
-        Singleton.apiClient().getFriendsCounts(userId),
-        object : Callback<Int> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: Int) {
-                _friendCounts.value = obj
-            }
-        })
-
-    fun loadRoomModel(roomId: Long) = request(
-        Singleton.apiClient().getRoomModel(roomId),
-        object : Callback<RoomModel> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: RoomModel) {
-                _roomModel.value = obj
-            }
-        })
-
-
 }

@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -54,7 +55,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity as MainActivity).get(MainViewModel::class.java)
 
         val intentFilter = IntentFilter(ACTION_ROOM_INVITE)
         activity?.registerReceiver(broadcastReceiver, intentFilter)
