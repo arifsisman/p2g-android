@@ -19,20 +19,11 @@ interface Play2GetherWebApi {
     @GET("/api/user/")
     fun getAllUsers(): Call<Response<MutableList<User>>>
 
-    @PUT("/api/user/")
-    fun updateUser(@Body user: User): Call<Response<User>>
-
     @GET("/api/user/{id}/model")
     fun getUserModel(@Path("id") userId: String): Call<Response<UserModel>>
 
     @GET("/api/user/me/model")
     fun getUserModelMe(): Call<Response<UserModel>>
-
-    @GET("/api/spotify/user/device")
-    fun getUserDevices(): Call<Response<MutableList<UserDevice>>>
-
-    @PUT("/api/spotify/user/device")
-    fun saveUsersActiveDevice(@Body userDevice: UserDevice): Call<Response<UserDevice>>
 
 
     // Room API
@@ -42,20 +33,11 @@ interface Play2GetherWebApi {
         @Body roomPassword: String
     ): Call<Response<Room>>
 
-    @GET("/api/room/{id}")
-    fun getRoom(@Path("id") roomId: Long): Call<Response<Room>>
-
-    @GET("/api/room/")
-    fun getAllRooms(): Call<List<Response<Room>>>
-
     @GET("/api/room/model/")
-    fun getSimplifiedRoomModels(): Call<Response<MutableList<RoomModelSimplified>>>
+    fun getRoomModels(): Call<Response<MutableList<RoomModel>>>
 
     @PUT("/api/room/")
     fun updateRoom(@Body room: Room): Call<Response<Room>>
-
-    @DELETE("/api/room/{id}")
-    fun deleteRoom(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @GET("/api/room/model/{id}")
     fun getRoomModel(@Path("id") roomId: Long): Call<Response<RoomModel>>
@@ -63,9 +45,8 @@ interface Play2GetherWebApi {
     @GET("/api/room/model/me")
     fun getRoomModelMe(): Call<Response<RoomModel>>
 
-    @GET("/api/room/smodel/{id}")
-    fun getSimplifiedRoomModel(@Path("id") roomId: Long): Call<Response<RoomModelSimplified>>
 
+    // Room Invite API
     @POST("/api/room/{roomId}/invite/{userId}")
     fun inviteUser(
         @Path("roomId") roomId: Long,
@@ -75,17 +56,25 @@ interface Play2GetherWebApi {
     @POST("/api/room/invite/accept")
     fun acceptInvite(@Body roomInvite: RoomInvite): Call<Response<RoomUser>>
 
-    @DELETE("/api/room/invite/{id}/reject")
+    @DELETE("/api/room/invite/{id}")
     fun rejectInvite(@Path("id") roomId: Long): Call<Response<Boolean>>
 
+    @GET("/api/room/invite/model")
+    fun getRoomInviteModels(): Call<Response<MutableList<RoomInviteModel>>>
+
+
+    // Room User API
     @POST("/api/room/{id}/join")
     fun joinRoom(@Path("id") roomId: Long, @Body password: String): Call<Response<RoomUser>>
 
-    @DELETE("/api/room/leave")
-    fun leaveRoom(): Call<Response<Boolean>>
-
     @GET("/api/room/{id}/users")
     fun getRoomUsers(@Path("id") roomId: Long): Call<Response<List<User>>>
+
+    @GET("/api/room/{id}/roomUserModels")
+    fun getRoomUserModels(@Path("id") roomId: Long): Call<Response<MutableList<RoomUserModel>>>
+
+    @DELETE("/api/room/user/leave")
+    fun leaveRoom(): Call<Response<Boolean>>
 
     @PUT("/api/room/user/{id}/promote")
     fun promoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
@@ -93,118 +82,114 @@ interface Play2GetherWebApi {
     @PUT("/api/room/user/{id}/demote")
     fun demoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
 
-    @GET("/api/room/invite/model")
-    fun getRoomInviteModels(): Call<Response<MutableList<RoomInviteModel>>>
-
-    @GET("/api/room/{id}/roomUserModels")
-    fun getRoomUserModels(@Path("id") roomId: Long): Call<Response<MutableList<RoomUserModel>>>
-
-    @POST("/api/room/{roomId}/queue/clear")
-    fun clearQueue(@Path("roomId") roomId: Long): Call<Response<Boolean>>
+    @PUT("/api/room/user/{id}/makeOwner")
+    fun changeRoomOwner(@Path("id") roomUserId: Long): Call<Response<Boolean>>
 
     @GET("/api/room/user/me")
     fun getRoomUserModelMe(): Call<Response<RoomUserModel>>
 
-    // Song API
-    @GET("/api/song/{id}")
-    fun getSong(@Path("id") songId: Long): Call<Response<Song>>
 
-    @GET("/api/song/{roomId}/list")
+    // Room Queue API
+    @GET("/api/room/{roomId}/queue")
     fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<MutableList<Song>>>
 
-    @POST("/api/song/{roomId}")
+    @POST("/api/room/{roomId}/queue")
     fun addSongToRoom(
         @Path("roomId") roomId: Long,
         @Body searchModelList: List<SearchModel>
     ): Call<Response<Boolean>>
 
-    @DELETE("/api/song/{songId}")
+    @DELETE("/api/room/{roomId}/queue")
+    fun clearQueue(@Path("roomId") roomId: Long): Call<Response<Boolean>>
+
+    @DELETE("/api/room/queue/{songId}/remove")
     fun removeSongFromRoom(@Path("songId") songId: Long): Call<Response<Boolean>>
 
-    @PUT("/api/song/{songId}/upvote")
+    @PUT("/api/room/queue/{songId}/upvote")
     fun upvoteSong(@Path("songId") songId: Long): Call<Response<Int>>
 
-    @PUT("/api/song/{songId}/downvote")
+    @PUT("/api/room/queue/{songId}/downvote")
     fun downvoteSong(@Path("songId") songId: Long): Call<Response<Int>>
 
 
-    // Friends API
-    @POST("/api/friend/requests/")
-    fun getRequests(): Call<Response<List<User>>>
-
-    @GET("/api/friend/requests/{id}")
-    fun getRequestById(@Path("id") friendRequestId: Long): Call<Response<List<User>>>
-
-    @POST("/api/friend/requests/{userId}/add")
+    // User Friends API
+    @POST("/api/user/{userId}/add")
     fun addFriend(@Path("userId") userId: String): Call<Response<Boolean>>
 
-    @DELETE("/api/friend/requests/{userId}/delete")
+    @DELETE("/api/user/{userId}/delete")
     fun deleteFriend(@Path("userId") userId: String): Call<Response<Boolean>>
 
-    @PUT("/api/friend/requests/{id}/accept")
-    fun accept(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
+    @GET("/api/user/me/friends/requests/model")
+    fun getFriendRequestModels(): Call<Response<MutableList<FriendRequestModel>>>
 
-    @PUT("/api/friend/requests/{id}/reject")
-    fun reject(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
+    @GET("/api/user/me/friends/model")
+    fun getFriendModels(): Call<Response<MutableList<FriendModel>>>
 
-    @PUT("/api/friend/requests/{id}/ignore")
-    fun ignore(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
+    @GET("/api/user/me/friends")
+    fun getFriends(): Call<Response<MutableList<User>>>
 
-    @GET("/api/friend/requests/model")
-    fun getFriendRequestModel(): Call<Response<MutableList<FriendRequestModel>>>
-
-    @GET("/api/friend/requests/{userId}/model")
-    fun getFriendRequestModel(@Path("userId") userId: String): Call<Response<MutableList<FriendRequestModel>>>
-
-    @GET("/api/friend/requests/friends")
-    fun getFriends(): Call<Response<MutableList<FriendModel>>>
-
-    @GET("/api/friend/requests/{userId}/friends")
-    fun getFriends(@Path("userId") userId: String): Call<Response<MutableList<FriendModel>>>
-
-    @GET("/api/friend/requests/friends/counts")
+    @GET("/api/user/me/friends/counts")
     fun getFriendsCounts(): Call<Response<Int>>
 
-    @GET("/api/friend/requests/{userId}/friends/counts")
+    @GET("/api/user/{userId}/friends/counts")
     fun getFriendsCounts(@Path("userId") userId: String): Call<Response<Int>>
 
+    @PUT("/api/user/friends/{id}/accept")
+    fun accept(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
 
-    // Authorization API
+    @PUT("/api/user/friends/{id}/reject")
+    fun reject(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
+
+    @PUT("/api/user/friends/{id}/ignore")
+    fun ignore(@Path("id") friendRequestId: Long): Call<Response<Boolean>>
+
+    @GET("/api/user/search/name/{query}")
+    fun searchUser(@Path("query") query: String): Call<Response<MutableList<User>>>
+
+
+    // Spotify Authorization API
     @GET("/api/spotify/login")
     fun login(): Call<Response<User>>
 
     @POST("/api/spotify/logout")
     fun logout(): Call<Response<Boolean>>
 
-    @POST("/api/spotify/token")
+    @PUT("/api/spotify/token")
     fun updateAccessToken(@Body accessToken: String): Call<Response<String>>
 
 
-    // Player API
-    @POST("/api/spotify/player/play")
+    // Spotify Player API
+    @POST("/api/spotify/room/play")
     fun play(@Body song: Song): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/{id}/playPause")
+    @POST("/api/spotify/room/{id}/playPause")
     fun playPause(@Path("id") roomId: Long): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/{id}/next")
+    @POST("/api/spotify/room/{id}/next")
     fun next(@Path("id") roomId: Long): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/{id}/previous")
+    @POST("/api/spotify/room/{id}/previous")
     fun previous(@Path("id") roomId: Long): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/{id}/seek/{ms}")
+    @POST("/api/spotify/room/{id}/seek/{ms}")
     fun seek(@Path("id") roomId: Long, @Path("ms") ms: Int): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/{id}/repeat")
+    @POST("/api/spotify/room/{id}/repeat")
     fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>
 
-    @POST("/api/spotify/player/sync")
+    @POST("/api/spotify/room/sync")
     fun syncWithRoom(@Body roomUser: RoomUser): Call<Response<Boolean>>
 
 
-    // Spotify API
+    // Spotify Search API
     @GET("/api/spotify/search/{query}")
-    fun search(@Path("query") query: String): Call<Response<MutableList<SearchModel>>>
+    fun searchSpotify(@Path("query") query: String): Call<Response<MutableList<SearchModel>>>
 
+
+    // Spotify Device API
+    @GET("/api/spotify/user/device")
+    fun getUserDevices(): Call<Response<MutableList<UserDevice>>>
+
+    @PUT("/api/spotify/user/device")
+    fun saveUsersActiveDevice(@Body userDevice: UserDevice): Call<Response<UserDevice>>
 }

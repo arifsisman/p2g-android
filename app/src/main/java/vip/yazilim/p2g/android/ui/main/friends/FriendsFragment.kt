@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -25,23 +26,26 @@ import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class FriendsFragment : FragmentBase(
-    FriendsViewModel(),
     R.layout.fragment_friends
 ),
     FriendsAdapter.OnItemClickListener {
 
-    private lateinit var viewModel: FriendsViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var adapter: FriendsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -53,8 +57,8 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as FriendsViewModel
-        viewModel.data.observe(this, renderData)
+        super.setupDefaultObservers(viewModel)
+        viewModel.friendRequestModel.observe(this, renderData)
     }
 
 
@@ -62,7 +66,7 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.data.value ?: mutableListOf(), this, this)
+        adapter = FriendsAdapter(viewModel.friendRequestModel.value ?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
@@ -89,17 +93,15 @@ class FriendsFragment : FragmentBase(
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
-        searchView.queryHint = "Search Friends"
+        searchView.queryHint = resources.getString(R.string.hint_search_friends)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("queryText", query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
-                Log.d("queryText", newText)
                 return true
             }
         })
@@ -156,10 +158,10 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onJoinClicked(room: Room?) {
-        if (room?.password?.isNotEmpty()!!) {
-            joinPrivateRoomEvent(room)
+        if (room?.password == null) {
+            room?.let { joinRoomEvent(it) }
         } else {
-            joinRoomEvent(room)
+            joinPrivateRoomEvent(room)
         }
     }
 
@@ -186,9 +188,9 @@ class FriendsFragment : FragmentBase(
 
 
         AlertDialog.Builder(context)
-            .setMessage("Are you sure you want to delete friend ?")
-            .setPositiveButton("Yes", dialogClickListener)
-            .setNegativeButton("No", dialogClickListener)
+            .setMessage(resources.getString(R.string.info_delete_friend))
+            .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
+            .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
             .show()
     }
 
@@ -199,7 +201,7 @@ class FriendsFragment : FragmentBase(
     }
 
     private fun loadFriendRequestModel() = request(
-        Singleton.apiClient().getFriendRequestModel(),
+        Singleton.apiClient().getFriendRequestModels(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, msg)
@@ -215,7 +217,7 @@ class FriendsFragment : FragmentBase(
 
 
     private fun loadFriends() = request(
-        Singleton.apiClient().getFriends(),
+        Singleton.apiClient().getFriendModels(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, msg)
@@ -288,9 +290,11 @@ class FriendsFragment : FragmentBase(
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
                         mAlertDialog.dismiss()
-                        closeKeyboard()
+                        context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
+                        intent.putExtra("roomUser", obj)
+                        intent.putExtra("room", room)
                         startActivity(intent)
                     }
                 })
@@ -300,7 +304,7 @@ class FriendsFragment : FragmentBase(
         mDialogView.dialog_cancel_button.setOnClickListener {
             mAlertDialog.cancel()
             roomPasswordEditText.clearFocus()
-            closeKeyboard()
+            context?.closeKeyboard()
         }
     }
 }

@@ -2,8 +2,6 @@ package vip.yazilim.p2g.android.ui.room.roomchat
 
 import android.content.Intent
 import android.os.Handler
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import com.bumptech.glide.request.RequestOptions
@@ -19,8 +17,6 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.TimeHelper
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 /**
@@ -28,7 +24,7 @@ import java.util.*
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomChatFragment(var roomViewModel: RoomViewModel) :
-    FragmentBase(roomViewModel, R.layout.fragment_room_chat) {
+    FragmentBase(R.layout.fragment_room_chat) {
 
     private var senderId: String? = roomViewModel.roomUserModel.value?.roomUser?.userId
     private lateinit var messagesAdapter: MessagesListAdapter<ChatMessage>
@@ -59,12 +55,6 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
 
     override fun setupViewModel() {
         roomViewModel.newMessage.observe(this, renderNewMessage)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.options_menu_room, menu)
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onResume() {
@@ -108,23 +98,6 @@ class RoomChatFragment(var roomViewModel: RoomViewModel) :
         override fun onBind(message: ChatMessage?) {
             super.onBind(message)
             itemView.messageAuthor.text = message?.roomUser?.name ?: ""
-        }
-    }
-
-    private fun getMessageStringFormatter(): MessagesListAdapter.Formatter<ChatMessage>? {
-        return MessagesListAdapter.Formatter<ChatMessage> { message ->
-            val createdAt = SimpleDateFormat(
-                "MMM d, EEE 'at' h:mm a",
-                Locale.getDefault()
-            )
-                .format(message.createdAt)
-
-            var text: String? = message.text
-            if (text == null) text = "[attachment]"
-            String.format(
-                Locale.getDefault(), "%s: %s (%s)",
-                message.user?.name, text, createdAt
-            )
         }
     }
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -16,6 +17,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.service.UserWebSocketService
+import vip.yazilim.p2g.android.ui.main.MainViewModel
+import vip.yazilim.p2g.android.ui.main.MainViewModelFactory
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -25,9 +28,13 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  */
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var mainViewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mainViewModel =
+            ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
 
         intent.getParcelableExtra<User>("user")?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
@@ -58,6 +65,11 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onDestroy() {
+        request(Singleton.apiClient().logout(), null)
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

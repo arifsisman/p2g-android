@@ -4,8 +4,6 @@ import android.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -29,6 +27,7 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -37,7 +36,7 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomQueueFragment(var roomViewModel: RoomViewModel) :
-    FragmentBase(roomViewModel, R.layout.fragment_room_queue),
+    FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener {
 
@@ -86,7 +85,10 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortTop(
+                    root,
+                    resources.getString(R.string.err_room_queue_refresh)
+                )
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -116,8 +118,9 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
-        val mBuilder =
-            AlertDialog.Builder(context, R.style.fullScreenAppTheme).setView(searchDialogView)
+        val mBuilder = AlertDialog
+            .Builder(context, R.style.fullScreenAppTheme)
+            .setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
 
         val queryEditText = searchDialogView.dialogQuery
@@ -162,14 +165,14 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             val query = queryEditText.text.toString()
 
             request(
-                Singleton.apiClient().search(query),
+                Singleton.apiClient().searchSpotify(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
                         UIHelper.showSnackBarShortTop(searchDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
-                        closeKeyboard()
+                        context?.closeKeyboard()
 
                         // Hide search bar, search button and show addButton
                         searchButton.visibility = View.GONE
@@ -182,7 +185,8 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
 
                         // Search text query
                         val searchText: TextView = searchDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder = "Search with query '${query}'"
+                        val searchTextPlaceholder =
+                            "${resources.getString(R.string.info_search_queue)} '${query}'"
                         searchText.text = searchTextPlaceholder
                         searchText.visibility = View.VISIBLE
                     }
@@ -217,16 +221,10 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
             } else {
                 UIHelper.showSnackBarShortTop(
                     searchDialogView,
-                    "10 songs or 1 Album/Playlist can be added in each search!"
+                    resources.getString(R.string.err_room_queue_add)
                 )
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.options_menu_room, menu)
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onItemClicked(view: SwipeLayout, song: Song) {
@@ -253,12 +251,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
-            UIHelper.showSnackBarShortTop(root, "Song voted before")
+            UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_song_vote))
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
-                    UIHelper.showSnackBarShortTop(root, "${song.songName} upvoted.")
+                    UIHelper.showSnackBarShortTop(
+                        root,
+                        "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
+                    )
                 }
 
                 override fun onError(msg: String) {
@@ -273,12 +274,15 @@ class RoomQueueFragment(var roomViewModel: RoomViewModel) :
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
-            UIHelper.showSnackBarShortTop(root, "Song voted before")
+            UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_song_vote))
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
-                    UIHelper.showSnackBarShortTop(root, "${song.songName} downvoted.")
+                    UIHelper.showSnackBarShortTop(
+                        root,
+                        "${song.songName} ${resources.getString(R.string.info_song_downvoted)}"
+                    )
                 }
 
                 override fun onError(msg: String) {

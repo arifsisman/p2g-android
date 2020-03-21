@@ -32,7 +32,6 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 class LoginActivity : AppCompatActivity() {
 
     private var mCall: Call? = null
-//    private val db by lazy { DBHelper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
             if (response.code != null) {
                 getTokensFromSpotify(response.code)
             } else {
-                val msg = "Can not get authorization code from Spotify"
+                val msg = resources.getString(R.string.err_authorization_code)
                 Log.d(TAG, msg)
                 UIHelper.showToastShort(this, msg)
             }
@@ -126,12 +125,12 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onSuccess(obj: User) {
-                existingRoomCheck(obj, tokenModel)
+                checkIsUserInRoom(obj, tokenModel)
             }
         })
 
 
-    private fun existingRoomCheck(user: User, tokenModel: TokenModel) = request(
+    private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) = request(
         Singleton.apiClient().getRoomModelMe(),
         object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
@@ -141,7 +140,8 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onError(msg: String) {
-                UIHelper.showToastLong(this@LoginActivity, "Logged in as ${user.name}")
+                val info = resources.getString(R.string.info_logged_in)
+                UIHelper.showToastLong(this@LoginActivity, "$info ${user.name}")
                 val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
                 startMainIntent.putExtra("user", user)
                 startMainIntent.putExtra("tokenModel", tokenModel)

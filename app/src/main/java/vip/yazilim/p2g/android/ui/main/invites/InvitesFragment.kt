@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
@@ -24,6 +25,7 @@ import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -32,10 +34,10 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @author mustafaarifsisman - 31.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invites),
+class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     InvitesAdapter.OnItemClickListener {
 
-    private lateinit var viewModel: InvitesViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var adapter: InvitesAdapter
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -52,6 +54,8 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
         val intentFilter = IntentFilter(ACTION_ROOM_INVITE)
         activity?.registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -63,7 +67,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as InvitesViewModel
+        super.setupDefaultObservers(viewModel)
         viewModel.roomInviteModel.observe(this, renderRoomInviteModel)
     }
 
@@ -92,17 +96,15 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
-        searchView.queryHint = "Search Room Invites"
+        searchView.queryHint = resources.getString(R.string.hint_search_invites)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("queryText", query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
-                Log.d("queryText", newText)
                 return true
             }
         })
@@ -119,7 +121,7 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
                 Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModelSimplified", roomInviteModel.roomModel)
+                intent.putExtra("roomModel", roomInviteModel.roomModel)
                 intent.putExtra("roomUser", obj)
                 startActivity(intent)
             }
@@ -159,7 +161,10 @@ class InvitesFragment : FragmentBase(InvitesViewModel(), R.layout.fragment_invit
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShortTop(root, "Rooms Invites cannot refreshed")
+                UIHelper.showSnackBarShortTop(
+                    root,
+                    resources.getString(R.string.err_room_invites_refresh)
+                )
                 swipeRefreshContainer.isRefreshing = false
             }
 

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
@@ -22,24 +23,27 @@ import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
-import vip.yazilim.p2g.android.model.p2g.RoomModelSimplified
+import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 04.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
+class HomeFragment : FragmentBase(R.layout.fragment_home),
     HomeAdapter.OnItemClickListener {
     private lateinit var adapter: HomeAdapter
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -48,7 +52,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     override fun setupViewModel() {
-        viewModel = super.setupViewModelBase() as HomeViewModel
+        super.setupDefaultObservers(viewModel)
         viewModel.roomModels.observe(this, renderRoomModels)
     }
 
@@ -63,7 +67,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
     }
 
     // Observer
-    private val renderRoomModels = Observer<MutableList<RoomModelSimplified>> {
+    private val renderRoomModels = Observer<MutableList<RoomModel>> {
         Log.v(TAG, "data updated $it")
         layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
@@ -76,23 +80,21 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         val searchItem: MenuItem? = menu.findItem(R.id.action_search)
         val searchView: SearchView = searchItem?.actionView as SearchView
 
-        searchView.queryHint = "Search Room or Owner"
+        searchView.queryHint = resources.getString(R.string.hint_search_room)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d("queryText", query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 adapter.filter.filter(newText)
-                Log.d("queryText", newText)
                 return true
             }
         })
     }
 
-    override fun onItemClicked(roomModel: RoomModelSimplified) {
+    override fun onItemClicked(roomModel: RoomModel) {
         val room: Room? = roomModel.room
 
         if (room?.password == null) {
@@ -103,8 +105,8 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModelSimplified: RoomModelSimplified) = request(
-        roomModelSimplified.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
+    private fun joinRoomEvent(roomModel: RoomModel) = request(
+        roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 UIHelper.showSnackBarShortTop(root, msg)
@@ -114,14 +116,14 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                 Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
                 val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModelSimplified", roomModelSimplified)
+                intent.putExtra("roomModel", roomModel)
                 intent.putExtra("roomUser", obj)
                 startActivity(intent)
             }
         })
 
 
-    private fun joinPrivateRoomEvent(roomModel: RoomModelSimplified) {
+    private fun joinPrivateRoomEvent(roomModel: RoomModel) {
         val room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
@@ -164,10 +166,10 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
                         mAlertDialog.dismiss()
-                        closeKeyboard()
+                        context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
-                        intent.putExtra("roomModelSimplified", roomModel)
+                        intent.putExtra("roomModel", roomModel)
                         intent.putExtra("roomUser", obj)
                         startActivity(intent)
                     }
@@ -179,7 +181,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
         mDialogView.dialog_cancel_button.setOnClickListener {
             mAlertDialog.cancel()
             roomPasswordEditText.clearFocus()
-            closeKeyboard()
+            context?.closeKeyboard()
         }
     }
 
@@ -220,7 +222,7 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
 
                     override fun onSuccess(obj: Room) {
                         Log.d(TAG, "Room created with ID: " + obj.id)
-                        closeKeyboard()
+                        context?.closeKeyboard()
                         mAlertDialog.dismiss()
 
                         val roomIntent = Intent(activity, RoomActivity::class.java)
@@ -236,19 +238,19 @@ class HomeFragment : FragmentBase(HomeViewModel(), R.layout.fragment_home),
             mAlertDialog.cancel()
             roomNameEditText.clearFocus()
             roomPasswordEditText.clearFocus()
-            closeKeyboard()
+            context?.closeKeyboard()
         }
     }
 
     private fun refreshRoomsEvent() = request(
-        Singleton.apiClient().getSimplifiedRoomModels(),
-        object : Callback<MutableList<RoomModelSimplified>> {
+        Singleton.apiClient().getRoomModels(),
+        object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, "Rooms cannot refreshed")
+                UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_room_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 
-            override fun onSuccess(obj: MutableList<RoomModelSimplified>) {
+            override fun onSuccess(obj: MutableList<RoomModel>) {
                 adapter.update(obj)
                 adapter.roomModelsFull = obj
                 swipeRefreshContainer.isRefreshing = false
