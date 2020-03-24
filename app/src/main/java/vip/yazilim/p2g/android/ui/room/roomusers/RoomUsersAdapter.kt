@@ -16,7 +16,6 @@ import vip.yazilim.p2g.android.constant.ColorCodes.CYAN
 import vip.yazilim.p2g.android.constant.ColorCodes.GREEN
 import vip.yazilim.p2g.android.constant.ColorCodes.RED
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
-import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -66,21 +65,6 @@ class RoomUsersAdapter(
                         .into(itemView.user_image)
                 } else {
                     itemView.user_image.setImageResource(R.drawable.ic_profile_image)
-                }
-
-                when (user.onlineStatus) {
-                    OnlineStatus.ONLINE.onlineStatus -> {
-                        itemView.onlineStatus.setImageResource(android.R.drawable.presence_online)
-                        itemView.onlineStatus.visibility = View.VISIBLE
-                    }
-                    OnlineStatus.OFFLINE.onlineStatus -> {
-                        itemView.onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                        itemView.onlineStatus.visibility = View.VISIBLE
-                    }
-                    OnlineStatus.AWAY.onlineStatus -> {
-                        itemView.onlineStatus.setImageResource(android.R.drawable.presence_away)
-                        itemView.onlineStatus.visibility = View.VISIBLE
-                    }
                 }
             }
 

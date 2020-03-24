@@ -27,6 +27,7 @@ import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
@@ -196,9 +197,6 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         val roomPasswordEditText = mDialogView.dialog_room_password
         val createButton = mDialogView.dialog_create_room_button
 
-        // For request focus and open keyboard
-        roomNameEditText.requestFocus()
-
         // For disable create button if name is empty
         roomNameEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -207,6 +205,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
                 createButton.isEnabled = s.isNotEmpty()
             }
         })
+
+        val roomNamePlaceholder = SharedPrefSingleton.read("userName", "UNKNOWN") + "'s Room"
+        roomNameEditText.setText(roomNamePlaceholder)
+
+        // For request focus and open keyboard
+        roomPasswordEditText.requestFocus()
 
         // Click create
         createButton.setOnClickListener {

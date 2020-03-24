@@ -126,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onSuccess(obj: User) {
+                SharedPrefSingleton.write("userName", obj.name)
                 checkIsUserInRoom(obj, tokenModel)
             }
         })

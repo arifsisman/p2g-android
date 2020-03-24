@@ -75,7 +75,7 @@ class HomeAdapter(
     }
 
     fun update(data: MutableList<RoomModel>) {
-        roomModels = data
+        roomModels = data.filter { it.owner != null && it.room?.name != null }.toMutableList()
         notifyDataSetChanged()
     }
 

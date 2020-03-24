@@ -115,6 +115,11 @@ class RoomActivity : AppCompatActivity(),
         room?.id?.let { roomViewModel.loadRoomUsers(it) }
     }
 
+    override fun onDestroy() {
+        request(Singleton.apiClient().leaveRoom(), null)
+        super.onDestroy()
+    }
+
     // Setups
     private fun setupViewPager() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
