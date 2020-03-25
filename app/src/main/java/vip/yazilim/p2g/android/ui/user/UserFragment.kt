@@ -1,9 +1,7 @@
 package vip.yazilim.p2g.android.ui.user
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
-import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +11,6 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
-import vip.yazilim.p2g.android.util.helper.TAG
 
 
 /**
@@ -61,14 +58,10 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
 
     // Observers
     private val renderFriendsCount = Observer<Int> {
-        Log.v(TAG, "data updated $it")
-        layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 
     private val renderRoomModel = Observer<RoomModel> {
-        Log.v(TAG, "data updated $it")
-        layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 }

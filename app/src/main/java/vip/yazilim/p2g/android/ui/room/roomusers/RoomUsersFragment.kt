@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -28,7 +27,6 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -88,8 +86,6 @@ class RoomUsersFragment :
 
     // Observer
     private val renderRoomUserModelList = Observer<MutableList<RoomUserModel>> { roomUserModels ->
-        Log.v(TAG, "data updated $roomUserModels")
-
         adapter.update(roomUserModels)
 
         roomUserModels.forEach {

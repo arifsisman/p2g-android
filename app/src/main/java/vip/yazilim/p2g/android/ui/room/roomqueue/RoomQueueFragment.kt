@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.ui.room.roomqueue
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -30,7 +29,6 @@ import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.refrofit.Singleton
@@ -116,8 +114,6 @@ class RoomQueueFragment :
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
-        Log.v(TAG, "data updated $songList")
-
         var hasNext = false
 
         songList.forEach { song ->

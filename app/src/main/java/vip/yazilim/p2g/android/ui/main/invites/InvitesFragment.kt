@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -85,8 +84,6 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
     // Observers
     private val renderRoomInviteModel = Observer<MutableList<RoomInviteModel>> {
-        Log.v(TAG, "data updated $it")
-        layoutEmpty.visibility = View.GONE
         adapter.roomInviteModelsFull.addAll(it)
         adapter.update(it)
     }

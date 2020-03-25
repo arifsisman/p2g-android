@@ -1,9 +1,7 @@
 package vip.yazilim.p2g.android.ui.main.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
-import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +11,6 @@ import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -57,14 +54,10 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
 
     // Observers
     private val renderUser = Observer<UserModel> {
-        Log.v(TAG, "data updated $it")
-        layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 
     private val renderFriendsCount = Observer<Int> {
-        Log.v(TAG, "data updated $it")
-        layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 }

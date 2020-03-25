@@ -1,14 +1,13 @@
 package vip.yazilim.p2g.android.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
-import vip.yazilim.p2g.android.util.helper.TAG
+import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 /**
@@ -53,20 +52,23 @@ abstract class FragmentBase(var layout: Int) :
 
     // Default Observers
     val isViewLoadingObserver = Observer<Boolean> {
-        Log.v(TAG, "isViewLoading $it")
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar?.visibility = visibility
     }
 
     val onMessageErrorObserver = Observer<String> {
-        Log.v(TAG, "onMessageError $it")
-        UIHelper.showSnackBarLongTop(root, it)
-        layoutEmpty?.visibility = View.GONE
+        if (it.isNotBlank()) {
+            UIHelper.showSnackBarError(root, it)
+        }
     }
 
-    val emptyListObserver = Observer<Boolean> {
-        Log.v(TAG, "emptyListObserver $it")
-        layoutEmpty?.visibility = View.VISIBLE
+    private val emptyListObserver = Observer<Boolean> {
+        if (it) {
+            UIHelper.showSnackBarEmpty(
+                root,
+                resources.getString(R.string.placeholder_empty_list)
+            )
+        }
     }
 
 }
