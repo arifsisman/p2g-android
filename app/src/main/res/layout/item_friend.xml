@@ -58,17 +58,6 @@
             app:layout_constraintTop_toBottomOf="@+id/roomName" />
 
         <ImageView
-            android:id="@+id/lockImage"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="6dp"
-            android:contentDescription="@string/description_lock_button"
-            app:layout_constraintEnd_toEndOf="@+id/joinButton"
-            app:layout_constraintStart_toStartOf="@+id/joinButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_lock_white_24dp" />
-
-        <ImageView
             android:id="@+id/profilePhoto"
             android:layout_width="45dp"
             android:layout_height="45dp"

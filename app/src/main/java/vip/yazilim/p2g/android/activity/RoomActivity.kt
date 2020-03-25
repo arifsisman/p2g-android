@@ -312,21 +312,10 @@ class RoomActivity : AppCompatActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.sync_with_room -> {
-                syncWithRoom(roomViewModel.roomUserModel.value?.roomUser)
-            }
-            R.id.select_device -> {
-                selectDevice()
-            }
-            R.id.clear_queue -> {
-                clearQueue()
-            }
-            R.id.leave -> {
-                leaveRoom()
-            }
-            android.R.id.home -> {
-                leaveRoom()
-            }
+            R.id.sync_with_room -> syncWithRoom(roomViewModel.roomUserModel.value?.roomUser)
+            R.id.select_device -> selectDevice()
+            R.id.clear_queue -> clearQueue()
+            android.R.id.home -> leaveRoom()
         }
         return true
     }
@@ -358,8 +347,6 @@ class RoomActivity : AppCompatActivity(),
     override fun onBackPressed() {
         if (viewPager.currentItem == 0 && slidingUpPanel.panelState != COLLAPSED) {
             showMinimizedPlayer()
-        } else {
-            leaveRoom()
         }
     }
 
