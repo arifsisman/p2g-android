@@ -1,24 +1,27 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents">
         <item name="actionBarSize">50dp</item>
         <item name="materialAlertDialogTheme">
             @style/ThemeOverlay.MaterialComponents.MaterialAlertDialog
         </item>
 
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorAccentBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="colorOnBackground">@color/white</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
         <item name="colorError">@color/colorRed</item>
         <item name="colorOnError">@color/white</item>
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="android:textColor">@color/colorText</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:textColorTertiary">@color/white</item>
+
     </style>
 
 
