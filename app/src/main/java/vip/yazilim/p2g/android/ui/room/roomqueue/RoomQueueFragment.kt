@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
@@ -320,7 +322,14 @@ class RoomQueueFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-
+        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        if (currentRole == Role.ROOM_USER.role) {
+            layout?.findViewById<ImageButton>(R.id.swipePlayButton)?.visibility = View.GONE
+            layout?.findViewById<ImageButton>(R.id.swipeDeleteButton)?.visibility = View.GONE
+        } else {
+            layout?.findViewById<ImageButton>(R.id.swipePlayButton)?.visibility = View.VISIBLE
+            layout?.findViewById<ImageButton>(R.id.swipeDeleteButton)?.visibility = View.VISIBLE
+        }
     }
 
     override fun onStartClose(layout: SwipeLayout?) {

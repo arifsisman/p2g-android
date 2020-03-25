@@ -70,7 +70,8 @@ class RoomQueueAdapter(
 
             itemView.row_song.showMode = SwipeLayout.ShowMode.LayDown
             itemView.row_song.isClickToClose = true
-            itemView.row_song.addDrag(SwipeLayout.DragEdge.Right, itemView.song_event_holder)
+            itemView.row_song.isRightSwipeEnabled = false
+            itemView.row_song.addDrag(SwipeLayout.DragEdge.Left, itemView.song_event_holder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {

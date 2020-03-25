@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
-import kotlinx.android.synthetic.main.layout_row_user_events.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -323,11 +323,11 @@ class RoomUsersFragment :
     override fun onStartOpen(layout: SwipeLayout?) {
         val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
         if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
-            swipePromoteButton.visibility = View.VISIBLE
-            swipeDemoteButton.visibility = View.VISIBLE
+            layout?.findViewById<ImageButton>(R.id.swipePromoteButton)?.visibility = View.VISIBLE
+            layout?.findViewById<ImageButton>(R.id.swipeDemoteButton)?.visibility = View.VISIBLE
         } else {
-            swipePromoteButton.visibility = View.GONE
-            swipeDemoteButton.visibility = View.GONE
+            layout?.findViewById<ImageButton>(R.id.swipePromoteButton)?.visibility = View.GONE
+            layout?.findViewById<ImageButton>(R.id.swipeDemoteButton)?.visibility = View.GONE
         }
     }
 
