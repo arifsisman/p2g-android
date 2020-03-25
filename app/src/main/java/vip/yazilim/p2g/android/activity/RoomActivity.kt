@@ -489,12 +489,11 @@ class RoomActivity : AppCompatActivity(),
                         intent.getParcelableArrayListExtra<Song>(ACTION_SONG_LIST_RECEIVE)
                     songListFromIntent?.let { songList ->
                         if (songList.isNullOrEmpty()) {
-                            roomViewModel.songList.value = mutableListOf()
-                            roomViewModel.playerSong.value = null
-                            roomViewModel._isEmptyList.postValue(true)
+                            roomViewModel.songList.postValue(mutableListOf())
+                            roomViewModel.playerSong.postValue(null)
                         } else {
-                            roomViewModel.songList.value = songList
-                            roomViewModel.playerSong.value = roomViewModel.getCurrentSong(songList)
+                            roomViewModel.songList.postValue(songList)
+                            roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
                         }
                     }
                 }

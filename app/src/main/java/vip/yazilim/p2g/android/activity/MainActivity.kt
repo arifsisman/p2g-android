@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.entity.User
+import vip.yazilim.p2g.android.service.LogoutService
 import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.ui.main.MainViewModelFactory
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mainViewModel =
             ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
+
+        startService(Intent(baseContext, LogoutService::class.java))
 
         intent.getParcelableExtra<User>("user")?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)

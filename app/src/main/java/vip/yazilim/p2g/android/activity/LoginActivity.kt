@@ -19,7 +19,6 @@ import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.spotify.TokenModel
-import vip.yazilim.p2g.android.service.LogoutService
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -133,10 +132,7 @@ class LoginActivity : AppCompatActivity() {
         })
 
 
-    private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) {
-        startService(Intent(baseContext, LogoutService::class.java))
-
-        request(
+    private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) = request(
             Singleton.apiClient().getRoomModelMe(),
             object : Callback<RoomModel> {
                 override fun onSuccess(obj: RoomModel) {
@@ -154,6 +150,5 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(startMainIntent)
                 }
             })
-    }
 
 }
