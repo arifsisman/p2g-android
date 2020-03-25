@@ -574,16 +574,16 @@ class RoomActivity : AppCompatActivity(),
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> RoomQueueFragment()
-                1 -> RoomChatFragment()
-                2 -> RoomUsersFragment()
+                2 -> RoomChatFragment()
+                1 -> RoomUsersFragment()
                 else -> throw IllegalArgumentException()
             }
         }
 
         private val tabTitles = arrayOf(
             R.string.title_queue,
-            R.string.title_chat,
-            R.string.title_users
+            R.string.title_users,
+            R.string.title_chat
         )
 
         override fun getPageTitle(position: Int): CharSequence? {
