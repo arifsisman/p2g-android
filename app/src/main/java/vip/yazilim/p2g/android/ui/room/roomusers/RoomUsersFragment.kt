@@ -40,7 +40,8 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 class RoomUsersFragment :
     FragmentBase(R.layout.fragment_room_users),
     RoomUsersAdapter.OnItemClickListener,
-    RoomInviteAdapter.OnItemClickListener {
+    RoomInviteAdapter.OnItemClickListener,
+    SwipeLayout.SwipeListener {
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomUsersAdapter
@@ -61,7 +62,8 @@ class RoomUsersFragment :
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this)
+        adapter =
+            RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         // recyclerView divider
@@ -80,7 +82,6 @@ class RoomUsersFragment :
     }
 
     override fun setupViewModel() {
-//        super.setupDefaultObservers(viewModel)
         roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
         roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
     }
@@ -199,21 +200,6 @@ class RoomUsersFragment :
 
     }
 
-    override fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
-        if ((currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) && roomUserModel.roomUser?.role != Role.ROOM_OWNER.role) {
-            swipePromoteButton.visibility = View.VISIBLE
-            swipeDemoteButton.visibility = View.VISIBLE
-        } else {
-            swipePromoteButton.visibility = View.GONE
-            swipeDemoteButton.visibility = View.GONE
-        }
-
-        if (view.openStatus != SwipeLayout.Status.Open) {
-            view.toggle()
-        }
-    }
-
     override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
@@ -326,5 +312,31 @@ class RoomUsersFragment :
                     }
                 })
         }
+    }
+
+    override fun onOpen(layout: SwipeLayout?) {
+    }
+
+    override fun onUpdate(layout: SwipeLayout?, leftOffset: Int, topOffset: Int) {
+    }
+
+    override fun onStartOpen(layout: SwipeLayout?) {
+        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
+            swipePromoteButton.visibility = View.VISIBLE
+            swipeDemoteButton.visibility = View.VISIBLE
+        } else {
+            swipePromoteButton.visibility = View.GONE
+            swipeDemoteButton.visibility = View.GONE
+        }
+    }
+
+    override fun onStartClose(layout: SwipeLayout?) {
+    }
+
+    override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+    }
+
+    override fun onClose(layout: SwipeLayout?) {
     }
 }

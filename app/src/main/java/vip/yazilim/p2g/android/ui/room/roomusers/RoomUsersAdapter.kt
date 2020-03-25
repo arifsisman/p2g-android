@@ -28,7 +28,8 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  */
 class RoomUsersAdapter(
     private var roomUserModelList: MutableList<RoomUserModel>,
-    private val itemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener,
+    private val swipeListener: SwipeLayout.SwipeListener
 ) : RecyclerSwipeAdapter<RoomUsersAdapter.MViewHolder>() {
 
     private lateinit var view: View
@@ -78,12 +79,6 @@ class RoomUsersAdapter(
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener {
-                clickListener.onItemClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
-            }
             itemView.swipePromoteButton.setOnClickListener {
                 clickListener.onPromoteClicked(
                     itemView.row_user_model,
@@ -102,6 +97,7 @@ class RoomUsersAdapter(
                     roomUserModel
                 )
             }
+            swipeLayout.addSwipeListener(swipeListener)
         }
 
         fun bindItemManager(position: Int) {
@@ -110,7 +106,6 @@ class RoomUsersAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel)

@@ -40,7 +40,8 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
 class RoomQueueFragment :
     FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
-    RoomQueueAdapter.OnItemClickListener {
+    RoomQueueAdapter.OnItemClickListener,
+    SwipeLayout.SwipeListener {
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomQueueAdapter
@@ -64,6 +65,7 @@ class RoomQueueFragment :
         // QueueAdapter
         adapter = RoomQueueAdapter(
             roomViewModel.songList.value ?: mutableListOf()
+            , this
             , this
         )
 
@@ -236,12 +238,6 @@ class RoomQueueFragment :
         }
     }
 
-    override fun onItemClicked(view: SwipeLayout, song: Song) {
-        if (view.openStatus != SwipeLayout.Status.Open) {
-            view.toggle()
-        }
-    }
-
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
@@ -315,6 +311,25 @@ class RoomQueueFragment :
                 adapter.add(song, position)
             }
         })
+    }
+
+    override fun onOpen(layout: SwipeLayout?) {
+    }
+
+    override fun onUpdate(layout: SwipeLayout?, leftOffset: Int, topOffset: Int) {
+    }
+
+    override fun onStartOpen(layout: SwipeLayout?) {
+
+    }
+
+    override fun onStartClose(layout: SwipeLayout?) {
+    }
+
+    override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+    }
+
+    override fun onClose(layout: SwipeLayout?) {
     }
 
 }

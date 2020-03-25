@@ -26,13 +26,16 @@ import vip.yazilim.p2g.android.util.helper.RoomHelper
  */
 class RoomQueueAdapter(
     var songs: MutableList<Song>,
-    private val itemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener,
+    private val swipeListener: SwipeLayout.SwipeListener
 ) : RecyclerSwipeAdapter<RoomQueueAdapter.MViewHolder>() {
 
     private lateinit var view: View
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
+
         fun bindView(song: Song) {
             itemView.row_song.close(false)
 
@@ -71,7 +74,6 @@ class RoomQueueAdapter(
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_song, song) }
             itemView.swipePlayButton.setOnClickListener {
                 clickListener.onPlayClicked(
                     itemView.row_song,
@@ -96,6 +98,7 @@ class RoomQueueAdapter(
                     song
                 )
             }
+            swipeLayout.addSwipeListener(swipeListener)
         }
 
         fun bindItemManager(position: Int) {
@@ -104,7 +107,6 @@ class RoomQueueAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: SwipeLayout, song: Song)
         fun onPlayClicked(view: SwipeLayout, song: Song)
         fun onUpvoteClicked(view: SwipeLayout, song: Song)
         fun onDownvoteClicked(view: SwipeLayout, song: Song)
