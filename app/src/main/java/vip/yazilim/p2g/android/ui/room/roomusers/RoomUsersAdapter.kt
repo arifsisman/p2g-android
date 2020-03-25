@@ -18,7 +18,9 @@ import vip.yazilim.p2g.android.constant.ColorCodes.RED
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.glide.GlideApp
+
 
 /**
  * @author mustafaarifsisman - 07.03.2020
@@ -31,8 +33,10 @@ class RoomUsersAdapter(
 
     private lateinit var view: View
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
+    private var userIdMe: String? = "-"
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_user_model)
         fun bindView(roomUserModel: RoomUserModel) {
             itemView.row_user_model.close(false)
 
@@ -124,9 +128,15 @@ class RoomUsersAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bindView(roomUserModelList[position])
-        holder.bindEvent(roomUserModelList[position], itemClickListener)
-        holder.bindItemManager(position)
+        val roomUserModel = roomUserModelList[position]
+        holder.bindView(roomUserModel)
+
+        if (roomUserModel.user?.id == userIdMe) {
+            holder.swipeLayout.isSwipeEnabled = false
+        } else {
+            holder.bindEvent(roomUserModelList[position], itemClickListener)
+            holder.bindItemManager(position)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -134,6 +144,7 @@ class RoomUsersAdapter(
     }
 
     fun update(data: MutableList<RoomUserModel>) {
+        userIdMe = SharedPrefSingleton.read("userId", "-")
         roomUserModelList = data
         notifyDataSetChanged()
     }
