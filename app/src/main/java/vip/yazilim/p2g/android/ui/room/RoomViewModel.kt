@@ -74,7 +74,7 @@ class RoomViewModel : ViewModelBase() {
 
                     obj.forEach {
                         if (it.user?.id == roomUserModel.value?.user?.id) {
-                            roomUserModel.value = it
+                            roomUserModel.postValue(it)
                         }
                     }
 
