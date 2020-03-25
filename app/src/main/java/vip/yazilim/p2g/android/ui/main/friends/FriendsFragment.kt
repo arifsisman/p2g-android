@@ -84,7 +84,6 @@ class FriendsFragment : FragmentBase(
     // Observer
     private val renderData = Observer<MutableList<Any>> {
         Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.adapterDataListFull.addAll(it)
         adapter.addAll(it)

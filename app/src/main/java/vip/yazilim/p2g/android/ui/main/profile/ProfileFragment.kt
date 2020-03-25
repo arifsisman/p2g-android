@@ -58,14 +58,12 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
     // Observers
     private val renderUser = Observer<UserModel> {
         Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }
 
     private val renderFriendsCount = Observer<Int> {
         Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.update(it)
     }

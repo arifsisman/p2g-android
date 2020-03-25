@@ -117,7 +117,6 @@ class RoomQueueFragment :
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
         Log.v(TAG, "data updated $songList")
-        layoutError.visibility = View.GONE
 
         var hasNext = false
 

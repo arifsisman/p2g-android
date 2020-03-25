@@ -13,8 +13,8 @@ abstract class ViewModelBase : ViewModel() {
     val _isViewLoading = MutableLiveData<Boolean>()
     val isViewLoading: LiveData<Boolean> = _isViewLoading
 
-    val _onMessageError = MutableLiveData<Any>()
-    val onMessageError: LiveData<Any> = _onMessageError
+    val _onMessageError = MutableLiveData<String>()
+    val onMessageError: LiveData<String> = _onMessageError
 
     val _isEmptyList = MutableLiveData<Boolean>()
     val isEmptyList: LiveData<Boolean> = _isEmptyList

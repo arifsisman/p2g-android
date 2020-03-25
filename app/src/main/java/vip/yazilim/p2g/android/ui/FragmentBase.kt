@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.layout_error.*
 import vip.yazilim.p2g.android.util.helper.TAG
+import vip.yazilim.p2g.android.util.helper.UIHelper
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -58,17 +58,15 @@ abstract class FragmentBase(var layout: Int) :
         progressBar?.visibility = visibility
     }
 
-    val onMessageErrorObserver = Observer<Any> {
+    val onMessageErrorObserver = Observer<String> {
         Log.v(TAG, "onMessageError $it")
-        layoutError?.visibility = View.VISIBLE
+        UIHelper.showSnackBarLongTop(root, it)
         layoutEmpty?.visibility = View.GONE
-        textViewError.text = it?.toString()
     }
 
     val emptyListObserver = Observer<Boolean> {
         Log.v(TAG, "emptyListObserver $it")
         layoutEmpty?.visibility = View.VISIBLE
-        layoutError?.visibility = View.GONE
     }
 
 }

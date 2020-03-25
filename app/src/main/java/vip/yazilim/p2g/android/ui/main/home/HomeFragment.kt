@@ -75,7 +75,6 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     // Observer
     private val renderRoomModels = Observer<MutableList<RoomModel>> {
         Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.roomModelsFull = it
         adapter.update(it)

@@ -86,7 +86,6 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     // Observers
     private val renderRoomInviteModel = Observer<MutableList<RoomInviteModel>> {
         Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
         layoutEmpty.visibility = View.GONE
         adapter.roomInviteModelsFull.addAll(it)
         adapter.update(it)
