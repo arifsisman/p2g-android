@@ -16,5 +16,7 @@
     <color name="colorTabBarDefault">#202020</color>
 
     <color name="colorIncomingMessagePressed">#2C6C52</color>
+    <color name="colorRed">#980000</color>
+    <color name="colorGreen">#179800</color>
 
 </resources>

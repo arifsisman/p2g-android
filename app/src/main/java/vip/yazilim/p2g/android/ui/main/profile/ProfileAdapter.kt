@@ -39,14 +39,11 @@ class ProfileAdapter(
         private val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         private val friendCountsTextView: TextView =
             itemView.findViewById(R.id.friend_counts_text_view)
-        private val songAndRoomStatus: TextView =
-            itemView.findViewById(R.id.song_room_status_text_view)
         private val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
         private val spotifyId: TextView = itemView.findViewById(R.id.spotify_id_text_view)
 
         fun bindView(userModel: UserModel) {
             val user = userModel.user
-            val room = userModel.room
 
             if (user != null) {
                 val profileNamePlaceholder = user.name
@@ -59,12 +56,6 @@ class ProfileAdapter(
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val profileSpotifyAccountIdPlaceholder =
                     "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
-
-                val profileSongAndRoomStatusPlaceholder = if (room?.name != null) {
-                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room.name}"
-                } else {
-                    view.resources.getString(R.string.placeholder_room_user_not_found)
-                }
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)
@@ -93,14 +84,6 @@ class ProfileAdapter(
                 }
 
                 spotifyId.text = profileSpotifyAccountIdPlaceholder
-
-                if (userModel.room != null) {
-                    songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
-                } else {
-                    val songAndRoomStatusString =
-                        " " + view.resources.getString(R.string.placeholder_room_user_not_found)
-                    songAndRoomStatus.text = songAndRoomStatusString
-                }
 
                 when (user.onlineStatus) {
                     OnlineStatus.ONLINE.onlineStatus -> {
