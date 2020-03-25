@@ -138,6 +138,8 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onPageSelected(position: Int) {
+                removeBadgeAt(position)
+
                 when (position) {
                     0 -> {
                         canUserAddAndControlSongs(roomViewModel.roomUserModel.value?.roomUser)
@@ -497,8 +499,7 @@ class RoomActivity : AppCompatActivity(),
                         } else {
                             roomViewModel.songList.postValue(songList)
                             roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
-                            val badge: BadgeDrawable? = tabLayout.getTabAt(0)?.orCreateBadge
-                            badge?.isVisible = true
+                            showBadgeAt(0)
                         }
                     }
                 }
@@ -542,15 +543,13 @@ class RoomActivity : AppCompatActivity(),
                     userListFromIntent.let { userList ->
                         roomViewModel.roomUserModelList.value = userList
                     }
-                    val badge: BadgeDrawable? = tabLayout.getTabAt(1)?.orCreateBadge
-                    badge?.isVisible = true
+                    showBadgeAt(1)
                 }
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =
                         intent.getParcelableExtra(ACTION_MESSAGE_RECEIVE)
                     chatMessage?.let { roomViewModel.newMessage.postValue(chatMessage) }
-                    val badge: BadgeDrawable? = tabLayout.getTabAt(3)?.orCreateBadge
-                    badge?.isVisible = true
+                    showBadgeAt(2)
                 }
             }
         }
@@ -724,5 +723,16 @@ class RoomActivity : AppCompatActivity(),
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    }
+
+    private fun showBadgeAt(pos: Int) {
+        if (viewPager.currentItem != pos) {
+            val badge: BadgeDrawable? = tabLayout.getTabAt(pos)?.orCreateBadge
+            badge?.isVisible = true
+        }
+    }
+
+    fun removeBadgeAt(pos: Int) {
+        tabLayout.getTabAt(pos)?.removeBadge()
     }
 }
