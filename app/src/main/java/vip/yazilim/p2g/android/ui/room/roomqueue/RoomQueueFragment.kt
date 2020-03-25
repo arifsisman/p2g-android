@@ -107,7 +107,9 @@ class RoomQueueFragment :
             }
 
             override fun onSuccess(obj: MutableList<Song>) {
-                adapter.update(obj)
+                val filteredList =
+                    obj.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
+                adapter.update(filteredList)
                 swipeRefreshContainer.isRefreshing = false
             }
         })
@@ -127,7 +129,9 @@ class RoomQueueFragment :
 
         roomActivity.skipFlag = hasNext
 
-        adapter.update(songList)
+        val filteredList =
+            songList.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
+        adapter.update(filteredList)
     }
 
     private fun showSearchDialog() {

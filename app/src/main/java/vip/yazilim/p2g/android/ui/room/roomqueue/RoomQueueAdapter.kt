@@ -134,8 +134,7 @@ class RoomQueueAdapter(
     }
 
     fun update(data: MutableList<Song>) {
-        val songList = data.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
-        songs = songList.sortByActive()
+        songs = data.sortByActive()
         notifyDataSetChanged()
     }
 
