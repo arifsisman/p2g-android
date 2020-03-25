@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -134,14 +135,12 @@ class RoomQueueFragment :
         val mBuilder = MaterialAlertDialogBuilder(context)
             .setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
+        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val queryEditText = searchDialogView.dialogQuery
         val searchButton = searchDialogView.dialog_search_button
         val addButton = searchDialogView.addButton
         val cancelButton = searchDialogView.dialog_cancel_button
-
-        // For request focus and open keyboard
-        queryEditText.requestFocus()
 
         // For disable create button if name is empty
         queryEditText.addTextChangedListener(object : TextWatcher {
@@ -151,6 +150,9 @@ class RoomQueueFragment :
                 searchButton.isEnabled = s.isNotEmpty()
             }
         })
+
+        // For request focus and open keyboard
+        queryEditText.requestFocus()
 
         // Click cancel
         cancelButton.setOnClickListener {
