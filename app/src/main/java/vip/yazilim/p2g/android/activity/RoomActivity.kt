@@ -79,6 +79,8 @@ class RoomActivity : AppCompatActivity(),
     private lateinit var deviceDialog: AlertDialog
     private var roomWsReconnectCounter = 0
 
+    private var clearRoomQueueMenuItem: MenuItem? = null
+
     @Volatile
     private var isPlaying = false
 
@@ -307,6 +309,7 @@ class RoomActivity : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
+        clearRoomQueueMenuItem = menu?.findItem(R.id.clear_queue)
         return true
     }
 
@@ -549,16 +552,18 @@ class RoomActivity : AppCompatActivity(),
     // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
         if (roomUser != null) {
-            return if (roomUser.role == Role.ROOM_DJ.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
-                fab.show()
-                playerController.visibility = View.VISIBLE
-                playPause_button_mini.visibility = View.VISIBLE
-                true
-            } else {
+            return if (roomUser.role == Role.ROOM_USER.role) {
                 fab.hide()
                 playPause_button_mini.visibility = View.GONE
                 playerController.visibility = View.GONE
+                clearRoomQueueMenuItem?.isVisible = false
                 false
+            } else {
+                fab.show()
+                playerController.visibility = View.VISIBLE
+                playPause_button_mini.visibility = View.VISIBLE
+                clearRoomQueueMenuItem?.isVisible = true
+                true
             }
         }
         return false
