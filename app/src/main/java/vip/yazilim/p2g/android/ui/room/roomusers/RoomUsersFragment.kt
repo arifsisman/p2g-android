@@ -8,13 +8,13 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
 import vip.yazilim.p2g.android.R
@@ -120,8 +120,7 @@ class RoomUsersFragment :
     private fun showInviteDialog() {
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
 
-        val mBuilder = AlertDialog
-            .Builder(context!!)
+        val mBuilder = MaterialAlertDialogBuilder(context)
             .setView(inviteDialogView)
         val mAlertDialog = mBuilder.show()
 
@@ -228,7 +227,7 @@ class RoomUsersFragment :
                 }
             }
 
-            AlertDialog.Builder(context!!)
+            MaterialAlertDialogBuilder(context)
                 .setMessage(
                     "${resources.getString(R.string.info_change_owner1)} $userName${resources.getString(
                         R.string.info_change_owner2

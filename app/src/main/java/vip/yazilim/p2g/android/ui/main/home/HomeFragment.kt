@@ -11,6 +11,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
@@ -132,11 +133,11 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         val room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = context?.let { AlertDialog.Builder(it).setView(mDialogView) }
+        val mBuilder = MaterialAlertDialogBuilder(context).setView(mDialogView)
         val joinButton = mDialogView.dialog_join_room_button
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog?
-        mAlertDialog = mBuilder?.show()
+        mAlertDialog = mBuilder.show()
         mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
@@ -192,7 +193,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     private fun createRoomButtonEvent() {
         val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
-        val mBuilder = context?.let { AlertDialog.Builder(it).setView(mDialogView) }
+        val mBuilder = context?.let { MaterialAlertDialogBuilder(it).setView(mDialogView) }
         val mAlertDialog = mBuilder?.show()
         mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 

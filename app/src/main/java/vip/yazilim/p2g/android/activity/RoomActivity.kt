@@ -25,6 +25,7 @@ import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
@@ -368,7 +369,7 @@ class RoomActivity : AppCompatActivity(),
             }
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(resources.getString(R.string.info_leave_room))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -430,7 +431,7 @@ class RoomActivity : AppCompatActivity(),
             }
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(resources.getString(R.string.info_clear_queue))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -442,7 +443,8 @@ class RoomActivity : AppCompatActivity(),
             override fun onSuccess(obj: MutableList<UserDevice>) {
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
-                val mBuilder = AlertDialog.Builder(this@RoomActivity).setView(deviceDialogView)
+                val mBuilder =
+                    MaterialAlertDialogBuilder(this@RoomActivity).setView(deviceDialogView)
                 deviceDialog = mBuilder.show()
 
                 // Adapter start and update with requested search model

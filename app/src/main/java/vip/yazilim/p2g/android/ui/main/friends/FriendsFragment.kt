@@ -12,6 +12,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
@@ -188,7 +189,7 @@ class FriendsFragment : FragmentBase(
         }
 
 
-        AlertDialog.Builder(context!!)
+        MaterialAlertDialogBuilder(context)
             .setMessage(resources.getString(R.string.info_delete_friend))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -252,7 +253,7 @@ class FriendsFragment : FragmentBase(
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = AlertDialog.Builder(context!!).setView(mDialogView)
+        val mBuilder = MaterialAlertDialogBuilder(context).setView(mDialogView)
         val joinButton = mDialogView.dialog_join_room_button
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog

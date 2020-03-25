@@ -44,6 +44,7 @@
             android:layout_gravity="end|bottom"
             android:layout_marginBottom="55dp"
             android:layout_marginEnd="8dp"
+            android:tint="@color/colorAccentBlue"
             android:src="@drawable/spotify_icon"
             android:visibility="invisible"
             app:borderWidth="0dp"

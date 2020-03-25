@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.androidadvance.topsnackbar.TSnackbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 
@@ -35,9 +36,8 @@ class UIHelper {
         }
 
         fun showErrorDialog(context: Context, message: String): AlertDialog? {
-            val dialogBuilder = AlertDialog.Builder(context)
-
-            dialogBuilder.setMessage(message)
+            val dialogBuilder = MaterialAlertDialogBuilder(context)
+                .setMessage(message)
                 .setPositiveButton("OK") { dialog, _ ->
                     dialog.cancel()
                 }
