@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.main.friends
 
-import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -188,7 +188,7 @@ class FriendsFragment : FragmentBase(
         }
 
 
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(context!!)
             .setMessage(resources.getString(R.string.info_delete_friend))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -252,7 +252,7 @@ class FriendsFragment : FragmentBase(
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val mBuilder = AlertDialog.Builder(context!!).setView(mDialogView)
         val joinButton = mDialogView.dialog_join_room_button
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog

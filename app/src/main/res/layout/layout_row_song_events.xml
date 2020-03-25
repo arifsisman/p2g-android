@@ -59,7 +59,7 @@
         android:id="@+id/swipeDeleteButton"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryLight"
+        android:background="@color/colorLightGray"
         android:clickable="true"
         android:contentDescription="@string/description_upvote_song_button"
         android:focusable="true"

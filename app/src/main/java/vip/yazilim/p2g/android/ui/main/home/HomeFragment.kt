@@ -1,12 +1,12 @@
 package vip.yazilim.p2g.android.ui.main.home
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -132,12 +132,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         val room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val mBuilder = context?.let { AlertDialog.Builder(it).setView(mDialogView) }
         val joinButton = mDialogView.dialog_join_room_button
         val roomPasswordEditText = mDialogView.dialog_room_password
-        val mAlertDialog: AlertDialog
-        mAlertDialog = mBuilder.show()
-        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        val mAlertDialog: AlertDialog?
+        mAlertDialog = mBuilder?.show()
+        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
 
@@ -170,7 +170,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-                        mAlertDialog.dismiss()
+                        mAlertDialog?.dismiss()
                         context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
@@ -184,7 +184,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog.cancel()
+            mAlertDialog?.cancel()
             roomPasswordEditText.clearFocus()
             context?.closeKeyboard()
         }
@@ -192,9 +192,9 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     private fun createRoomButtonEvent() {
         val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
-        val mAlertDialog = mBuilder.show()
-        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        val mBuilder = context?.let { AlertDialog.Builder(it).setView(mDialogView) }
+        val mAlertDialog = mBuilder?.show()
+        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val roomNameEditText = mDialogView.dialog_room_name
         val roomPasswordEditText = mDialogView.dialog_room_password
@@ -231,7 +231,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
                     override fun onSuccess(obj: Room) {
                         Log.d(TAG, "Room created with ID: " + obj.id)
                         context?.closeKeyboard()
-                        mAlertDialog.dismiss()
+                        mAlertDialog?.dismiss()
 
                         val roomIntent = Intent(activity, RoomActivity::class.java)
                         roomIntent.putExtra("room", obj)
@@ -243,7 +243,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog.cancel()
+            mAlertDialog?.cancel()
             roomNameEditText.clearFocus()
             roomPasswordEditText.clearFocus()
             context?.closeKeyboard()

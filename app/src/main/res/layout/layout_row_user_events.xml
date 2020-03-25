@@ -43,7 +43,7 @@
         android:id="@+id/swipeAddButton"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:background="@color/colorBlack"
+        android:background="@color/black"
         android:clickable="true"
         android:contentDescription="@string/description_downvote_song_button"
         android:focusable="true"

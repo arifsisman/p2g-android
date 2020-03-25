@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.room.roomqueue
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -132,7 +132,7 @@ class RoomQueueFragment :
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder = AlertDialog
-            .Builder(context, R.style.fullScreenAppTheme)
+            .Builder(context!!)
             .setView(searchDialogView)
         val mAlertDialog = mBuilder.show()
 

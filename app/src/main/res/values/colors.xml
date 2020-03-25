@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#161616</color>
-    <color name="colorPrimaryDark">#121212</color>
-    <color name="colorPrimaryLight">#9A9A9A</color>
-    <color name="colorPrimaryText">#FFFFFF</color>
+    <color name="colorPrimary">#1e1e1e</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorLightGray">#9A9A9A</color>
+    <color name="colorSelectedTab">#FFFFFF</color>
     <color name="colorSecondaryTab">#BDBDBD</color>
-    <color name="colorBackground">#141414</color>
+    <color name="colorText">#DCDCDC</color>
+    <color name="colorBackground">#121212</color>
+    <color name="colorSurface">#1c1c1c</color>
     <color name="colorAccentBlue">#1D95B9</color>
-    <color name="colorSpotifyGreen">#1DB954</color>
-    <color name="colorNegative">#D10000</color>
-    <color name="colorBlack">#000000</color>
-    <color name="colorWhite">#FFFFFF</color>
-
     <color name="colorBottomNavDefault">#BDBDBD</color>
     <color name="colorTabBarDefault">#202020</color>
-
     <color name="colorIncomingMessagePressed">#2C6C52</color>
     <color name="colorRed">#980000</color>
     <color name="colorGreen">#179800</color>
-
 </resources>

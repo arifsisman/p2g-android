@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.activity
 
-import android.app.AlertDialog
 import android.content.*
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -24,6 +24,7 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.google.android.material.badge.BadgeDrawable
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
@@ -494,6 +495,8 @@ class RoomActivity : AppCompatActivity(),
                         } else {
                             roomViewModel.songList.postValue(songList)
                             roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
+                            val badge: BadgeDrawable? = tabLayout.getTabAt(0)?.orCreateBadge
+                            badge?.isVisible = true
                         }
                     }
                 }
@@ -537,11 +540,15 @@ class RoomActivity : AppCompatActivity(),
                     userListFromIntent.let { userList ->
                         roomViewModel.roomUserModelList.value = userList
                     }
+                    val badge: BadgeDrawable? = tabLayout.getTabAt(1)?.orCreateBadge
+                    badge?.isVisible = true
                 }
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =
                         intent.getParcelableExtra(ACTION_MESSAGE_RECEIVE)
                     chatMessage?.let { roomViewModel.newMessage.postValue(chatMessage) }
+                    val badge: BadgeDrawable? = tabLayout.getTabAt(3)?.orCreateBadge
+                    badge?.isVisible = true
                 }
             }
         }

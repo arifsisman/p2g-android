@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.util.helper
 
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
@@ -9,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.snackbar.Snackbar
 import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE

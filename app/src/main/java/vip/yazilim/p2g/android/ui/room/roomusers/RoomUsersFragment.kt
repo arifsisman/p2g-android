@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.room.roomusers
 
-import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -121,7 +121,7 @@ class RoomUsersFragment :
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
 
         val mBuilder = AlertDialog
-            .Builder(context, R.style.fullScreenAppTheme)
+            .Builder(context!!)
             .setView(inviteDialogView)
         val mAlertDialog = mBuilder.show()
 
@@ -228,7 +228,7 @@ class RoomUsersFragment :
                 }
             }
 
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(context!!)
                 .setMessage(
                     "${resources.getString(R.string.info_change_owner1)} $userName${resources.getString(
                         R.string.info_change_owner2
