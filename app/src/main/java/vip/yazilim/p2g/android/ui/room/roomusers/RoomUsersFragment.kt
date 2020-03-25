@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
+import kotlinx.android.synthetic.main.layout_row_user_events.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -199,6 +200,15 @@ class RoomUsersFragment :
     }
 
     override fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
+        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        if ((currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) && roomUserModel.roomUser?.role != Role.ROOM_OWNER.role) {
+            swipePromoteButton.visibility = View.VISIBLE
+            swipeDemoteButton.visibility = View.VISIBLE
+        } else {
+            swipePromoteButton.visibility = View.GONE
+            swipeDemoteButton.visibility = View.GONE
+        }
+
         if (view.openStatus != SwipeLayout.Status.Open) {
             view.toggle()
         }
