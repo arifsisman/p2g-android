@@ -116,8 +116,8 @@ class RoomActivity : AppCompatActivity(),
     }
 
     override fun onDestroy() {
-        request(Singleton.apiClient().leaveRoom(), null)
         super.onDestroy()
+        request(Singleton.apiClient().leaveRoom(), null)
     }
 
     // Setups

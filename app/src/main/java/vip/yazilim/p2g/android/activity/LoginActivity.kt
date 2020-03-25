@@ -19,6 +19,7 @@ import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.spotify.TokenModel
+import vip.yazilim.p2g.android.service.LogoutService
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -64,7 +65,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         cancelCall()
-        request(Singleton.apiClient().logout(), null)
         super.onDestroy()
     }
 
@@ -133,23 +133,27 @@ class LoginActivity : AppCompatActivity() {
         })
 
 
-    private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) = request(
-        Singleton.apiClient().getRoomModelMe(),
-        object : Callback<RoomModel> {
-            override fun onSuccess(obj: RoomModel) {
-                val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                roomIntent.putExtra("roomModel", obj)
-                startActivity(roomIntent)
-            }
+    private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) {
+        startService(Intent(baseContext, LogoutService::class.java))
 
-            override fun onError(msg: String) {
-                val info = resources.getString(R.string.info_logged_in)
-                UIHelper.showToastLong(this@LoginActivity, "$info ${user.name}")
-                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                startMainIntent.putExtra("user", user)
-                startMainIntent.putExtra("tokenModel", tokenModel)
-                startActivity(startMainIntent)
-            }
-        })
+        request(
+            Singleton.apiClient().getRoomModelMe(),
+            object : Callback<RoomModel> {
+                override fun onSuccess(obj: RoomModel) {
+                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                    roomIntent.putExtra("roomModel", obj)
+                    startActivity(roomIntent)
+                }
+
+                override fun onError(msg: String) {
+                    val info = resources.getString(R.string.info_logged_in)
+                    UIHelper.showToastLong(this@LoginActivity, "$info ${user.name}")
+                    val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startMainIntent.putExtra("user", user)
+                    startMainIntent.putExtra("tokenModel", tokenModel)
+                    startActivity(startMainIntent)
+                }
+            })
+    }
 
 }

@@ -51,6 +51,7 @@
         <service
             android:name=".service.RoomWebSocketService"
             android:stopWithTask="true" />
+        <service android:name=".service.LogoutService" />
 
     </application>
 
