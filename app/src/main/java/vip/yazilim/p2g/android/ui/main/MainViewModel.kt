@@ -39,7 +39,6 @@ class MainViewModel : ViewModelBase() {
             Singleton.apiClient().getRoomModels(),
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
-                    _isEmptyList.postValue(false)
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
@@ -47,10 +46,7 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<RoomModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _isEmptyList.postValue(false)
+                    if (obj.isNotEmpty()) {
                         _roomModels.value = obj
                     }
                 }
@@ -64,7 +60,6 @@ class MainViewModel : ViewModelBase() {
             Singleton.apiClient().getFriendRequestModels(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
-                    _isEmptyList.postValue(false)
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
@@ -73,12 +68,6 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
                     _isViewLoading.postValue(false)
                     _friendRequestModel.value = obj as MutableList<Any>
-
-                    if (friendRequestModel.value.isNullOrEmpty()) {
-//                        _isEmptyList.postValue(true)
-                    } else {
-                        _isEmptyList.postValue(false)
-                    }
                 }
             })
     }
@@ -90,7 +79,6 @@ class MainViewModel : ViewModelBase() {
             Singleton.apiClient().getFriendModels(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
-                    _isEmptyList.postValue(false)
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
@@ -99,12 +87,6 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<FriendModel>) {
                     _isViewLoading.postValue(false)
                     _friendRequestModel.value = obj as MutableList<Any>
-
-                    if (friendRequestModel.value.isNullOrEmpty()) {
-//                        _isEmptyList.postValue(true)
-                    } else {
-                        _isEmptyList.postValue(false)
-                    }
                 }
             })
     }
@@ -117,17 +99,13 @@ class MainViewModel : ViewModelBase() {
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
-                    _isEmptyList.postValue(false)
                     _onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<RoomInviteModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
-                        _isEmptyList.postValue(false)
+                    if (!obj.isNullOrEmpty()) {
                         _roomInviteModel.value = obj
                     }
                 }
@@ -142,14 +120,12 @@ class MainViewModel : ViewModelBase() {
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
-                    _isEmptyList.postValue(false)
                     _onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: UserModel) {
                     _userModel.value = obj
                     _isViewLoading.postValue(false)
-                    _isEmptyList.postValue(false)
                 }
             })
     }

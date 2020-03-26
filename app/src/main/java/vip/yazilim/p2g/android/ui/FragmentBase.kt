@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.androidadvance.topsnackbar.TSnackbar
 import kotlinx.android.synthetic.main.fragment_home.*
-import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.util.helper.UIHelper
 
 /**
@@ -50,7 +49,6 @@ abstract class FragmentBase(var layout: Int) :
     fun setupDefaultObservers(viewModelBase: ViewModelBase) {
         viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
         viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
-        viewModelBase.isEmptyList.observe(this, emptyListObserver)
     }
 
     // Default Observers
@@ -65,17 +63,6 @@ abstract class FragmentBase(var layout: Int) :
             errorSnackbar?.dismiss()
         } else {
             errorSnackbar = UIHelper.showSnackBarError(root, it)
-        }
-    }
-
-    private val emptyListObserver = Observer<Boolean> {
-        if (it) {
-            emptySnackbar = UIHelper.showSnackBarEmpty(
-                root,
-                resources.getString(R.string.placeholder_empty_list)
-            )
-        } else {
-            emptySnackbar?.dismiss()
         }
     }
 }

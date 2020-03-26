@@ -59,8 +59,8 @@
 
         <ImageView
             android:id="@+id/lockImage"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:contentDescription="@string/description_lock_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/countryFlag"
@@ -72,7 +72,7 @@
             android:id="@+id/countryFlag"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="6dp"
             android:contentDescription="@string/description_country_flag_image"
             app:countryCode="TR"
@@ -93,9 +93,9 @@
 
         <ImageView
             android:id="@+id/personImage"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginBottom="6dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="4dp"
             android:contentDescription="@string/description_lock_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/countryFlag"
