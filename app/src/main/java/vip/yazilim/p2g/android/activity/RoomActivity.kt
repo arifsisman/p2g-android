@@ -530,10 +530,10 @@ class RoomActivity : AppCompatActivity(),
                 ACTION_USER_LIST_RECEIVE -> {
                     val userListFromIntent =
                         intent.getParcelableArrayListExtra<RoomUserModel>(ACTION_USER_LIST_RECEIVE)
-                    userListFromIntent.let { roomViewModel.roomUserModelList.value = it }
                     if (userListFromIntent != null && roomViewModel.roomUserModelList.value?.size != userListFromIntent.size) {
                         showBadgeAt(1)
                     }
+                    userListFromIntent.let { roomViewModel.roomUserModelList.value = it }
                 }
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =
