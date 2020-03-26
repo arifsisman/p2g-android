@@ -76,18 +76,14 @@ interface Play2GetherWebApi {
     @DELETE("/api/room/user/leave")
     fun leaveRoom(): Call<Response<Boolean>>
 
-    @PUT("/api/room/user/{id}/promote")
-    fun promoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
-
-    @PUT("/api/room/user/{id}/demote")
-    fun demoteUser(@Path("id") roomUserId: Long): Call<Response<RoomUser>>
-
-    @PUT("/api/room/user/{id}/makeOwner")
-    fun changeRoomOwner(@Path("id") roomUserId: Long): Call<Response<Boolean>>
+    @PUT("/api/room/user/{id}/changeRole")
+    fun changeRoomUserRole(
+        @Path("id") roomUserId: Long,
+        @Body roleName: String
+    ): Call<Response<RoomUser>>
 
     @GET("/api/room/user/me")
     fun getRoomUserModelMe(): Call<Response<RoomUserModel>>
-
 
     // Room Queue API
     @GET("/api/room/{roomId}/queue")

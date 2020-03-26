@@ -79,14 +79,8 @@ class RoomUsersAdapter(
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.swipePromoteButton.setOnClickListener {
-                clickListener.onPromoteClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
-            }
-            itemView.swipeDemoteButton.setOnClickListener {
-                clickListener.onDemoteClicked(
+            itemView.swipeChangeRoleButton.setOnClickListener {
+                clickListener.onChangeRoleClicked(
                     itemView.row_user_model,
                     roomUserModel
                 )
@@ -106,8 +100,7 @@ class RoomUsersAdapter(
     }
 
     interface OnItemClickListener {
-        fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
-        fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
+        fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
     }
 
