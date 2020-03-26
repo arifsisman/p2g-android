@@ -39,6 +39,7 @@ class MainViewModel : ViewModelBase() {
             Singleton.apiClient().getRoomModels(),
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
+                    _isEmptyList.postValue(false)
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
@@ -49,6 +50,7 @@ class MainViewModel : ViewModelBase() {
                     if (obj.isEmpty()) {
                         _isEmptyList.postValue(true)
                     } else {
+                        _isEmptyList.postValue(false)
                         _roomModels.value = obj
                     }
                 }
@@ -62,6 +64,7 @@ class MainViewModel : ViewModelBase() {
             Singleton.apiClient().getFriendRequestModels(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
+                    _isEmptyList.postValue(false)
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
@@ -72,7 +75,9 @@ class MainViewModel : ViewModelBase() {
                     _friendRequestModel.value = obj as MutableList<Any>
 
                     if (friendRequestModel.value.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
+//                        _isEmptyList.postValue(true)
+                    } else {
+                        _isEmptyList.postValue(false)
                     }
                 }
             })
@@ -85,6 +90,7 @@ class MainViewModel : ViewModelBase() {
             Singleton.apiClient().getFriendModels(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
+                    _isEmptyList.postValue(false)
                     _isViewLoading.postValue(false)
                     _onMessageError.postValue(msg)
                 }
@@ -95,7 +101,9 @@ class MainViewModel : ViewModelBase() {
                     _friendRequestModel.value = obj as MutableList<Any>
 
                     if (friendRequestModel.value.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
+//                        _isEmptyList.postValue(true)
+                    } else {
+                        _isEmptyList.postValue(false)
                     }
                 }
             })
@@ -109,6 +117,7 @@ class MainViewModel : ViewModelBase() {
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
+                    _isEmptyList.postValue(false)
                     _onMessageError.postValue(msg)
                 }
 
@@ -118,6 +127,7 @@ class MainViewModel : ViewModelBase() {
                     if (obj.isNullOrEmpty()) {
                         _isEmptyList.postValue(true)
                     } else {
+                        _isEmptyList.postValue(false)
                         _roomInviteModel.value = obj
                     }
                 }
@@ -132,12 +142,14 @@ class MainViewModel : ViewModelBase() {
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                     _isViewLoading.postValue(false)
+                    _isEmptyList.postValue(false)
                     _onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: UserModel) {
                     _userModel.value = obj
                     _isViewLoading.postValue(false)
+                    _isEmptyList.postValue(false)
                 }
             })
     }

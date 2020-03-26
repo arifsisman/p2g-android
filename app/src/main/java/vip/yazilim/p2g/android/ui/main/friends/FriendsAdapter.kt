@@ -24,7 +24,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
  * @contact mustafaarifsisman@gmail.com
  */
 class FriendsAdapter(
-    private var adapterDataList: MutableList<Any>,
+    var adapterDataList: MutableList<Any>,
     private val requestClickListener: OnItemClickListener,
     private val friendClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolderBase<*>>(), Filterable {

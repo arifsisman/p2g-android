@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.androidadvance.topsnackbar.TSnackbar
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.util.helper.UIHelper
@@ -18,6 +19,7 @@ abstract class FragmentBase(var layout: Int) :
     Fragment() {
     lateinit var root: View
     lateinit var container: ViewGroup
+    private var emptySnackbar: TSnackbar? = null
 
     // Inflate view with container and setupViewModel and setupUI
     override fun onCreateView(
@@ -64,10 +66,12 @@ abstract class FragmentBase(var layout: Int) :
 
     private val emptyListObserver = Observer<Boolean> {
         if (it) {
-            UIHelper.showSnackBarEmpty(
+            emptySnackbar = UIHelper.showSnackBarEmpty(
                 root,
                 resources.getString(R.string.placeholder_empty_list)
             )
+        } else {
+            emptySnackbar?.dismiss()
         }
     }
 
