@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 import vip.yazilim.p2g.android.constant.ColorCodes.EMPTY
 import vip.yazilim.p2g.android.constant.ColorCodes.ERROR
@@ -58,8 +57,8 @@ class UIHelper {
         }
 
         fun showSnackBarPlayer(view: View?, message: String) {
-            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            snack?.anchorView = view
+            val snack: TSnackbar? =
+                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
             val snackView = snack?.view
             snackView?.setBackgroundColor(Color.parseColor(ERROR))
             snack?.show()

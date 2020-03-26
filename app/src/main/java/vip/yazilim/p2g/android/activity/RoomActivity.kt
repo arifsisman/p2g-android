@@ -633,7 +633,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                UIHelper.showSnackBarPlayer(viewPager, msg)
             }
         })
 
@@ -643,7 +643,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                UIHelper.showSnackBarPlayer(viewPager, msg)
             }
         })
 
@@ -653,7 +653,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                UIHelper.showSnackBarPlayer(viewPager, msg)
             }
         })
 
@@ -663,7 +663,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                UIHelper.showSnackBarPlayer(viewPager, msg)
             }
         })
 
@@ -673,7 +673,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                UIHelper.showSnackBarPlayer(viewPager, msg)
             }
         })
 

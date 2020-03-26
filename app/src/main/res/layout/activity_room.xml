@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     sothree:umanoOverlay="true"
-    sothree:umanoFadeColor="@android:color/transparent"
     sothree:umanoPanelHeight="62dp"
     sothree:umanoShadowHeight="0dp"
     tools:context=".activity.RoomActivity">

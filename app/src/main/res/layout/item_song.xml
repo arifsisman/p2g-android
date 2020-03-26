@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_song"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="1dp"
-    android:paddingEnd="1dp">
+    android:layout_height="wrap_content">
 
     <include
         android:id="@+id/song_event_holder"
@@ -16,7 +14,8 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
