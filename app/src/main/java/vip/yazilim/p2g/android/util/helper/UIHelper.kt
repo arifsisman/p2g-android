@@ -19,22 +19,50 @@ import vip.yazilim.p2g.android.constant.ColorCodes.ERROR
  */
 class UIHelper {
     companion object {
-        fun showToastShort(context: Context?, message: String) {
-            val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
+        fun View.showSnackBarInfo(message: String) {
+            val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun View.showSnackBarError(message: String) {
+            val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ERROR))
+            snack?.show()
+        }
+
+        fun View.showSnackBarPlayerError(message: String) {
+            val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ERROR))
+            snack?.show()
+        }
+
+        fun View.showSnackBarErrorIndefinite(message: String) {
+            val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_INDEFINITE)
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ERROR))
+            snack?.show()
+        }
+
+        fun Context.showToastShort(message: String) {
+            val toast: Toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
 
             toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
         }
 
-        fun showToastLong(context: Context?, message: String) {
-            val toast: Toast = Toast.makeText(context, message, Toast.LENGTH_LONG)
+        fun Context.showToastLong(message: String) {
+            val toast: Toast = Toast.makeText(this, message, Toast.LENGTH_LONG)
 
             toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
         }
 
-        fun showErrorDialog(context: Context, message: String): AlertDialog? {
-            val dialogBuilder = MaterialAlertDialogBuilder(context)
+        fun Context.showErrorDialog(message: String): AlertDialog? {
+            val dialogBuilder = MaterialAlertDialogBuilder(this)
                 .setMessage(message)
                 .setPositiveButton("OK") { dialog, _ ->
                     dialog.cancel()
@@ -47,51 +75,19 @@ class UIHelper {
             return alert
         }
 
-        fun View.showSnackBarInfo(message: String) {
-            val snack: TSnackbar? = this.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
-            snack?.show()
-        }
-
-        fun View.showSnackBarError(message: String) {
-            val snack: TSnackbar? = this.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ERROR))
-            snack?.show()
-        }
-
-        fun showSnackBarPlayer(view: View?, message: String) {
-            val snack: TSnackbar? =
-                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ERROR))
-            snack?.show()
-        }
-
-
-        fun showSnackBarErrorIndefinite(view: View?, message: String) {
-            val snack: TSnackbar? =
-                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_INDEFINITE) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ERROR))
-            snack?.show()
-        }
-
-        fun dpFromPx(context: Context, px: Float): Float {
-            return px / context.resources.displayMetrics.density
-        }
-
-        fun pxFromDp(context: Context, dp: Float): Float {
-            return dp * context.resources.displayMetrics.density
-        }
-
         fun Context.closeKeyboard() {
             val inputMethodManager =
                 this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
         }
 
+        fun Context.dpFromPx(px: Float): Float {
+            return px / this.resources.displayMetrics.density
+        }
+
+        fun Context.pxFromDp(dp: Float): Float {
+            return dp * this.resources.displayMetrics.density
+        }
     }
 }
 

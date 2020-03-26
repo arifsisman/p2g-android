@@ -58,9 +58,11 @@ import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarErrorIndefinite
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
@@ -504,10 +506,7 @@ class RoomActivity : AppCompatActivity(),
                         roomWsReconnectCounter++
                         viewPager.showSnackBarInfo(resources.getString(R.string.err_room_websocket_reconnect))
                     } else {
-                        UIHelper.showSnackBarErrorIndefinite(
-                            viewPager,
-                            resources.getString(R.string.err_room_websocket_closed)
-                        )
+                        viewPager.showSnackBarErrorIndefinite(resources.getString(R.string.err_room_websocket_closed))
                     }
                 }
                 ACTION_ROOM_STATUS -> {
@@ -515,10 +514,7 @@ class RoomActivity : AppCompatActivity(),
                     if (status.equals(RoomStatus.CLOSED.status)) {
                         val roomPlaceholder = resources.getString(R.string.title_room)
                         val closedPlaceholder = resources.getString(R.string.info_closed)
-                        UIHelper.showToastLong(
-                            context,
-                            "$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}"
-                        )
+                        context?.showToastLong("$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}")
                         request(Singleton.apiClient().leaveRoom(), null)
 
                         val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
@@ -623,7 +619,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(viewPager, msg)
+                viewPager.showSnackBarPlayerError(msg)
             }
         })
 
@@ -633,7 +629,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(viewPager, msg)
+                viewPager.showSnackBarPlayerError(msg)
             }
         })
 
@@ -643,7 +639,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(viewPager, msg)
+                viewPager.showSnackBarPlayerError(msg)
             }
         })
 
@@ -653,7 +649,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(viewPager, msg)
+                viewPager.showSnackBarPlayerError(msg)
             }
         })
 
@@ -663,7 +659,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(viewPager, msg)
+                viewPager.showSnackBarPlayerError(msg)
             }
         })
 
