@@ -59,6 +59,8 @@ import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
@@ -333,20 +335,14 @@ class RoomActivity : AppCompatActivity(),
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     if (obj) {
-                        UIHelper.showSnackBarShortTop(
-                            viewPager,
-                            resources.getString(R.string.info_sync)
-                        )
+                        viewPager.showSnackBarInfo(resources.getString(R.string.info_sync))
                     } else {
-                        UIHelper.showSnackBarShortTop(
-                            viewPager,
-                            resources.getString(R.string.info_not_playing)
-                        )
+                        viewPager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
                     }
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarError(viewPager, msg)
+                    viewPager.showSnackBarError(msg)
                 }
             })
     }
@@ -419,14 +415,11 @@ class RoomActivity : AppCompatActivity(),
                         room?.id?.let { Singleton.apiClient().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
-                                UIHelper.showSnackBarShortTop(
-                                    viewPager,
-                                    resources.getString(R.string.info_queue_cleared)
-                                )
+                                viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
                             }
 
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarError(viewPager, msg)
+                                viewPager.showSnackBarError(msg)
                             }
                         })
                 }
@@ -467,7 +460,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarError(viewPager, msg)
+                viewPager.showSnackBarError(msg)
             }
         })
     }
@@ -509,10 +502,7 @@ class RoomActivity : AppCompatActivity(),
                         TokenAuthenticator.refreshToken()
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
-                        UIHelper.showSnackBarShortTop(
-                            viewPager,
-                            resources.getString(R.string.err_room_websocket_reconnect)
-                        )
+                        viewPager.showSnackBarInfo(resources.getString(R.string.err_room_websocket_reconnect))
                     } else {
                         UIHelper.showSnackBarErrorIndefinite(
                             viewPager,
@@ -619,7 +609,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarError(viewPager, msg)
+                viewPager.showSnackBarError(msg)
             }
         })
 
@@ -707,14 +697,11 @@ class RoomActivity : AppCompatActivity(),
             Singleton.apiClient().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
-                    UIHelper.showSnackBarShortTop(
-                        viewPager,
-                        resources.getString(R.string.info_device_change)
-                    )
+                    viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarError(viewPager, msg)
+                    viewPager.showSnackBarError(msg)
                 }
             })
     }

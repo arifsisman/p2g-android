@@ -27,8 +27,9 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
@@ -98,10 +99,7 @@ class RoomUsersFragment :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarError(
-                    root,
-                    resources.getString(R.string.err_room_user_refresh)
-                )
+                roomViewModel._onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -162,7 +160,7 @@ class RoomUsersFragment :
                 Singleton.apiClient().searchUser(query),
                 object : Callback<MutableList<User>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarError(inviteRecyclerView, msg)
+                        inviteRecyclerView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: MutableList<User>) {
@@ -292,14 +290,11 @@ class RoomUsersFragment :
             request(Singleton.apiClient().inviteUser(roomId, userId),
                 object : Callback<RoomInvite> {
                     override fun onSuccess(obj: RoomInvite) {
-                        UIHelper.showSnackBarShortTop(
-                            inviteDialogView,
-                            "${user.name} ${resources.getString(R.string.info_room_invite_send)}"
-                        )
+                        inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
                     }
 
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarError(inviteDialogView, msg)
+                        inviteDialogView.showSnackBarError(msg)
                     }
                 })
         }

@@ -47,11 +47,17 @@ class UIHelper {
             return alert
         }
 
-        fun showSnackBarShortTop(view: View?, message: String) {
-            val snack: TSnackbar? =
-                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
+        fun View.showSnackBarInfo(message: String) {
+            val snack: TSnackbar? = this.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
             val snackView = snack?.view
             snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snack?.show()
+        }
+
+        fun View.showSnackBarError(message: String) {
+            val snack: TSnackbar? = this.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(ERROR))
             snack?.show()
         }
 
@@ -63,15 +69,6 @@ class UIHelper {
             snack?.show()
         }
 
-        fun showSnackBarError(view: View?, message: String): TSnackbar? {
-            val snack: TSnackbar? =
-                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ERROR))
-            snack?.show()
-
-            return snack
-        }
 
         fun showSnackBarErrorIndefinite(view: View?, message: String) {
             val snack: TSnackbar? =

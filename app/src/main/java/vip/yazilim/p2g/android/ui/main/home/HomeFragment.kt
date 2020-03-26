@@ -30,8 +30,8 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
@@ -163,7 +163,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarError(mDialogView, msg)
+                        mDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
@@ -222,7 +222,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
                 ),
                 object : Callback<Room> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarError(mDialogView, msg)
+                        mDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: Room) {

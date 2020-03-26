@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.androidadvance.topsnackbar.TSnackbar
 import kotlinx.android.synthetic.main.fragment_home.*
-import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -18,8 +18,6 @@ abstract class FragmentBase(var layout: Int) :
     Fragment() {
     lateinit var root: View
     lateinit var container: ViewGroup
-    private var emptySnackbar: TSnackbar? = null
-    private var errorSnackbar: TSnackbar? = null
 
     // Inflate view with container and setupViewModel and setupUI
     override fun onCreateView(
@@ -53,17 +51,11 @@ abstract class FragmentBase(var layout: Int) :
     }
 
     // Default Observers
-    val isViewLoadingObserver = Observer<Boolean> {
+    private val isViewLoadingObserver = Observer<Boolean> {
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar?.visibility = visibility
-        errorSnackbar?.dismiss()
     }
 
-    val onMessageErrorObserver = Observer<String> { it ->
-        errorSnackbar = UIHelper.showSnackBarError(container, it)
-    }
-
-    val onMessageInfoObserver = Observer<String> { it ->
-        UIHelper.showSnackBarShortTop(container, it)
-    }
+    private val onMessageErrorObserver = Observer<String> { container.showSnackBarError(it) }
+    private val onMessageInfoObserver = Observer<String> { container.showSnackBarInfo(it) }
 }

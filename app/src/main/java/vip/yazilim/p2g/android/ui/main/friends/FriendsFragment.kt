@@ -30,8 +30,8 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -283,7 +283,7 @@ class FriendsFragment : FragmentBase(
                 room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarError(mDialogView, msg)
+                        mDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {

@@ -29,8 +29,8 @@ import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -179,7 +179,7 @@ class RoomQueueFragment :
                 Singleton.apiClient().searchSpotify(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarError(searchDialogView, msg)
+                        searchDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -230,10 +230,7 @@ class RoomQueueFragment :
             if (isAnyItemsSelected != null) {
                 searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
-                UIHelper.showSnackBarError(
-                    searchDialogView,
-                    resources.getString(R.string.err_room_queue_add)
-                )
+                searchDialogView.showSnackBarError(resources.getString(R.string.err_room_queue_add))
             }
         }
     }
