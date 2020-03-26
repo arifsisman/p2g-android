@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.card.MaterialCardView
 import com.haipq.android.flagkit.FlagImageView
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
@@ -29,7 +29,7 @@ class ProfileAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val cardView: MaterialCardView = itemView.findViewById(R.id.profile_card_view)
+        private val cardView: ConstraintLayout = itemView.findViewById(R.id.profile_view)
         private val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
         private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
         private val flagImage: FlagImageView = itemView.findViewById(R.id.countryFlag)

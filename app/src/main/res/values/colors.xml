@@ -13,4 +13,5 @@
     <color name="colorIncomingMessagePressed">#2C6C52</color>
     <color name="colorRed">#980000</color>
     <color name="colorGreen">#179800</color>
+    <color name="colorItemBackground">#2B2B2B</color>
 </resources>
