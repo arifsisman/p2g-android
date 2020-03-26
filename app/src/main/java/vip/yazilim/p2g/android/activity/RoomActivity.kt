@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.activity
 
-import android.app.AlertDialog
 import android.content.*
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -24,6 +24,8 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
@@ -56,7 +58,11 @@ import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
-import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarErrorIndefinite
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
@@ -78,6 +84,8 @@ class RoomActivity : AppCompatActivity(),
     private lateinit var playerRecyclerView: RecyclerView
     private lateinit var deviceDialog: AlertDialog
     private var roomWsReconnectCounter = 0
+
+    private var clearRoomQueueMenuItem: MenuItem? = null
 
     @Volatile
     private var isPlaying = false
@@ -115,9 +123,14 @@ class RoomActivity : AppCompatActivity(),
         room?.id?.let { roomViewModel.loadRoomUsers(it) }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        request(Singleton.apiClient().leaveRoom(), null)
+    }
+
     // Setups
     private fun setupViewPager() {
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
         viewPager.adapter = sectionsPagerAdapter
 
         viewPager.addOnPageChangeListener(object : OnPageChangeListener {
@@ -129,6 +142,8 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onPageSelected(position: Int) {
+                removeBadgeAt(position)
+
                 when (position) {
                     0 -> {
                         canUserAddAndControlSongs(roomViewModel.roomUserModel.value?.roomUser)
@@ -148,6 +163,10 @@ class RoomActivity : AppCompatActivity(),
 
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.bringToFront()
+
+        tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_queue_music_white_24dp)
+        tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_people_white_24dp)
+        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_chat_white_24dp)
     }
 
     private fun setPlayerVisibility(show: Boolean) {
@@ -302,26 +321,16 @@ class RoomActivity : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
+        clearRoomQueueMenuItem = menu?.findItem(R.id.clear_queue)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.sync_with_room -> {
-                syncWithRoom(roomViewModel.roomUserModel.value?.roomUser)
-            }
-            R.id.select_device -> {
-                selectDevice()
-            }
-            R.id.clear_queue -> {
-                clearQueue()
-            }
-            R.id.leave -> {
-                leaveRoom()
-            }
-            android.R.id.home -> {
-                leaveRoom()
-            }
+            R.id.sync_with_room -> syncWithRoom(roomViewModel.roomUserModel.value?.roomUser)
+            R.id.select_device -> selectDevice()
+            R.id.clear_queue -> clearQueue()
+            android.R.id.home -> leaveRoom()
         }
         return true
     }
@@ -332,20 +341,14 @@ class RoomActivity : AppCompatActivity(),
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     if (obj) {
-                        UIHelper.showSnackBarShortTop(
-                            viewPager,
-                            resources.getString(R.string.info_sync)
-                        )
+                        viewPager.showSnackBarInfo(resources.getString(R.string.info_sync))
                     } else {
-                        UIHelper.showSnackBarShortTop(
-                            viewPager,
-                            resources.getString(R.string.info_not_playing)
-                        )
+                        viewPager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
                     }
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(viewPager, msg)
+                    viewPager.showSnackBarError(msg)
                 }
             })
     }
@@ -353,8 +356,6 @@ class RoomActivity : AppCompatActivity(),
     override fun onBackPressed() {
         if (viewPager.currentItem == 0 && slidingUpPanel.panelState != COLLAPSED) {
             showMinimizedPlayer()
-        } else {
-            leaveRoom()
         }
     }
 
@@ -372,7 +373,7 @@ class RoomActivity : AppCompatActivity(),
             }
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(resources.getString(R.string.info_leave_room))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -420,21 +421,18 @@ class RoomActivity : AppCompatActivity(),
                         room?.id?.let { Singleton.apiClient().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
-                                UIHelper.showSnackBarShortTop(
-                                    viewPager,
-                                    resources.getString(R.string.info_queue_cleared)
-                                )
+                                viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
                             }
 
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShortTop(viewPager, msg)
+                                viewPager.showSnackBarError(msg)
                             }
                         })
                 }
             }
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(resources.getString(R.string.info_clear_queue))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -446,7 +444,8 @@ class RoomActivity : AppCompatActivity(),
             override fun onSuccess(obj: MutableList<UserDevice>) {
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
-                val mBuilder = AlertDialog.Builder(this@RoomActivity).setView(deviceDialogView)
+                val mBuilder =
+                    MaterialAlertDialogBuilder(this@RoomActivity).setView(deviceDialogView)
                 deviceDialog = mBuilder.show()
 
                 // Adapter start and update with requested search model
@@ -467,7 +466,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(viewPager, msg)
+                viewPager.showSnackBarError(msg)
             }
         })
     }
@@ -494,12 +493,12 @@ class RoomActivity : AppCompatActivity(),
                         intent.getParcelableArrayListExtra<Song>(ACTION_SONG_LIST_RECEIVE)
                     songListFromIntent?.let { songList ->
                         if (songList.isNullOrEmpty()) {
-                            roomViewModel.songList.value = mutableListOf()
-                            roomViewModel.playerSong.value = null
-                            roomViewModel._isEmptyList.postValue(true)
+                            roomViewModel.songList.postValue(mutableListOf())
+                            roomViewModel.playerSong.postValue(null)
                         } else {
-                            roomViewModel.songList.value = songList
-                            roomViewModel.playerSong.value = roomViewModel.getCurrentSong(songList)
+                            roomViewModel.songList.postValue(songList)
+                            roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
+                            showBadgeAt(0)
                         }
                     }
                 }
@@ -509,15 +508,9 @@ class RoomActivity : AppCompatActivity(),
                         TokenAuthenticator.refreshToken()
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
-                        UIHelper.showSnackBarShortTop(
-                            viewPager,
-                            resources.getString(R.string.err_room_websocket_reconnect)
-                        )
+                        viewPager.showSnackBarInfo(resources.getString(R.string.err_room_websocket_reconnect))
                     } else {
-                        UIHelper.showSnackBarShortTopIndefinite(
-                            viewPager,
-                            resources.getString(R.string.err_room_websocket_closed)
-                        )
+                        viewPager.showSnackBarErrorIndefinite(resources.getString(R.string.err_room_websocket_closed))
                     }
                 }
                 ACTION_ROOM_STATUS -> {
@@ -525,10 +518,7 @@ class RoomActivity : AppCompatActivity(),
                     if (status.equals(RoomStatus.CLOSED.status)) {
                         val roomPlaceholder = resources.getString(R.string.title_room)
                         val closedPlaceholder = resources.getString(R.string.info_closed)
-                        UIHelper.showToastLong(
-                            context,
-                            "$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}"
-                        )
+                        context?.showToastLong("$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}")
                         request(Singleton.apiClient().leaveRoom(), null)
 
                         val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
@@ -540,14 +530,18 @@ class RoomActivity : AppCompatActivity(),
                 ACTION_USER_LIST_RECEIVE -> {
                     val userListFromIntent =
                         intent.getParcelableArrayListExtra<RoomUserModel>(ACTION_USER_LIST_RECEIVE)
-                    userListFromIntent.let { userList ->
-                        roomViewModel.roomUserModelList.value = userList
+                    userListFromIntent.let { roomViewModel.roomUserModelList.value = it }
+                    if (userListFromIntent != null && roomViewModel.roomUserModelList.value?.size != userListFromIntent.size) {
+                        showBadgeAt(1)
                     }
                 }
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =
                         intent.getParcelableExtra(ACTION_MESSAGE_RECEIVE)
-                    chatMessage?.let { roomViewModel.newMessage.postValue(chatMessage) }
+                    chatMessage?.let { roomViewModel.newMessage.postValue(it) }
+                    if (chatMessage?.roomUser?.name != "Info") {
+                        showBadgeAt(2)
+                    }
                 }
             }
         }
@@ -557,45 +551,41 @@ class RoomActivity : AppCompatActivity(),
     // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
         if (roomUser != null) {
-            return if (roomUser.role == Role.ROOM_DJ.role || roomUser.role == Role.ROOM_ADMIN.role || roomUser.role == Role.ROOM_OWNER.role) {
-                fab.show()
-                playerController.visibility = View.VISIBLE
-                playPause_button_mini.visibility = View.VISIBLE
-                true
-            } else {
+            return if (roomUser.role == Role.ROOM_USER.role) {
                 fab.hide()
                 playPause_button_mini.visibility = View.GONE
                 playerController.visibility = View.GONE
+                clearRoomQueueMenuItem?.isVisible = false
                 false
+            } else {
+                fab.show()
+                playerController.visibility = View.VISIBLE
+                playPause_button_mini.visibility = View.VISIBLE
+                clearRoomQueueMenuItem?.isVisible = true
+                true
             }
         }
         return false
     }
 
-    inner class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
+    inner class SectionsPagerAdapter(fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> RoomQueueFragment(roomViewModel)
-                1 -> RoomUsersFragment(roomViewModel)
-                2 -> RoomChatFragment(roomViewModel)
+                0 -> RoomQueueFragment()
+                2 -> RoomChatFragment()
+                1 -> RoomUsersFragment()
                 else -> throw IllegalArgumentException()
             }
         }
 
-        private val tabTitles = arrayOf(
-            R.string.title_queue,
-            R.string.title_users,
-            R.string.title_chat
-        )
-
         override fun getPageTitle(position: Int): CharSequence? {
-            return context.resources.getString(tabTitles[position])
+            return null
         }
 
         override fun getCount(): Int {
-            return tabTitles.size
+            return 3
         }
     }
 
@@ -615,7 +605,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(viewPager, msg)
+                playerCoordinatorLayout.showSnackBarError(msg)
             }
         })
 
@@ -629,7 +619,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -639,7 +629,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -649,7 +639,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -659,7 +649,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -669,7 +659,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarPlayer(playerController, msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -703,14 +693,11 @@ class RoomActivity : AppCompatActivity(),
             Singleton.apiClient().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
-                    UIHelper.showSnackBarShortTop(
-                        viewPager,
-                        resources.getString(R.string.info_device_change)
-                    )
+                    viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(viewPager, msg)
+                    viewPager.showSnackBarError(msg)
                 }
             })
     }
@@ -719,5 +706,16 @@ class RoomActivity : AppCompatActivity(),
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    }
+
+    private fun showBadgeAt(pos: Int) {
+        if (viewPager.currentItem != pos) {
+            val badge: BadgeDrawable? = tabLayout.getTabAt(pos)?.orCreateBadge
+            badge?.isVisible = true
+        }
+    }
+
+    fun removeBadgeAt(pos: Int) {
+        tabLayout.getTabAt(pos)?.removeBadge()
     }
 }

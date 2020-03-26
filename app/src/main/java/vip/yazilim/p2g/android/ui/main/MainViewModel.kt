@@ -29,9 +29,6 @@ class MainViewModel : ViewModelBase() {
     private val _friendCountsMe = MutableLiveData<Int>()
     val friendCountsMe: LiveData<Int> = _friendCountsMe
 
-    private val _friendCounts = MutableLiveData<Int>()
-    val friendCounts: LiveData<Int> = _friendCounts
-
     private val _roomModel = MutableLiveData<RoomModel>()
     val roomModel: LiveData<RoomModel> = _roomModel
 
@@ -49,9 +46,7 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<RoomModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
+                    if (obj.isNotEmpty()) {
                         _roomModels.value = obj
                     }
                 }
@@ -73,10 +68,6 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
                     _isViewLoading.postValue(false)
                     _friendRequestModel.value = obj as MutableList<Any>
-
-                    if (friendRequestModel.value.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
-                    }
                 }
             })
     }
@@ -96,10 +87,6 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<FriendModel>) {
                     _isViewLoading.postValue(false)
                     _friendRequestModel.value = obj as MutableList<Any>
-
-                    if (friendRequestModel.value.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
-                    }
                 }
             })
     }
@@ -118,9 +105,7 @@ class MainViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<RoomInviteModel>) {
                     _isViewLoading.postValue(false)
 
-                    if (obj.isNullOrEmpty()) {
-                        _isEmptyList.postValue(true)
-                    } else {
+                    if (!obj.isNullOrEmpty()) {
                         _roomInviteModel.value = obj
                     }
                 }
@@ -155,28 +140,4 @@ class MainViewModel : ViewModelBase() {
                 _friendCountsMe.value = obj
             }
         })
-
-    fun loadFriendsCount(userId: String) = request(
-        Singleton.apiClient().getFriendsCounts(userId),
-        object : Callback<Int> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: Int) {
-                _friendCounts.value = obj
-            }
-        })
-
-    fun loadRoomModel(roomId: Long) = request(
-        Singleton.apiClient().getRoomModel(roomId),
-        object : Callback<RoomModel> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: RoomModel) {
-                _roomModel.value = obj
-            }
-        })
-
-
 }

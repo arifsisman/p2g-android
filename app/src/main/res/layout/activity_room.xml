@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     sothree:umanoOverlay="true"
-    sothree:umanoFadeColor="@android:color/transparent"
+    app:umanoFadeColor="@android:color/transparent"
     sothree:umanoPanelHeight="62dp"
     sothree:umanoShadowHeight="0dp"
     tools:context=".activity.RoomActivity">
@@ -24,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             app:tabRippleColor="@null"
-            android:background="@color/colorTabBarDefault"
-            app:tabSelectedTextColor="@color/colorPrimaryText"
+            android:elevation="3dp"
+            app:tabSelectedTextColor="@color/colorSelectedTab"
             app:tabTextColor="@color/colorSecondaryTab" />
 
         <androidx.viewpager.widget.ViewPager
@@ -42,28 +42,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_marginBottom="55dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/spotify_icon"
+            android:layout_marginBottom="60dp"
+            android:backgroundTint="@color/colorAccentBlue"
+            android:src="@drawable/ic_playlist_add_white_24dp"
             android:visibility="invisible"
-            app:backgroundTint="@color/colorAccentBlue"
             app:borderWidth="0dp"
-            app:elevation="6dp"
             app:layout_anchor="@+id/viewPager"
             app:layout_anchorGravity="end|bottom"
             app:useCompatPadding="true" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playerRecyclerView"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/playerCoordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:nestedScrollingEnabled="false"
-        android:overScrollMode="never"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:elevation="3dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

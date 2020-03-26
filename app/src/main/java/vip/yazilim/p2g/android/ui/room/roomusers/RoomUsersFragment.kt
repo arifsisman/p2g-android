@@ -1,17 +1,19 @@
 package vip.yazilim.p2g.android.ui.room.roomusers
 
-import android.app.AlertDialog
-import android.content.DialogInterface
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
 import vip.yazilim.p2g.android.R
@@ -25,19 +27,21 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 07.03.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomUsersFragment(var roomViewModel: RoomViewModel) :
+class RoomUsersFragment :
     FragmentBase(R.layout.fragment_room_users),
     RoomUsersAdapter.OnItemClickListener,
-    RoomInviteAdapter.OnItemClickListener {
+    RoomInviteAdapter.OnItemClickListener,
+    ChangeRoleAdapter.OnItemClickListener,
+    SwipeLayout.SwipeListener {
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomUsersAdapter
@@ -45,13 +49,24 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     private lateinit var inviteAdapter: RoomInviteAdapter
     private lateinit var inviteDialogView: View
 
+    private lateinit var roomViewModel: RoomViewModel
+
+    private lateinit var changeRoleAdapter: ChangeRoleAdapter
+    private var changeRoleDialogView: AlertDialog? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
+    }
+
     override fun setupUI() {
         roomActivity = activity as RoomActivity
 
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this)
+        adapter =
+            RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         // recyclerView divider
@@ -70,16 +85,11 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     }
 
     override fun setupViewModel() {
-//        super.setupDefaultObservers(viewModel)
-        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
+        setupDefaultObservers(roomViewModel)
     }
 
     // Observer
     private val renderRoomUserModelList = Observer<MutableList<RoomUserModel>> { roomUserModels ->
-        Log.v(TAG, "data updated $roomUserModels")
-        layoutError.visibility = View.GONE
-
         adapter.update(roomUserModels)
 
         roomUserModels.forEach {
@@ -93,10 +103,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(
-                    root,
-                    resources.getString(R.string.err_room_user_refresh)
-                )
+                roomViewModel._onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -109,8 +116,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
     private fun showInviteDialog() {
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
 
-        val mBuilder = AlertDialog
-            .Builder(context, R.style.fullScreenAppTheme)
+        val mBuilder = MaterialAlertDialogBuilder(context)
             .setView(inviteDialogView)
         val mAlertDialog = mBuilder.show()
 
@@ -132,7 +138,6 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             queryEditText.clearFocus()
         }
 
-        // Adapter start and update with requested search model
         val inviteRecyclerView: RecyclerView =
             inviteDialogView.findViewById(R.id.inviteRecyclerView)
         inviteRecyclerView.setHasFixedSize(true)
@@ -158,7 +163,7 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
                 Singleton.apiClient().searchUser(query),
                 object : Callback<MutableList<User>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(inviteRecyclerView, msg)
+                        inviteRecyclerView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: MutableList<User>) {
@@ -189,84 +194,28 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
 
     }
 
-    override fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        if (view.openStatus != SwipeLayout.Status.Open) {
-            view.toggle()
-        }
-    }
-
-    override fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
+    override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
+        val mDialogView = View.inflate(context, R.layout.dialog_change_role, null)
+        val mBuilder = context?.let { MaterialAlertDialogBuilder(it).setView(mDialogView) }
+        changeRoleDialogView = mBuilder?.show()
 
-        if (roomUserModel.roomUser?.role == Role.ROOM_ADMIN.role) {
-            val userName = roomUserModel.roomUser?.userName
-            val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
-                when (ans) {
-                    DialogInterface.BUTTON_POSITIVE -> {
-                        request(
-                            roomUserModel.roomUser?.id?.let {
-                                Singleton.apiClient().changeRoomOwner(it)
-                            },
-                            object : Callback<Boolean> {
-                                override fun onSuccess(obj: Boolean) {
-                                    UIHelper.showSnackBarShortTop(
-                                        root,
-                                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${Role.ROOM_OWNER.role}"
-                                    )
-                                }
+        val changeRoleRecyclerView: RecyclerView = mDialogView.findViewById(R.id.rolesRecyclerView)
+        changeRoleRecyclerView.setHasFixedSize(true)
+        changeRoleRecyclerView.layoutManager = LinearLayoutManager(activity)
 
-                                override fun onError(msg: String) {
-                                    UIHelper.showSnackBarShortTop(root, msg)
-                                }
-                            })
-                    }
-                }
-            }
+        changeRoleAdapter = ChangeRoleAdapter(roomUserModel, emptyList(), this@RoomUsersFragment)
+        changeRoleRecyclerView.adapter = changeRoleAdapter
 
-            AlertDialog.Builder(activity)
-                .setMessage(
-                    "${resources.getString(R.string.info_change_owner1)} $userName${resources.getString(
-                        R.string.info_change_owner2
-                    )}"
-                )
-                .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
-                .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
-                .show()
-        } else {
-            request(
-                roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
-                object : Callback<RoomUser> {
-                    override fun onSuccess(obj: RoomUser) {
-                        UIHelper.showSnackBarShortTop(
-                            root,
-                            "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
-                        )
-                    }
+        changeRoleRecyclerView.addItemDecoration(object : DividerItemDecoration(
+            changeRoleRecyclerView.context,
+            (changeRoleRecyclerView.layoutManager as LinearLayoutManager).orientation
+        ) {})
 
-                    override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(root, msg)
-                    }
-                })
-        }
-    }
-
-    override fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
-        view.close()
-
-        request(
-            roomUserModel.roomUser?.id?.let { Singleton.apiClient().demoteUser(it) },
-            object : Callback<RoomUser> {
-                override fun onSuccess(obj: RoomUser) {
-                    UIHelper.showSnackBarShortTop(
-                        root,
-                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
-                    )
-                }
-
-                override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
-                }
-            })
+        val roles = Role.values().toMutableList()
+        roles.removeAt(0)
+        roles.removeAt(0)
+        changeRoleAdapter.update(roles)
     }
 
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
@@ -276,14 +225,11 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    UIHelper.showSnackBarShortTop(
-                        root,
-                        "${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}"
-                    )
+                    roomViewModel._onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
+                    roomViewModel._onMessageError.postValue(msg)
                 }
             })
     }
@@ -296,16 +242,57 @@ class RoomUsersFragment(var roomViewModel: RoomViewModel) :
             request(Singleton.apiClient().inviteUser(roomId, userId),
                 object : Callback<RoomInvite> {
                     override fun onSuccess(obj: RoomInvite) {
-                        UIHelper.showSnackBarShortTop(
-                            inviteDialogView,
-                            "${user.name} ${resources.getString(R.string.info_room_invite_send)}"
-                        )
+                        inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
                     }
 
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(inviteDialogView, msg)
+                        inviteDialogView.showSnackBarError(msg)
                     }
                 })
         }
+    }
+
+    override fun onOpen(layout: SwipeLayout?) {
+    }
+
+    override fun onUpdate(layout: SwipeLayout?, leftOffset: Int, topOffset: Int) {
+    }
+
+    override fun onStartOpen(layout: SwipeLayout?) {
+        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
+            layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.VISIBLE
+        } else {
+            layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.GONE
+        }
+    }
+
+    override fun onStartClose(layout: SwipeLayout?) {
+    }
+
+    override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+    }
+
+    override fun onClose(layout: SwipeLayout?) {
+    }
+
+    override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
+        changeRoleDialogView?.dismiss()
+
+        request(
+            roomUserModel.roomUser?.id?.let {
+                Singleton.apiClient().changeRoomUserRole(it, role.role)
+            },
+            object : Callback<RoomUser> {
+                override fun onSuccess(obj: RoomUser) {
+                    roomViewModel._onMessageInfo.postValue(
+                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                    )
+                }
+
+                override fun onError(msg: String) {
+                    roomViewModel._onMessageError.postValue(msg)
+                }
+            })
     }
 }

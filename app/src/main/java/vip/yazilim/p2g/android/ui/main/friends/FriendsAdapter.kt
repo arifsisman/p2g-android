@@ -24,7 +24,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
  * @contact mustafaarifsisman@gmail.com
  */
 class FriendsAdapter(
-    private var adapterDataList: MutableList<Any>,
+    var adapterDataList: MutableList<Any>,
     private val requestClickListener: OnItemClickListener,
     private val friendClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ViewHolderBase<*>>(), Filterable {
@@ -102,7 +102,6 @@ class FriendsAdapter(
         private val profilePhoto: ImageView = itemView.findViewById(R.id.profilePhoto)
         private val onlineStatus: ImageView =
             itemView.findViewById(R.id.onlineStatus)
-        private val lock: ImageView = itemView.findViewById(R.id.lockImage)
 
         private val joinButton: ImageButton = itemView.findViewById(R.id.joinButton)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
@@ -150,15 +149,12 @@ class FriendsAdapter(
                     "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
                 roomName.text = roomNamePlaceholder
                 if (room.privateFlag) {
-                    lock.visibility = View.VISIBLE
-                } else {
-                    lock.visibility = View.GONE
+                    joinButton.setImageResource(R.drawable.ic_lock_white_24dp)
                 }
 
                 roomSongStatus.text = RoomHelper.getRoomSongStatus(view, song)
             } else {
                 roomName.visibility = View.GONE
-                lock.visibility = View.GONE
                 joinButton.visibility = View.GONE
                 roomSongStatus.visibility = View.GONE
             }

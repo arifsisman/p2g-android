@@ -1,22 +1,24 @@
 package vip.yazilim.p2g.android.ui.main.home
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
@@ -26,9 +28,10 @@ import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
@@ -43,7 +46,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity as MainActivity).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -58,7 +61,10 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     override fun setupUI() {
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        val linearLayoutManager = LinearLayoutManager(activity)
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.stackFromEnd = true
+        recyclerView.layoutManager = linearLayoutManager
         adapter = HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), this)
         recyclerView.adapter = adapter
 
@@ -68,9 +74,6 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     // Observer
     private val renderRoomModels = Observer<MutableList<RoomModel>> {
-        Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
-        layoutEmpty.visibility = View.GONE
         adapter.roomModelsFull = it
         adapter.update(it)
     }
@@ -109,7 +112,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -127,12 +130,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         val room = roomModel.room
 
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val mBuilder = MaterialAlertDialogBuilder(context).setView(mDialogView)
         val joinButton = mDialogView.dialog_join_room_button
         val roomPasswordEditText = mDialogView.dialog_room_password
-        val mAlertDialog: AlertDialog
+        val mAlertDialog: AlertDialog?
         mAlertDialog = mBuilder.show()
-        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         roomPasswordEditText.requestFocus()
 
@@ -160,12 +163,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(mDialogView, msg)
+                        mDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {
                         Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-                        mAlertDialog.dismiss()
+                        mAlertDialog?.dismiss()
                         context?.closeKeyboard()
 
                         val intent = Intent(activity, RoomActivity::class.java)
@@ -179,7 +182,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog.cancel()
+            mAlertDialog?.cancel()
             roomPasswordEditText.clearFocus()
             context?.closeKeyboard()
         }
@@ -187,16 +190,13 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     private fun createRoomButtonEvent() {
         val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
-        val mAlertDialog = mBuilder.show()
-        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        val mBuilder = context?.let { MaterialAlertDialogBuilder(it).setView(mDialogView) }
+        val mAlertDialog = mBuilder?.show()
+        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val roomNameEditText = mDialogView.dialog_room_name
         val roomPasswordEditText = mDialogView.dialog_room_password
         val createButton = mDialogView.dialog_create_room_button
-
-        // For request focus and open keyboard
-        roomNameEditText.requestFocus()
 
         // For disable create button if name is empty
         roomNameEditText.addTextChangedListener(object : TextWatcher {
@@ -207,6 +207,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             }
         })
 
+        val roomNamePlaceholder = SharedPrefSingleton.read("userName", "UNKNOWN") + "'s Room"
+        roomNameEditText.setText(roomNamePlaceholder)
+
+        // For request focus and open keyboard
+        roomPasswordEditText.requestFocus()
+
         // Click create
         createButton.setOnClickListener {
             request(
@@ -216,14 +222,13 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
                 ),
                 object : Callback<Room> {
                     override fun onError(msg: String) {
-                        Log.d(TAG, "Room can not created")
-                        UIHelper.showSnackBarShortTop(mDialogView, msg)
+                        mDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: Room) {
                         Log.d(TAG, "Room created with ID: " + obj.id)
                         context?.closeKeyboard()
-                        mAlertDialog.dismiss()
+                        mAlertDialog?.dismiss()
 
                         val roomIntent = Intent(activity, RoomActivity::class.java)
                         roomIntent.putExtra("room", obj)
@@ -235,7 +240,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog.cancel()
+            mAlertDialog?.cancel()
             roomNameEditText.clearFocus()
             roomPasswordEditText.clearFocus()
             context?.closeKeyboard()
@@ -246,7 +251,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         Singleton.apiClient().getRoomModels(),
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_room_refresh))
+                viewModel._onMessageError.postValue(resources.getString(R.string.err_room_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 

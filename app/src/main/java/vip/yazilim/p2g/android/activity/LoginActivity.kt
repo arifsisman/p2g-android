@@ -21,7 +21,9 @@ import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.spotify.TokenModel
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -57,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 val msg = resources.getString(R.string.err_authorization_code)
                 Log.d(TAG, msg)
-                UIHelper.showToastShort(this, msg)
+                this.showToastShort(msg)
             }
         }
     }
@@ -102,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
             SpotifyConstants.REDIRECT_URI
         ), object : Callback<TokenModel> {
             override fun onError(msg: String) {
-                UIHelper.showToastLong(this@LoginActivity, msg)
+                this@LoginActivity.showToastLong(msg)
             }
 
             override fun onSuccess(obj: TokenModel) {
@@ -118,35 +120,35 @@ class LoginActivity : AppCompatActivity() {
         Singleton.apiClient().login(),
         object : Callback<User> {
             override fun onError(msg: String) {
-                val alert = UIHelper.showErrorDialog(this@LoginActivity, msg)
-                alert?.setOnCancelListener {
-                    getAuthorizationCodeFromSpotify()
-                }
+                val alert = this@LoginActivity.showErrorDialog(msg)
+                alert?.setOnCancelListener { getAuthorizationCodeFromSpotify() }
             }
 
             override fun onSuccess(obj: User) {
+                SharedPrefSingleton.write("userName", obj.name)
+                SharedPrefSingleton.write("userId", obj.id)
                 checkIsUserInRoom(obj, tokenModel)
             }
         })
 
 
     private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) = request(
-        Singleton.apiClient().getRoomModelMe(),
-        object : Callback<RoomModel> {
-            override fun onSuccess(obj: RoomModel) {
-                val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                roomIntent.putExtra("roomModel", obj)
-                startActivity(roomIntent)
-            }
+            Singleton.apiClient().getRoomModelMe(),
+            object : Callback<RoomModel> {
+                override fun onSuccess(obj: RoomModel) {
+                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                    roomIntent.putExtra("roomModel", obj)
+                    startActivity(roomIntent)
+                }
 
-            override fun onError(msg: String) {
-                val info = resources.getString(R.string.info_logged_in)
-                UIHelper.showToastLong(this@LoginActivity, "$info ${user.name}")
-                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                startMainIntent.putExtra("user", user)
-                startMainIntent.putExtra("tokenModel", tokenModel)
-                startActivity(startMainIntent)
-            }
-        })
+                override fun onError(msg: String) {
+                    val info = resources.getString(R.string.info_logged_in)
+                    this@LoginActivity.showToastLong("$info ${user.name}")
+                    val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startMainIntent.putExtra("user", user)
+                    startMainIntent.putExtra("tokenModel", tokenModel)
+                    startActivity(startMainIntent)
+                }
+            })
 
 }

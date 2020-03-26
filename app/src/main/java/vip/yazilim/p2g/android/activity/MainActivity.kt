@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -14,12 +13,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.entity.User
+import vip.yazilim.p2g.android.service.LogoutService
 import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.ui.main.MainViewModelFactory
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 /**
@@ -35,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mainViewModel =
             ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
+
+        startService(Intent(baseContext, LogoutService::class.java))
 
         intent.getParcelableExtra<User>("user")?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
@@ -67,24 +67,8 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-    override fun onDestroy() {
-        request(Singleton.apiClient().logout(), null)
-        super.onDestroy()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.logout -> {
-                request(Singleton.apiClient().logout(), null)
-                val loginIntent = Intent(this@MainActivity, LoginActivity::class.java)
-                startActivity(loginIntent)
-            }
-        }
         return true
     }
 

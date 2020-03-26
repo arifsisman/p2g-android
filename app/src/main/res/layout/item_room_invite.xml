@@ -1,69 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_friend_request"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardElevation="0dp"
-    tools:context=".activity.MainActivity">
+    android:focusable="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
+        android:id="@+id/user_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="60dp"
+        android:paddingEnd="15dp"
+        android:singleLine="true"
+        android:text="@string/placeholder_user_name"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="60dp"
-            android:paddingEnd="15dp"
-            android:singleLine="true"
-            android:text="@string/placeholder_user_name"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/user_image"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:contentDescription="@string/description_profile_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.555"
+        app:srcCompat="@drawable/ic_profile_image" />
 
-        <ImageView
-            android:id="@+id/user_image"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:contentDescription="@string/description_profile_image"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.555"
-            app:srcCompat="@drawable/ic_profile_image" />
+    <ImageButton
+        android:id="@+id/invite_button"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="12dp"
+        android:background="?android:selectableItemBackground"
+        android:contentDescription="@string/description_accept_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_insert_invitation_white_24dp" />
 
-        <ImageButton
-            android:id="@+id/invite_button"
-            android:layout_width="30dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="12dp"
-            android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/description_accept_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_insert_invitation_white_24dp" />
+    <ImageView
+        android:id="@+id/online_status"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:contentDescription="@string/description_online_status"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/user_image"
+        app:layout_constraintEnd_toEndOf="@+id/user_image"
+        app:srcCompat="@android:drawable/presence_online" />
 
-        <ImageView
-            android:id="@+id/online_status"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:contentDescription="@string/description_online_status"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/user_image"
-            app:layout_constraintEnd_toEndOf="@+id/user_image"
-            app:srcCompat="@android:drawable/presence_online" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

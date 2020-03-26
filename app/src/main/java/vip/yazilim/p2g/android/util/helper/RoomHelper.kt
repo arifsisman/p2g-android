@@ -48,22 +48,22 @@ class RoomHelper {
         fun getRoomSongStatus(view: View, song: Song?): String {
             return when (song?.songStatus) {
                 SongStatus.PLAYING.songStatus -> {
-                    "${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${song.songName}" + getArtistsPlaceholder(
+                    "• ${view.resources.getString(R.string.placeholder_room_now_playing_song)} ${song.songName}" + getArtistsPlaceholder(
                         song.artistNames, " • "
                     )
                 }
                 SongStatus.PAUSED.songStatus -> {
-                    "${view.resources.getString(R.string.placeholder_room_paused_song)} ${song.songName}" + getArtistsPlaceholder(
+                    "• ${view.resources.getString(R.string.placeholder_room_paused_song)} ${song.songName}" + getArtistsPlaceholder(
                         song.artistNames, " • "
                     )
                 }
                 SongStatus.NEXT.songStatus -> {
-                    "${view.resources.getString(R.string.placeholder_room_next_song)} ${song.songName}" + getArtistsPlaceholder(
+                    "• ${view.resources.getString(R.string.placeholder_room_next_song)} ${song.songName}" + getArtistsPlaceholder(
                         song.artistNames, " • "
                     )
                 }
                 else -> {
-                    view.resources.getString(R.string.placeholder_room_song_not_found)
+                    "• ${view.resources.getString(R.string.placeholder_room_song_not_found)}"
                 }
             }
         }

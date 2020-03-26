@@ -65,7 +65,8 @@ class SearchAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view = LayoutInflater.from(parent.context).inflate(R.layout.item_search, parent, false)
+        view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_spotify_search, parent, false)
         return MViewHolder(view)
     }
 

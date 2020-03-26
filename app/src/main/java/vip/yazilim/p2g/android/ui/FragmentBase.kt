@@ -1,15 +1,14 @@
 package vip.yazilim.p2g.android.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.layout_error.*
-import vip.yazilim.p2g.android.util.helper.TAG
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -48,27 +47,15 @@ abstract class FragmentBase(var layout: Int) :
     fun setupDefaultObservers(viewModelBase: ViewModelBase) {
         viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
         viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
-        viewModelBase.isEmptyList.observe(this, emptyListObserver)
+        viewModelBase.onMessageInfo.observe(this, onMessageInfoObserver)
     }
 
     // Default Observers
-    val isViewLoadingObserver = Observer<Boolean> {
-        Log.v(TAG, "isViewLoading $it")
+    private val isViewLoadingObserver = Observer<Boolean> {
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar?.visibility = visibility
     }
 
-    val onMessageErrorObserver = Observer<Any> {
-        Log.v(TAG, "onMessageError $it")
-        layoutError?.visibility = View.VISIBLE
-        layoutEmpty?.visibility = View.GONE
-        textViewError.text = it?.toString()
-    }
-
-    val emptyListObserver = Observer<Boolean> {
-        Log.v(TAG, "emptyListObserver $it")
-        layoutEmpty?.visibility = View.VISIBLE
-        layoutError?.visibility = View.GONE
-    }
-
+    private val onMessageErrorObserver = Observer<String> { container.showSnackBarError(it) }
+    private val onMessageInfoObserver = Observer<String> { container.showSnackBarInfo(it) }
 }

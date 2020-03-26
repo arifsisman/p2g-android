@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui.main.friends
 
-import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -8,13 +7,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.generic.Callback
@@ -28,8 +30,8 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
@@ -45,7 +47,7 @@ class FriendsFragment : FragmentBase(
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(activity as MainActivity).get(MainViewModel::class.java)
     }
 
     override fun onResume() {
@@ -81,9 +83,6 @@ class FriendsFragment : FragmentBase(
 
     // Observer
     private val renderData = Observer<MutableList<Any>> {
-        Log.v(TAG, "data updated $it")
-        layoutError.visibility = View.GONE
-        layoutEmpty.visibility = View.GONE
         adapter.adapterDataListFull.addAll(it)
         adapter.addAll(it)
     }
@@ -111,7 +110,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -135,7 +134,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -148,7 +147,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -175,7 +174,7 @@ class FriendsFragment : FragmentBase(
                         },
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShortTop(root, msg)
+                                viewModel._onMessageError.postValue(msg)
                             }
 
                             override fun onSuccess(obj: Boolean) {
@@ -187,7 +186,7 @@ class FriendsFragment : FragmentBase(
         }
 
 
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(context)
             .setMessage(resources.getString(R.string.info_delete_friend))
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
@@ -204,7 +203,7 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendRequestModels(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -220,7 +219,7 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendModels(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -236,7 +235,7 @@ class FriendsFragment : FragmentBase(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -251,7 +250,7 @@ class FriendsFragment : FragmentBase(
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = AlertDialog.Builder(activity).setView(mDialogView)
+        val mBuilder = MaterialAlertDialogBuilder(context).setView(mDialogView)
         val joinButton = mDialogView.dialog_join_room_button
         val roomPasswordEditText = mDialogView.dialog_room_password
         val mAlertDialog: AlertDialog
@@ -284,7 +283,7 @@ class FriendsFragment : FragmentBase(
                 room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(mDialogView, msg)
+                        mDialogView.showSnackBarError(msg)
                     }
 
                     override fun onSuccess(obj: RoomUser) {

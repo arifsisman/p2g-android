@@ -59,7 +59,6 @@
     <string name="placeholder_create_room">Create New Room</string>
     <string name="placeholder_join_room">Join Room</string>
     <string name="placeholder_an_error_occurred">An error occurred</string>
-    <string name="placeholder_empty_list">Nothing found here…</string>
     <string name="placeholder_email">Email:</string>
     <string name="placeholder_room_owner">Owner:</string>
     <string name="placeholder_room_now_playing_song">Playing:</string>
@@ -137,6 +136,7 @@
     <string name="info_change_owner2">\'s Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)</string>
     <string name="info_friend_request_send">Friend request sent to</string>
     <string name="info_room_invite_send">invited to room.</string>
+    <string name="placeholder_change_role">Change Users Role</string>
 
 
 </resources>

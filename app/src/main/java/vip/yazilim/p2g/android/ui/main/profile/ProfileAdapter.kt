@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import com.haipq.android.flagkit.FlagImageView
@@ -29,7 +29,7 @@ class ProfileAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val cardView: CardView = itemView.findViewById(R.id.profile_card_view)
+        private val cardView: ConstraintLayout = itemView.findViewById(R.id.profile_view)
         private val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
         private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
         private val flagImage: FlagImageView = itemView.findViewById(R.id.countryFlag)
@@ -39,14 +39,11 @@ class ProfileAdapter(
         private val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
         private val friendCountsTextView: TextView =
             itemView.findViewById(R.id.friend_counts_text_view)
-        private val songAndRoomStatus: TextView =
-            itemView.findViewById(R.id.song_room_status_text_view)
         private val anthem: TextView = itemView.findViewById(R.id.anthem_text_view)
         private val spotifyId: TextView = itemView.findViewById(R.id.spotify_id_text_view)
 
         fun bindView(userModel: UserModel) {
             val user = userModel.user
-            val room = userModel.room
 
             if (user != null) {
                 val profileNamePlaceholder = user.name
@@ -59,12 +56,6 @@ class ProfileAdapter(
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val profileSpotifyAccountIdPlaceholder =
                     "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
-
-                val profileSongAndRoomStatusPlaceholder = if (room?.name != null) {
-                    "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room.name}"
-                } else {
-                    view.resources.getString(R.string.placeholder_room_user_not_found)
-                }
 
                 if (user.imageUrl != null) {
                     GlideApp.with(view)
@@ -93,14 +84,6 @@ class ProfileAdapter(
                 }
 
                 spotifyId.text = profileSpotifyAccountIdPlaceholder
-
-                if (userModel.room != null) {
-                    songAndRoomStatus.text = profileSongAndRoomStatusPlaceholder
-                } else {
-                    val songAndRoomStatusString =
-                        " " + view.resources.getString(R.string.placeholder_room_user_not_found)
-                    songAndRoomStatus.text = songAndRoomStatusString
-                }
 
                 when (user.onlineStatus) {
                     OnlineStatus.ONLINE.onlineStatus -> {

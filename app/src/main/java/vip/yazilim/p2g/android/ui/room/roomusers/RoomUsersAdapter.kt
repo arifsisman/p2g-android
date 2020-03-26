@@ -16,10 +16,11 @@ import vip.yazilim.p2g.android.constant.ColorCodes.CYAN
 import vip.yazilim.p2g.android.constant.ColorCodes.GREEN
 import vip.yazilim.p2g.android.constant.ColorCodes.RED
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
-import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.glide.GlideApp
+
 
 /**
  * @author mustafaarifsisman - 07.03.2020
@@ -27,13 +28,16 @@ import vip.yazilim.p2g.android.util.glide.GlideApp
  */
 class RoomUsersAdapter(
     private var roomUserModelList: MutableList<RoomUserModel>,
-    private val itemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener,
+    private val swipeListener: SwipeLayout.SwipeListener
 ) : RecyclerSwipeAdapter<RoomUsersAdapter.MViewHolder>() {
 
     private lateinit var view: View
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
+    private var userIdMe: String? = "-"
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_user_model)
         fun bindView(roomUserModel: RoomUserModel) {
             itemView.row_user_model.close(false)
 
@@ -67,21 +71,6 @@ class RoomUsersAdapter(
                 } else {
                     itemView.user_image.setImageResource(R.drawable.ic_profile_image)
                 }
-
-                when (user.onlineStatus) {
-                    OnlineStatus.ONLINE.onlineStatus -> {
-                        itemView.onlineStatus.setImageResource(android.R.drawable.presence_online)
-                        itemView.onlineStatus.visibility = View.VISIBLE
-                    }
-                    OnlineStatus.OFFLINE.onlineStatus -> {
-                        itemView.onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                        itemView.onlineStatus.visibility = View.VISIBLE
-                    }
-                    OnlineStatus.AWAY.onlineStatus -> {
-                        itemView.onlineStatus.setImageResource(android.R.drawable.presence_away)
-                        itemView.onlineStatus.visibility = View.VISIBLE
-                    }
-                }
             }
 
             itemView.row_user_model.showMode = SwipeLayout.ShowMode.LayDown
@@ -90,20 +79,8 @@ class RoomUsersAdapter(
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener {
-                clickListener.onItemClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
-            }
-            itemView.swipePromoteButton.setOnClickListener {
-                clickListener.onPromoteClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
-            }
-            itemView.swipeDemoteButton.setOnClickListener {
-                clickListener.onDemoteClicked(
+            itemView.swipeChangeRoleButton.setOnClickListener {
+                clickListener.onChangeRoleClicked(
                     itemView.row_user_model,
                     roomUserModel
                 )
@@ -114,6 +91,7 @@ class RoomUsersAdapter(
                     roomUserModel
                 )
             }
+            swipeLayout.addSwipeListener(swipeListener)
         }
 
         fun bindItemManager(position: Int) {
@@ -122,9 +100,7 @@ class RoomUsersAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
-        fun onPromoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
-        fun onDemoteClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
+        fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
     }
 
@@ -140,9 +116,15 @@ class RoomUsersAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bindView(roomUserModelList[position])
-        holder.bindEvent(roomUserModelList[position], itemClickListener)
-        holder.bindItemManager(position)
+        val roomUserModel = roomUserModelList[position]
+        holder.bindView(roomUserModel)
+
+        if (roomUserModel.user?.id == userIdMe) {
+            holder.swipeLayout.isSwipeEnabled = false
+        } else {
+            holder.bindEvent(roomUserModelList[position], itemClickListener)
+            holder.bindItemManager(position)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -150,6 +132,7 @@ class RoomUsersAdapter(
     }
 
     fun update(data: MutableList<RoomUserModel>) {
+        userIdMe = SharedPrefSingleton.read("userId", "-")
         roomUserModelList = data
         notifyDataSetChanged()
     }
