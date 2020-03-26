@@ -20,6 +20,7 @@ abstract class FragmentBase(var layout: Int) :
     lateinit var root: View
     lateinit var container: ViewGroup
     private var emptySnackbar: TSnackbar? = null
+    private var errorSnackbar: TSnackbar? = null
 
     // Inflate view with container and setupViewModel and setupUI
     override fun onCreateView(
@@ -56,11 +57,14 @@ abstract class FragmentBase(var layout: Int) :
     val isViewLoadingObserver = Observer<Boolean> {
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar?.visibility = visibility
+        errorSnackbar?.dismiss()
     }
 
-    val onMessageErrorObserver = Observer<String> {
-        if (it.isNotBlank()) {
-            UIHelper.showSnackBarError(root, it)
+    val onMessageErrorObserver = Observer<String> { it ->
+        if (it.isNullOrEmpty()) {
+            errorSnackbar?.dismiss()
+        } else {
+            errorSnackbar = UIHelper.showSnackBarError(root, it)
         }
     }
 
@@ -74,5 +78,4 @@ abstract class FragmentBase(var layout: Int) :
             emptySnackbar?.dismiss()
         }
     }
-
 }

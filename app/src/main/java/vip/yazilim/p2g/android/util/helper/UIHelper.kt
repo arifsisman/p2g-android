@@ -3,8 +3,6 @@ package vip.yazilim.p2g.android.util.helper
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -51,28 +49,6 @@ class UIHelper {
             return alert
         }
 
-
-        fun showSnackBarLongBottom(view: View?, message: String) {
-            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_LONG) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
-            snack?.show()
-        }
-
-        fun showSnackBarLongTop(view: View?, message: String) {
-            val snack: TSnackbar? = view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_LONG) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
-            snack?.show()
-        }
-
-        fun showSnackBarShortBottom(view: View?, message: String) {
-            val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
-            snack?.show()
-        }
-
         fun showSnackBarShortTop(view: View?, message: String) {
             val snack: TSnackbar? =
                 view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
@@ -85,7 +61,7 @@ class UIHelper {
             val snack: Snackbar? = view?.let { Snackbar.make(it, message, Snackbar.LENGTH_SHORT) }
             snack?.anchorView = view
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snackView?.setBackgroundColor(Color.parseColor(ERROR))
             snack?.show()
         }
 
@@ -100,7 +76,8 @@ class UIHelper {
         }
 
         fun showSnackBarError(view: View?, message: String): TSnackbar? {
-            val snack: TSnackbar? = view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_LONG) }
+            val snack: TSnackbar? =
+                view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_SHORT) }
             val snackView = snack?.view
             snackView?.setBackgroundColor(Color.parseColor(ERROR))
             snack?.show()
@@ -108,19 +85,11 @@ class UIHelper {
             return snack
         }
 
-        fun showSnackBarShortBottomIndefinite(view: View?, message: String) {
-            val snack: Snackbar? =
-                view?.let { Snackbar.make(it, message, Snackbar.LENGTH_INDEFINITE) }
-            val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
-            snack?.show()
-        }
-
-        fun showSnackBarShortTopIndefinite(view: View?, message: String) {
+        fun showSnackBarErrorIndefinite(view: View?, message: String) {
             val snack: TSnackbar? =
                 view?.let { TSnackbar.make(it, message, TSnackbar.LENGTH_INDEFINITE) }
             val snackView = snack?.view
-            snackView?.setBackgroundColor(Color.parseColor(ACCENT_BLUE))
+            snackView?.setBackgroundColor(Color.parseColor(ERROR))
             snack?.show()
         }
 
@@ -130,13 +99,6 @@ class UIHelper {
 
         fun pxFromDp(context: Context, dp: Float): Float {
             return dp * context.resources.displayMetrics.density
-        }
-
-        fun setMenuItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
-            for (i in 0 until menu.size()) {
-                val item = menu.getItem(i)
-                if (item !== exception) item.isVisible = visible
-            }
         }
 
         fun Context.closeKeyboard() {

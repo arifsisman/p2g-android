@@ -99,7 +99,7 @@ class RoomUsersFragment :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(
+                UIHelper.showSnackBarError(
                     root,
                     resources.getString(R.string.err_room_user_refresh)
                 )
@@ -163,7 +163,7 @@ class RoomUsersFragment :
                 Singleton.apiClient().searchUser(query),
                 object : Callback<MutableList<User>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(inviteRecyclerView, msg)
+                        UIHelper.showSnackBarError(inviteRecyclerView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<User>) {
@@ -215,7 +215,7 @@ class RoomUsersFragment :
                                 }
 
                                 override fun onError(msg: String) {
-                                    UIHelper.showSnackBarShortTop(root, msg)
+                                    roomViewModel._onMessageError.postValue(msg)
                                 }
                             })
                     }
@@ -243,7 +243,7 @@ class RoomUsersFragment :
                     }
 
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(root, msg)
+                        roomViewModel._onMessageError.postValue(msg)
                     }
                 })
         }
@@ -263,7 +263,7 @@ class RoomUsersFragment :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
+                    roomViewModel._onMessageError.postValue(msg)
                 }
             })
     }
@@ -282,7 +282,7 @@ class RoomUsersFragment :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
+                    roomViewModel._onMessageError.postValue(msg)
                 }
             })
     }
@@ -302,7 +302,7 @@ class RoomUsersFragment :
                     }
 
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(inviteDialogView, msg)
+                        UIHelper.showSnackBarError(inviteDialogView, msg)
                     }
                 })
         }

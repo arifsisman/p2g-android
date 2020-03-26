@@ -97,8 +97,7 @@ class RoomQueueFragment :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(
-                    root,
+                roomViewModel._onMessageError.postValue(
                     resources.getString(R.string.err_room_queue_refresh)
                 )
                 swipeRefreshContainer.isRefreshing = false
@@ -181,7 +180,7 @@ class RoomQueueFragment :
                 Singleton.apiClient().searchSpotify(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
-                        UIHelper.showSnackBarShortTop(searchDialogView, msg)
+                        UIHelper.showSnackBarError(searchDialogView, msg)
                     }
 
                     override fun onSuccess(obj: MutableList<SearchModel>) {
@@ -219,7 +218,7 @@ class RoomQueueFragment :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    UIHelper.showSnackBarShortTop(root, msg)
+                    roomViewModel._onMessageError.postValue(msg)
                 }
             })
         }
@@ -232,7 +231,7 @@ class RoomQueueFragment :
             if (isAnyItemsSelected != null) {
                 searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
             } else {
-                UIHelper.showSnackBarShortTop(
+                UIHelper.showSnackBarError(
                     searchDialogView,
                     resources.getString(R.string.err_room_queue_add)
                 )
@@ -248,7 +247,7 @@ class RoomQueueFragment :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                roomViewModel._onMessageError.postValue(msg)
             }
         })
     }
@@ -270,7 +269,7 @@ class RoomQueueFragment :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
+                    roomViewModel._onMessageError.postValue(msg)
                 }
             })
         }
@@ -293,7 +292,7 @@ class RoomQueueFragment :
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(root, msg)
+                    roomViewModel._onMessageError.postValue(msg)
                 }
             })
         }
@@ -309,7 +308,7 @@ class RoomQueueFragment :
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                roomViewModel._onMessageError.postValue(msg)
                 adapter.add(song, position)
             }
         })

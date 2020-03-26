@@ -27,7 +27,6 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper
 import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
@@ -111,7 +110,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -130,7 +129,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShortTop(root, msg)
+                viewModel._onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -158,8 +157,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                UIHelper.showSnackBarShortTop(
-                    root,
+                viewModel._onMessageError.postValue(
                     resources.getString(R.string.err_room_invites_refresh)
                 )
                 swipeRefreshContainer.isRefreshing = false

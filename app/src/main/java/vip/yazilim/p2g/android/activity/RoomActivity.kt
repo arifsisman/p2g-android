@@ -346,7 +346,7 @@ class RoomActivity : AppCompatActivity(),
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(viewPager, msg)
+                    UIHelper.showSnackBarError(viewPager, msg)
                 }
             })
     }
@@ -426,7 +426,7 @@ class RoomActivity : AppCompatActivity(),
                             }
 
                             override fun onError(msg: String) {
-                                UIHelper.showSnackBarShortTop(viewPager, msg)
+                                UIHelper.showSnackBarError(viewPager, msg)
                             }
                         })
                 }
@@ -467,7 +467,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(viewPager, msg)
+                UIHelper.showSnackBarError(viewPager, msg)
             }
         })
     }
@@ -514,7 +514,7 @@ class RoomActivity : AppCompatActivity(),
                             resources.getString(R.string.err_room_websocket_reconnect)
                         )
                     } else {
-                        UIHelper.showSnackBarShortTopIndefinite(
+                        UIHelper.showSnackBarErrorIndefinite(
                             viewPager,
                             resources.getString(R.string.err_room_websocket_closed)
                         )
@@ -619,7 +619,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                UIHelper.showSnackBarShortTop(viewPager, msg)
+                UIHelper.showSnackBarError(viewPager, msg)
             }
         })
 
@@ -714,7 +714,7 @@ class RoomActivity : AppCompatActivity(),
                 }
 
                 override fun onError(msg: String) {
-                    UIHelper.showSnackBarShortTop(viewPager, msg)
+                    UIHelper.showSnackBarError(viewPager, msg)
                 }
             })
     }
