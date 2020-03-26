@@ -26,14 +26,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:clipToPadding="false"
-                android:elevation="-1dp"
                 android:paddingBottom="60dp"
                 android:scrollbars="vertical"
                 app:layout_constraintBottom_toTopOf="@+id/button_create_room"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

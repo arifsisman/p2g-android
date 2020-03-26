@@ -605,7 +605,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                viewPager.showSnackBarError(msg)
+                playerCoordinatorLayout.showSnackBarError(msg)
             }
         })
 
@@ -619,7 +619,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                viewPager.showSnackBarPlayerError(msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -629,7 +629,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                viewPager.showSnackBarPlayerError(msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -639,7 +639,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                viewPager.showSnackBarPlayerError(msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -649,7 +649,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                viewPager.showSnackBarPlayerError(msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
@@ -659,7 +659,7 @@ class RoomActivity : AppCompatActivity(),
             }
 
             override fun onError(msg: String) {
-                viewPager.showSnackBarPlayerError(msg)
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
             }
         })
 
