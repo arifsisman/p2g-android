@@ -130,7 +130,7 @@ class RoomActivity : AppCompatActivity(),
 
     // Setups
     private fun setupViewPager() {
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
         viewPager.adapter = sectionsPagerAdapter
 
         viewPager.addOnPageChangeListener(object : OnPageChangeListener {
@@ -163,6 +163,10 @@ class RoomActivity : AppCompatActivity(),
 
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.bringToFront()
+
+        tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_queue_music_white_24dp)
+        tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_people_white_24dp)
+        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_chat_white_24dp)
     }
 
     private fun setPlayerVisibility(show: Boolean) {
@@ -562,7 +566,7 @@ class RoomActivity : AppCompatActivity(),
         return false
     }
 
-    inner class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
+    inner class SectionsPagerAdapter(fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getItem(position: Int): Fragment {
@@ -574,18 +578,12 @@ class RoomActivity : AppCompatActivity(),
             }
         }
 
-        private val tabTitles = arrayOf(
-            R.string.title_queue,
-            R.string.title_users,
-            R.string.title_chat
-        )
-
         override fun getPageTitle(position: Int): CharSequence? {
-            return context.resources.getString(tabTitles[position])
+            return null
         }
 
         override fun getCount(): Int {
-            return tabTitles.size
+            return 3
         }
     }
 
