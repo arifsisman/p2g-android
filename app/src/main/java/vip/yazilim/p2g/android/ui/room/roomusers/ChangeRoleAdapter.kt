@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_change_role.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.Role
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 
 /**
  * @author mustafaarifsisman - 26.03.2020
  * @contact mustafaarifsisman@gmail.com
  */
 class ChangeRoleAdapter(
+    private var roomUserModel: RoomUserModel,
     private var roleList: List<Role>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ChangeRoleAdapter.MViewHolder>() {
@@ -25,12 +27,18 @@ class ChangeRoleAdapter(
         }
 
         fun bindEvent(role: Role, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(itemView, role) }
+            itemView.setOnClickListener {
+                clickListener.onItemClicked(
+                    itemView,
+                    roomUserModel,
+                    role
+                )
+            }
         }
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: View, role: Role)
+        fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {

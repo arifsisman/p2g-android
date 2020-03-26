@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.swipe.SwipeLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.dialog_change_role.view.*
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
 import vip.yazilim.p2g.android.R
@@ -53,7 +52,7 @@ class RoomUsersFragment :
     private lateinit var roomViewModel: RoomViewModel
 
     private lateinit var changeRoleAdapter: ChangeRoleAdapter
-    private lateinit var selectedRole: Role
+    private var changeRoleDialogView: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -197,51 +196,26 @@ class RoomUsersFragment :
 
     override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
-
         val mDialogView = View.inflate(context, R.layout.dialog_change_role, null)
         val mBuilder = context?.let { MaterialAlertDialogBuilder(it).setView(mDialogView) }
-        val mAlertDialog = mBuilder?.show()
-        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        changeRoleDialogView = mBuilder?.show()
 
-        // Click cancel
-        mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog?.cancel()
-        }
+        val changeRoleRecyclerView: RecyclerView = mDialogView.findViewById(R.id.rolesRecyclerView)
+        changeRoleRecyclerView.setHasFixedSize(true)
+        changeRoleRecyclerView.layoutManager = LinearLayoutManager(activity)
 
-        mDialogView.dialog_change_button.setOnClickListener {
-            val role = selectedRole.role
+        changeRoleAdapter = ChangeRoleAdapter(roomUserModel, emptyList(), this@RoomUsersFragment)
+        changeRoleRecyclerView.adapter = changeRoleAdapter
 
-            val changeRoleRecyclerView: RecyclerView =
-                inviteDialogView.findViewById(R.id.inviteRecyclerView)
-            changeRoleRecyclerView.setHasFixedSize(true)
-            changeRoleRecyclerView.layoutManager = LinearLayoutManager(activity)
+        changeRoleRecyclerView.addItemDecoration(object : DividerItemDecoration(
+            changeRoleRecyclerView.context,
+            (changeRoleRecyclerView.layoutManager as LinearLayoutManager).orientation
+        ) {})
 
-            changeRoleAdapter = ChangeRoleAdapter(emptyList(), this@RoomUsersFragment)
-            changeRoleRecyclerView.adapter = inviteAdapter
-
-            changeRoleRecyclerView.addItemDecoration(object : DividerItemDecoration(
-                changeRoleRecyclerView.context,
-                (changeRoleRecyclerView.layoutManager as LinearLayoutManager).orientation
-            ) {})
-
-            changeRoleAdapter.update(Role.values().toList())
-
-            request(
-                roomUserModel.roomUser?.id?.let {
-                    Singleton.apiClient().changeRoomUserRole(it, role)
-                },
-                object : Callback<RoomUser> {
-                    override fun onSuccess(obj: RoomUser) {
-                        roomViewModel._onMessageInfo.postValue(
-                            "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
-                        )
-                    }
-
-                    override fun onError(msg: String) {
-                        roomViewModel._onMessageError.postValue(msg)
-                    }
-                })
-        }
+        val roles = Role.values().toMutableList()
+        roles.removeAt(0)
+        roles.removeAt(0)
+        changeRoleAdapter.update(roles)
     }
 
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
@@ -302,7 +276,23 @@ class RoomUsersFragment :
     override fun onClose(layout: SwipeLayout?) {
     }
 
-    override fun onItemClicked(view: View, role: Role) {
-        TODO("Not yet implemented")
+    override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
+        changeRoleDialogView?.dismiss()
+
+        request(
+            roomUserModel.roomUser?.id?.let {
+                Singleton.apiClient().changeRoomUserRole(it, role.role)
+            },
+            object : Callback<RoomUser> {
+                override fun onSuccess(obj: RoomUser) {
+                    roomViewModel._onMessageInfo.postValue(
+                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                    )
+                }
+
+                override fun onError(msg: String) {
+                    roomViewModel._onMessageError.postValue(msg)
+                }
+            })
     }
 }
