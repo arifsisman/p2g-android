@@ -80,8 +80,7 @@ class RoomUsersFragment :
     }
 
     override fun setupViewModel() {
-        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
+        setupDefaultObservers(roomViewModel)
     }
 
     // Observer
@@ -208,9 +207,10 @@ class RoomUsersFragment :
                             },
                             object : Callback<Boolean> {
                                 override fun onSuccess(obj: Boolean) {
-                                    UIHelper.showSnackBarShortTop(
-                                        root,
-                                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${Role.ROOM_OWNER.role}"
+                                    roomViewModel._onMessageInfo.postValue(
+                                        "${roomUserModel.user?.name}${resources.getString(
+                                            R.string.info_promote_demote
+                                        )} ${Role.ROOM_OWNER.role}"
                                     )
                                 }
 
@@ -236,8 +236,7 @@ class RoomUsersFragment :
                 roomUserModel.roomUser?.id?.let { Singleton.apiClient().promoteUser(it) },
                 object : Callback<RoomUser> {
                     override fun onSuccess(obj: RoomUser) {
-                        UIHelper.showSnackBarShortTop(
-                            root,
+                        roomViewModel._onMessageInfo.postValue(
                             "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
                         )
                     }
@@ -256,9 +255,10 @@ class RoomUsersFragment :
             roomUserModel.roomUser?.id?.let { Singleton.apiClient().demoteUser(it) },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
-                    UIHelper.showSnackBarShortTop(
-                        root,
-                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                    roomViewModel._onMessageInfo.postValue(
+                        "${roomUserModel.user?.name}${resources.getString(
+                            R.string.info_promote_demote
+                        )} ${obj.role}"
                     )
                 }
 
@@ -275,10 +275,7 @@ class RoomUsersFragment :
             roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    UIHelper.showSnackBarShortTop(
-                        root,
-                        "${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}"
-                    )
+                    roomViewModel._onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
                 }
 
                 override fun onError(msg: String) {

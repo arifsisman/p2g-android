@@ -16,4 +16,7 @@ abstract class ViewModelBase : ViewModel() {
     val _onMessageError = MutableLiveData<String>()
     val onMessageError: LiveData<String> = _onMessageError
 
+    val _onMessageInfo = MutableLiveData<String>()
+    val onMessageInfo: LiveData<String> = _onMessageInfo
+
 }

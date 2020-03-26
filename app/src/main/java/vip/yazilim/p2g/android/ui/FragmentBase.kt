@@ -49,6 +49,7 @@ abstract class FragmentBase(var layout: Int) :
     fun setupDefaultObservers(viewModelBase: ViewModelBase) {
         viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
         viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
+        viewModelBase.onMessageInfo.observe(this, onMessageInfoObserver)
     }
 
     // Default Observers
@@ -59,10 +60,10 @@ abstract class FragmentBase(var layout: Int) :
     }
 
     val onMessageErrorObserver = Observer<String> { it ->
-        if (it.isNullOrEmpty()) {
-            errorSnackbar?.dismiss()
-        } else {
-            errorSnackbar = UIHelper.showSnackBarError(root, it)
-        }
+        errorSnackbar = UIHelper.showSnackBarError(container, it)
+    }
+
+    val onMessageInfoObserver = Observer<String> { it ->
+        UIHelper.showSnackBarShortTop(container, it)
     }
 }

@@ -88,9 +88,8 @@ class RoomQueueFragment :
     }
 
     override fun setupViewModel() {
+        setupDefaultObservers(roomViewModel)
         roomViewModel.songList.observe(this, renderRoomQueue)
-        roomViewModel.isViewLoading.observe(this, isViewLoadingObserver)
-        roomViewModel.onMessageError.observe(this, onMessageErrorObserver)
     }
 
     private fun refreshQueueEvent() = request(
@@ -257,13 +256,12 @@ class RoomQueueFragment :
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
-            UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_song_vote))
+            roomViewModel._onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
-                    UIHelper.showSnackBarShortTop(
-                        root,
+                    roomViewModel._onMessageInfo.postValue(
                         "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
                     )
                 }
@@ -280,15 +278,12 @@ class RoomQueueFragment :
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
-            UIHelper.showSnackBarShortTop(root, resources.getString(R.string.err_song_vote))
+            roomViewModel._onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
-                    UIHelper.showSnackBarShortTop(
-                        root,
-                        "${song.songName} ${resources.getString(R.string.info_song_downvoted)}"
-                    )
+                    roomViewModel._onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
                 }
 
                 override fun onError(msg: String) {
