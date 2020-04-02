@@ -57,6 +57,11 @@ class RoomQueueFragment :
         roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
     }
 
+    override fun onResume() {
+        super.onResume()
+        roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
+    }
+
     override fun setupUI() {
         roomActivity = activity as RoomActivity
 
@@ -103,9 +108,7 @@ class RoomQueueFragment :
             }
 
             override fun onSuccess(obj: MutableList<Song>) {
-                val filteredList =
-                    obj.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
-                adapter.update(filteredList)
+                roomViewModel.songList.postValue(obj)
                 swipeRefreshContainer.isRefreshing = false
             }
         })
@@ -121,10 +124,7 @@ class RoomQueueFragment :
         }
 
         roomActivity.skipFlag = hasNext
-
-        val filteredList =
-            songList.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
-        adapter.update(filteredList)
+        adapter.update(songList)
     }
 
     private fun showSearchDialog() {

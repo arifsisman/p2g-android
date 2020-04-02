@@ -18,21 +18,11 @@ import vip.yazilim.p2g.android.util.refrofit.Singleton
  * @contact mustafaarifsisman@gmail.com
  */
 class RoomViewModel : ViewModelBase() {
-    private val _songList = MutableLiveData<MutableList<Song>>()
-    val songList: MutableLiveData<MutableList<Song>> = _songList
-
-    private val _playerSong = MutableLiveData<Song>()
-    val playerSong: MutableLiveData<Song> = _playerSong
-
-    private val _roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
-    val roomUserModelList: MutableLiveData<MutableList<RoomUserModel>> = _roomUserModelList
-
-    private val _roomUserModel = MutableLiveData<RoomUserModel>()
-    val roomUserModel: MutableLiveData<RoomUserModel> = _roomUserModel
-
-    private val _roomInviteUserList = MutableLiveData<MutableList<User>>()
-    val inviteUserList: MutableLiveData<MutableList<User>> = _roomInviteUserList
-
+    val songList = MutableLiveData<MutableList<Song>>()
+    val playerSong = MutableLiveData<Song>()
+    val roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
+    val roomUserModel = MutableLiveData<RoomUserModel>()
+    val roomInviteUserList = MutableLiveData<MutableList<User>>()
     var messages: MutableList<ChatMessage> = mutableListOf()
     val newMessage: MutableLiveData<ChatMessage> = MutableLiveData<ChatMessage>()
 
@@ -50,8 +40,8 @@ class RoomViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<Song>) {
                     isViewLoading.postValue(false)
 
-                    _songList.postValue(obj)
-                    _playerSong.postValue(getCurrentSong(obj))
+                    songList.postValue(obj)
+                    playerSong.postValue(getCurrentSong(obj))
                 }
             })
     }
@@ -70,7 +60,7 @@ class RoomViewModel : ViewModelBase() {
                 override fun onSuccess(obj: MutableList<RoomUserModel>) {
                     isViewLoading.postValue(false)
 
-                    _roomUserModelList.postValue(obj)
+                    roomUserModelList.postValue(obj)
 
                     obj.forEach {
                         if (it.user?.id == roomUserModel.value?.user?.id) {
@@ -85,7 +75,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomUserMe() {
         request(Singleton.apiClient().getRoomUserModelMe(), object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
-                _roomUserModel.postValue(obj)
+                roomUserModel.postValue(obj)
             }
 
             override fun onError(msg: String) {
@@ -106,7 +96,7 @@ class RoomViewModel : ViewModelBase() {
 
                 override fun onSuccess(obj: MutableList<User>) {
                     isViewLoading.postValue(false)
-                    _roomInviteUserList.postValue(obj)
+                    roomInviteUserList.postValue(obj)
                 }
             })
     }

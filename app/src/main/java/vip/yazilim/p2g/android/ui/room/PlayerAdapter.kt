@@ -131,6 +131,9 @@ class PlayerAdapter(
                 songImage.visibility = View.INVISIBLE
                 songImageExp.visibility = View.GONE
 
+                playPauseButton.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                playPauseButtonMini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
+
                 songName.text = ""
                 songArtists.text = ""
                 songImage.setImageResource(R.drawable.sample_cover_image)
