@@ -26,7 +26,7 @@ class UserViewModel : ViewModelBase() {
             }
 
             override fun onSuccess(obj: Int) {
-                _friendCounts.value = obj
+                _friendCounts.postValue(obj)
             }
         })
 
@@ -37,7 +37,7 @@ class UserViewModel : ViewModelBase() {
             }
 
             override fun onSuccess(obj: RoomModel) {
-                _roomModel.value = obj
+                _roomModel.postValue(obj)
             }
         })
 

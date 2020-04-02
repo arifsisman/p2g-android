@@ -103,7 +103,7 @@ class RoomUsersFragment :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
-                roomViewModel._onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
+                roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 
@@ -225,11 +225,11 @@ class RoomUsersFragment :
             roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    roomViewModel._onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
+                    roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
                 }
 
                 override fun onError(msg: String) {
-                    roomViewModel._onMessageError.postValue(msg)
+                    roomViewModel.onMessageError.postValue(msg)
                 }
             })
     }
@@ -285,13 +285,13 @@ class RoomUsersFragment :
             },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
-                    roomViewModel._onMessageInfo.postValue(
+                    roomViewModel.onMessageInfo.postValue(
                         "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
                     )
                 }
 
                 override fun onError(msg: String) {
-                    roomViewModel._onMessageError.postValue(msg)
+                    roomViewModel.onMessageError.postValue(msg)
                 }
             })
     }

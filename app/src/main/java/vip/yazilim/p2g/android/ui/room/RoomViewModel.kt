@@ -37,40 +37,40 @@ class RoomViewModel : ViewModelBase() {
     val newMessage: MutableLiveData<ChatMessage> = MutableLiveData<ChatMessage>()
 
     fun loadSongs(roomId: Long) {
-        _isViewLoading.postValue(true)
+        isViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getRoomSongs(roomId),
             object : Callback<MutableList<Song>> {
                 override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
+                    isViewLoading.postValue(false)
+                    onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<Song>) {
-                    _isViewLoading.postValue(false)
+                    isViewLoading.postValue(false)
 
-                    _songList.value = obj
-                    _playerSong.value = getCurrentSong(obj)
+                    _songList.postValue(obj)
+                    _playerSong.postValue(getCurrentSong(obj))
                 }
             })
     }
 
     fun loadRoomUsers(roomId: Long) {
-        _isViewLoading.postValue(true)
+        isViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getRoomUserModels(roomId),
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
+                    isViewLoading.postValue(false)
+                    onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                    _isViewLoading.postValue(false)
+                    isViewLoading.postValue(false)
 
-                    _roomUserModelList.value = obj
+                    _roomUserModelList.postValue(obj)
 
                     obj.forEach {
                         if (it.user?.id == roomUserModel.value?.user?.id) {
@@ -85,7 +85,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomUserMe() {
         request(Singleton.apiClient().getRoomUserModelMe(), object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
-                _roomUserModel.value = obj
+                _roomUserModel.postValue(obj)
             }
 
             override fun onError(msg: String) {
@@ -94,19 +94,19 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomInviteUsers() {
-        _isViewLoading.postValue(true)
+        isViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getAllUsers(),
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
-                    _isViewLoading.postValue(false)
-                    _onMessageError.postValue(msg)
+                    isViewLoading.postValue(false)
+                    onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<User>) {
-                    _isViewLoading.postValue(false)
-                    _roomInviteUserList.value = obj
+                    isViewLoading.postValue(false)
+                    _roomInviteUserList.postValue(obj)
                 }
             })
     }

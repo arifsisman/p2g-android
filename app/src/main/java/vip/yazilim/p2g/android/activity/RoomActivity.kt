@@ -550,7 +550,7 @@ class RoomActivity : AppCompatActivity(),
                     if (userListFromIntent != null && roomViewModel.roomUserModelList.value?.size != userListFromIntent.size) {
                         showBadgeAt(1)
                     }
-                    userListFromIntent.let { roomViewModel.roomUserModelList.value = it }
+                    userListFromIntent.let { roomViewModel.roomUserModelList.postValue(it) }
                 }
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =

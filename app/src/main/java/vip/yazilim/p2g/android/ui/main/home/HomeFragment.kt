@@ -51,6 +51,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     override fun onResume() {
         super.onResume()
+        adapter.clear()
         viewModel.loadRooms()
     }
 
@@ -112,7 +113,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -251,7 +252,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         Singleton.apiClient().getRoomModels(),
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(resources.getString(R.string.err_room_refresh))
+                viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 
