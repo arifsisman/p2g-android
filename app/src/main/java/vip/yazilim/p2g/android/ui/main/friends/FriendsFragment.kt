@@ -89,8 +89,8 @@ class FriendsFragment : FragmentBase(
             adapter.clearDataListFull()
         } else {
             viewModel.onEmptyList.postValue(false)
-            adapter.adapterDataListFull.addAll(it)
             adapter.addAll(it)
+            adapter.adapterDataListFull.addAll(it)
         }
     }
 
@@ -210,19 +210,16 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendRequestModels(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
                 swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.onMessageError.postValue(msg)
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                if (obj.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
-                    viewModel.onEmptyList.postValue(true)
-                } else {
-                    viewModel.onEmptyList.postValue(false)
-                    adapter.addAll(obj as MutableList<Any>)
-                    adapter.adapterDataListFull.addAll(obj)
-                }
+                swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
             }
         })
 
@@ -231,20 +228,16 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendModels(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
                 swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.onMessageError.postValue(msg)
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendModel>) {
-                if (obj.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
-                    viewModel.onEmptyList.postValue(true)
-                } else {
-                    viewModel.onEmptyList.postValue(false)
-                    adapter.addAll(obj as MutableList<Any>)
-                    adapter.adapterDataListFull.addAll(obj)
-                }
                 swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
             }
         })
 

@@ -173,8 +173,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
                     viewModel.onEmptyList.postValue(true)
                 } else {
                     viewModel.onEmptyList.postValue(false)
-                    adapter.update(obj)
-                    adapter.roomInviteModelsFull.addAll(obj)
+                    viewModel.roomInviteModel.postValue(obj)
                 }
                 swipeRefreshContainer.isRefreshing = false
             }

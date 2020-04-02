@@ -108,7 +108,7 @@ class RoomUsersFragment :
             }
 
             override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                adapter.update(obj)
+                roomViewModel.roomUserModelList.postValue(obj)
                 swipeRefreshContainer.isRefreshing = false
             }
         })

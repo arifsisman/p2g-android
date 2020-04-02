@@ -35,13 +35,11 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:noHistory="true"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".activity.RoomActivity"
             android:label="@string/title_activity_room"
-            android:noHistory="true"
             android:parentActivityName=".activity.MainActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -57,7 +55,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~1033173712" />
+            android:value="ca-app-pub-9988109607477807~7124820860" />
     </application>
 
 </manifest>

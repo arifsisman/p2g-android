@@ -27,7 +27,6 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -116,9 +115,8 @@ class RoomActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
-        MobileAds.initialize(this)
         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.adUnitId = "ca-app-pub-9988109607477807/6243177559"
         mInterstitialAd.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 mInterstitialAd.show()
@@ -382,10 +380,11 @@ class RoomActivity : AppCompatActivity(),
                 DialogInterface.BUTTON_POSITIVE -> {
                     request(Singleton.apiClient().leaveRoom(), null)
 
-                    val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
-                    startActivity(loginIntent)
-
+                    val mainIntent = Intent(this@RoomActivity, MainActivity::class.java)
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(mainIntent)
                     stopRoomWebSocketService(broadcastReceiver)
+                    finish()
                 }
             }
         }
