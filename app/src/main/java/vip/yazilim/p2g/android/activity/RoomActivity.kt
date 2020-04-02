@@ -24,6 +24,9 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -106,9 +109,21 @@ class RoomActivity : AppCompatActivity(),
         private const val PLAYER_TAG = "Player"
     }
 
+    private lateinit var mInterstitialAd: InterstitialAd
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
+
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-9988109607477807/6243177559"
+        mInterstitialAd.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                mInterstitialAd.show()
+            }
+        }
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+
         setupViewPager()
         setupViewModelBase()
         setupRoomModel()
@@ -365,10 +380,11 @@ class RoomActivity : AppCompatActivity(),
                 DialogInterface.BUTTON_POSITIVE -> {
                     request(Singleton.apiClient().leaveRoom(), null)
 
-                    val loginIntent = Intent(this@RoomActivity, MainActivity::class.java)
-                    startActivity(loginIntent)
-
+                    val mainIntent = Intent(this@RoomActivity, MainActivity::class.java)
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(mainIntent)
                     stopRoomWebSocketService(broadcastReceiver)
+                    finish()
                 }
             }
         }
@@ -533,7 +549,7 @@ class RoomActivity : AppCompatActivity(),
                     if (userListFromIntent != null && roomViewModel.roomUserModelList.value?.size != userListFromIntent.size) {
                         showBadgeAt(1)
                     }
-                    userListFromIntent.let { roomViewModel.roomUserModelList.value = it }
+                    userListFromIntent.let { roomViewModel.roomUserModelList.postValue(it) }
                 }
                 ACTION_MESSAGE_RECEIVE -> {
                     val chatMessage: ChatMessage? =

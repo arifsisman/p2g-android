@@ -53,6 +53,9 @@
             android:stopWithTask="true" />
         <service android:name=".service.LogoutService" />
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9988109607477807~7124820860" />
     </application>
 
 </manifest>

@@ -10,8 +10,8 @@ android {
         applicationId "vip.yazilim.p2g.android"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 4
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -98,6 +98,9 @@ dependencies {
 
     // ChatKit
     implementation 'com.github.stfalcon:chatkit:0.3.3'
+
+    // Ad SDK
+    implementation 'com.google.android.gms:play-services-ads:19.0.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

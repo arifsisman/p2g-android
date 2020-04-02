@@ -74,8 +74,14 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     // Observer
     private val renderRoomModels = Observer<MutableList<RoomModel>> {
-        adapter.roomModelsFull = it
-        adapter.update(it)
+        if (it.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+            adapter.clear()
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            adapter.roomModelsFull = it
+            adapter.update(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -112,7 +118,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -251,13 +257,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         Singleton.apiClient().getRoomModels(),
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(resources.getString(R.string.err_room_refresh))
+                viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
                 swipeRefreshContainer.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<RoomModel>) {
-                adapter.update(obj)
-                adapter.roomModelsFull = obj
+                viewModel.roomModels.postValue(obj)
                 swipeRefreshContainer.isRefreshing = false
             }
         })

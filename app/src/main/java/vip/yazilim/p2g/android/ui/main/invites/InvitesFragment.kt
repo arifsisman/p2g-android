@@ -61,7 +61,6 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
     override fun onResume() {
         super.onResume()
-        adapter.clear()
         viewModel.loadRoomInviteModel()
     }
 
@@ -83,8 +82,14 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
     // Observers
     private val renderRoomInviteModel = Observer<MutableList<RoomInviteModel>> {
-        adapter.roomInviteModelsFull.addAll(it)
-        adapter.update(it)
+        if (it.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+            adapter.clear()
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            adapter.roomInviteModelsFull.addAll(it)
+            adapter.update(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -110,7 +115,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {
@@ -129,7 +134,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -157,15 +162,19 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
-                viewModel._onMessageError.postValue(
+                viewModel.onMessageError.postValue(
                     resources.getString(R.string.err_room_invites_refresh)
                 )
                 swipeRefreshContainer.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<RoomInviteModel>) {
-                adapter.update(obj)
-                adapter.roomInviteModelsFull.addAll(obj)
+                if (obj.isNullOrEmpty()) {
+                    viewModel.onEmptyList.postValue(true)
+                } else {
+                    viewModel.onEmptyList.postValue(false)
+                    viewModel.roomInviteModel.postValue(obj)
+                }
                 swipeRefreshContainer.isRefreshing = false
             }
         })

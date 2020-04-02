@@ -34,7 +34,7 @@ class RoomQueueAdapter(
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
+        private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
 
         fun bindView(song: Song) {
             itemView.row_song.close(false)
@@ -124,8 +124,9 @@ class RoomQueueAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bindView(songs[position])
-        holder.bindEvent(songs[position], itemClickListener)
+        val song = songs[position]
+        holder.bindView(song)
+        holder.bindEvent(song, itemClickListener)
         holder.bindItemManager(position)
     }
 
@@ -134,7 +135,7 @@ class RoomQueueAdapter(
     }
 
     fun update(data: MutableList<Song>) {
-        songs = data.sortByActive()
+        songs = data
         notifyDataSetChanged()
     }
 

@@ -83,8 +83,15 @@ class FriendsFragment : FragmentBase(
 
     // Observer
     private val renderData = Observer<MutableList<Any>> {
-        adapter.adapterDataListFull.addAll(it)
-        adapter.addAll(it)
+        if (it.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+            adapter.clearDataList()
+            adapter.clearDataListFull()
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            adapter.addAll(it)
+            adapter.adapterDataListFull.addAll(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -110,7 +117,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -134,7 +141,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -147,7 +154,7 @@ class FriendsFragment : FragmentBase(
         friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
@@ -174,7 +181,7 @@ class FriendsFragment : FragmentBase(
                         },
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
-                                viewModel._onMessageError.postValue(msg)
+                                viewModel.onMessageError.postValue(msg)
                             }
 
                             override fun onSuccess(obj: Boolean) {
@@ -203,14 +210,16 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendRequestModels(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
                 swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.onMessageError.postValue(msg)
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                adapter.addAll(obj as MutableList<Any>)
-                adapter.adapterDataListFull.addAll(obj)
+                swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
             }
         })
 
@@ -219,15 +228,16 @@ class FriendsFragment : FragmentBase(
         Singleton.apiClient().getFriendModels(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
                 swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.onMessageError.postValue(msg)
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendModel>) {
-                adapter.addAll(obj as MutableList<Any>)
-                adapter.adapterDataListFull.addAll(obj)
                 swipeRefreshContainer.isRefreshing = false
+                viewModel.onViewLoading.postValue(false)
+                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
             }
         })
 
@@ -235,7 +245,7 @@ class FriendsFragment : FragmentBase(
         room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
-                viewModel._onMessageError.postValue(msg)
+                viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: RoomUser) {

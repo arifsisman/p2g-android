@@ -45,17 +45,19 @@ abstract class FragmentBase(var layout: Int) :
     abstract fun setupViewModel()
 
     fun setupDefaultObservers(viewModelBase: ViewModelBase) {
-        viewModelBase.isViewLoading.observe(this, isViewLoadingObserver)
+        viewModelBase.onViewLoading.observe(this, onViewLoadingObserver)
+        viewModelBase.onEmptyList.observe(this, onEmptyListObserver)
         viewModelBase.onMessageError.observe(this, onMessageErrorObserver)
         viewModelBase.onMessageInfo.observe(this, onMessageInfoObserver)
     }
 
     // Default Observers
-    private val isViewLoadingObserver = Observer<Boolean> {
+    private val onViewLoadingObserver = Observer<Boolean> {
         val visibility = if (it) View.VISIBLE else View.GONE
         progressBar?.visibility = visibility
     }
-
+    private val onEmptyListObserver =
+        Observer<Boolean> { layoutEmpty?.visibility = if (it) View.VISIBLE else View.GONE }
     private val onMessageErrorObserver = Observer<String> { container.showSnackBarError(it) }
     private val onMessageInfoObserver = Observer<String> { container.showSnackBarInfo(it) }
 }

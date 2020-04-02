@@ -57,6 +57,11 @@ class RoomQueueFragment :
         roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
     }
 
+    override fun onResume() {
+        super.onResume()
+        roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
+    }
+
     override fun setupUI() {
         roomActivity = activity as RoomActivity
 
@@ -96,16 +101,14 @@ class RoomQueueFragment :
         roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
-                roomViewModel._onMessageError.postValue(
+                roomViewModel.onMessageError.postValue(
                     resources.getString(R.string.err_room_queue_refresh)
                 )
                 swipeRefreshContainer.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<Song>) {
-                val filteredList =
-                    obj.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
-                adapter.update(filteredList)
+                roomViewModel.songList.postValue(obj)
                 swipeRefreshContainer.isRefreshing = false
             }
         })
@@ -121,10 +124,7 @@ class RoomQueueFragment :
         }
 
         roomActivity.skipFlag = hasNext
-
-        val filteredList =
-            songList.filter { it.songStatus != SongStatus.PLAYED.songStatus }.toMutableList()
-        adapter.update(filteredList)
+        adapter.update(songList)
     }
 
     private fun showSearchDialog() {
@@ -217,7 +217,7 @@ class RoomQueueFragment :
 
                 override fun onError(msg: String) {
                     cancelButton.performClick()
-                    roomViewModel._onMessageError.postValue(msg)
+                    roomViewModel.onMessageError.postValue(msg)
                 }
             })
         }
@@ -243,7 +243,7 @@ class RoomQueueFragment :
             }
 
             override fun onError(msg: String) {
-                roomViewModel._onMessageError.postValue(msg)
+                roomViewModel.onMessageError.postValue(msg)
             }
         })
     }
@@ -253,18 +253,18 @@ class RoomQueueFragment :
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
-            roomViewModel._onMessageError.postValue(resources.getString(R.string.err_song_vote))
+            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
             request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
-                    roomViewModel._onMessageInfo.postValue(
+                    roomViewModel.onMessageInfo.postValue(
                         "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
                     )
                 }
 
                 override fun onError(msg: String) {
-                    roomViewModel._onMessageError.postValue(msg)
+                    roomViewModel.onMessageError.postValue(msg)
                 }
             })
         }
@@ -275,16 +275,16 @@ class RoomQueueFragment :
         val db = roomActivity.db
 
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
-            roomViewModel._onMessageError.postValue(resources.getString(R.string.err_song_vote))
+            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
             request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
-                    roomViewModel._onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
+                    roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
                 }
 
                 override fun onError(msg: String) {
-                    roomViewModel._onMessageError.postValue(msg)
+                    roomViewModel.onMessageError.postValue(msg)
                 }
             })
         }
@@ -300,7 +300,7 @@ class RoomQueueFragment :
             }
 
             override fun onError(msg: String) {
-                roomViewModel._onMessageError.postValue(msg)
+                roomViewModel.onMessageError.postValue(msg)
                 adapter.add(song, position)
             }
         })
