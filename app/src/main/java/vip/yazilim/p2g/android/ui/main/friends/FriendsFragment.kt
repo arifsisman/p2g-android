@@ -83,8 +83,15 @@ class FriendsFragment : FragmentBase(
 
     // Observer
     private val renderData = Observer<MutableList<Any>> {
-        adapter.adapterDataListFull.addAll(it)
-        adapter.addAll(it)
+        if (it.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+            adapter.clearDataList()
+            adapter.clearDataListFull()
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            adapter.adapterDataListFull.addAll(it)
+            adapter.addAll(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

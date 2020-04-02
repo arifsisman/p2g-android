@@ -61,7 +61,6 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
     override fun onResume() {
         super.onResume()
-        adapter.clear()
         viewModel.loadRoomInviteModel()
     }
 
@@ -83,8 +82,14 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
     // Observers
     private val renderRoomInviteModel = Observer<MutableList<RoomInviteModel>> {
-        adapter.roomInviteModelsFull.addAll(it)
-        adapter.update(it)
+        if (it.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+            adapter.clear()
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            adapter.roomInviteModelsFull.addAll(it)
+            adapter.update(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

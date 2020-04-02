@@ -33,13 +33,7 @@ class MainViewModel : ViewModelBase() {
 
                 override fun onSuccess(obj: MutableList<RoomModel>) {
                     onViewLoading.postValue(false)
-
-                    if (obj.isNotEmpty()) {
-                        roomModels.postValue(obj)
-                        onEmptyList.postValue(false)
-                    } else {
-                        onEmptyList.postValue(true)
-                    }
+                    roomModels.postValue(obj)
                 }
             })
     }
@@ -57,15 +51,8 @@ class MainViewModel : ViewModelBase() {
 
                 @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                    if (obj.isNullOrEmpty() && friendRequestModel.value.isNullOrEmpty()) {
-                        onEmptyList.postValue(true)
-                        onViewLoading.postValue(false)
-                    } else {
-                        onViewLoading.postValue(false)
-                        onEmptyList.postValue(false)
-                        onViewLoading.postValue(false)
-                        friendRequestModel.postValue(obj as MutableList<Any>)
-                    }
+                    onViewLoading.postValue(false)
+                    friendRequestModel.postValue(obj as MutableList<Any>)
                 }
             })
     }
@@ -83,15 +70,8 @@ class MainViewModel : ViewModelBase() {
 
                 @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: MutableList<FriendModel>) {
-                    if (obj.isNullOrEmpty() && friendRequestModel.value.isNullOrEmpty()) {
-                        onEmptyList.postValue(true)
-                        onViewLoading.postValue(false)
-                    } else {
-                        onViewLoading.postValue(false)
-                        onEmptyList.postValue(false)
-                        onViewLoading.postValue(false)
-                        friendRequestModel.postValue(obj as MutableList<Any>)
-                    }
+                    onViewLoading.postValue(false)
+                    friendRequestModel.postValue(obj as MutableList<Any>)
                 }
             })
     }
@@ -109,13 +89,7 @@ class MainViewModel : ViewModelBase() {
 
                 override fun onSuccess(obj: MutableList<RoomInviteModel>) {
                     onViewLoading.postValue(false)
-
-                    if (obj.isNullOrEmpty()) {
-                        onEmptyList.postValue(true)
-                    } else {
-                        onEmptyList.postValue(false)
-                        roomInviteModel.postValue(obj)
-                    }
+                    roomInviteModel.postValue(obj)
                 }
             })
     }

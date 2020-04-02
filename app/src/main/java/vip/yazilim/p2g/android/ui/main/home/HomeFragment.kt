@@ -51,7 +51,6 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     override fun onResume() {
         super.onResume()
-        adapter.clear()
         viewModel.loadRooms()
     }
 
@@ -75,8 +74,14 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     // Observer
     private val renderRoomModels = Observer<MutableList<RoomModel>> {
-        adapter.roomModelsFull = it
-        adapter.update(it)
+        if (it.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+            adapter.clear()
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            adapter.roomModelsFull = it
+            adapter.update(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -257,13 +262,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             }
 
             override fun onSuccess(obj: MutableList<RoomModel>) {
-                if (obj.isNullOrEmpty()) {
-                    viewModel.onEmptyList.postValue(true)
-                } else {
-                    adapter.update(obj)
-                    adapter.roomModelsFull = obj
-                    viewModel.onEmptyList.postValue(false)
-                }
+                viewModel.roomModels.postValue(obj)
                 swipeRefreshContainer.isRefreshing = false
             }
         })
