@@ -27,18 +27,18 @@ class RoomViewModel : ViewModelBase() {
     val newMessage: MutableLiveData<ChatMessage> = MutableLiveData<ChatMessage>()
 
     fun loadSongs(roomId: Long) {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getRoomSongs(roomId),
             object : Callback<MutableList<Song>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<Song>) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
 
                     songList.postValue(obj)
                     playerSong.postValue(getCurrentSong(obj))
@@ -47,18 +47,18 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomUsers(roomId: Long) {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getRoomUserModels(roomId),
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
 
                     roomUserModelList.postValue(obj)
 
@@ -84,18 +84,18 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomInviteUsers() {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getAllUsers(),
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<User>) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     roomInviteUserList.postValue(obj)
                 }
             })

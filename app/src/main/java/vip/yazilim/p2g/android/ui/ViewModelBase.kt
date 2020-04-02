@@ -9,7 +9,8 @@ import androidx.lifecycle.ViewModel
  */
 abstract class ViewModelBase : ViewModel() {
 
-    val isViewLoading = MutableLiveData<Boolean>()
+    val onViewLoading = MutableLiveData<Boolean>()
+    val onEmptyList = MutableLiveData<Boolean>()
     val onMessageError = MutableLiveData<String>()
     val onMessageInfo = MutableLiveData<String>()
 

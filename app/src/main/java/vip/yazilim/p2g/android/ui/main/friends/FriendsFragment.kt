@@ -209,8 +209,13 @@ class FriendsFragment : FragmentBase(
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                adapter.addAll(obj as MutableList<Any>)
-                adapter.adapterDataListFull.addAll(obj)
+                if (obj.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
+                    viewModel.onEmptyList.postValue(true)
+                } else {
+                    viewModel.onEmptyList.postValue(false)
+                    adapter.addAll(obj as MutableList<Any>)
+                    adapter.adapterDataListFull.addAll(obj)
+                }
             }
         })
 
@@ -225,8 +230,13 @@ class FriendsFragment : FragmentBase(
 
             @Suppress("UNCHECKED_CAST")
             override fun onSuccess(obj: MutableList<FriendModel>) {
-                adapter.addAll(obj as MutableList<Any>)
-                adapter.adapterDataListFull.addAll(obj)
+                if (obj.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
+                    viewModel.onEmptyList.postValue(true)
+                } else {
+                    viewModel.onEmptyList.postValue(false)
+                    adapter.addAll(obj as MutableList<Any>)
+                    adapter.adapterDataListFull.addAll(obj)
+                }
                 swipeRefreshContainer.isRefreshing = false
             }
         })

@@ -164,8 +164,13 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
             }
 
             override fun onSuccess(obj: MutableList<RoomInviteModel>) {
-                adapter.update(obj)
-                adapter.roomInviteModelsFull.addAll(obj)
+                if (obj.isNullOrEmpty()) {
+                    viewModel.onEmptyList.postValue(true)
+                } else {
+                    viewModel.onEmptyList.postValue(false)
+                    adapter.update(obj)
+                    adapter.roomInviteModelsFull.addAll(obj)
+                }
                 swipeRefreshContainer.isRefreshing = false
             }
         })

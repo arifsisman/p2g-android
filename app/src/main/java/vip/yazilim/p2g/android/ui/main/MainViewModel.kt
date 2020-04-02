@@ -21,79 +21,99 @@ class MainViewModel : ViewModelBase() {
     val roomModel = MutableLiveData<RoomModel>()
 
     fun loadRooms() {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getRoomModels(),
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<RoomModel>) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
 
                     if (obj.isNotEmpty()) {
                         roomModels.postValue(obj)
+                        onEmptyList.postValue(false)
+                    } else {
+                        onEmptyList.postValue(true)
                     }
                 }
             })
     }
 
     fun loadFriendRequestModel() {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getFriendRequestModels(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: MutableList<FriendRequestModel>) {
-                    isViewLoading.postValue(false)
-                    friendRequestModel.postValue(obj as MutableList<Any>)
+                    if (obj.isNullOrEmpty() && friendRequestModel.value.isNullOrEmpty()) {
+                        onEmptyList.postValue(true)
+                        onViewLoading.postValue(false)
+                    } else {
+                        onViewLoading.postValue(false)
+                        onEmptyList.postValue(false)
+                        onViewLoading.postValue(false)
+                        friendRequestModel.postValue(obj as MutableList<Any>)
+                    }
                 }
             })
     }
 
     fun loadFriends() {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getFriendModels(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 @Suppress("UNCHECKED_CAST")
                 override fun onSuccess(obj: MutableList<FriendModel>) {
-                    isViewLoading.postValue(false)
-                    friendRequestModel.postValue(obj as MutableList<Any>)
+                    if (obj.isNullOrEmpty() && friendRequestModel.value.isNullOrEmpty()) {
+                        onEmptyList.postValue(true)
+                        onViewLoading.postValue(false)
+                    } else {
+                        onViewLoading.postValue(false)
+                        onEmptyList.postValue(false)
+                        onViewLoading.postValue(false)
+                        friendRequestModel.postValue(obj as MutableList<Any>)
+                    }
                 }
             })
     }
 
     fun loadRoomInviteModel() {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getRoomInviteModels(),
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: MutableList<RoomInviteModel>) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
 
-                    if (!obj.isNullOrEmpty()) {
+                    if (obj.isNullOrEmpty()) {
+                        onEmptyList.postValue(true)
+                    } else {
+                        onEmptyList.postValue(false)
                         roomInviteModel.postValue(obj)
                     }
                 }
@@ -101,19 +121,19 @@ class MainViewModel : ViewModelBase() {
     }
 
     fun loadUserModel() {
-        isViewLoading.postValue(true)
+        onViewLoading.postValue(true)
 
         request(
             Singleton.apiClient().getUserModelMe(),
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: UserModel) {
                     userModel.postValue(obj)
-                    isViewLoading.postValue(false)
+                    onViewLoading.postValue(false)
                 }
             })
     }

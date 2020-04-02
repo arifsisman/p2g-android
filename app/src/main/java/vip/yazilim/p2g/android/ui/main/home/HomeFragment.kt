@@ -257,8 +257,13 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             }
 
             override fun onSuccess(obj: MutableList<RoomModel>) {
-                adapter.update(obj)
-                adapter.roomModelsFull = obj
+                if (obj.isNullOrEmpty()) {
+                    viewModel.onEmptyList.postValue(true)
+                } else {
+                    adapter.update(obj)
+                    adapter.roomModelsFull = obj
+                    viewModel.onEmptyList.postValue(false)
+                }
                 swipeRefreshContainer.isRefreshing = false
             }
         })
