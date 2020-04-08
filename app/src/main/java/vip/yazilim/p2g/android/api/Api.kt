@@ -13,12 +13,14 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.Response
 import vip.yazilim.p2g.android.api.generic.Result
 import vip.yazilim.p2g.android.constant.ApiConstants
+import vip.yazilim.p2g.android.constant.TokenConstants
+import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
 object Api {
     lateinit var client: Endpoints
 
-    fun buildApi(accessToken: String) {
+    fun build(accessToken: String) {
         val httpClient = OkHttpClient.Builder()
         httpClient
             .authenticator(TokenAuthenticator())
@@ -38,6 +40,7 @@ object Api {
 
         client = retrofit.create(Endpoints::class.java) as Endpoints
         client.updateAccessToken(accessToken).queue(null)
+        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, accessToken)
     }
 
     class HeaderInterceptor(private val accessToken: String) : Interceptor {

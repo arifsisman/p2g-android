@@ -18,8 +18,6 @@ import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_ACTIVITY
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_STRING_SERVICE
 import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
@@ -41,15 +39,7 @@ class UserWebSocketService : Service() {
 
     private val serviceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.v(TAG, "Sending broadcast to activity")
-            sendBroadcast()
         }
-    }
-
-    private fun sendBroadcast() {
-        val intent = Intent()
-        intent.action = ACTION_STRING_ACTIVITY
-        sendBroadcast(intent)
     }
 
     private fun sendBroadcastRoomInvite(roomInviteModel: RoomInviteModel) {
@@ -70,7 +60,7 @@ class UserWebSocketService : Service() {
             startForeground(1, Notification())
         }
 
-        val intentFilter = IntentFilter(ACTION_STRING_SERVICE)
+        val intentFilter = IntentFilter()
         registerReceiver(serviceReceiver, intentFilter)
     }
 

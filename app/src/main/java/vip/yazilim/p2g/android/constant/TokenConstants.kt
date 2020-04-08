@@ -6,6 +6,5 @@ package vip.yazilim.p2g.android.constant
  */
 object TokenConstants {
     const val ACCESS_TOKEN = "access_token"
-    const val REFRESH_TOKEN = "refresh_token"
     const val UNDEFINED = "undefined"
 }

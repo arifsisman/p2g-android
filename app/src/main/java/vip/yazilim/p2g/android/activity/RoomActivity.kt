@@ -33,6 +33,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
@@ -115,8 +116,11 @@ class RoomActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
+        Play2GetherApplication.currentActivity = this
         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app-pub-9988109607477807/6243177559"
+        //todo
+//        mInterstitialAd.adUnitId = "ca-app-pub-9988109607477807/6243177559"
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712" // test ad id
         mInterstitialAd.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 mInterstitialAd.show()
