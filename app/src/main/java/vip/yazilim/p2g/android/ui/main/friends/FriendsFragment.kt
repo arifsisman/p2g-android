@@ -113,85 +113,76 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
-        friendRequestModel.friendRequest?.id?.let { fr ->
-            Api.client.accept(fr).queue(object : Callback<Boolean> {
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.accept(friendRequestModel.friendRequest.id).queue(object : Callback<Boolean> {
+            override fun onError(msg: String) {
+                viewModel.onMessageError.postValue(msg)
+            }
+
+            override fun onSuccess(obj: Boolean) {
+                adapter.remove(friendRequestModel)
+                adapter.add(FriendModel(friendRequestModel.friendRequestUserModel, null))
+                adapter.adapterDataListFull.add(
+                    FriendModel(
+                        friendRequestModel.friendRequestUserModel,
+                        null
+                    )
+                )
+            }
+        })
+
+
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.reject(friendRequestModel.friendRequest.id).queue(
+            object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
                 }
 
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
-                    friendRequestModel.friendRequestUserModel?.let {
-                        adapter.add(FriendModel(it, null))
-                    }
-                    friendRequestModel.friendRequestUserModel?.let {
-                        adapter.adapterDataListFull.add(FriendModel(it, null))
-                    }
                 }
-            })
-        }
-    }
 
-
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
-        friendRequestModel.friendRequest?.id?.let {
-            Api.client.reject(it).queue(
-                object : Callback<Boolean> {
-                    override fun onError(msg: String) {
-                        viewModel.onMessageError.postValue(msg)
-                    }
-
-                    override fun onSuccess(obj: Boolean) {
-                        adapter.remove(friendRequestModel)
-                    }
-
-                }
-            )
-        }
-    }
+            }
+        )
 
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
-        friendRequestModel.friendRequest?.id?.let {
-            Api.client.ignore(it).queue(
-                object : Callback<Boolean> {
-                    override fun onError(msg: String) {
-                        viewModel.onMessageError.postValue(msg)
-                    }
+        Api.client.ignore(friendRequestModel.friendRequest.id).queue(
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-                    override fun onSuccess(obj: Boolean) {
-                        adapter.remove(friendRequestModel)
-                    }
-                })
-        }
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
+                }
+            })
     }
 
 
-    override fun onJoinClicked(room: Room?) {
-        if (room?.password == null) {
-            room?.let { joinRoomEvent(it) }
+    override fun onJoinClicked(room: Room) {
+        if (room.password == null) {
+            joinRoomEvent(room)
         } else {
             joinPrivateRoomEvent(room)
         }
     }
 
-    override fun onDeleteClicked(friendModel: FriendModel?) {
+    override fun onDeleteClicked(friendModel: FriendModel) {
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    friendModel?.userModel?.user?.id?.let {
-                        Api.client.deleteFriend(it).queue(
-                            object : Callback<Boolean> {
-                                override fun onError(msg: String) {
-                                    viewModel.onMessageError.postValue(msg)
-                                }
+                    Api.client.deleteFriend(friendModel.userModel.user.id).queue(
+                        object : Callback<Boolean> {
+                            override fun onError(msg: String) {
+                                viewModel.onMessageError.postValue(msg)
+                            }
 
-                                override fun onSuccess(obj: Boolean) {
-                                    friendModel.let { adapter.remove(it) }
-                                }
-                            })
-                    }
+                            override fun onSuccess(obj: Boolean) {
+                                friendModel.let { adapter.remove(it) }
+                            }
+                        })
                 }
             }
         }
@@ -204,7 +195,7 @@ class FriendsFragment : FragmentBase(
             .show()
     }
 
-    override fun onRowClicked(userModel: UserModel?) {
+    override fun onRowClicked(userModel: UserModel) {
         val intent = Intent(activity, UserActivity::class.java)
         intent.putExtra("userModel", userModel)
         startActivity(intent)

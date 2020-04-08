@@ -93,14 +93,14 @@ class RoomUsersFragment :
         adapter.update(roomUserModels)
 
         roomUserModels.forEach {
-            if (it.user?.id == roomViewModel.roomUserModel.value?.user?.id) {
+            if (it.user.id == roomViewModel.roomUserModel.value?.user?.id) {
                 roomViewModel.roomUserModel.postValue(it)
             }
         }
     }
 
-    private fun refreshUsersEvent() = roomActivity.room?.id?.let {
-        Api.client.getRoomUserModels(it).queue(
+    private fun refreshUsersEvent() =
+        Api.client.getRoomUserModels(roomActivity.room.id).queue(
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
@@ -112,7 +112,7 @@ class RoomUsersFragment :
                     swipeRefreshContainer.isRefreshing = false
                 }
             })
-    }
+
 
     private fun showInviteDialog() {
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
@@ -220,11 +220,11 @@ class RoomUsersFragment :
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
-        roomUserModel.roomUser?.userId?.let {
+        roomUserModel.roomUser.userId?.let {
             Api.client.addFriend(it).queue(
                 object : Callback<Boolean> {
                     override fun onSuccess(obj: Boolean) {
-                        roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
+                        roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user.name}")
                     }
 
                     override fun onError(msg: String) {
@@ -235,10 +235,10 @@ class RoomUsersFragment :
     }
 
     override fun onItemClicked(view: View, user: User) {
-        val roomId = (activity as RoomActivity).room?.id
+        val roomId = (activity as RoomActivity).room.id
         val userId = user.id
 
-        if (roomId != null && userId != null) {
+        if (userId != null) {
             Api.client.inviteUser(roomId, userId).queue(
                 object : Callback<RoomInvite> {
                     override fun onSuccess(obj: RoomInvite) {
@@ -279,12 +279,12 @@ class RoomUsersFragment :
     override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
         changeRoleDialogView?.dismiss()
 
-        roomUserModel.roomUser?.id?.let {
+        roomUserModel.roomUser.id.let {
             Api.client.changeRoomUserRole(it, role.role).queue(
                 object : Callback<RoomUser> {
                     override fun onSuccess(obj: RoomUser) {
                         roomViewModel.onMessageInfo.postValue(
-                            "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                            "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
                         )
                     }
 

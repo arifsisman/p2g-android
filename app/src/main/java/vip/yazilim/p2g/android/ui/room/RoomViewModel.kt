@@ -62,7 +62,7 @@ class RoomViewModel : ViewModelBase() {
                     roomUserModelList.postValue(obj)
 
                     obj.forEach {
-                        if (it.user?.id == roomUserModel.value?.user?.id) {
+                        if (it.user.id == roomUserModel.value?.user?.id) {
                             roomUserModel.postValue(it)
                         }
                     }
@@ -80,23 +80,6 @@ class RoomViewModel : ViewModelBase() {
             override fun onError(msg: String) {
             }
         })
-    }
-
-    fun loadRoomInviteUsers() {
-        onViewLoading.postValue(true)
-
-        Api.client.getAllUsers().queue(
-            object : Callback<MutableList<User>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: MutableList<User>) {
-                    onViewLoading.postValue(false)
-                    roomInviteUserList.postValue(obj)
-                }
-            })
     }
 
     fun getCurrentSong(songList: MutableList<Song>): Song? {

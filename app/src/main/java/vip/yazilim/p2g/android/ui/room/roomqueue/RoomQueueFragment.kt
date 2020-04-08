@@ -97,22 +97,21 @@ class RoomQueueFragment :
         roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
-    private fun refreshQueueEvent() = roomActivity.room?.id?.let {
-        Api.client.getRoomSongs(it).queue(
-            object : Callback<MutableList<Song>> {
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(
-                        resources.getString(R.string.err_room_queue_refresh)
-                    )
-                    swipeRefreshContainer.isRefreshing = false
-                }
+    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).queue(
+        object : Callback<MutableList<Song>> {
+            override fun onError(msg: String) {
+                roomViewModel.onMessageError.postValue(
+                    resources.getString(R.string.err_room_queue_refresh)
+                )
+                swipeRefreshContainer.isRefreshing = false
+            }
 
-                override fun onSuccess(obj: MutableList<Song>) {
-                    roomViewModel.songList.postValue(obj)
-                    swipeRefreshContainer.isRefreshing = false
-                }
-            })
-    }
+            override fun onSuccess(obj: MutableList<Song>) {
+                roomViewModel.songList.postValue(obj)
+                swipeRefreshContainer.isRefreshing = false
+            }
+        })
+
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
@@ -207,20 +206,18 @@ class RoomQueueFragment :
         addButton.setOnClickListener {
             val selectedSearchModels = searchAdapter.selectedSearchModels
 
-            roomActivity.room?.id?.let { id ->
-                Api.client.addSongToRoom(id, selectedSearchModels)
-                    .queue(object : Callback<Boolean> {
-                        override fun onSuccess(obj: Boolean) {
-                            cancelButton.performClick()
-                            selectedSearchModels.clear()
-                        }
+            Api.client.addSongToRoom(roomActivity.room.id, selectedSearchModels)
+                .queue(object : Callback<Boolean> {
+                    override fun onSuccess(obj: Boolean) {
+                        cancelButton.performClick()
+                        selectedSearchModels.clear()
+                    }
 
-                        override fun onError(msg: String) {
-                            cancelButton.performClick()
-                            roomViewModel.onMessageError.postValue(msg)
-                        }
-                    })
-            }
+                    override fun onError(msg: String) {
+                        cancelButton.performClick()
+                        roomViewModel.onMessageError.postValue(msg)
+                    }
+                })
         }
 
     }
@@ -253,12 +250,12 @@ class RoomQueueFragment :
         view.close()
         val db = roomActivity.db
 
-        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
+        if (db.isVotedBefore(roomActivity.room, song)) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
             Api.client.upvoteSong(song.id).queue(object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    roomActivity.room?.let { db.insertVotedSong(it, song) }
+                    db.insertVotedSong(roomActivity.room, song)
                     roomViewModel.onMessageInfo.postValue(
                         "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
                     )
@@ -275,12 +272,12 @@ class RoomQueueFragment :
         view.close()
         val db = roomActivity.db
 
-        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
+        if (db.isVotedBefore(roomActivity.room, song)) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
             Api.client.downvoteSong(song.id).queue(object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    roomActivity.room?.let { db.insertVotedSong(it, song) }
+                    db.insertVotedSong(roomActivity.room, song)
                     roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
                 }
 
