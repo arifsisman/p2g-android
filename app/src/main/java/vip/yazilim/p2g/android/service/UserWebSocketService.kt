@@ -121,8 +121,7 @@ class UserWebSocketService : Service() {
                     val roomInviteModel = gson.fromJson(it.payload, RoomInviteModel::class.java)
 
                     sendBroadcastRoomInvite(roomInviteModel)
-
-                    roomInviteModel.roomInvite?.let { it1 -> showInviteNotification(it1) }
+                    showInviteNotification(roomInviteModel.roomInvite)
                 }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }
     }

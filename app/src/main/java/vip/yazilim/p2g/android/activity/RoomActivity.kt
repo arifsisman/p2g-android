@@ -133,8 +133,8 @@ class RoomActivity : BaseActivity(),
         Thread(playerTimer).start()
 
         roomViewModel.loadRoomUserMe()
-        room.id.let { roomViewModel.loadSongs(it) }
-        room.id.let { roomViewModel.loadRoomUsers(it) }
+        roomViewModel.loadSongs(room.id)
+        roomViewModel.loadRoomUsers(room.id)
     }
 
     override fun onDestroy() {
@@ -241,7 +241,7 @@ class RoomActivity : BaseActivity(),
                             }
                         }
                         COLLAPSED -> {
-                            roomViewModel.roomUserModel.value?.let { canUserAddAndControlSongs(it.roomUser) }
+                            canUserAddAndControlSongs(roomViewModel.roomUserModel.value?.roomUser)
                             showMinimizedPlayer()
                         }
                         else -> {
@@ -437,18 +437,16 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    room.id.let {
-                        Api.client.clearQueue(it).queue(
-                            object : Callback<Boolean> {
-                                override fun onSuccess(obj: Boolean) {
-                                    viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
-                                }
+                    Api.client.clearQueue(room.id).queue(
+                        object : Callback<Boolean> {
+                            override fun onSuccess(obj: Boolean) {
+                                viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
+                            }
 
-                                override fun onError(msg: String) {
-                                    viewPager.showSnackBarError(msg)
-                                }
-                            })
-                    }
+                            override fun onError(msg: String) {
+                                viewPager.showSnackBarError(msg)
+                            }
+                        })
                 }
             }
         }
@@ -625,42 +623,36 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onPlayPauseMiniClicked() {
-        room.id.let {
-            Api.client.playPause(it).queue(object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                }
+        Api.client.playPause(room.id).queue(object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
 
-                override fun onError(msg: String) {
-                    playerCoordinatorLayout.showSnackBarError(msg)
-                }
-            })
-        }
+            override fun onError(msg: String) {
+                playerCoordinatorLayout.showSnackBarError(msg)
+            }
+        })
     }
 
     override fun onPlayPauseClicked() {
-        room.id.let {
-            Api.client.playPause(it).queue(object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                }
+        Api.client.playPause(room.id).queue(object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
 
-                override fun onError(msg: String) {
-                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
-                }
-            })
-        }
+            override fun onError(msg: String) {
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
+            }
+        })
     }
 
     override fun onNextClicked() {
-        room.id.let {
-            Api.client.next(it).queue(object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                }
+        Api.client.next(room.id).queue(object : Callback<Boolean> {
+            override fun onSuccess(obj: Boolean) {
+            }
 
-                override fun onError(msg: String) {
-                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
-                }
-            })
-        }
+            override fun onError(msg: String) {
+                playerCoordinatorLayout.showSnackBarPlayerError(msg)
+            }
+        })
     }
 
     override fun onPreviousClicked() {
@@ -675,8 +667,7 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onRepeatClicked() {
-        room.id.let {
-            Api.client.repeat(it).queue(object : Callback<Boolean> {
+        Api.client.repeat(room.id).queue(object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                 }
 
@@ -684,12 +675,10 @@ class RoomActivity : BaseActivity(),
                     playerCoordinatorLayout.showSnackBarPlayerError(msg)
                 }
             })
-        }
     }
 
     private fun onSeekPerformed(ms: Int) {
-        room.id.let {
-            Api.client.seek(it, ms).queue(object : Callback<Boolean> {
+        Api.client.seek(room.id, ms).queue(object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                 }
 
@@ -697,7 +686,6 @@ class RoomActivity : BaseActivity(),
                     playerCoordinatorLayout.showSnackBarPlayerError(msg)
                 }
             })
-        }
     }
 
     override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {

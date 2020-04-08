@@ -220,36 +220,32 @@ class RoomUsersFragment :
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
-        roomUserModel.roomUser.userId?.let {
-            Api.client.addFriend(it).queue(
-                object : Callback<Boolean> {
-                    override fun onSuccess(obj: Boolean) {
-                        roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user.name}")
-                    }
+        Api.client.addFriend(roomUserModel.roomUser.userId).queue(
+            object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                    roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user.name}")
+                }
 
-                    override fun onError(msg: String) {
-                        roomViewModel.onMessageError.postValue(msg)
-                    }
-                })
-        }
+                override fun onError(msg: String) {
+                    roomViewModel.onMessageError.postValue(msg)
+                }
+            })
     }
 
     override fun onItemClicked(view: View, user: User) {
         val roomId = (activity as RoomActivity).room.id
         val userId = user.id
 
-        if (userId != null) {
-            Api.client.inviteUser(roomId, userId).queue(
-                object : Callback<RoomInvite> {
-                    override fun onSuccess(obj: RoomInvite) {
-                        inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
-                    }
+        Api.client.inviteUser(roomId, userId).queue(
+            object : Callback<RoomInvite> {
+                override fun onSuccess(obj: RoomInvite) {
+                    inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
+                }
 
-                    override fun onError(msg: String) {
-                        inviteDialogView.showSnackBarError(msg)
-                    }
-                })
-        }
+                override fun onError(msg: String) {
+                    inviteDialogView.showSnackBarError(msg)
+                }
+            })
     }
 
     override fun onOpen(layout: SwipeLayout?) {
@@ -279,19 +275,17 @@ class RoomUsersFragment :
     override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
         changeRoleDialogView?.dismiss()
 
-        roomUserModel.roomUser.id.let {
-            Api.client.changeRoomUserRole(it, role.role).queue(
-                object : Callback<RoomUser> {
-                    override fun onSuccess(obj: RoomUser) {
-                        roomViewModel.onMessageInfo.postValue(
-                            "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
-                        )
-                    }
+        Api.client.changeRoomUserRole(roomUserModel.roomUser.id, role.role).queue(
+            object : Callback<RoomUser> {
+                override fun onSuccess(obj: RoomUser) {
+                    roomViewModel.onMessageInfo.postValue(
+                        "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                    )
+                }
 
-                    override fun onError(msg: String) {
-                        roomViewModel.onMessageError.postValue(msg)
-                    }
-                })
-        }
+                override fun onError(msg: String) {
+                    roomViewModel.onMessageError.postValue(msg)
+                }
+            })
     }
 }

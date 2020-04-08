@@ -114,25 +114,22 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModel) {
-        roomModel.room?.id?.let {
-            Api.client.joinRoom(it, UNDEFINED).queue(
-                object : Callback<RoomUser> {
-                    override fun onError(msg: String) {
-                        viewModel.onMessageError.postValue(msg)
-                    }
+    private fun joinRoomEvent(roomModel: RoomModel) =
+        Api.client.joinRoom(roomModel.room.id, UNDEFINED).queue(
+            object : Callback<RoomUser> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-                    override fun onSuccess(obj: RoomUser) {
-                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+                override fun onSuccess(obj: RoomUser) {
+                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        intent.putExtra("roomModel", roomModel)
-                        intent.putExtra("roomUser", obj)
-                        startActivity(intent)
-                    }
-                })
-        }
-    }
+                    val intent = Intent(activity, RoomActivity::class.java)
+                    intent.putExtra("roomModel", roomModel)
+                    intent.putExtra("roomUser", obj)
+                    startActivity(intent)
+                }
+            })
 
 
     private fun joinPrivateRoomEvent(roomModel: RoomModel) {
@@ -166,25 +163,23 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            room?.id?.let { id ->
-                Api.client.joinRoom(id, roomPasswordEditText.text.toString()).queue(
-                    object : Callback<RoomUser> {
-                        override fun onError(msg: String) {
-                            mDialogView.showSnackBarError(msg)
-                        }
+            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).queue(
+                object : Callback<RoomUser> {
+                    override fun onError(msg: String) {
+                        mDialogView.showSnackBarError(msg)
+                    }
 
-                        override fun onSuccess(obj: RoomUser) {
-                            Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-                            mAlertDialog?.dismiss()
-                            context?.closeKeyboard()
+                    override fun onSuccess(obj: RoomUser) {
+                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+                        mAlertDialog?.dismiss()
+                        context?.closeKeyboard()
 
-                            val intent = Intent(activity, RoomActivity::class.java)
-                            intent.putExtra("roomModel", roomModel)
-                            intent.putExtra("roomUser", obj)
-                            startActivity(intent)
-                        }
-                    })
-            }
+                        val intent = Intent(activity, RoomActivity::class.java)
+                        intent.putExtra("roomModel", roomModel)
+                        intent.putExtra("roomUser", obj)
+                        startActivity(intent)
+                    }
+                })
         }
 
 

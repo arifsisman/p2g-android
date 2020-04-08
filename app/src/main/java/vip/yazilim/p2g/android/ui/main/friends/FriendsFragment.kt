@@ -180,7 +180,7 @@ class FriendsFragment : FragmentBase(
                             }
 
                             override fun onSuccess(obj: Boolean) {
-                                friendModel.let { adapter.remove(it) }
+                                adapter.remove(friendModel)
                             }
                         })
                 }
