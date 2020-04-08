@@ -9,11 +9,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import vip.yazilim.p2g.android.api.Play2GetherWebApi
-import vip.yazilim.p2g.android.constant.ApiConstants.BASE_URL
+import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
-import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 
 object ApiClient {
+    private lateinit var webApi: Play2GetherWebApi
+
+    fun get(): Play2GetherWebApi = webApi
+
+    fun buildApi(accessToken: String) {
+        webApi = build(accessToken)
+        request(webApi.updateAccessToken(accessToken), null)
+    }
 
     fun build(accessToken: String): Play2GetherWebApi {
         val httpClient = OkHttpClient.Builder()
@@ -24,7 +32,7 @@ object ApiClient {
 
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
         val builder: Retrofit.Builder = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(ApiConstants.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
         val retrofit: Retrofit = builder.client(httpClient.build()).build()

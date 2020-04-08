@@ -19,6 +19,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants
@@ -32,7 +33,6 @@ import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class FriendsFragment : FragmentBase(
@@ -114,7 +114,7 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = request(
-        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
+        friendRequestModel.friendRequest?.id?.let { ApiClient.get().accept(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
@@ -138,7 +138,7 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) = request(
-        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
+        friendRequestModel.friendRequest?.id?.let { ApiClient.get().reject(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
@@ -151,7 +151,7 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = request(
-        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
+        friendRequestModel.friendRequest?.id?.let { ApiClient.get().ignore(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
@@ -177,7 +177,7 @@ class FriendsFragment : FragmentBase(
                 DialogInterface.BUTTON_POSITIVE -> {
                     request(
                         friendModel?.userModel?.user?.id?.let {
-                            Singleton.apiClient().deleteFriend(it)
+                            ApiClient.get().deleteFriend(it)
                         },
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
@@ -207,7 +207,7 @@ class FriendsFragment : FragmentBase(
     }
 
     private fun loadFriendRequestModel() = request(
-        Singleton.apiClient().getFriendRequestModels(),
+        ApiClient.get().getFriendRequestModels(),
         object : Callback<MutableList<FriendRequestModel>> {
             override fun onError(msg: String) {
                 swipeRefreshContainer.isRefreshing = false
@@ -225,7 +225,7 @@ class FriendsFragment : FragmentBase(
 
 
     private fun loadFriends() = request(
-        Singleton.apiClient().getFriendModels(),
+        ApiClient.get().getFriendModels(),
         object : Callback<MutableList<FriendModel>> {
             override fun onError(msg: String) {
                 swipeRefreshContainer.isRefreshing = false
@@ -242,7 +242,7 @@ class FriendsFragment : FragmentBase(
         })
 
     private fun joinRoomEvent(room: Room) = request(
-        room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
+        room.id.let { ApiClient.get().joinRoom(it, GeneralConstants.UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
@@ -290,7 +290,7 @@ class FriendsFragment : FragmentBase(
             val roomPassword = roomPasswordEditText.text.toString()
 
             request(
-                room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
+                room.id.let { it1 -> ApiClient.get().joinRoom(it1, roomPassword) },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)

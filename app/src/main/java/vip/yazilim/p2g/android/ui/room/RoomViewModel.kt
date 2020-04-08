@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.ui.room
 
 import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.SongStatus
@@ -11,7 +12,6 @@ import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTimeZonedUTC
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 20.02.2020
@@ -31,7 +31,7 @@ class RoomViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getRoomSongs(roomId),
+            ApiClient.get().getRoomSongs(roomId),
             object : Callback<MutableList<Song>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -51,7 +51,7 @@ class RoomViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getRoomUserModels(roomId),
+            ApiClient.get().getRoomUserModels(roomId),
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -74,7 +74,7 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomUserMe() {
-        request(Singleton.apiClient().getRoomUserModelMe(), object : Callback<RoomUserModel> {
+        request(ApiClient.get().getRoomUserModelMe(), object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
                 roomUserModel.postValue(obj)
             }
@@ -88,7 +88,7 @@ class RoomViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getAllUsers(),
+            ApiClient.get().getAllUsers(),
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)

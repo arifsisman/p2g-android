@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
@@ -32,7 +33,6 @@ import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -115,7 +115,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     }
 
     private fun joinRoomEvent(roomModel: RoomModel) = request(
-        roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
+        roomModel.room?.id?.let { ApiClient.get().joinRoom(it, UNDEFINED) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
@@ -165,7 +165,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         joinButton.setOnClickListener {
             request(
                 room?.id?.let { id ->
-                    Singleton.apiClient().joinRoom(id, roomPasswordEditText.text.toString())
+                    ApiClient.get().joinRoom(id, roomPasswordEditText.text.toString())
                 },
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
@@ -222,7 +222,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         // Click create
         createButton.setOnClickListener {
             request(
-                Singleton.apiClient().createRoom(
+                ApiClient.get().createRoom(
                     roomNameEditText.text.toString(),
                     roomPasswordEditText.text.toString()
                 ),
@@ -254,7 +254,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     }
 
     private fun refreshRoomsEvent() = request(
-        Singleton.apiClient().getRoomModels(),
+        ApiClient.get().getRoomModels(),
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))

@@ -18,6 +18,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
@@ -27,7 +28,6 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -112,7 +112,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun onAccept(roomInviteModel: RoomInviteModel) = request(
-        roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
+        roomInviteModel.roomInvite?.let { ApiClient.get().acceptInvite(it) },
         object : Callback<RoomUser> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
@@ -130,7 +130,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun onReject(roomInviteModel: RoomInviteModel) = request(
-        roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
+        roomInviteModel.roomInvite?.id?.let { ApiClient.get().rejectInvite(it) },
         object : Callback<Boolean> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
@@ -144,7 +144,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) = request(
-        roomInviteModel.roomInvite?.inviterId?.let { Singleton.apiClient().getUserModel(it) },
+        roomInviteModel.roomInvite?.inviterId?.let { ApiClient.get().getUserModel(it) },
         object : Callback<UserModel> {
             override fun onError(msg: String) {
             }
@@ -158,7 +158,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     private fun refreshRoomInvitesEvent() = request(
-        Singleton.apiClient().getRoomInviteModels(),
+        ApiClient.get().getRoomInviteModels(),
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)

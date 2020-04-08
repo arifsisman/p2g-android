@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
@@ -30,7 +31,6 @@ import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 07.03.2020
@@ -100,7 +100,7 @@ class RoomUsersFragment :
     }
 
     private fun refreshUsersEvent() = request(
-        roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
+        roomActivity.room?.id?.let { ApiClient.get().getRoomUserModels(it) },
         object : Callback<MutableList<RoomUserModel>> {
             override fun onError(msg: String) {
                 roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
@@ -160,7 +160,7 @@ class RoomUsersFragment :
             val query = queryEditText.text.toString()
 
             request(
-                Singleton.apiClient().searchUser(query),
+                ApiClient.get().searchUser(query),
                 object : Callback<MutableList<User>> {
                     override fun onError(msg: String) {
                         inviteRecyclerView.showSnackBarError(msg)
@@ -182,7 +182,7 @@ class RoomUsersFragment :
 
         // Load friends
         request(
-            Singleton.apiClient().getFriends(),
+            ApiClient.get().getFriends(),
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
                 }
@@ -222,7 +222,7 @@ class RoomUsersFragment :
         view.close()
 
         request(
-            roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
+            roomUserModel.roomUser?.userId?.let { ApiClient.get().addFriend(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
@@ -239,7 +239,8 @@ class RoomUsersFragment :
         val userId = user.id
 
         if (roomId != null && userId != null) {
-            request(Singleton.apiClient().inviteUser(roomId, userId),
+            request(
+                ApiClient.get().inviteUser(roomId, userId),
                 object : Callback<RoomInvite> {
                     override fun onSuccess(obj: RoomInvite) {
                         inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
@@ -281,7 +282,7 @@ class RoomUsersFragment :
 
         request(
             roomUserModel.roomUser?.id?.let {
-                Singleton.apiClient().changeRoomUserRole(it, role.role)
+                ApiClient.get().changeRoomUserRole(it, role.role)
             },
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {

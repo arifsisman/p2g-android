@@ -34,6 +34,8 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.TokenAuthenticator
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
@@ -66,8 +68,6 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarErrorI
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
-import vip.yazilim.p2g.android.util.refrofit.Singleton
-import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import java.util.concurrent.TimeUnit
 
@@ -140,7 +140,7 @@ class RoomActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        request(Singleton.apiClient().leaveRoom(), null)
+        request(ApiClient.get().leaveRoom(), null)
     }
 
     // Setups
@@ -352,7 +352,7 @@ class RoomActivity : AppCompatActivity(),
 
     private fun syncWithRoom(roomUser: RoomUser?) {
         request(
-            roomUser?.let { Singleton.apiClient().syncWithRoom(it) },
+            roomUser?.let { ApiClient.get().syncWithRoom(it) },
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     if (obj) {
@@ -378,7 +378,7 @@ class RoomActivity : AppCompatActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    request(Singleton.apiClient().leaveRoom(), null)
+                    request(ApiClient.get().leaveRoom(), null)
 
                     val mainIntent = Intent(this@RoomActivity, MainActivity::class.java)
                     mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -434,7 +434,7 @@ class RoomActivity : AppCompatActivity(),
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
                     request(
-                        room?.id?.let { Singleton.apiClient().clearQueue(it) },
+                        room?.id?.let { ApiClient.get().clearQueue(it) },
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
                                 viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
@@ -456,7 +456,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun selectDevice() {
-        request(Singleton.apiClient().getUserDevices(), object : Callback<MutableList<UserDevice>> {
+        request(ApiClient.get().getUserDevices(), object : Callback<MutableList<UserDevice>> {
             override fun onSuccess(obj: MutableList<UserDevice>) {
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
@@ -491,7 +491,7 @@ class RoomActivity : AppCompatActivity(),
     private fun getRoomModel(roomId: Long) {
         // Get room model if not exists
 
-        request(Singleton.apiClient().getRoomModel(roomId), object : Callback<RoomModel> {
+        request(ApiClient.get().getRoomModel(roomId), object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
                 roomModel = obj
             }
@@ -535,7 +535,7 @@ class RoomActivity : AppCompatActivity(),
                         val roomPlaceholder = resources.getString(R.string.title_room)
                         val closedPlaceholder = resources.getString(R.string.info_closed)
                         context?.showToastLong("$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}")
-                        request(Singleton.apiClient().leaveRoom(), null)
+                        request(ApiClient.get().leaveRoom(), null)
 
                         val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
                         startActivity(leaveIntent)
@@ -616,7 +616,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     override fun onPlayPauseMiniClicked() =
-        request(room?.id?.let { Singleton.apiClient().playPause(it) }, object : Callback<Boolean> {
+        request(room?.id?.let { ApiClient.get().playPause(it) }, object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -630,7 +630,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     override fun onPlayPauseClicked() =
-        request(room?.id?.let { Singleton.apiClient().playPause(it) }, object : Callback<Boolean> {
+        request(room?.id?.let { ApiClient.get().playPause(it) }, object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -640,7 +640,7 @@ class RoomActivity : AppCompatActivity(),
         })
 
     override fun onNextClicked() =
-        request(room?.id?.let { Singleton.apiClient().next(it) }, object : Callback<Boolean> {
+        request(room?.id?.let { ApiClient.get().next(it) }, object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -650,7 +650,7 @@ class RoomActivity : AppCompatActivity(),
         })
 
     override fun onPreviousClicked() =
-        request(room?.id?.let { Singleton.apiClient().previous(it) }, object : Callback<Boolean> {
+        request(room?.id?.let { ApiClient.get().previous(it) }, object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -660,7 +660,7 @@ class RoomActivity : AppCompatActivity(),
         })
 
     override fun onRepeatClicked() =
-        request(room?.id?.let { Singleton.apiClient().repeat(it) }, object : Callback<Boolean> {
+        request(room?.id?.let { ApiClient.get().repeat(it) }, object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -670,7 +670,7 @@ class RoomActivity : AppCompatActivity(),
         })
 
     private fun onSeekPerformed(ms: Int) =
-        request(room?.id?.let { Singleton.apiClient().seek(it, ms) }, object : Callback<Boolean> {
+        request(room?.id?.let { ApiClient.get().seek(it, ms) }, object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -706,7 +706,7 @@ class RoomActivity : AppCompatActivity(),
         }
 
         request(
-            Singleton.apiClient().saveUsersActiveDevice(userDevice),
+            ApiClient.get().saveUsersActiveDevice(userDevice),
             object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))

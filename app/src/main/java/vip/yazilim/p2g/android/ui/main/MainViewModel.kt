@@ -1,11 +1,11 @@
 package vip.yazilim.p2g.android.ui.main
 
 import androidx.lifecycle.MutableLiveData
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.ui.ViewModelBase
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 20.03.2020
@@ -24,7 +24,7 @@ class MainViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getRoomModels(),
+            ApiClient.get().getRoomModels(),
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -42,7 +42,7 @@ class MainViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getFriendRequestModels(),
+            ApiClient.get().getFriendRequestModels(),
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -61,7 +61,7 @@ class MainViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getFriendModels(),
+            ApiClient.get().getFriendModels(),
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -80,7 +80,7 @@ class MainViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getRoomInviteModels(),
+            ApiClient.get().getRoomInviteModels(),
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -98,7 +98,7 @@ class MainViewModel : ViewModelBase() {
         onViewLoading.postValue(true)
 
         request(
-            Singleton.apiClient().getUserModelMe(),
+            ApiClient.get().getUserModelMe(),
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -113,7 +113,7 @@ class MainViewModel : ViewModelBase() {
     }
 
     fun loadFriendsCountMe() = request(
-        Singleton.apiClient().getFriendsCounts(),
+        ApiClient.get().getFriendsCounts(),
         object : Callback<Int> {
             override fun onError(msg: String) {
             }

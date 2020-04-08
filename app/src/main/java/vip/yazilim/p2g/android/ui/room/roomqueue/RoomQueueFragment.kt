@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
@@ -31,7 +32,6 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 /**
@@ -98,7 +98,7 @@ class RoomQueueFragment :
     }
 
     private fun refreshQueueEvent() = request(
-        roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
+        roomActivity.room?.id?.let { ApiClient.get().getRoomSongs(it) },
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
                 roomViewModel.onMessageError.postValue(
@@ -176,7 +176,7 @@ class RoomQueueFragment :
             val query = queryEditText.text.toString()
 
             request(
-                Singleton.apiClient().searchSpotify(query),
+                ApiClient.get().searchSpotify(query),
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
                         searchDialogView.showSnackBarError(msg)
@@ -208,7 +208,7 @@ class RoomQueueFragment :
             val selectedSearchModels = searchAdapter.selectedSearchModels
 
             request(roomActivity.room?.id?.let {
-                Singleton.apiClient().addSongToRoom(it, selectedSearchModels)
+                ApiClient.get().addSongToRoom(it, selectedSearchModels)
             }, object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     cancelButton.performClick()
@@ -238,7 +238,7 @@ class RoomQueueFragment :
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        request(Singleton.apiClient().play(song), object : Callback<Boolean> {
+        request(ApiClient.get().play(song), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -255,7 +255,7 @@ class RoomQueueFragment :
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
-            request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
+            request(ApiClient.get().upvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
                     roomViewModel.onMessageInfo.postValue(
@@ -277,7 +277,7 @@ class RoomQueueFragment :
         if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
-            request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
+            request(ApiClient.get().downvoteSong(song.id), object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     roomActivity.room?.let { db.insertVotedSong(it, song) }
                     roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
@@ -295,7 +295,7 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
+        request(ApiClient.get().removeSongFromRoom(song.id), object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 

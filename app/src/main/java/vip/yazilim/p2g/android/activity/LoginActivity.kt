@@ -11,6 +11,7 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
@@ -22,7 +23,6 @@ import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 /**
@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
         if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
             if (response.accessToken != null) {
-                Singleton.buildApi(response.accessToken)
+                ApiClient.buildApi(response.accessToken)
                 loginToPlay2Gether()
             } else {
                 val msg = resources.getString(R.string.err_authorization_code)
@@ -95,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
 
     // loginToPlay2Gether via Play2Gether Web API
     private fun loginToPlay2Gether() = request(
-        Singleton.apiClient().login(),
+        ApiClient.get().login(),
         object : Callback<User> {
             override fun onError(msg: String) {
                 val alert = this@LoginActivity.showErrorDialog(msg)
@@ -111,7 +111,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun checkIsUserInRoom(user: User) = request(
-            Singleton.apiClient().getRoomModelMe(),
+        ApiClient.get().getRoomModelMe(),
             object : Callback<RoomModel> {
                 override fun onSuccess(obj: RoomModel) {
                     val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
