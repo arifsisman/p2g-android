@@ -5,10 +5,8 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import vip.yazilim.p2g.android.api.client.ApiClient
 import vip.yazilim.p2g.android.api.client.SpotifyApiClient
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.api.generic.spotifyRequest
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
@@ -42,10 +40,6 @@ class TokenAuthenticator : Authenticator {
 
 
     companion object {
-        fun updateAccessTokenOnPlay2Gether(accessToken: String) = request(
-            ApiClient.build().updateAccessToken(accessToken), null
-        )
-
         fun refreshToken() {
             val refreshToken =
                 SharedPrefSingleton.read(TokenConstants.REFRESH_TOKEN, TokenConstants.UNDEFINED)
@@ -63,9 +57,8 @@ class TokenAuthenticator : Authenticator {
                     override fun onSuccess(obj: TokenModel) {
                         SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
                         SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.access_token)
-                        obj.access_token?.let { updateAccessTokenOnPlay2Gether(it) }
+                        obj.access_token?.let { Singleton.buildApi(it) }
                         Log.d(TAG, "Token refreshed. New access token is: $obj.access_token")
-                        Singleton.buildApi()
                     }
                 })
         }

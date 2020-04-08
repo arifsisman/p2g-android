@@ -10,19 +10,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import vip.yazilim.p2g.android.api.Play2GetherWebApi
 import vip.yazilim.p2g.android.constant.ApiConstants.BASE_URL
-import vip.yazilim.p2g.android.constant.TokenConstants
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.refrofit.TokenAuthenticator
 
 object ApiClient {
 
-    fun build(): Play2GetherWebApi {
-
+    fun build(accessToken: String): Play2GetherWebApi {
         val httpClient = OkHttpClient.Builder()
         httpClient
             .authenticator(TokenAuthenticator())
-            .addInterceptor(HeaderInterceptor())
+            .addInterceptor(HeaderInterceptor(accessToken))
             .addInterceptor(loggingInterceptor())
 
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
@@ -35,10 +32,7 @@ object ApiClient {
         return retrofit.create(Play2GetherWebApi::class.java) as Play2GetherWebApi
     }
 
-    class HeaderInterceptor : Interceptor {
-        private val accessToken =
-            SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
-
+    class HeaderInterceptor(private val accessToken: String) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response = chain.run {
             proceed(
                 request().newBuilder().addHeader(
