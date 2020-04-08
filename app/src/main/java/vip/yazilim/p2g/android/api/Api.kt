@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,42 +16,50 @@ import vip.yazilim.p2g.android.api.generic.Result
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
+
 
 object Api {
     lateinit var client: Endpoints
 
     fun build(accessToken: String) {
-        val httpClient = OkHttpClient.Builder()
-        httpClient
-            .authenticator(TokenAuthenticator())
-            .addInterceptor(
-                HeaderInterceptor(
-                    accessToken
-                )
-            )
-            .addInterceptor(loggingInterceptor())
-
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
         val builder: Retrofit.Builder = Retrofit.Builder()
             .baseUrl(ApiConstants.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
-        val retrofit: Retrofit = builder.client(httpClient.build()).build()
+
+        val httpClient: OkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(HeaderInterceptor(accessToken))
+            .addInterceptor(UnauthorizedInterceptor())
+            .addInterceptor(loggingInterceptor()).build()
+
+        val retrofit: Retrofit = builder.client(httpClient).build()
 
         client = retrofit.create(Endpoints::class.java) as Endpoints
         client.updateAccessToken(accessToken).queue(null)
         SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, accessToken)
     }
 
-    class HeaderInterceptor(private val accessToken: String) : Interceptor {
-        override fun intercept(chain: Interceptor.Chain): okhttp3.Response = chain.run {
-            proceed(
-                request().newBuilder().addHeader(
-                    "Authorization",
-                    "Bearer $accessToken"
-                ).build()
-            )
+    internal class UnauthorizedInterceptor : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+            val response: okhttp3.Response = chain.proceed(chain.request())
+            if (response.code == 401) EventBus.getDefault().post(UnauthorizedEvent.instance)
+            return response
+        }
+    }
+
+    internal class HeaderInterceptor(private val accessToken: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+            return chain.run {
+                proceed(
+                    request()
+                        .newBuilder()
+                        .addHeader("Authorization", "Bearer $accessToken")
+                        .build()
+                )
+            }
         }
     }
 
@@ -78,6 +87,7 @@ object Api {
             }
         }
 
+    //todo merge with queue
     inline fun <reified T> Call<T>.enqueueRequest(crossinline result: (Result<T>) -> Unit) =
         enqueue(object : retrofit2.Callback<T> {
             override fun onFailure(call: Call<T>, error: Throwable) = result(

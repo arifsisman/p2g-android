@@ -2,7 +2,6 @@ package vip.yazilim.p2g.android.activity
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -10,7 +9,7 @@ import vip.yazilim.p2g.android.ui.user.UserViewModel
 import vip.yazilim.p2g.android.ui.user.UserViewModelFactory
 
 
-class UserActivity : AppCompatActivity() {
+class UserActivity : BaseActivity() {
 
     private lateinit var userViewModel: UserViewModel
     var userModel: UserModel? = null

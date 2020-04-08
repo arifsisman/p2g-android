@@ -11,7 +11,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -37,7 +36,6 @@ import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
-import vip.yazilim.p2g.android.api.TokenAuthenticator
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
@@ -73,7 +71,7 @@ import vip.yazilim.p2g.android.util.sqlite.DBHelper
 import java.util.concurrent.TimeUnit
 
 
-class RoomActivity : AppCompatActivity(),
+class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
     PlayerAdapter.OnSeekBarChangeListener,
     DeviceAdapter.OnItemClickListener {
@@ -525,7 +523,8 @@ class RoomActivity : AppCompatActivity(),
                 ACTION_ROOM_SOCKET_ERROR -> {
                     if (roomWsReconnectCounter < 22) {
                         stopRoomWebSocketService(this)
-                        TokenAuthenticator.refreshToken()
+                        //todo check
+//                        TokenAuthenticator.refreshToken()
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
                         viewPager.showSnackBarInfo(resources.getString(R.string.err_room_websocket_reconnect))
