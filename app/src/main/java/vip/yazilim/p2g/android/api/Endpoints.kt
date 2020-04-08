@@ -115,11 +115,8 @@ interface Endpoints {
     @DELETE("/api/user/{userId}/delete")
     fun deleteFriend(@Path("userId") userId: String): Call<Response<Boolean>>
 
-    @GET("/api/user/me/friends/requests/model")
-    fun getFriendRequestModels(): Call<Response<MutableList<FriendRequestModel>>>
-
     @GET("/api/user/me/friends/model")
-    fun getFriendModels(): Call<Response<MutableList<FriendModel>>>
+    fun getUserFriendModel(): Call<Response<UserFriendModel>>
 
     @GET("/api/user/me/friends")
     fun getFriends(): Call<Response<MutableList<User>>>

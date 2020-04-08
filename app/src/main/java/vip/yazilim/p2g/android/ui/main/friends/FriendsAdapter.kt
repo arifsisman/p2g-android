@@ -11,6 +11,7 @@ import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -63,8 +64,8 @@ class FriendsAdapter(
             val user = item.friendRequestUserModel.user
 
             val inviteDatePlaceholder =
-                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest.requestDate?.toZonedDateTime()
-                    ?.getFormattedCompact()}"
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest.requestDate.toZonedDateTime()
+                    .getFormattedCompact()}"
 
             userName.text = user.name
             inviteDate.text = inviteDatePlaceholder
@@ -109,7 +110,13 @@ class FriendsAdapter(
         private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
             deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
-            joinButton.setOnClickListener { clickListener.onJoinClicked(friendModel.userModel.room) }
+            joinButton.setOnClickListener {
+                friendModel.userModel.room?.let { room ->
+                    clickListener.onJoinClicked(
+                        room
+                    )
+                }
+            }
         }
 
         override fun bindView(item: FriendModel) {
@@ -260,6 +267,12 @@ class FriendsAdapter(
     fun addAll(data: MutableList<Any>) {
         adapterDataList.addAll(data)
         adapterDataList.sortBy { it is FriendModel }
+        notifyDataSetChanged()
+    }
+
+    fun update(data: UserFriendModel) {
+        adapterDataList.addAll(data.friendRequestModelList)
+        adapterDataList.addAll(data.friendModelList)
         notifyDataSetChanged()
     }
 

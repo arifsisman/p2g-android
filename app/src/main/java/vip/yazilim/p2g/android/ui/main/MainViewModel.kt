@@ -4,7 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.model.p2g.*
+import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
+import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.UserFriendModel
+import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 
 /**
@@ -14,7 +17,7 @@ import vip.yazilim.p2g.android.ui.ViewModelBase
 class MainViewModel : ViewModelBase() {
 
     val roomModels = MutableLiveData<MutableList<RoomModel>>()
-    val friendRequestModel = MutableLiveData<MutableList<Any>>()
+    val userFriendModel = MutableLiveData<UserFriendModel>()
     val roomInviteModel = MutableLiveData<MutableList<RoomInviteModel>>()
     val userModel = MutableLiveData<UserModel>()
     val friendCountsMe = MutableLiveData<Int>()
@@ -37,38 +40,19 @@ class MainViewModel : ViewModelBase() {
             })
     }
 
-    fun loadFriendRequestModel() {
+    fun loadUserFriendModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getFriendRequestModels().queue(
-            object : Callback<MutableList<FriendRequestModel>> {
+        Api.client.getUserFriendModel().queue(
+            object : Callback<UserFriendModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
                     onMessageError.postValue(msg)
                 }
 
-                @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+                override fun onSuccess(obj: UserFriendModel) {
                     onViewLoading.postValue(false)
-                    friendRequestModel.postValue(obj as MutableList<Any>)
-                }
-            })
-    }
-
-    fun loadFriends() {
-        onViewLoading.postValue(true)
-
-        Api.client.getFriendModels().queue(
-            object : Callback<MutableList<FriendModel>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
-
-                @Suppress("UNCHECKED_CAST")
-                override fun onSuccess(obj: MutableList<FriendModel>) {
-                    onViewLoading.postValue(false)
-                    friendRequestModel.postValue(obj as MutableList<Any>)
+                    userFriendModel.postValue(obj)
                 }
             })
     }

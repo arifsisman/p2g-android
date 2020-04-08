@@ -27,6 +27,7 @@ import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
@@ -54,13 +55,12 @@ class FriendsFragment : FragmentBase(
         super.onResume()
         adapter.clearDataList()
         adapter.clearDataListFull()
-        viewModel.loadFriendRequestModel()
-        viewModel.loadFriends()
+        viewModel.loadUserFriendModel()
     }
 
     override fun setupViewModel() {
         super.setupDefaultObservers(viewModel)
-        viewModel.friendRequestModel.observe(this, renderData)
+        viewModel.userFriendModel.observe(this, renderData)
     }
 
 
@@ -68,29 +68,29 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.friendRequestModel.value ?: mutableListOf(), this, this)
+        adapter = FriendsAdapter(mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
         swipeRefreshContainer.setOnRefreshListener {
             adapter.clearDataList()
             adapter.clearDataListFull()
-            loadFriendRequestModel()
-            loadFriends()
+            loadUserFriendModel()
         }
 
     }
 
     // Observer
-    private val renderData = Observer<MutableList<Any>> {
-        if (it.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
+    private val renderData = Observer<UserFriendModel> {
+        if (it.friendRequestModelList.isEmpty() && it.friendModelList.isEmpty()) {
             viewModel.onEmptyList.postValue(true)
             adapter.clearDataList()
             adapter.clearDataListFull()
         } else {
             viewModel.onEmptyList.postValue(false)
-            adapter.addAll(it)
-            adapter.adapterDataListFull.addAll(it)
+            adapter.update(it)
+            it.friendModelList.forEach { friend -> adapter.adapterDataListFull.add(friend) }
+            it.friendRequestModelList.forEach { request -> adapter.adapterDataListFull.add(request) }
         }
     }
 
@@ -201,36 +201,18 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadFriendRequestModel() = Api.client.getFriendRequestModels().queue(
-        object : Callback<MutableList<FriendRequestModel>> {
+    private fun loadUserFriendModel() = Api.client.getUserFriendModel().queue(
+        object : Callback<UserFriendModel> {
             override fun onError(msg: String) {
                 swipeRefreshContainer.isRefreshing = false
                 viewModel.onViewLoading.postValue(false)
                 viewModel.onMessageError.postValue(msg)
             }
 
-            @Suppress("UNCHECKED_CAST")
-            override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+            override fun onSuccess(obj: UserFriendModel) {
                 swipeRefreshContainer.isRefreshing = false
                 viewModel.onViewLoading.postValue(false)
-                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
-            }
-        })
-
-
-    private fun loadFriends() = Api.client.getFriendModels().queue(
-        object : Callback<MutableList<FriendModel>> {
-            override fun onError(msg: String) {
-                swipeRefreshContainer.isRefreshing = false
-                viewModel.onViewLoading.postValue(false)
-                viewModel.onMessageError.postValue(msg)
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            override fun onSuccess(obj: MutableList<FriendModel>) {
-                swipeRefreshContainer.isRefreshing = false
-                viewModel.onViewLoading.postValue(false)
-                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
+                viewModel.userFriendModel.postValue(obj)
             }
         })
 
