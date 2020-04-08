@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.generic.request
+import vip.yazilim.p2g.android.api.client.ApiClient.request
 
 /**
  * @author mustafaarifsisman - 25.03.2020

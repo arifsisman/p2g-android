@@ -21,8 +21,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.ApiClient.request
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser

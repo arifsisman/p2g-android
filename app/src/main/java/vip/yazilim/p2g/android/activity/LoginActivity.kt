@@ -12,8 +12,8 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.ApiClient.request
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User

@@ -2,8 +2,8 @@ package vip.yazilim.p2g.android.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.ApiClient.request
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.ui.ViewModelBase
 

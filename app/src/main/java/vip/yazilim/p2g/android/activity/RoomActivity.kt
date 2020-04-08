@@ -35,9 +35,9 @@ import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.client.ApiClient
+import vip.yazilim.p2g.android.api.client.ApiClient.request
 import vip.yazilim.p2g.android.api.client.TokenAuthenticator
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
