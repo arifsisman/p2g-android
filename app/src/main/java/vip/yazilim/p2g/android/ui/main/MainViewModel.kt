@@ -1,8 +1,8 @@
 package vip.yazilim.p2g.android.ui.main
 
 import androidx.lifecycle.MutableLiveData
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.ApiClient.request
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.model.p2g.*
 import vip.yazilim.p2g.android.ui.ViewModelBase
@@ -23,8 +23,7 @@ class MainViewModel : ViewModelBase() {
     fun loadRooms() {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getRoomModels(),
+        Api.client.getRoomModels().queue(
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -41,8 +40,7 @@ class MainViewModel : ViewModelBase() {
     fun loadFriendRequestModel() {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getFriendRequestModels(),
+        Api.client.getFriendRequestModels().queue(
             object : Callback<MutableList<FriendRequestModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -60,8 +58,7 @@ class MainViewModel : ViewModelBase() {
     fun loadFriends() {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getFriendModels(),
+        Api.client.getFriendModels().queue(
             object : Callback<MutableList<FriendModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -79,8 +76,7 @@ class MainViewModel : ViewModelBase() {
     fun loadRoomInviteModel() {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getRoomInviteModels(),
+        Api.client.getRoomInviteModels().queue(
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -97,8 +93,7 @@ class MainViewModel : ViewModelBase() {
     fun loadUserModel() {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getUserModelMe(),
+        Api.client.getUserModelMe().queue(
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -112,8 +107,7 @@ class MainViewModel : ViewModelBase() {
             })
     }
 
-    fun loadFriendsCountMe() = request(
-        ApiClient.get().getFriendsCounts(),
+    fun loadFriendsCountMe() = Api.client.getFriendsCounts().queue(
         object : Callback<Int> {
             override fun onError(msg: String) {
             }

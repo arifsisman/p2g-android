@@ -1,36 +1,32 @@
-package vip.yazilim.p2g.android.api.client
+package vip.yazilim.p2g.android.api
 
 import android.util.Log
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import vip.yazilim.p2g.android.api.Play2GetherWebApi
 import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.generic.Response
 import vip.yazilim.p2g.android.api.generic.Result
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
-object ApiClient {
-    private lateinit var webApi: Play2GetherWebApi
-
-    fun get(): Play2GetherWebApi = webApi
+object Api {
+    lateinit var client: Endpoints
 
     fun buildApi(accessToken: String) {
-        webApi = build(accessToken)
-        request(webApi.updateAccessToken(accessToken), null)
-    }
-
-    private fun build(accessToken: String): Play2GetherWebApi {
         val httpClient = OkHttpClient.Builder()
         httpClient
             .authenticator(TokenAuthenticator())
-            .addInterceptor(HeaderInterceptor(accessToken))
+            .addInterceptor(
+                HeaderInterceptor(
+                    accessToken
+                )
+            )
             .addInterceptor(loggingInterceptor())
 
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
@@ -40,11 +36,12 @@ object ApiClient {
             .addConverterFactory(GsonConverterFactory.create(gson))
         val retrofit: Retrofit = builder.client(httpClient.build()).build()
 
-        return retrofit.create(Play2GetherWebApi::class.java) as Play2GetherWebApi
+        client = retrofit.create(Endpoints::class.java) as Endpoints
+        client.updateAccessToken(accessToken).queue(null)
     }
 
     class HeaderInterceptor(private val accessToken: String) : Interceptor {
-        override fun intercept(chain: Interceptor.Chain): Response = chain.run {
+        override fun intercept(chain: Interceptor.Chain): okhttp3.Response = chain.run {
             proceed(
                 request().newBuilder().addHeader(
                     "Authorization",
@@ -60,48 +57,33 @@ object ApiClient {
         return httpLoggingInterceptor
     }
 
-    const val REQUEST_TAG = "Request"
-    inline fun <reified T> request(
-        call: Call<vip.yazilim.p2g.android.api.generic.Response<T>>?,
-        callback: Callback<T>?
-    ) {
-        call?.enqueue { result ->
+    inline fun <reified T> Call<Response<T>>.queue(callback: Callback<T>?) =
+        this.enqueueRequest { result ->
             when (result) {
                 is Result.Success -> if (result.response.isSuccessful) {
                     callback?.onSuccess(result.response.body()?.data as T)
                 } else {
                     val msg = result.response.errorBody()!!.string()
-                    Log.d("$REQUEST_TAG not successful ", msg)
+                    Log.d("Request not successful ", msg)
                     callback?.onError(msg)
                 }
                 is Result.Failure -> {
                     val msg = result.error.message as String
-                    Log.d("$REQUEST_TAG failed ", msg)
+                    Log.d("Request failed ", msg)
                     callback?.onError(msg)
                 }
             }
         }
-    }
 
-    inline fun <reified T> Call<T>.enqueue(crossinline result: (Result<T>) -> Unit) {
+    inline fun <reified T> Call<T>.enqueueRequest(crossinline result: (Result<T>) -> Unit) =
         enqueue(object : retrofit2.Callback<T> {
-            override fun onFailure(call: Call<T>, error: Throwable) {
-                result(
-                    Result.Failure(
-                        call,
-                        error
-                    )
-                )
-            }
+            override fun onFailure(call: Call<T>, error: Throwable) = result(
+                Result.Failure(call, error)
+            )
 
-            override fun onResponse(call: Call<T>, response: retrofit2.Response<T>) {
-                result(
-                    Result.Success(
-                        call,
-                        response
-                    )
-                )
-            }
+            override fun onResponse(call: Call<T>, response: retrofit2.Response<T>) = result(
+                Result.Success(call, response)
+            )
         })
-    }
+
 }

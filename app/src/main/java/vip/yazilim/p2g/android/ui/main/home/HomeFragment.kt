@@ -20,8 +20,8 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.ApiClient.request
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.entity.Room
@@ -114,22 +114,25 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModel) = request(
-        roomModel.room?.id?.let { ApiClient.get().joinRoom(it, UNDEFINED) },
-        object : Callback<RoomUser> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
+    private fun joinRoomEvent(roomModel: RoomModel) {
+        roomModel.room?.id?.let {
+            Api.client.joinRoom(it, UNDEFINED).queue(
+                object : Callback<RoomUser> {
+                    override fun onError(msg: String) {
+                        viewModel.onMessageError.postValue(msg)
+                    }
 
-            override fun onSuccess(obj: RoomUser) {
-                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+                    override fun onSuccess(obj: RoomUser) {
+                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
-                val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModel", roomModel)
-                intent.putExtra("roomUser", obj)
-                startActivity(intent)
-            }
-        })
+                        val intent = Intent(activity, RoomActivity::class.java)
+                        intent.putExtra("roomModel", roomModel)
+                        intent.putExtra("roomUser", obj)
+                        startActivity(intent)
+                    }
+                })
+        }
+    }
 
 
     private fun joinPrivateRoomEvent(roomModel: RoomModel) {
@@ -163,26 +166,25 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            request(
-                room?.id?.let { id ->
-                    ApiClient.get().joinRoom(id, roomPasswordEditText.text.toString())
-                },
-                object : Callback<RoomUser> {
-                    override fun onError(msg: String) {
-                        mDialogView.showSnackBarError(msg)
-                    }
+            room?.id?.let { id ->
+                Api.client.joinRoom(id, roomPasswordEditText.text.toString()).queue(
+                    object : Callback<RoomUser> {
+                        override fun onError(msg: String) {
+                            mDialogView.showSnackBarError(msg)
+                        }
 
-                    override fun onSuccess(obj: RoomUser) {
-                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-                        mAlertDialog?.dismiss()
-                        context?.closeKeyboard()
+                        override fun onSuccess(obj: RoomUser) {
+                            Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+                            mAlertDialog?.dismiss()
+                            context?.closeKeyboard()
 
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        intent.putExtra("roomModel", roomModel)
-                        intent.putExtra("roomUser", obj)
-                        startActivity(intent)
-                    }
-                })
+                            val intent = Intent(activity, RoomActivity::class.java)
+                            intent.putExtra("roomModel", roomModel)
+                            intent.putExtra("roomUser", obj)
+                            startActivity(intent)
+                        }
+                    })
+            }
         }
 
 
@@ -221,11 +223,10 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click create
         createButton.setOnClickListener {
-            request(
-                ApiClient.get().createRoom(
-                    roomNameEditText.text.toString(),
-                    roomPasswordEditText.text.toString()
-                ),
+            Api.client.createRoom(
+                roomNameEditText.text.toString(),
+                roomPasswordEditText.text.toString()
+            ).queue(
                 object : Callback<Room> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)
@@ -253,8 +254,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() = request(
-        ApiClient.get().getRoomModels(),
+    private fun refreshRoomsEvent() = Api.client.getRoomModels().queue(
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))

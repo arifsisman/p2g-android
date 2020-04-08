@@ -3,8 +3,8 @@ package vip.yazilim.p2g.android.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.ApiClient.request
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.queue
 
 /**
  * @author mustafaarifsisman - 25.03.2020
@@ -21,6 +21,6 @@ class LogoutService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        request(ApiClient.get().logout(), null)
+        Api.client.logout().queue(null)
     }
 }

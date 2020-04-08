@@ -34,9 +34,9 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.ApiClient.request
-import vip.yazilim.p2g.android.api.client.TokenAuthenticator
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.TokenAuthenticator
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
@@ -140,7 +140,7 @@ class RoomActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        request(ApiClient.get().leaveRoom(), null)
+        Api.client.leaveRoom().queue(null)
     }
 
     // Setups
@@ -351,9 +351,8 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun syncWithRoom(roomUser: RoomUser?) {
-        request(
-            roomUser?.let { ApiClient.get().syncWithRoom(it) },
-            object : Callback<Boolean> {
+        roomUser?.let {
+            Api.client.syncWithRoom(it).queue(object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     if (obj) {
                         viewPager.showSnackBarInfo(resources.getString(R.string.info_sync))
@@ -366,6 +365,7 @@ class RoomActivity : AppCompatActivity(),
                     viewPager.showSnackBarError(msg)
                 }
             })
+        }
     }
 
     override fun onBackPressed() {
@@ -378,7 +378,7 @@ class RoomActivity : AppCompatActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    request(ApiClient.get().leaveRoom(), null)
+                    Api.client.leaveRoom().queue(null)
 
                     val mainIntent = Intent(this@RoomActivity, MainActivity::class.java)
                     mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -433,17 +433,18 @@ class RoomActivity : AppCompatActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    request(
-                        room?.id?.let { ApiClient.get().clearQueue(it) },
-                        object : Callback<Boolean> {
-                            override fun onSuccess(obj: Boolean) {
-                                viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
-                            }
+                    room?.id?.let {
+                        Api.client.clearQueue(it).queue(
+                            object : Callback<Boolean> {
+                                override fun onSuccess(obj: Boolean) {
+                                    viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
+                                }
 
-                            override fun onError(msg: String) {
-                                viewPager.showSnackBarError(msg)
-                            }
-                        })
+                                override fun onError(msg: String) {
+                                    viewPager.showSnackBarError(msg)
+                                }
+                            })
+                    }
                 }
             }
         }
@@ -456,7 +457,7 @@ class RoomActivity : AppCompatActivity(),
     }
 
     private fun selectDevice() {
-        request(ApiClient.get().getUserDevices(), object : Callback<MutableList<UserDevice>> {
+        Api.client.getUserDevices().queue(object : Callback<MutableList<UserDevice>> {
             override fun onSuccess(obj: MutableList<UserDevice>) {
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
@@ -490,8 +491,7 @@ class RoomActivity : AppCompatActivity(),
 
     private fun getRoomModel(roomId: Long) {
         // Get room model if not exists
-
-        request(ApiClient.get().getRoomModel(roomId), object : Callback<RoomModel> {
+        Api.client.getRoomModel(roomId).queue(object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
                 roomModel = obj
             }
@@ -535,7 +535,7 @@ class RoomActivity : AppCompatActivity(),
                         val roomPlaceholder = resources.getString(R.string.title_room)
                         val closedPlaceholder = resources.getString(R.string.info_closed)
                         context?.showToastLong("$roomPlaceholder ${room?.name} $closedPlaceholder - ${room?.ownerId}")
-                        request(ApiClient.get().leaveRoom(), null)
+                        Api.client.leaveRoom().queue(null)
 
                         val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
                         startActivity(leaveIntent)
@@ -615,69 +615,87 @@ class RoomActivity : AppCompatActivity(),
         slidingUpPanel.panelState = EXPANDED
     }
 
-    override fun onPlayPauseMiniClicked() =
-        request(room?.id?.let { ApiClient.get().playPause(it) }, object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarError(msg)
-            }
-        })
-
     override fun onPlayerMiniClicked() {
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseClicked() =
-        request(room?.id?.let { ApiClient.get().playPause(it) }, object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onPlayPauseMiniClicked() {
+        room?.id?.let {
+            Api.client.playPause(it).queue(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    playerCoordinatorLayout.showSnackBarError(msg)
+                }
+            })
+        }
+    }
 
-    override fun onNextClicked() =
-        request(room?.id?.let { ApiClient.get().next(it) }, object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onPlayPauseClicked() {
+        room?.id?.let {
+            Api.client.playPause(it).queue(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
+                }
+            })
+        }
+    }
 
-    override fun onPreviousClicked() =
-        request(room?.id?.let { ApiClient.get().previous(it) }, object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onNextClicked() {
+        room?.id?.let {
+            Api.client.next(it).queue(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
+                }
+            })
+        }
+    }
 
-    override fun onRepeatClicked() =
-        request(room?.id?.let { ApiClient.get().repeat(it) }, object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onPreviousClicked() {
+        room?.id?.let {
+            Api.client.previous(it).queue(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
+                }
+            })
+        }
+    }
 
-    private fun onSeekPerformed(ms: Int) =
-        request(room?.id?.let { ApiClient.get().seek(it, ms) }, object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onRepeatClicked() {
+        room?.id?.let {
+            Api.client.repeat(it).queue(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
+                }
+            })
+        }
+    }
+
+    private fun onSeekPerformed(ms: Int) {
+        room?.id?.let {
+            Api.client.seek(it, ms).queue(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
+
+                override fun onError(msg: String) {
+                    playerCoordinatorLayout.showSnackBarPlayerError(msg)
+                }
+            })
+        }
+    }
 
     override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {
         return object : SeekBar.OnSeekBarChangeListener {
@@ -705,17 +723,15 @@ class RoomActivity : AppCompatActivity(),
             deviceDialog.dismiss()
         }
 
-        request(
-            ApiClient.get().saveUsersActiveDevice(userDevice),
-            object : Callback<UserDevice> {
-                override fun onSuccess(obj: UserDevice) {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
-                }
+        Api.client.saveUsersActiveDevice(userDevice).queue(object : Callback<UserDevice> {
+            override fun onSuccess(obj: UserDevice) {
+                viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
+            }
 
-                override fun onError(msg: String) {
-                    viewPager.showSnackBarError(msg)
-                }
-            })
+            override fun onError(msg: String) {
+                viewPager.showSnackBarError(msg)
+            }
+        })
     }
 
     fun closeKeyboard() {

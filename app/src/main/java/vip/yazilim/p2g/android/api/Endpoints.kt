@@ -10,7 +10,7 @@ import vip.yazilim.p2g.android.model.p2g.*
  * @author mustafaarifsisman - 28.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-interface Play2GetherWebApi {
+interface Endpoints {
 
     // User API
     @GET("/api/user/{id}")

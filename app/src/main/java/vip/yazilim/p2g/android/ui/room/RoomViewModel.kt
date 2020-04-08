@@ -2,8 +2,8 @@ package vip.yazilim.p2g.android.ui.room
 
 import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.ApiClient.request
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
@@ -30,8 +30,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadSongs(roomId: Long) {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getRoomSongs(roomId),
+        Api.client.getRoomSongs(roomId).queue(
             object : Callback<MutableList<Song>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -50,8 +49,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomUsers(roomId: Long) {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getRoomUserModels(roomId),
+        Api.client.getRoomUserModels(roomId).queue(
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -74,7 +72,7 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomUserMe() {
-        request(ApiClient.get().getRoomUserModelMe(), object : Callback<RoomUserModel> {
+        Api.client.getRoomUserModelMe().queue(object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
                 roomUserModel.postValue(obj)
             }
@@ -87,8 +85,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomInviteUsers() {
         onViewLoading.postValue(true)
 
-        request(
-            ApiClient.get().getAllUsers(),
+        Api.client.getAllUsers().queue(
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)

@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.api.client
+package vip.yazilim.p2g.android.api
 
 import okhttp3.Authenticator
 import okhttp3.Request

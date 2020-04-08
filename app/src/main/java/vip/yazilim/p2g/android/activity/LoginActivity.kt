@@ -11,8 +11,8 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import okhttp3.Call
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.client.ApiClient
-import vip.yazilim.p2g.android.api.client.ApiClient.request
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
         if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             val response = AuthenticationClient.getResponse(resultCode, data)
             if (response.accessToken != null) {
-                ApiClient.buildApi(response.accessToken)
+                Api.buildApi(response.accessToken)
                 loginToPlay2Gether()
             } else {
                 val msg = resources.getString(R.string.err_authorization_code)
@@ -94,8 +94,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // loginToPlay2Gether via Play2Gether Web API
-    private fun loginToPlay2Gether() = request(
-        ApiClient.get().login(),
+    private fun loginToPlay2Gether() = Api.client.login().queue(
         object : Callback<User> {
             override fun onError(msg: String) {
                 val alert = this@LoginActivity.showErrorDialog(msg)
@@ -110,22 +109,21 @@ class LoginActivity : AppCompatActivity() {
         })
 
 
-    private fun checkIsUserInRoom(user: User) = request(
-        ApiClient.get().getRoomModelMe(),
-            object : Callback<RoomModel> {
-                override fun onSuccess(obj: RoomModel) {
-                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                    roomIntent.putExtra("roomModel", obj)
-                    startActivity(roomIntent)
-                }
+    private fun checkIsUserInRoom(user: User) = Api.client.getRoomModelMe().queue(
+        object : Callback<RoomModel> {
+            override fun onSuccess(obj: RoomModel) {
+                val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                roomIntent.putExtra("roomModel", obj)
+                startActivity(roomIntent)
+            }
 
-                override fun onError(msg: String) {
-                    val info = resources.getString(R.string.info_logged_in)
-                    this@LoginActivity.showToastLong("$info ${user.name}")
-                    val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startMainIntent.putExtra("user", user)
-                    startActivity(startMainIntent)
-                }
-            })
+            override fun onError(msg: String) {
+                val info = resources.getString(R.string.info_logged_in)
+                this@LoginActivity.showToastLong("$info ${user.name}")
+                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                startMainIntent.putExtra("user", user)
+                startActivity(startMainIntent)
+            }
+        })
 
 }
