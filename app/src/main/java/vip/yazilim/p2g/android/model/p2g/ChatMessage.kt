@@ -17,8 +17,8 @@ import java.util.*
 @Parcelize
 data class ChatMessage(
     var roomUser: RoomUser?,
-    var message: String,
-    var timestamp: LocalDateTime
+    var message: String?,
+    var timestamp: LocalDateTime?
 ) : IMessage, Parcelable {
     override fun getId(): String? {
         return this.roomUser?.userId + timestamp
@@ -33,6 +33,6 @@ data class ChatMessage(
     }
 
     override fun getCreatedAt(): Date {
-        return DateTimeUtils.toDate(timestamp.toZonedDateTime().toInstant())
+        return DateTimeUtils.toDate(timestamp?.toZonedDateTime()?.toInstant())
     }
 }

@@ -21,7 +21,7 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.toZonedDateTime
  * @contact mustafaarifsisman@gmail.com
  */
 class ProfileAdapter(
-    private var userModel: UserModel,
+    private var userModel: UserModel?,
     private var friendCounts: Int
 ) :
     RecyclerView.Adapter<ProfileAdapter.MViewHolder>() {
@@ -45,63 +45,61 @@ class ProfileAdapter(
         fun bindView(userModel: UserModel) {
             val user = userModel.user
 
-            if (user != null) {
-                val profileNamePlaceholder = user.name
-                val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.toZonedDateTime()
-                        ?.getFormattedFull()}"
-                val profileEmailPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_email)} ${user.email}"
-                val profileAnthemPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
-                val profileSpotifyAccountIdPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
+            val profileNamePlaceholder = user.name
+            val memberSincePlaceholder =
+                "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.toZonedDateTime()
+                    .getFormattedFull()}"
+            val profileEmailPlaceholder =
+                "${view.resources.getString(R.string.placeholder_email)} ${user.email}"
+            val profileAnthemPlaceholder =
+                "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
+            val profileSpotifyAccountIdPlaceholder =
+                "${view.resources.getString(R.string.placeholder_spotify_account_id)} ${user.id}"
 
-                if (user.imageUrl != null) {
-                    GlideApp.with(view)
-                        .load(user.imageUrl)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(profileImage)
-                } else {
-                    profileImage.setImageResource(R.drawable.ic_profile_image)
-                }
-
-                try {
-                    flagImage.countryCode = user.countryCode
-                } catch (exception: Exception) {
-                    flagImage.visibility = View.GONE
-                }
-
-                userName.text = profileNamePlaceholder
-                memberSince.text = memberSincePlaceholder
-                email.text = profileEmailPlaceholder
-
-                if (user.anthemSongId == null) {
-                    anthem.visibility = View.GONE
-                } else {
-                    anthem.visibility = View.VISIBLE
-                    anthem.text = profileAnthemPlaceholder
-                }
-
-                spotifyId.text = profileSpotifyAccountIdPlaceholder
-
-                when (user.onlineStatus) {
-                    OnlineStatus.ONLINE.onlineStatus -> {
-                        onlineStatus.setImageResource(android.R.drawable.presence_online)
-                        onlineStatus.visibility = View.VISIBLE
-                    }
-                    OnlineStatus.OFFLINE.onlineStatus -> {
-                        onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                        onlineStatus.visibility = View.VISIBLE
-                    }
-                    OnlineStatus.AWAY.onlineStatus -> {
-                        onlineStatus.setImageResource(android.R.drawable.presence_away)
-                        onlineStatus.visibility = View.VISIBLE
-                    }
-                }
-
-                cardView.visibility = View.VISIBLE
+            if (user.imageUrl != null) {
+                GlideApp.with(view)
+                    .load(user.imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(profileImage)
+            } else {
+                profileImage.setImageResource(R.drawable.ic_profile_image)
             }
+
+            try {
+                flagImage.countryCode = user.countryCode
+            } catch (exception: Exception) {
+                flagImage.visibility = View.GONE
+            }
+
+            userName.text = profileNamePlaceholder
+            memberSince.text = memberSincePlaceholder
+            email.text = profileEmailPlaceholder
+
+            if (user.anthemSongId == null) {
+                anthem.visibility = View.GONE
+            } else {
+                anthem.visibility = View.VISIBLE
+                anthem.text = profileAnthemPlaceholder
+            }
+
+            spotifyId.text = profileSpotifyAccountIdPlaceholder
+
+            when (user.onlineStatus) {
+                OnlineStatus.ONLINE.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_online)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+                OnlineStatus.OFFLINE.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+                OnlineStatus.AWAY.onlineStatus -> {
+                    onlineStatus.setImageResource(android.R.drawable.presence_away)
+                    onlineStatus.visibility = View.VISIBLE
+                }
+            }
+
+            cardView.visibility = View.VISIBLE
 
             val profileFriendCountsPlaceholder =
                 "$friendCounts ${view.resources.getString(R.string.placeholder_friend_counts)}"
@@ -129,7 +127,7 @@ class ProfileAdapter(
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {
-        holder.bindView(userModel)
+        userModel?.let { holder.bindView(it) }
     }
 
 }

@@ -197,23 +197,20 @@ class RoomActivity : BaseActivity(),
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
 
-        when {
-            roomFromIntent != null -> {
-                title = roomFromIntent.name
-                room = roomFromIntent
-                getRoomModel(roomFromIntent.id)
-            }
-            roomModelFromIntent != null -> {
-                title = roomModelFromIntent.room.name
-                if (roomModelFromIntent.room != null) {
-                    room = roomModelFromIntent.room
-                } else {
-                    startMainActivity()
+        if (roomFromIntent == null && roomModelFromIntent == null) {
+            startMainActivity()
+        } else {
+            when {
+                roomFromIntent != null -> {
+                    title = roomFromIntent.name
+                    room = roomFromIntent
+                    getRoomModel(roomFromIntent.id)
                 }
-                roomModel = roomModelFromIntent
-            }
-            else -> {
-                setTitle(R.string.title_room)
+                roomModelFromIntent != null -> {
+                    title = roomModelFromIntent.room.name
+                    room = roomModelFromIntent.room
+                    roomModel = roomModelFromIntent
+                }
             }
         }
     }

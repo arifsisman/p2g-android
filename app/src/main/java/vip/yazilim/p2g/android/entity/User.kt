@@ -15,8 +15,8 @@ data class User(
     var email: String,
     var role: String,
     var onlineStatus: String,
-    var countryCode: String,
-    var imageUrl: String,
-    var anthemSongId: String,
+    var countryCode: String?,
+    var imageUrl: String?,
+    var anthemSongId: String?,
     var creationDate: LocalDateTime
 ) : Parcelable

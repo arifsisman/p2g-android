@@ -14,6 +14,6 @@ import vip.yazilim.p2g.android.entity.User
 data class RoomModel(
     var room: Room,
     var owner: User,
-    var song: Song,
+    var song: Song?,
     var userCount: Int
 ) : Parcelable
