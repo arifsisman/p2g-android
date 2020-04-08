@@ -8,19 +8,17 @@ import retrofit2.Call
  * @contact mustafaarifsisman@gmail.com
  */
 
-const val REQUEST_TAG = "Play2GetherRequest"
+const val REQUEST_TAG = "Request"
 
 inline fun <reified T> request(call: Call<Response<T>>?, callback: Callback<T>?) {
     call?.enqueue { result ->
         when (result) {
-            is Result.Success -> {
-                if (result.response.isSuccessful) {
-                    callback?.onSuccess(result.response.body()?.data as T)
-                } else {
-                    val msg = result.response.errorBody()!!.string()
-                    Log.d("$REQUEST_TAG not successful ", msg)
-                    callback?.onError(msg)
-                }
+            is Result.Success -> if (result.response.isSuccessful) {
+                callback?.onSuccess(result.response.body()?.data as T)
+            } else {
+                val msg = result.response.errorBody()!!.string()
+                Log.d("$REQUEST_TAG not successful ", msg)
+                callback?.onError(msg)
             }
             is Result.Failure -> {
                 val msg = result.error.message as String

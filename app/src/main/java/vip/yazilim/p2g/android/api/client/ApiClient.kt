@@ -23,7 +23,7 @@ object ApiClient {
         request(webApi.updateAccessToken(accessToken), null)
     }
 
-    fun build(accessToken: String): Play2GetherWebApi {
+    private fun build(accessToken: String): Play2GetherWebApi {
         val httpClient = OkHttpClient.Builder()
         httpClient
             .authenticator(TokenAuthenticator())
