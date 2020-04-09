@@ -11,6 +11,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import kotlinx.android.synthetic.main.item_room_user_model.view.*
 import kotlinx.android.synthetic.main.layout_row_user_events.view.*
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ColorCodes.CYAN
 import vip.yazilim.p2g.android.constant.ColorCodes.GREEN
@@ -18,7 +19,6 @@ import vip.yazilim.p2g.android.constant.ColorCodes.RED
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.glide.GlideApp
 
 
@@ -44,33 +44,31 @@ class RoomUsersAdapter(
             val user = roomUserModel.user
             val roomUser = roomUserModel.roomUser
 
-            if (user != null && roomUser != null) {
-                itemView.user_name.text = user.name
-                itemView.user_role.text = roomUser.role
+            itemView.user_name.text = user.name
+            itemView.user_role.text = roomUser.role
 
-                when {
-                    roomUser.role.equals(Role.ROOM_OWNER.role) -> {
-                        itemView.user_role.setTextColor(Color.parseColor(RED))
-                    }
-                    roomUser.role.equals(Role.ROOM_ADMIN.role) -> {
-                        itemView.user_role.setTextColor(Color.parseColor(CYAN))
-                    }
-                    roomUser.role.equals(Role.ROOM_DJ.role) -> {
-                        itemView.user_role.setTextColor(Color.parseColor(GREEN))
-                    }
-                    roomUser.role.equals(Role.ROOM_USER.role) -> {
-                        itemView.user_role.setTextColor(Color.parseColor(WHITE))
-                    }
+            when (roomUser.role) {
+                Role.ROOM_OWNER.role -> {
+                    itemView.user_role.setTextColor(Color.parseColor(RED))
                 }
+                Role.ROOM_ADMIN.role -> {
+                    itemView.user_role.setTextColor(Color.parseColor(CYAN))
+                }
+                Role.ROOM_DJ.role -> {
+                    itemView.user_role.setTextColor(Color.parseColor(GREEN))
+                }
+                Role.ROOM_USER.role -> {
+                    itemView.user_role.setTextColor(Color.parseColor(WHITE))
+                }
+            }
 
-                if (user.imageUrl != null) {
-                    GlideApp.with(view)
-                        .load(user.imageUrl)
-                        .apply(RequestOptions.circleCropTransform())
-                        .into(itemView.user_image)
-                } else {
-                    itemView.user_image.setImageResource(R.drawable.ic_profile_image)
-                }
+            if (user.imageUrl != null) {
+                GlideApp.with(view)
+                    .load(user.imageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(itemView.user_image)
+            } else {
+                itemView.user_image.setImageResource(R.drawable.ic_profile_image)
             }
 
             itemView.row_user_model.showMode = SwipeLayout.ShowMode.LayDown
@@ -119,7 +117,7 @@ class RoomUsersAdapter(
         val roomUserModel = roomUserModelList[position]
         holder.bindView(roomUserModel)
 
-        if (roomUserModel.user?.id == userIdMe) {
+        if (roomUserModel.user.id == userIdMe) {
             holder.swipeLayout.isSwipeEnabled = false
         } else {
             holder.bindEvent(roomUserModelList[position], itemClickListener)
@@ -132,7 +130,7 @@ class RoomUsersAdapter(
     }
 
     fun update(data: MutableList<RoomUserModel>) {
-        userIdMe = SharedPrefSingleton.read("userId", "-")
+        userIdMe = Play2GetherApplication.userId
         roomUserModelList = data
         notifyDataSetChanged()
     }

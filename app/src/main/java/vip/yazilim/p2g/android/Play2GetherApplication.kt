@@ -15,8 +15,10 @@ class Play2GetherApplication : Application() {
     }
 
     companion object {
+        lateinit var instance: Play2GetherApplication private set
         lateinit var currentActivity: Activity
-        lateinit var instance: Play2GetherApplication
-            private set
+        lateinit var userName: String
+        lateinit var userId: String
+        lateinit var accessToken: String
     }
 }

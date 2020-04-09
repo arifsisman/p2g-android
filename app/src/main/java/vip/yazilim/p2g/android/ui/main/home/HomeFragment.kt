@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_butt
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
@@ -29,7 +30,6 @@ import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
@@ -210,7 +210,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             }
         })
 
-        val roomNamePlaceholder = SharedPrefSingleton.read("userName", "UNKNOWN") + "'s Room"
+        val roomNamePlaceholder = Play2GetherApplication.userName + "'s Room"
         roomNameEditText.setText(roomNamePlaceholder)
 
         // For request focus and open keyboard

@@ -15,7 +15,6 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.SpotifyHelper.Companion.getAccessTokenFromSpotify
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
@@ -41,7 +40,6 @@ class LoginActivity : BaseActivity() {
 
         // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
-        SharedPrefSingleton.init(this, "General")
 
         getAccessTokenFromSpotify()
     }
@@ -62,8 +60,8 @@ class LoginActivity : BaseActivity() {
                         }
 
                         override fun onSuccess(obj: User) {
-                            SharedPrefSingleton.write("userName", obj.name)
-                            SharedPrefSingleton.write("userId", obj.id)
+                            Play2GetherApplication.userId = obj.id
+                            Play2GetherApplication.userName = obj.name
                             checkIsUserInRoom(obj)
                         }
                     })

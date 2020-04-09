@@ -10,13 +10,12 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.Response
 import vip.yazilim.p2g.android.api.generic.Result
 import vip.yazilim.p2g.android.api.generic.resultHelper
 import vip.yazilim.p2g.android.constant.ApiConstants
-import vip.yazilim.p2g.android.constant.TokenConstants
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
@@ -40,7 +39,7 @@ object Api {
 
         client = retrofit.create(Endpoints::class.java) as Endpoints
         client.updateAccessToken(accessToken).withCallback(null)
-        SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, accessToken)
+        Play2GetherApplication.accessToken = accessToken
     }
 
     internal class UnauthorizedInterceptor : Interceptor {

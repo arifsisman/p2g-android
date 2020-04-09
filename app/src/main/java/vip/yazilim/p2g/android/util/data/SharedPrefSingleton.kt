@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 
 
+@Deprecated("Causes NPE on some cases, will not be used until fixed")
 object SharedPrefSingleton {
     private var mSharedPref: SharedPreferences? = null
 
