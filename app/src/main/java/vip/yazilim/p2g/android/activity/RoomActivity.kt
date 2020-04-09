@@ -32,6 +32,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
+import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
@@ -113,9 +114,7 @@ class RoomActivity : BaseActivity(),
         Play2GetherApplication.currentActivity = this
 
         mInterstitialAd = InterstitialAd(this)
-        //todo
-//        mInterstitialAd.adUnitId = "ca-app-pub-9988109607477807/6243177559"
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712" // test ad id
+        mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
         mInterstitialAd.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 mInterstitialAd.show()
@@ -145,7 +144,9 @@ class RoomActivity : BaseActivity(),
     override fun onResume() {
         super.onResume()
         //Try sync with room, if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
-        syncWithRoom(roomViewModel.roomUserModel.value?.roomUser)
+        roomViewModel.roomUserModel.value?.roomUser?.let {
+            Api.client.syncWithRoom(it).withCallback(null)
+        }
     }
 
     // Setups

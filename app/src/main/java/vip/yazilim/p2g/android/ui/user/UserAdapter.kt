@@ -53,8 +53,8 @@ class UserAdapter(
                 val profileAnthemPlaceholder =
                     "${view.resources.getString(R.string.placeholder_anthem)} ${user.anthemSongId}"
                 val memberSincePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate?.toZonedDateTime()
-                        ?.getFormattedFull()}"
+                    "${view.resources.getString(R.string.placeholder_member_since)} ${user.creationDate.toZonedDateTime()
+                        .getFormattedFull()}"
                 val profileSongAndRoomStatusPlaceholder = if (room?.name != null) {
                     "${view.resources.getString(R.string.placeholder_song_and_room_status_helper)} ${room.name}"
                 } else {

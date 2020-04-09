@@ -32,20 +32,20 @@ class HomeAdapter(
 
         fun bindView(roomModel: RoomModel) {
             val roomOwnerPlaceholder =
-                "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
+                "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner.name}"
 
-            itemView.roomName.text = roomModel.room?.name
+            itemView.roomName.text = roomModel.room.name
             itemView.roomOwner.text = roomOwnerPlaceholder
             itemView.userCount.text = roomModel.userCount.toString()
 
-            if (roomModel.room?.privateFlag!!) {
+            if (roomModel.room.privateFlag) {
                 itemView.lockImage.visibility = View.VISIBLE
             } else {
                 itemView.lockImage.visibility = View.GONE
             }
 
             try {
-                itemView.countryFlag.countryCode = roomModel.owner?.countryCode
+                itemView.countryFlag.countryCode = roomModel.owner.countryCode
             } catch (exception: Exception) {
                 itemView.countryFlag.visibility = View.GONE
             }
@@ -75,7 +75,7 @@ class HomeAdapter(
     }
 
     fun update(data: MutableList<RoomModel>) {
-        roomModels = data.filter { it.owner != null && it.room?.name != null }.toMutableList()
+        roomModels = data
         notifyDataSetChanged()
     }
 
@@ -98,8 +98,8 @@ class HomeAdapter(
                     val filter = constraint.toString().trim()
 
                     roomModelsFull.forEach {
-                        if (it.room?.name?.contains(filter, true)!!
-                            || it.owner?.name?.contains(filter, true)!!
+                        if (it.room.name.contains(filter, true)
+                            || it.owner.name.contains(filter, true)
                         ) {
                             filteredList.add(it)
                         }

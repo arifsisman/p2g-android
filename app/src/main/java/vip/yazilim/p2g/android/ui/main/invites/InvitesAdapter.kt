@@ -43,7 +43,7 @@ class InvitesAdapter(
             val roomModel = roomInviteModel.roomModel
             val user = roomInviteModel.inviter
 
-            if (user?.imageUrl != null) {
+            if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
@@ -52,13 +52,13 @@ class InvitesAdapter(
                 profileImage.setImageResource(R.drawable.ic_profile_image)
             }
 
-            roomInviter.text = user?.name
+            roomInviter.text = user.name
 
             val roomNamePlaceholder =
-                "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel?.room?.name}"
+                "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel.room.name}"
             roomName.text = roomNamePlaceholder
 
-            when (user?.onlineStatus) {
+            when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
                     onlineStatus.setImageResource(android.R.drawable.presence_online)
                     onlineStatus.visibility = View.VISIBLE
@@ -73,7 +73,7 @@ class InvitesAdapter(
                 }
             }
 
-            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel?.song)
+            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
             roomSongStatus.text = songStatus
         }
     }
@@ -119,15 +119,6 @@ class InvitesAdapter(
         roomInviteModelsFull.remove(data)
     }
 
-    fun removeAt(position: Int) {
-        val size = roomInviteModels.size
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, size)
-
-        roomInviteModels.removeAt(position)
-        roomInviteModelsFull.removeAt(position)
-    }
-
     fun clear() {
         roomInviteModels.clear()
         roomInviteModelsFull.clear()
@@ -145,10 +136,10 @@ class InvitesAdapter(
                 } else {
                     val filter = constraint.toString().trim()
                     roomInviteModelsFull.forEach {
-                        if (it.roomModel?.room?.name?.contains(
+                        if (it.roomModel.room.name.contains(
                                 filter,
                                 true
-                            )!! || it.inviter?.name?.contains(filter, true)!!
+                            ) || it.inviter.name.contains(filter, true)
                         ) {
                             filteredList.add(it)
                         }

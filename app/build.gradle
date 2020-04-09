@@ -6,6 +6,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+    flavorDimensions "default"
     defaultConfig {
         applicationId "vip.yazilim.p2g.android"
         minSdkVersion 21
@@ -30,6 +31,16 @@ android {
     }
     dataBinding {
         enabled = true
+    }
+    productFlavors {
+        development {
+            buildConfigField 'String', 'URL', '\"192.168.1.150\"'
+            buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-3940256099942544/1033173712\"'
+        }
+        production {
+            buildConfigField 'String', 'URL', '\"142.93.239.61\"'
+            buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-9988109607477807/6243177559\"'
+        }
     }
 }
 
