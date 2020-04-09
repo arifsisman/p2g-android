@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import com.google.android.gms.ads.MobileAds
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.spotify.sdk.android.authentication.AuthenticationClient
+import com.spotify.sdk.android.auth.AuthorizationClient
 import okhttp3.Call
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
@@ -49,7 +49,7 @@ class LoginActivity : BaseActivity() {
 
         // If the access token has been received successfully
         if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
-            val response = AuthenticationClient.getResponse(resultCode, data)
+            val response = AuthorizationClient.getResponse(resultCode, data)
             if (response.accessToken != null) {
                 Api.build(response.accessToken)
                 Api.client.login().withCallback(

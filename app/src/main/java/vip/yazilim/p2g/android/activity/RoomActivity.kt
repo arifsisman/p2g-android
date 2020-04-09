@@ -1,6 +1,7 @@
 package vip.yazilim.p2g.android.activity
 
 import android.content.*
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -77,6 +78,8 @@ class RoomActivity : BaseActivity(),
     PlayerAdapter.OnSeekBarChangeListener,
     DeviceAdapter.OnItemClickListener {
     val db by lazy { DBHelper(this) }
+
+    private lateinit var mediaPlayer: MediaPlayer
 
     lateinit var room: Room
     lateinit var roomModel: RoomModel
@@ -324,6 +327,21 @@ class RoomActivity : BaseActivity(),
 
             playerSong = song
             songCurrentMs = RoomViewModel.getCurrentSongMs(song)
+
+//            if (::mediaPlayer.isInitialized) {
+//                mediaPlayer.release()
+//            }
+//
+//            mediaPlayer = MediaPlayer().apply {
+//                setAudioAttributes(
+//                    AudioAttributes.Builder()
+//                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+//                        .build()
+//                )
+//                setDataSource("https://open.spotify.com/track/" + song.songId)
+//                prepare()
+////                start()
+//            }
 
             Log.d(TAG, "Is ${song.songName} playing? = $isPlaying")
             Log.d(TAG, "CURRENT MS $songCurrentMs")

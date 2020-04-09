@@ -1,8 +1,8 @@
 package vip.yazilim.p2g.android.util.helper
 
-import com.spotify.sdk.android.authentication.AuthenticationClient
-import com.spotify.sdk.android.authentication.AuthenticationRequest
-import com.spotify.sdk.android.authentication.AuthenticationResponse
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 
@@ -13,17 +13,17 @@ import vip.yazilim.p2g.android.constant.SpotifyConstants
 class SpotifyHelper {
     companion object {
         fun getAccessTokenFromSpotify() {
-            val request: AuthenticationRequest = AuthenticationRequest
+            val request: AuthorizationRequest = AuthorizationRequest
                 .Builder(
                     SpotifyConstants.CLIENT_ID,
-                    AuthenticationResponse.Type.TOKEN,
+                    AuthorizationResponse.Type.TOKEN,
                     SpotifyConstants.REDIRECT_URI
                 )
                 .setShowDialog(false)
                 .setScopes(SpotifyConstants.SCOPE)
                 .build()
 
-            AuthenticationClient.openLoginActivity(
+            AuthorizationClient.openLoginActivity(
                 Play2GetherApplication.currentActivity,
                 SpotifyConstants.AUTH_TOKEN_REQUEST_CODE,
                 request
