@@ -10,7 +10,7 @@ import okhttp3.Call
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
@@ -54,7 +54,7 @@ class LoginActivity : BaseActivity() {
             val response = AuthenticationClient.getResponse(resultCode, data)
             if (response.accessToken != null) {
                 Api.build(response.accessToken)
-                Api.client.login().queue(
+                Api.client.login().withCallback(
                     object : Callback<User> {
                         override fun onError(msg: String) {
                             val alert = this@LoginActivity.showErrorDialog(msg)
@@ -90,7 +90,7 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    private fun checkIsUserInRoom(user: User) = Api.client.getRoomModelMe().queue(
+    private fun checkIsUserInRoom(user: User) = Api.client.getRoomModelMe().withCallback(
         object : Callback<RoomModel> {
             //user in room
             override fun onSuccess(obj: RoomModel) {

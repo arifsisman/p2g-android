@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_room_users.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.entity.RoomInvite
@@ -100,7 +100,7 @@ class RoomUsersFragment :
     }
 
     private fun refreshUsersEvent() =
-        Api.client.getRoomUserModels(roomActivity.room.id).queue(
+        Api.client.getRoomUserModels(roomActivity.room.id).withCallback(
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
@@ -160,7 +160,7 @@ class RoomUsersFragment :
         searchButton.setOnClickListener {
             val query = queryEditText.text.toString()
 
-            Api.client.searchUser(query).queue(
+            Api.client.searchUser(query).withCallback(
                 object : Callback<MutableList<User>> {
                     override fun onError(msg: String) {
                         inviteRecyclerView.showSnackBarError(msg)
@@ -181,7 +181,7 @@ class RoomUsersFragment :
         }
 
         // Load friends
-        Api.client.getFriends().queue(
+        Api.client.getFriends().withCallback(
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
                 }
@@ -220,7 +220,7 @@ class RoomUsersFragment :
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
-        Api.client.addFriend(roomUserModel.roomUser.userId).queue(
+        Api.client.addFriend(roomUserModel.roomUser.userId).withCallback(
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user.name}")
@@ -236,7 +236,7 @@ class RoomUsersFragment :
         val roomId = (activity as RoomActivity).room.id
         val userId = user.id
 
-        Api.client.inviteUser(roomId, userId).queue(
+        Api.client.inviteUser(roomId, userId).withCallback(
             object : Callback<RoomInvite> {
                 override fun onSuccess(obj: RoomInvite) {
                     inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
@@ -275,7 +275,7 @@ class RoomUsersFragment :
     override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
         changeRoleDialogView?.dismiss()
 
-        Api.client.changeRoomUserRole(roomUserModel.roomUser.id, role.role).queue(
+        Api.client.changeRoomUserRole(roomUserModel.roomUser.id, role.role).withCallback(
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
                     roomViewModel.onMessageInfo.postValue(

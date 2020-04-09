@@ -19,7 +19,7 @@ import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
 import vip.yazilim.p2g.android.entity.RoomUser
@@ -112,7 +112,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun onAccept(roomInviteModel: RoomInviteModel) =
-        Api.client.acceptInvite(roomInviteModel.roomInvite).queue(
+        Api.client.acceptInvite(roomInviteModel.roomInvite).withCallback(
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -130,7 +130,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun onReject(roomInviteModel: RoomInviteModel) =
-        Api.client.rejectInvite(roomInviteModel.roomInvite.id).queue(
+        Api.client.rejectInvite(roomInviteModel.roomInvite.id).withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(TAG, msg)
@@ -144,7 +144,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) =
-        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).queue(
+        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).withCallback(
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                 }
@@ -156,7 +156,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
                 }
             })
 
-    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().queue(
+    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().withCallback(
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)

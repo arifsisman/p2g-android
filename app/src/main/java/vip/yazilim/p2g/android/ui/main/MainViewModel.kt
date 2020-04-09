@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomModel
@@ -26,7 +26,7 @@ class MainViewModel : ViewModelBase() {
     fun loadRooms() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomModels().queue(
+        Api.client.getRoomModels().withCallback(
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -43,7 +43,7 @@ class MainViewModel : ViewModelBase() {
     fun loadUserFriendModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserFriendModel().queue(
+        Api.client.getUserFriendModel().withCallback(
             object : Callback<UserFriendModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -60,7 +60,7 @@ class MainViewModel : ViewModelBase() {
     fun loadRoomInviteModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomInviteModels().queue(
+        Api.client.getRoomInviteModels().withCallback(
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -77,7 +77,7 @@ class MainViewModel : ViewModelBase() {
     fun loadUserModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserModelMe().queue(
+        Api.client.getUserModelMe().withCallback(
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -91,7 +91,7 @@ class MainViewModel : ViewModelBase() {
             })
     }
 
-    fun loadFriendsCountMe() = Api.client.getFriendsCounts().queue(
+    fun loadFriendsCountMe() = Api.client.getFriendsCounts().withCallback(
         object : Callback<Int> {
             override fun onError(msg: String) {
             }

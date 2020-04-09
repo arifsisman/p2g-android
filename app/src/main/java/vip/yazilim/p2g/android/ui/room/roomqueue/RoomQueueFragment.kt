@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_room_queue.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.SongStatus
@@ -97,7 +97,7 @@ class RoomQueueFragment :
         roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
-    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).queue(
+    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).withCallback(
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
                 roomViewModel.onMessageError.postValue(
@@ -175,7 +175,7 @@ class RoomQueueFragment :
 
             val query = queryEditText.text.toString()
 
-            Api.client.searchSpotify(query).queue(
+            Api.client.searchSpotify(query).withCallback(
                 object : Callback<MutableList<SearchModel>> {
                     override fun onError(msg: String) {
                         searchDialogView.showSnackBarError(msg)
@@ -207,7 +207,7 @@ class RoomQueueFragment :
             val selectedSearchModels = searchAdapter.selectedSearchModels
 
             Api.client.addSongToRoom(roomActivity.room.id, selectedSearchModels)
-                .queue(object : Callback<Boolean> {
+                .withCallback(object : Callback<Boolean> {
                     override fun onSuccess(obj: Boolean) {
                         cancelButton.performClick()
                         selectedSearchModels.clear()
@@ -236,7 +236,7 @@ class RoomQueueFragment :
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        Api.client.play(song).queue(object : Callback<Boolean> {
+        Api.client.play(song).withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -253,7 +253,7 @@ class RoomQueueFragment :
         if (db.isVotedBefore(roomActivity.room, song)) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
-            Api.client.upvoteSong(song.id).queue(object : Callback<Int> {
+            Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     db.insertVotedSong(roomActivity.room, song)
                     roomViewModel.onMessageInfo.postValue(
@@ -275,7 +275,7 @@ class RoomQueueFragment :
         if (db.isVotedBefore(roomActivity.room, song)) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
-            Api.client.downvoteSong(song.id).queue(object : Callback<Int> {
+            Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
                     db.insertVotedSong(roomActivity.room, song)
                     roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
@@ -293,7 +293,7 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        Api.client.removeSongFromRoom(song.id).queue(object : Callback<Boolean> {
+        Api.client.removeSongFromRoom(song.id).withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 

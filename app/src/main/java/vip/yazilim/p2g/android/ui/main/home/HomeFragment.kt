@@ -21,7 +21,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.entity.Room
@@ -115,7 +115,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     }
 
     private fun joinRoomEvent(roomModel: RoomModel) =
-        Api.client.joinRoom(roomModel.room.id, UNDEFINED).queue(
+        Api.client.joinRoom(roomModel.room.id, UNDEFINED).withCallback(
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -163,7 +163,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).queue(
+            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).withCallback(
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)
@@ -221,7 +221,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             Api.client.createRoom(
                 roomNameEditText.text.toString(),
                 roomPasswordEditText.text.toString()
-            ).queue(
+            ).withCallback(
                 object : Callback<Room> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)
@@ -249,7 +249,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() = Api.client.getRoomModels().queue(
+    private fun refreshRoomsEvent() = Api.client.getRoomModels().withCallback(
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))

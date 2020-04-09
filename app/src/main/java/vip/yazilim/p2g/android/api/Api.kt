@@ -13,6 +13,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.Response
 import vip.yazilim.p2g.android.api.generic.Result
+import vip.yazilim.p2g.android.api.generic.resultHelper
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
@@ -38,7 +39,7 @@ object Api {
         val retrofit: Retrofit = builder.client(httpClient).build()
 
         client = retrofit.create(Endpoints::class.java) as Endpoints
-        client.updateAccessToken(accessToken).queue(null)
+        client.updateAccessToken(accessToken).withCallback(null)
         SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, accessToken)
     }
 
@@ -69,15 +70,17 @@ object Api {
         return httpLoggingInterceptor
     }
 
-    inline fun <reified T> Call<Response<T>>.queue(callback: Callback<T>?) =
-        this.enqueueRequest { result ->
+    inline fun <reified T> Call<Response<T>>.withCallback(callback: Callback<T>?) {
+        this.resultHelper { result ->
             when (result) {
                 is Result.Success -> if (result.response.isSuccessful) {
                     callback?.onSuccess(result.response.body()?.data as T)
                 } else {
-                    val msg = result.response.errorBody()!!.string()
-                    Log.d("Request not successful ", msg)
-                    callback?.onError(msg)
+                    val msg = result.response.errorBody()?.string()
+                    if (msg != null) {
+                        Log.d("Request not successful ", msg)
+                        callback?.onError(msg)
+                    }
                 }
                 is Result.Failure -> {
                     val msg = result.error.message as String
@@ -86,17 +89,5 @@ object Api {
                 }
             }
         }
-
-    //todo merge with queue
-    inline fun <reified T> Call<T>.enqueueRequest(crossinline result: (Result<T>) -> Unit) =
-        enqueue(object : retrofit2.Callback<T> {
-            override fun onFailure(call: Call<T>, error: Throwable) = result(
-                Result.Failure(call, error)
-            )
-
-            override fun onResponse(call: Call<T>, response: retrofit2.Response<T>) = result(
-                Result.Success(call, response)
-            )
-        })
-
+    }
 }

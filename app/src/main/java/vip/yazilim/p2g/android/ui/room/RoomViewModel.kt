@@ -3,7 +3,7 @@ package vip.yazilim.p2g.android.ui.room
 import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
@@ -30,7 +30,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadSongs(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomSongs(roomId).queue(
+        Api.client.getRoomSongs(roomId).withCallback(
             object : Callback<MutableList<Song>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -49,7 +49,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomUsers(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomUserModels(roomId).queue(
+        Api.client.getRoomUserModels(roomId).withCallback(
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -72,7 +72,7 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomUserMe() {
-        Api.client.getRoomUserModelMe().queue(object : Callback<RoomUserModel> {
+        Api.client.getRoomUserModelMe().withCallback(object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
                 roomUserModel.postValue(obj)
             }
