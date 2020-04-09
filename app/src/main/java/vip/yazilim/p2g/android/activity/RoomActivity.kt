@@ -1,7 +1,6 @@
 package vip.yazilim.p2g.android.activity
 
 import android.content.*
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -79,8 +78,6 @@ class RoomActivity : BaseActivity(),
     DeviceAdapter.OnItemClickListener {
     val db by lazy { DBHelper(this) }
 
-    private lateinit var mediaPlayer: MediaPlayer
-
     lateinit var room: Room
     lateinit var roomModel: RoomModel
 
@@ -146,10 +143,15 @@ class RoomActivity : BaseActivity(),
 
     override fun onResume() {
         super.onResume()
-        //Try sync with room, if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
-        roomViewModel.roomUserModel.value?.roomUser?.let {
-            Api.client.syncWithRoom(it).withCallback(null)
-        }
+        //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
+        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
+            override fun onSuccess(obj: MutableList<UserDevice>) {
+            }
+
+            override fun onError(msg: String) {
+                viewPager.showSnackBarError(msg)
+            }
+        })
     }
 
     // Setups
@@ -285,10 +287,10 @@ class RoomActivity : BaseActivity(),
                     Log.v(TAG, "Song is playing! Views updated.")
                 }
                 songCurrentMs += 1000
-                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs!!) {
-                    isPlaying = false
-                    skipHelper()
+                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs!! - 1000) {
                     Log.v(TAG, "Song is finished!")
+                    isPlaying = false
+                    // Update player ui as played
                     runOnUiThread {
                         song_current.text =
                             roomViewModel.playerSong.value?.durationMs!!.getHumanReadableTimestamp()
@@ -298,18 +300,6 @@ class RoomActivity : BaseActivity(),
                 }
             }
             TimeUnit.SECONDS.sleep(1)
-        }
-    }
-
-    private fun skipHelper() {
-        if (skipFlag && roomViewModel.roomUserModel.value?.roomUser?.role.equals(Role.ROOM_OWNER.role)) {
-            Log.v(TAG, "Skipping next song.")
-            skipFlag = false
-            if (::playerSong.isInitialized && playerSong.repeatFlag) {
-                onSeekPerformed(0)
-            } else {
-                onNextClicked()
-            }
         }
     }
 
@@ -327,21 +317,6 @@ class RoomActivity : BaseActivity(),
 
             playerSong = song
             songCurrentMs = RoomViewModel.getCurrentSongMs(song)
-
-//            if (::mediaPlayer.isInitialized) {
-//                mediaPlayer.release()
-//            }
-//
-//            mediaPlayer = MediaPlayer().apply {
-//                setAudioAttributes(
-//                    AudioAttributes.Builder()
-//                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-//                        .build()
-//                )
-//                setDataSource("https://open.spotify.com/track/" + song.songId)
-//                prepare()
-////                start()
-//            }
 
             Log.d(TAG, "Is ${song.songName} playing? = $isPlaying")
             Log.d(TAG, "CURRENT MS $songCurrentMs")

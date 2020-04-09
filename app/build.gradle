@@ -68,7 +68,7 @@ dependencies {
 
     // Spotify
     implementation 'com.spotify.android:auth:1.2.3'
-//    implementation 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+//    implementation 'com.spotify.sdk:spotify-app-remote-release-0.7.0@aar'
 
     // OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.5.0'
