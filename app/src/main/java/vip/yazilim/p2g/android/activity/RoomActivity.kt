@@ -1,6 +1,8 @@
 package vip.yazilim.p2g.android.activity
 
 import android.content.*
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -87,6 +89,7 @@ class RoomActivity : BaseActivity(),
     private lateinit var slidingUpPanel: SlidingUpPanelLayout
     private lateinit var playerRecyclerView: RecyclerView
     private lateinit var deviceDialog: AlertDialog
+    private lateinit var connectivityManager: ConnectivityManager
     private var roomWsReconnectCounter = 0
 
     private var clearRoomQueueMenuItem: MenuItem? = null
@@ -121,6 +124,8 @@ class RoomActivity : BaseActivity(),
         setupSlidingUpPanel()
         setupPlayer()
 
+        setupNetworkConnectivityManager()
+
         mInterstitialAd = InterstitialAd(this)
         mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
         mInterstitialAd.adListener = object : AdListener() {
@@ -149,6 +154,22 @@ class RoomActivity : BaseActivity(),
                 viewPager.showSnackBarError(msg)
             }
         })
+    }
+
+    private fun setupNetworkConnectivityManager() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager =
+                applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            connectivityManager.registerDefaultNetworkCallback(object :
+                ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                }
+
+                override fun onLost(network: Network?) {
+                    viewPager.showSnackBarError(resources.getString(R.string.err_network_closed))
+                }
+            })
+        }
     }
 
     // Setups
@@ -291,8 +312,8 @@ class RoomActivity : BaseActivity(),
                     isPlaying = false
                     // Update player ui as played
                     runOnUiThread {
-                        song_current.text =
-                            roomViewModel.playerSong.value?.durationMs!!.getHumanReadableTimestamp()
+                        song_current?.text =
+                            roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
                         playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
                         playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
                     }
@@ -519,11 +540,10 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CLOSED -> {
                     if (roomWsReconnectCounter < 22) {
-                        stopRoomWebSocketService(this)
                         // refresh access token with LoginActivity maybe...
+                        stopRoomWebSocketService(this)
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
-                        viewPager.showSnackBarInfo(resources.getString(R.string.err_room_websocket_reconnect))
                     } else {
                         viewPager.showSnackBarErrorIndefinite(resources.getString(R.string.err_room_websocket_closed))
                     }
