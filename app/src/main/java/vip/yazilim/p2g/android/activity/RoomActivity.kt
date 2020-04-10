@@ -307,7 +307,7 @@ class RoomActivity : BaseActivity(),
                     Log.v(TAG, "Song is playing! Views updated.")
                 }
                 songCurrentMs += 1000
-                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs!! - 1000) {
+                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs?.minus(1000) ?: 0) {
                     Log.v(TAG, "Song is finished!")
                     isPlaying = false
                     // Update player ui as played

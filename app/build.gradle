@@ -36,7 +36,7 @@ android {
     productFlavors {
         development {
             buildConfigField 'String', 'URL', '\"192.168.1.150\"'
-            buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-3940256099942544/1033173712\"'
+            buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-3940256099942544/1033173712---\"'
         }
         production {
             buildConfigField 'String', 'URL', '\"142.93.239.61\"'
@@ -94,9 +94,9 @@ dependencies {
     // StompProtocolAndroid
     implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
 
-    //  RxJava
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    // RxJava
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     // FlagKit
     implementation 'com.github.KaKaVip:Android-Flag-Kit:v0.1'

@@ -5,9 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,6 +16,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
 import kotlinx.android.synthetic.main.layout_row_song_events.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
@@ -32,6 +33,7 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import kotlin.coroutines.CoroutineContext
 
 
 /**
@@ -42,7 +44,9 @@ class RoomQueueFragment :
     FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener,
-    SwipeLayout.SwipeListener {
+    SwipeLayout.SwipeListener, CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomQueueAdapter
@@ -84,8 +88,8 @@ class RoomQueueFragment :
         ) {})
 
         // Search with floating action button
-        val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
-        fab.setOnClickListener { showSearchDialog() }
+        val fab: FloatingActionButton? = activity?.findViewById(R.id.fab)
+        fab?.setOnClickListener { showSearchDialog() }
 
         swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
@@ -135,102 +139,76 @@ class RoomQueueFragment :
         mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val queryEditText = searchDialogView.dialogQuery
-        val searchButton = searchDialogView.dialog_search_button
-        val addButton = searchDialogView.addButton
-        val cancelButton = searchDialogView.dialog_cancel_button
-
-        // For disable create button if name is empty
-        queryEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                searchButton.isEnabled = s.isNotEmpty()
-            }
-        })
 
         // For request focus and open keyboard
         queryEditText.requestFocus()
 
-        // Click cancel
-        cancelButton.setOnClickListener {
-            mAlertDialog.cancel()
-            queryEditText.clearFocus()
-        }
+        // Adapter start and update with requested search model
+        val searchRecyclerView: RecyclerView =
+            searchDialogView.findViewById(R.id.searchRecyclerView)
+        searchRecyclerView.layoutManager = LinearLayoutManager(activity)
+        searchRecyclerView.setHasFixedSize(true)
 
-        // Click search
-        searchButton.setOnClickListener {
-            // Adapter start and update with requested search model
-            val searchRecyclerView: RecyclerView =
-                searchDialogView.findViewById(R.id.searchRecyclerView)
-            searchRecyclerView.layoutManager = LinearLayoutManager(activity)
-            searchRecyclerView.setHasFixedSize(true)
+        searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
+        searchRecyclerView.adapter = searchAdapter
 
-            searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
-            searchRecyclerView.adapter = searchAdapter
+        searchRecyclerView.addItemDecoration(object : DividerItemDecoration(
+            searchRecyclerView.context,
+            (searchRecyclerView.layoutManager as LinearLayoutManager).orientation
+        ) {})
 
-            searchRecyclerView.addItemDecoration(object : DividerItemDecoration(
-                searchRecyclerView.context,
-                (searchRecyclerView.layoutManager as LinearLayoutManager).orientation
-            ) {})
+        queryEditText.addTextChangedListener(object : TextWatcher {
+            private var searchFor = ""
 
-            val query = queryEditText.text.toString()
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchText = s.toString().trim()
+                if (searchText == searchFor)
+                    return
 
-            Api.client.searchSpotify(query).withCallback(
-                object : Callback<MutableList<SearchModel>> {
-                    override fun onError(msg: String) {
-                        searchDialogView.showSnackBarError(msg)
-                    }
+                searchFor = searchText
 
-                    override fun onSuccess(obj: MutableList<SearchModel>) {
+                launch {
+                    delay(500)  //debounce timeOut
+                    if (searchText != searchFor)
+                        return@launch
+
+                    if (s.isNullOrEmpty()) {
+                        mAlertDialog.dismiss()
                         context?.closeKeyboard()
+                    } else {
+                        searchAdapter.clear()
+                        Api.client.searchSpotify(s.toString()).withCallback(
+                            object : Callback<MutableList<SearchModel>> {
+                                override fun onError(msg: String) {
+                                    searchDialogView.showSnackBarError(msg)
+                                }
 
-                        // Hide search bar, search button and show addButton
-                        searchButton.visibility = View.GONE
-                        addButton.visibility = View.VISIBLE
-
-                        searchDialogView.findViewById<EditText>(R.id.dialogQuery).visibility =
-                            View.GONE
-
-                        searchAdapter.update(obj)
-
-                        // Search text query
-                        val searchText: TextView = searchDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder =
-                            "${resources.getString(R.string.info_search_queue)} '${query}'"
-                        searchText.text = searchTextPlaceholder
-                        searchText.visibility = View.VISIBLE
+                                override fun onSuccess(obj: MutableList<SearchModel>) {
+                                    context?.closeKeyboard()
+                                    searchAdapter.update(obj)
+                                }
+                            })
                     }
-                })
-        }
+                }
+            }
 
-        addButton.setOnClickListener {
-            val selectedSearchModels = searchAdapter.selectedSearchModels
-
-            Api.client.addSongToRoom(roomActivity.room.id, selectedSearchModels)
-                .withCallback(object : Callback<Boolean> {
-                    override fun onSuccess(obj: Boolean) {
-                        cancelButton.performClick()
-                        selectedSearchModels.clear()
-                    }
-
-                    override fun onError(msg: String) {
-                        cancelButton.performClick()
-                        roomViewModel.onMessageError.postValue(msg)
-                    }
-                })
-        }
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+        })
 
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
-        if (::searchAdapter.isInitialized && ::searchDialogView.isInitialized) {
-            val isAnyItemsSelected = searchAdapter.select(searchModel)
-            if (isAnyItemsSelected != null) {
-                searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
-            } else {
-                searchDialogView.showSnackBarError(resources.getString(R.string.err_room_queue_add))
-            }
-        }
+        Api.client.addSongToRoom(roomActivity.room.id, listOf(searchModel))
+            .withCallback(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                }
+
+                override fun onError(msg: String) {
+                    searchDialogView.showSnackBarError(msg)
+                }
+            })
     }
 
     override fun onItemClicked(view: SwipeLayout) {

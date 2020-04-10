@@ -85,9 +85,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun cancelCall() {
-        if (mCall != null) {
-            mCall!!.cancel()
-        }
+        mCall?.cancel()
     }
 
     private fun checkIsUserInRoom(user: User) = Api.client.getRoomModelMe().withCallback(
