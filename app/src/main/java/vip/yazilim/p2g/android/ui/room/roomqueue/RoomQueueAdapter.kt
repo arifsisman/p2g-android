@@ -69,12 +69,11 @@ class RoomQueueAdapter(
             }
 
             itemView.row_song.showMode = SwipeLayout.ShowMode.LayDown
-            itemView.row_song.isClickToClose = true
-            itemView.row_song.isRightSwipeEnabled = false
             itemView.row_song.addDrag(SwipeLayout.DragEdge.Left, itemView.song_event_holder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_song) }
             itemView.swipePlayButton.setOnClickListener {
                 clickListener.onPlayClicked(
                     itemView.row_song,
@@ -108,6 +107,7 @@ class RoomQueueAdapter(
     }
 
     interface OnItemClickListener {
+        fun onItemClicked(view: SwipeLayout)
         fun onPlayClicked(view: SwipeLayout, song: Song)
         fun onUpvoteClicked(view: SwipeLayout, song: Song)
         fun onDownvoteClicked(view: SwipeLayout, song: Song)

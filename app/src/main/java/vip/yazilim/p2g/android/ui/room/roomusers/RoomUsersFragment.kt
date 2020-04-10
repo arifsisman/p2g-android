@@ -193,6 +193,10 @@ class RoomUsersFragment :
 
     }
 
+    override fun onItemClicked(view: SwipeLayout) {
+        view.toggle()
+    }
+
     override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
         val mDialogView = View.inflate(context, R.layout.dialog_change_role, null)
@@ -255,7 +259,7 @@ class RoomUsersFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        val currentRole = roomViewModel.roomUserRole.value
         if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
             layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.VISIBLE
         } else {

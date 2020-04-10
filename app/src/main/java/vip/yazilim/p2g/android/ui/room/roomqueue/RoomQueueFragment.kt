@@ -7,7 +7,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
+import kotlinx.android.synthetic.main.layout_row_song_events.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
@@ -233,6 +233,15 @@ class RoomQueueFragment :
         }
     }
 
+    override fun onItemClicked(view: SwipeLayout) {
+        val openStatus = view.openStatus
+        if (openStatus == SwipeLayout.Status.Open) {
+            view.close()
+        } else if (openStatus == SwipeLayout.Status.Close) {
+            view.open(SwipeLayout.DragEdge.Left)
+        }
+    }
+
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
@@ -311,13 +320,13 @@ class RoomQueueFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        val currentRole = roomViewModel.roomUserRole.value
         if (currentRole == Role.ROOM_USER.role) {
-            layout?.findViewById<ImageButton>(R.id.swipePlayButton)?.visibility = View.GONE
-            layout?.findViewById<ImageButton>(R.id.swipeDeleteButton)?.visibility = View.GONE
+            layout?.swipePlayButton?.visibility = View.GONE
+            layout?.swipeDeleteButton?.visibility = View.GONE
         } else {
-            layout?.findViewById<ImageButton>(R.id.swipePlayButton)?.visibility = View.VISIBLE
-            layout?.findViewById<ImageButton>(R.id.swipeDeleteButton)?.visibility = View.VISIBLE
+            layout?.swipePlayButton?.visibility = View.VISIBLE
+            layout?.swipeDeleteButton?.visibility = View.VISIBLE
         }
     }
 

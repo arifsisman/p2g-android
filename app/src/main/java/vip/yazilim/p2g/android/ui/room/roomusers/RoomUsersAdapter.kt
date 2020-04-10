@@ -72,11 +72,11 @@ class RoomUsersAdapter(
             }
 
             itemView.row_user_model.showMode = SwipeLayout.ShowMode.LayDown
-            itemView.row_user_model.isClickToClose = true
             itemView.row_user_model.addDrag(SwipeLayout.DragEdge.Right, itemView.user_event_holder)
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_user_model) }
             itemView.swipeChangeRoleButton.setOnClickListener {
                 clickListener.onChangeRoleClicked(
                     itemView.row_user_model,
@@ -98,6 +98,7 @@ class RoomUsersAdapter(
     }
 
     interface OnItemClickListener {
+        fun onItemClicked(view: SwipeLayout)
         fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
     }

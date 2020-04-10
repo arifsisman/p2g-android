@@ -7,7 +7,6 @@ import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
-import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
@@ -22,7 +21,7 @@ class RoomViewModel : ViewModelBase() {
     val playerSong = MutableLiveData<Song>()
     val roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
     val roomUserModel = MutableLiveData<RoomUserModel>()
-    val roomInviteUserList = MutableLiveData<MutableList<User>>()
+    val roomUserRole = MutableLiveData<String>()
     val newMessage = MutableLiveData<ChatMessage>()
 
     var messages: MutableList<ChatMessage> = mutableListOf()
@@ -64,6 +63,7 @@ class RoomViewModel : ViewModelBase() {
                     obj.forEach {
                         if (it.user.id == roomUserModel.value?.user?.id) {
                             roomUserModel.postValue(it)
+                            roomUserRole.postValue(it.roomUser.role)
                         }
                     }
 
@@ -75,6 +75,7 @@ class RoomViewModel : ViewModelBase() {
         Api.client.getRoomUserModelMe().withCallback(object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
                 roomUserModel.postValue(obj)
+                roomUserRole.postValue(obj.roomUser.role)
             }
 
             override fun onError(msg: String) {

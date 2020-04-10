@@ -6,9 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.androidadvance.topsnackbar.TSnackbar
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 import vip.yazilim.p2g.android.constant.ColorCodes.ERROR
 
@@ -59,20 +57,6 @@ class UIHelper {
 
             toast.setGravity(Gravity.BOTTOM, 0, 175)
             toast.show()
-        }
-
-        fun Context.showErrorDialog(message: String): AlertDialog? {
-            val dialogBuilder = MaterialAlertDialogBuilder(this)
-                .setMessage(message)
-                .setPositiveButton("OK") { dialog, _ ->
-                    dialog.cancel()
-                }
-
-            val alert = dialogBuilder.create()
-            alert.setTitle("Error")
-            alert.show()
-
-            return alert
         }
 
         fun Context.closeKeyboard() {
