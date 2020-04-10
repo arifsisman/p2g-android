@@ -5,7 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +15,10 @@ import com.daimajia.swipe.SwipeLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
@@ -28,9 +31,10 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboardSoft
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author mustafaarifsisman - 07.03.2020
@@ -41,7 +45,10 @@ class RoomUsersFragment :
     RoomUsersAdapter.OnItemClickListener,
     RoomInviteAdapter.OnItemClickListener,
     ChangeRoleAdapter.OnItemClickListener,
-    SwipeLayout.SwipeListener {
+    SwipeLayout.SwipeListener,
+    CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomUsersAdapter
@@ -119,25 +126,7 @@ class RoomUsersFragment :
 
         val mBuilder = MaterialAlertDialogBuilder(context)
             .setView(inviteDialogView)
-        val mAlertDialog = mBuilder.show()
-
-        val queryEditText = inviteDialogView.dialogQuery
-        val searchButton = inviteDialogView.dialog_search_button
-        val cancelButton = inviteDialogView.dialog_close_button
-
-        // For disable create button if name is empty
-        queryEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                searchButton.isEnabled = s.length > 2
-            }
-        })
-
-        cancelButton.setOnClickListener {
-            mAlertDialog.cancel()
-            queryEditText.clearFocus()
-        }
+        mBuilder.show()
 
         val inviteRecyclerView: RecyclerView =
             inviteDialogView.findViewById(R.id.inviteRecyclerView)
@@ -157,28 +146,58 @@ class RoomUsersFragment :
             (inviteRecyclerView.layoutManager as LinearLayoutManager).orientation
         ) {})
 
-        searchButton.setOnClickListener {
-            val query = queryEditText.text.toString()
+        val queryEditText = inviteDialogView.dialogQuery
 
-            Api.client.searchUser(query).withCallback(
-                object : Callback<MutableList<User>> {
-                    override fun onError(msg: String) {
-                        inviteRecyclerView.showSnackBarError(msg)
-                    }
+        inviteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!inviteRecyclerView.hasFocus()) {
+                    inviteRecyclerView.requestFocus()
+                }
+            }
+        })
 
-                    override fun onSuccess(obj: MutableList<User>) {
-                        context?.closeKeyboard()
-                        inviteAdapter.update(obj)
-
-                        // Search text query
-                        val searchText: TextView = inviteDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder =
-                            "${resources.getString(R.string.info_search_invite)} '${query}'"
-                        searchText.text = searchTextPlaceholder
-                        searchText.visibility = View.VISIBLE
-                    }
-                })
+        queryEditText.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                context?.closeKeyboardSoft(queryEditText.windowToken)
+            }
         }
+
+        queryEditText.addTextChangedListener(object : TextWatcher {
+            private var searchFor = ""
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchText = s.toString().trim()
+                if (searchText == searchFor)
+                    return
+
+                searchFor = searchText
+
+                launch {
+                    delay(500)  //debounce timeOut
+                    if (searchText != searchFor)
+                        return@launch
+
+                    if (!s.isNullOrEmpty() && s.length > 2) {
+                        inviteAdapter.clear()
+                        Api.client.searchUser(s.toString()).withCallback(
+                            object : Callback<MutableList<User>> {
+                                override fun onError(msg: String) {
+                                    inviteRecyclerView.showSnackBarError(msg)
+                                }
+
+                                override fun onSuccess(obj: MutableList<User>) {
+                                    inviteAdapter.update(obj)
+                                }
+                            })
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+        })
 
         // Load friends
         Api.client.getFriends().withCallback(
@@ -190,7 +209,6 @@ class RoomUsersFragment :
                     inviteAdapter.update(obj)
                 }
             })
-
     }
 
     override fun onItemClicked(view: SwipeLayout) {

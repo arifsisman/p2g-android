@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.WindowManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,8 +32,9 @@ import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboardSoft
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import kotlin.coroutines.CoroutineContext
 
 
@@ -44,7 +46,8 @@ class RoomQueueFragment :
     FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener,
-    SwipeLayout.SwipeListener, CoroutineScope {
+    SwipeLayout.SwipeListener,
+    CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main
 
@@ -157,6 +160,21 @@ class RoomQueueFragment :
             (searchRecyclerView.layoutManager as LinearLayoutManager).orientation
         ) {})
 
+        searchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!searchRecyclerView.hasFocus()) {
+                    searchRecyclerView.requestFocus()
+                }
+            }
+        })
+
+        queryEditText.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                context?.closeKeyboardSoft(queryEditText.windowToken)
+            }
+        }
+
         queryEditText.addTextChangedListener(object : TextWatcher {
             private var searchFor = ""
 
@@ -172,10 +190,7 @@ class RoomQueueFragment :
                     if (searchText != searchFor)
                         return@launch
 
-                    if (s.isNullOrEmpty()) {
-                        mAlertDialog.dismiss()
-                        context?.closeKeyboard()
-                    } else {
+                    if (!s.isNullOrEmpty()) {
                         searchAdapter.clear()
                         Api.client.searchSpotify(s.toString()).withCallback(
                             object : Callback<MutableList<SearchModel>> {
@@ -184,7 +199,6 @@ class RoomQueueFragment :
                                 }
 
                                 override fun onSuccess(obj: MutableList<SearchModel>) {
-                                    context?.closeKeyboard()
                                     searchAdapter.update(obj)
                                 }
                             })
@@ -203,6 +217,7 @@ class RoomQueueFragment :
         Api.client.addSongToRoom(roomActivity.room.id, listOf(searchModel))
             .withCallback(object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
+                    searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
                 }
 
                 override fun onError(msg: String) {

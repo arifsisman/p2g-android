@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android.util.helper
 
 import android.content.Context
 import android.graphics.Color
+import android.os.IBinder
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -63,6 +64,12 @@ class UIHelper {
             val inputMethodManager =
                 this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+        }
+
+        fun Context.closeKeyboardSoft(viewBinder: IBinder) {
+            val inputMethodManager =
+                this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(viewBinder, 0)
         }
 
         fun Context.dpFromPx(px: Float): Float {
