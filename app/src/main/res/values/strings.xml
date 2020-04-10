@@ -138,5 +138,6 @@
     <string name="info_change_owner2">\'s Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)</string>
     <string name="info_friend_request_send">Friend request sent to</string>
     <string name="info_room_invite_send">invited to room.</string>
+    <string name="info_room_websocket_connect">Connected to room.</string>
 
 </resources>

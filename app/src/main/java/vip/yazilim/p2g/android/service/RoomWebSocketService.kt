@@ -23,7 +23,8 @@ import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_ERROR
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONNECTED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
@@ -103,7 +104,13 @@ class RoomWebSocketService : Service() {
 
     private fun sendBroadcastSocketClosed() {
         val intent = Intent()
-        intent.action = ACTION_ROOM_SOCKET_ERROR
+        intent.action = ACTION_ROOM_SOCKET_CLOSED
+        sendBroadcast(intent)
+    }
+
+    private fun sendBroadcastSocketConnected() {
+        val intent = Intent()
+        intent.action = ACTION_ROOM_SOCKET_CONNECTED
         sendBroadcast(intent)
     }
 
@@ -155,6 +162,7 @@ class RoomWebSocketService : Service() {
                     when (it.type) {
                         LifecycleEvent.Type.OPENED -> {
                             Log.i(TAG, it.toString())
+                            sendBroadcastSocketConnected()
                         }
                         LifecycleEvent.Type.CLOSED -> {
                             Log.i(TAG, it.toString())

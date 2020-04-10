@@ -171,7 +171,7 @@ interface Endpoints {
     fun repeat(@Path("id") roomId: Long): Call<Response<Boolean>>
 
     @POST("/api/spotify/room/sync")
-    fun syncWithRoom(@Body roomUser: RoomUser): Call<Response<Boolean>>
+    fun syncWithRoom(): Call<Response<Boolean>>
 
 
     // Spotify Search API
