@@ -93,13 +93,7 @@ class RoomActivity : BaseActivity(),
     private var roomWsReconnectCounter = 0
 
     private var clearRoomQueueMenuItem: MenuItem? = null
-    var durationHandler: Handler = Handler()
-
-    @Volatile
-    private var isPlaying = false
-
-    @Volatile
-    private var isSeeking = false
+    private var durationHandler: Handler = Handler()
 
     @Volatile
     lateinit var playerSong: Song
@@ -130,20 +124,6 @@ class RoomActivity : BaseActivity(),
         }
         mInterstitialAd.loadAd(AdRequest.Builder().build())
         updateSeekBarTime.run()
-    }
-
-    private val updateSeekBarTime: Runnable = object : Runnable {
-        override fun run() {
-
-            if (isPlaying && !isSeeking) {
-                val currentMs = roomViewModel.songCurrentMs.value
-                if (currentMs != null) {
-                    roomViewModel.songCurrentMs.postValue(currentMs + PLAYER_UPDATE_MS)
-                }
-            }
-
-            durationHandler.postDelayed(this, PLAYER_UPDATE_MS.toLong())
-        }
     }
 
     override fun onDestroy() {
@@ -315,15 +295,15 @@ class RoomActivity : BaseActivity(),
         playerAdapter.updatePlayerSong(song)
 
         if (song != null) {
-            isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
+            roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
 
             playerSong = song
             roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
 
-            Log.d(TAG, "Is ${song.songName} playing? = $isPlaying")
+            Log.d(TAG, "Is ${song.songName} playing? = ${roomViewModel.isPlaying.value}")
             Log.d(TAG, "CURRENT MS ${roomViewModel.songCurrentMs.value}")
         } else {
-            isPlaying = false
+            roomViewModel.isPlaying.postValue(false)
             Log.d(TAG, "Not playing any song!")
         }
     }
@@ -334,6 +314,7 @@ class RoomActivity : BaseActivity(),
         }
     }
 
+
     private val renderSongCurrentMs = Observer<Int> { ms ->
         runOnUiThread {
             seek_bar_exp.progress = ms
@@ -343,7 +324,7 @@ class RoomActivity : BaseActivity(),
         }
         if (ms >= roomViewModel.playerSong.value?.durationMs?.minus(PLAYER_UPDATE_MS) ?: 0) {
             Log.v(TAG, "Song is finished!")
-            isPlaying = false
+            roomViewModel.isPlaying.postValue(false)
             // Update player ui as played
             runOnUiThread {
                 song_current?.text =
@@ -351,6 +332,22 @@ class RoomActivity : BaseActivity(),
                 playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
                 playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
             }
+        }
+    }
+
+    private val updateSeekBarTime: Runnable = object : Runnable {
+        override fun run() {
+
+            val isPlaying = roomViewModel.isPlaying.value
+            val isSeeking = roomViewModel.isSeeking.value
+            if (isPlaying != null && isSeeking != null && isPlaying && !isSeeking) {
+                val currentMs = roomViewModel.songCurrentMs.value
+                if (currentMs != null) {
+                    roomViewModel.songCurrentMs.postValue(currentMs + PLAYER_UPDATE_MS)
+                }
+            }
+
+            durationHandler.postDelayed(this, PLAYER_UPDATE_MS.toLong())
         }
     }
 
@@ -722,11 +719,11 @@ class RoomActivity : BaseActivity(),
         return object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(sb: SeekBar) {
                 onSeekPerformed(sb.progress)
-                isSeeking = false
+                roomViewModel.isSeeking.postValue(false)
             }
 
             override fun onStartTrackingTouch(sb: SeekBar) {
-                isSeeking = true
+                roomViewModel.isSeeking.postValue(true)
             }
 
             override fun onProgressChanged(

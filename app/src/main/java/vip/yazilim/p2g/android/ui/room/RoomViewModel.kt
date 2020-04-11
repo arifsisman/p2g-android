@@ -18,6 +18,9 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getLocalDateTime
  */
 class RoomViewModel : ViewModelBase() {
     val songCurrentMs = MutableLiveData<Int>()
+    val isPlaying = MutableLiveData(false)
+    val isSeeking = MutableLiveData(false)
+
     val songList = MutableLiveData<MutableList<Song>>()
     val playerSong = MutableLiveData<Song>()
     val roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
