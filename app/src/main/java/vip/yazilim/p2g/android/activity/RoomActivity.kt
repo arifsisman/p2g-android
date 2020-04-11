@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
@@ -72,8 +73,6 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
-import java.util.concurrent.TimeUnit
-
 
 class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
@@ -93,6 +92,7 @@ class RoomActivity : BaseActivity(),
     private var roomWsReconnectCounter = 0
 
     private var clearRoomQueueMenuItem: MenuItem? = null
+    var durationHandler: Handler = Handler()
 
     @Volatile
     private var isPlaying = false
@@ -102,9 +102,6 @@ class RoomActivity : BaseActivity(),
 
     @Volatile
     private var songCurrentMs = 0
-
-    @Volatile
-    internal var skipFlag = false
 
     @Volatile
     lateinit var playerSong: Song
@@ -134,8 +131,35 @@ class RoomActivity : BaseActivity(),
             }
         }
         mInterstitialAd.loadAd(AdRequest.Builder().build())
+        updateSeekBarTime.run()
+    }
 
-        Thread(playerTimer).start()
+    private val updateSeekBarTime: Runnable = object : Runnable {
+        override fun run() {
+
+            if (isPlaying && !isSeeking) {
+                runOnUiThread {
+                    seek_bar_exp.progress = songCurrentMs
+                    seek_bar.progress = songCurrentMs
+                    song_current.text = songCurrentMs.getHumanReadableTimestamp()
+                    Log.v(TAG, "Song is playing! Views updated.")
+                }
+                songCurrentMs += 500
+                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs?.minus(500) ?: 0) {
+                    Log.v(TAG, "Song is finished!")
+                    isPlaying = false
+                    // Update player ui as played
+                    runOnUiThread {
+                        song_current?.text =
+                            roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
+                        playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                        playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
+                    }
+                }
+            }
+
+            durationHandler.postDelayed(this, 500)
+        }
     }
 
     override fun onDestroy() {
@@ -294,32 +318,6 @@ class RoomActivity : BaseActivity(),
         // PlayerAdapter
         playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this, this)
         playerRecyclerView.adapter = playerAdapter
-    }
-
-    private val playerTimer = Runnable {
-        while (true) {
-            if (isPlaying && !isSeeking) {
-                runOnUiThread {
-                    seek_bar_exp.progress = songCurrentMs
-                    seek_bar.progress = songCurrentMs
-                    song_current.text = songCurrentMs.getHumanReadableTimestamp()
-                    Log.v(TAG, "Song is playing! Views updated.")
-                }
-                songCurrentMs += 1000
-                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs?.minus(1000) ?: 0) {
-                    Log.v(TAG, "Song is finished!")
-                    isPlaying = false
-                    // Update player ui as played
-                    runOnUiThread {
-                        song_current?.text =
-                            roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
-                        playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
-                        playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
-                    }
-                }
-            }
-            TimeUnit.SECONDS.sleep(1)
-        }
     }
 
     private fun setupViewModelBase() {
@@ -532,7 +530,11 @@ class RoomActivity : BaseActivity(),
                             roomViewModel.playerSong.postValue(null)
                         } else {
                             roomViewModel.songList.postValue(songList)
-                            roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
+                            roomViewModel.playerSong.postValue(
+                                roomViewModel.getCurrentSong(
+                                    songList
+                                )
+                            )
                             showBadgeAt(0)
                         }
                     }
@@ -570,7 +572,9 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_USER_LIST_RECEIVE -> {
                     val userListFromIntent =
-                        intent.getParcelableArrayListExtra<RoomUserModel>(ACTION_USER_LIST_RECEIVE)
+                        intent.getParcelableArrayListExtra<RoomUserModel>(
+                            ACTION_USER_LIST_RECEIVE
+                        )
                     if (userListFromIntent != null && roomViewModel.roomUserModelList.value?.size != userListFromIntent.size) {
                         showBadgeAt(1)
                     }
@@ -736,15 +740,16 @@ class RoomActivity : BaseActivity(),
             deviceDialog.dismiss()
         }
 
-        Api.client.saveUsersActiveDevice(userDevice).withCallback(object : Callback<UserDevice> {
-            override fun onSuccess(obj: UserDevice) {
-                viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
-            }
+        Api.client.saveUsersActiveDevice(userDevice)
+            .withCallback(object : Callback<UserDevice> {
+                override fun onSuccess(obj: UserDevice) {
+                    viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
+                }
 
-            override fun onError(msg: String) {
-                viewPager.showSnackBarError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    viewPager.showSnackBarError(msg)
+                }
+            })
     }
 
     fun closeKeyboard() {

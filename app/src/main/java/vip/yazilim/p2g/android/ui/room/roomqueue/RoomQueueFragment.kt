@@ -27,7 +27,6 @@ import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.enums.Role
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -122,15 +121,6 @@ class RoomQueueFragment :
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
-        var hasNext = false
-
-        songList.forEach { song ->
-            if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
-                hasNext = true
-            }
-        }
-
-        roomActivity.skipFlag = hasNext
         adapter.update(songList)
     }
 
