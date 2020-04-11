@@ -95,9 +95,6 @@ class RoomActivity : BaseActivity(),
     private var clearRoomQueueMenuItem: MenuItem? = null
     private var durationHandler: Handler = Handler()
 
-    @Volatile
-    lateinit var playerSong: Song
-
     private lateinit var mInterstitialAd: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -296,8 +293,6 @@ class RoomActivity : BaseActivity(),
 
         if (song != null) {
             roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
-
-            playerSong = song
             roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
 
             Log.d(TAG, "Is ${song.songName} playing? = ${roomViewModel.isPlaying.value}")
@@ -532,9 +527,7 @@ class RoomActivity : BaseActivity(),
                         } else {
                             roomViewModel.songList.postValue(songList)
                             roomViewModel.playerSong.postValue(
-                                roomViewModel.getCurrentSong(
-                                    songList
-                                )
+                                roomViewModel.getCurrentSong(songList)
                             )
                             showBadgeAt(0)
                         }

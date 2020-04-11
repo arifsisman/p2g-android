@@ -23,6 +23,7 @@ class RoomViewModel : ViewModelBase() {
 
     val songList = MutableLiveData<MutableList<Song>>()
     val playerSong = MutableLiveData<Song>()
+
     val roomUserModelList = MutableLiveData<MutableList<RoomUserModel>>()
     val roomUserModel = MutableLiveData<RoomUserModel>()
     val roomUserRole = MutableLiveData<String>()
