@@ -41,6 +41,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONNECTED
@@ -101,9 +102,6 @@ class RoomActivity : BaseActivity(),
     private var isSeeking = false
 
     @Volatile
-    private var songCurrentMs = 0
-
-    @Volatile
     lateinit var playerSong: Song
 
     private lateinit var mInterstitialAd: InterstitialAd
@@ -138,27 +136,13 @@ class RoomActivity : BaseActivity(),
         override fun run() {
 
             if (isPlaying && !isSeeking) {
-                runOnUiThread {
-                    seek_bar_exp.progress = songCurrentMs
-                    seek_bar.progress = songCurrentMs
-                    song_current.text = songCurrentMs.getHumanReadableTimestamp()
-                    Log.v(TAG, "Song is playing! Views updated.")
-                }
-                songCurrentMs += 500
-                if (songCurrentMs >= roomViewModel.playerSong.value?.durationMs?.minus(500) ?: 0) {
-                    Log.v(TAG, "Song is finished!")
-                    isPlaying = false
-                    // Update player ui as played
-                    runOnUiThread {
-                        song_current?.text =
-                            roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
-                        playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
-                        playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
-                    }
+                val currentMs = roomViewModel.songCurrentMs.value
+                if (currentMs != null) {
+                    roomViewModel.songCurrentMs.postValue(currentMs + PLAYER_UPDATE_MS)
                 }
             }
 
-            durationHandler.postDelayed(this, 500)
+            durationHandler.postDelayed(this, PLAYER_UPDATE_MS.toLong())
         }
     }
 
@@ -272,6 +256,7 @@ class RoomActivity : BaseActivity(),
     private fun setupViewModel() {
         roomViewModel.playerSong.observe(this, renderPlayerSong)
         roomViewModel.roomUserModel.observe(this, renderRoomUserModel)
+        roomViewModel.songCurrentMs.observe(this, renderSongCurrentMs)
     }
 
     private fun setupSlidingUpPanel() {
@@ -333,10 +318,10 @@ class RoomActivity : BaseActivity(),
             isPlaying = song.songStatus == SongStatus.PLAYING.songStatus
 
             playerSong = song
-            songCurrentMs = RoomViewModel.getCurrentSongMs(song)
+            roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
 
             Log.d(TAG, "Is ${song.songName} playing? = $isPlaying")
-            Log.d(TAG, "CURRENT MS $songCurrentMs")
+            Log.d(TAG, "CURRENT MS ${roomViewModel.songCurrentMs.value}")
         } else {
             isPlaying = false
             Log.d(TAG, "Not playing any song!")
@@ -349,6 +334,25 @@ class RoomActivity : BaseActivity(),
         }
     }
 
+    private val renderSongCurrentMs = Observer<Int> { ms ->
+        runOnUiThread {
+            seek_bar_exp.progress = ms
+            seek_bar.progress = ms
+            song_current.text = ms.getHumanReadableTimestamp()
+            Log.v(TAG, "Song is playing! Views updated.")
+        }
+        if (ms >= roomViewModel.playerSong.value?.durationMs?.minus(PLAYER_UPDATE_MS) ?: 0) {
+            Log.v(TAG, "Song is finished!")
+            isPlaying = false
+            // Update player ui as played
+            runOnUiThread {
+                song_current?.text =
+                    roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
+                playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
+                playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
+            }
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu_room, menu)
