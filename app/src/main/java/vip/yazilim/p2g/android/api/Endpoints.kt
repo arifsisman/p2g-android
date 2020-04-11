@@ -178,6 +178,8 @@ interface Endpoints {
     @GET("/api/spotify/search/{query}")
     fun searchSpotify(@Path("query") query: String): Call<Response<MutableList<SearchModel>>>
 
+    @GET("/api/spotify/search/recommendations")
+    fun getRecommendations(): Call<Response<MutableList<SearchModel>>>
 
     // Spotify Device API
     @GET("/api/spotify/user/device")

@@ -144,7 +144,7 @@ class RoomQueueFragment :
         val queryEditText = searchDialogView.dialogQuery
 
         // For request focus and open keyboard
-        queryEditText.requestFocus()
+//        queryEditText.requestFocus()
 
         // Adapter start and update with requested search model
         val searchRecyclerView: RecyclerView =
@@ -209,6 +209,15 @@ class RoomQueueFragment :
             override fun afterTextChanged(s: Editable?) = Unit
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
                 Unit
+        })
+
+        Api.client.getRecommendations().withCallback(object : Callback<MutableList<SearchModel>> {
+            override fun onSuccess(obj: MutableList<SearchModel>) {
+                searchAdapter.update(obj)
+            }
+
+            override fun onError(msg: String) {
+            }
         })
 
     }
@@ -327,6 +336,7 @@ class RoomQueueFragment :
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {

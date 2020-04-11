@@ -289,6 +289,7 @@ class RoomUsersFragment :
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {
