@@ -211,10 +211,6 @@ class RoomUsersFragment :
             })
     }
 
-    override fun onItemClicked(view: SwipeLayout) {
-        view.toggle()
-    }
-
     override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
         val mDialogView = View.inflate(context, R.layout.dialog_change_role, null)
@@ -289,7 +285,6 @@ class RoomUsersFragment :
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
-        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {

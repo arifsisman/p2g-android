@@ -36,7 +36,7 @@ class RoomQueueAdapter(
         private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
 
         fun bindView(song: Song) {
-            itemView.row_song.close(false)
+            swipeLayout.close(false)
 
             itemView.song_name.text = song.songName
             itemView.song_artists.text = RoomHelper.getArtistsPlaceholder(song.artistNames, "")
@@ -66,39 +66,27 @@ class RoomQueueAdapter(
                     itemView.song_vote.setTextColor(Color.parseColor(WHITE))
                 }
             }
-
-            itemView.row_song.showMode = SwipeLayout.ShowMode.LayDown
-            itemView.row_song.isRightSwipeEnabled = false
-            itemView.row_song.addDrag(SwipeLayout.DragEdge.Left, itemView.song_event_holder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_song) }
             itemView.swipePlayButton.setOnClickListener {
-                clickListener.onPlayClicked(
-                    itemView.row_song,
-                    song
-                )
+                clickListener.onPlayClicked(swipeLayout, song)
             }
             itemView.swipeUpvoteButton.setOnClickListener {
-                clickListener.onUpvoteClicked(
-                    itemView.row_song,
-                    song
-                )
+                clickListener.onUpvoteClicked(swipeLayout, song)
             }
             itemView.swipeDownvoteButton.setOnClickListener {
-                clickListener.onDownvoteClicked(
-                    itemView.row_song,
-                    song
-                )
+                clickListener.onDownvoteClicked(swipeLayout, song)
             }
             itemView.swipeDeleteButton.setOnClickListener {
-                clickListener.onDeleteClicked(
-                    itemView.row_song,
-                    song
-                )
+                clickListener.onDeleteClicked(swipeLayout, song)
             }
+
             swipeLayout.addSwipeListener(swipeListener)
+            swipeLayout.surfaceView.setOnClickListener { swipeLayout.open(true) }
+            swipeLayout.isClickToClose = true
+            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, itemView.song_event_holder)
         }
 
         fun bindItemManager(position: Int) {
@@ -107,7 +95,6 @@ class RoomQueueAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: SwipeLayout)
         fun onPlayClicked(view: SwipeLayout, song: Song)
         fun onUpvoteClicked(view: SwipeLayout, song: Song)
         fun onDownvoteClicked(view: SwipeLayout, song: Song)

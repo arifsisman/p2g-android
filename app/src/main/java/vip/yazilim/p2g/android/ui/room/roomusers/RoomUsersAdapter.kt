@@ -10,6 +10,7 @@ import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import kotlinx.android.synthetic.main.item_room_user_model.view.*
+import kotlinx.android.synthetic.main.item_song.view.*
 import kotlinx.android.synthetic.main.layout_row_user_events.view.*
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
@@ -70,13 +71,9 @@ class RoomUsersAdapter(
             } else {
                 itemView.user_image.setImageResource(R.drawable.ic_profile_image)
             }
-
-            itemView.row_user_model.showMode = SwipeLayout.ShowMode.LayDown
-            itemView.row_user_model.addDrag(SwipeLayout.DragEdge.Right, itemView.user_event_holder)
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_user_model) }
             itemView.swipeChangeRoleButton.setOnClickListener {
                 clickListener.onChangeRoleClicked(
                     itemView.row_user_model,
@@ -90,6 +87,10 @@ class RoomUsersAdapter(
                 )
             }
             swipeLayout.addSwipeListener(swipeListener)
+            swipeLayout.surfaceView.setOnClickListener { swipeLayout.open(true) }
+            swipeLayout.isClickToClose = true
+            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, itemView.song_event_holder)
         }
 
         fun bindItemManager(position: Int) {
@@ -98,7 +99,6 @@ class RoomUsersAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: SwipeLayout)
         fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
     }

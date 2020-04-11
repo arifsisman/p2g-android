@@ -225,15 +225,6 @@ class RoomQueueFragment :
             })
     }
 
-    override fun onItemClicked(view: SwipeLayout) {
-        val openStatus = view.openStatus
-        if (openStatus == SwipeLayout.Status.Open) {
-            view.close()
-        } else if (openStatus == SwipeLayout.Status.Close) {
-            view.open(SwipeLayout.DragEdge.Left)
-        }
-    }
-
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
@@ -326,7 +317,6 @@ class RoomQueueFragment :
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
-        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {
