@@ -205,7 +205,6 @@ class RoomActivity : BaseActivity(),
         })
 
         tabLayout.setupWithViewPager(viewPager)
-        tabLayout.bringToFront()
 
         tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_queue_music_white_24dp)
         tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_people_white_24dp)
