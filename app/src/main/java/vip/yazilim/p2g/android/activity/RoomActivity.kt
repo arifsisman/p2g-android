@@ -593,12 +593,12 @@ class RoomActivity : BaseActivity(),
             return if (roomUser.role == Role.ROOM_USER.role) {
                 fab.hide()
                 playPause_button_mini.visibility = View.GONE
-                playerController.visibility = View.GONE
+                player_controller_buttons.visibility = View.GONE
                 clearRoomQueueMenuItem?.isVisible = false
                 false
             } else {
                 fab.show()
-                playerController.visibility = View.VISIBLE
+                player_controller_buttons.visibility = View.VISIBLE
                 playPause_button_mini.visibility = View.VISIBLE
                 clearRoomQueueMenuItem?.isVisible = true
                 true

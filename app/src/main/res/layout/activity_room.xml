@@ -22,8 +22,8 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            app:tabRippleColor="@null"
+            android:layout_height="35dp"
+            app:tabRippleColor="@android:color/transparent"
             android:elevation="4dp"
             app:tabSelectedTextColor="@color/colorSelectedTab"
             app:tabTextColor="@color/colorSecondaryTab" />
