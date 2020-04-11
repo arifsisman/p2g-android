@@ -5,7 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,10 +15,15 @@ import com.daimajia.swipe.SwipeLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_room_invite.view.*
 import kotlinx.android.synthetic.main.fragment_room_users.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.entity.RoomUser
@@ -27,10 +31,10 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboardSoft
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
-import vip.yazilim.p2g.android.util.refrofit.Singleton
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author mustafaarifsisman - 07.03.2020
@@ -41,7 +45,10 @@ class RoomUsersFragment :
     RoomUsersAdapter.OnItemClickListener,
     RoomInviteAdapter.OnItemClickListener,
     ChangeRoleAdapter.OnItemClickListener,
-    SwipeLayout.SwipeListener {
+    SwipeLayout.SwipeListener,
+    CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomUsersAdapter
@@ -93,50 +100,33 @@ class RoomUsersFragment :
         adapter.update(roomUserModels)
 
         roomUserModels.forEach {
-            if (it.user?.id == roomViewModel.roomUserModel.value?.user?.id) {
+            if (it.user.id == roomViewModel.roomUserModel.value?.user?.id) {
                 roomViewModel.roomUserModel.postValue(it)
             }
         }
     }
 
-    private fun refreshUsersEvent() = request(
-        roomActivity.room?.id?.let { Singleton.apiClient().getRoomUserModels(it) },
-        object : Callback<MutableList<RoomUserModel>> {
-            override fun onError(msg: String) {
-                roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
-                swipeRefreshContainer.isRefreshing = false
-            }
+    private fun refreshUsersEvent() =
+        Api.client.getRoomUserModels(roomActivity.room.id).withCallback(
+            object : Callback<MutableList<RoomUserModel>> {
+                override fun onError(msg: String) {
+                    roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
+                    swipeRefreshContainer.isRefreshing = false
+                }
 
-            override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                roomViewModel.roomUserModelList.postValue(obj)
-                swipeRefreshContainer.isRefreshing = false
-            }
-        })
+                override fun onSuccess(obj: MutableList<RoomUserModel>) {
+                    roomViewModel.roomUserModelList.postValue(obj)
+                    swipeRefreshContainer.isRefreshing = false
+                }
+            })
+
 
     private fun showInviteDialog() {
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
 
         val mBuilder = MaterialAlertDialogBuilder(context)
             .setView(inviteDialogView)
-        val mAlertDialog = mBuilder.show()
-
-        val queryEditText = inviteDialogView.dialogQuery
-        val searchButton = inviteDialogView.dialog_search_button
-        val cancelButton = inviteDialogView.dialog_close_button
-
-        // For disable create button if name is empty
-        queryEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                searchButton.isEnabled = s.length > 2
-            }
-        })
-
-        cancelButton.setOnClickListener {
-            mAlertDialog.cancel()
-            queryEditText.clearFocus()
-        }
+        mBuilder.show()
 
         val inviteRecyclerView: RecyclerView =
             inviteDialogView.findViewById(R.id.inviteRecyclerView)
@@ -156,33 +146,61 @@ class RoomUsersFragment :
             (inviteRecyclerView.layoutManager as LinearLayoutManager).orientation
         ) {})
 
-        searchButton.setOnClickListener {
-            val query = queryEditText.text.toString()
+        val queryEditText = inviteDialogView.dialogQuery
 
-            request(
-                Singleton.apiClient().searchUser(query),
-                object : Callback<MutableList<User>> {
-                    override fun onError(msg: String) {
-                        inviteRecyclerView.showSnackBarError(msg)
-                    }
+        inviteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!inviteRecyclerView.hasFocus()) {
+                    inviteRecyclerView.requestFocus()
+                }
+            }
+        })
 
-                    override fun onSuccess(obj: MutableList<User>) {
-                        context?.closeKeyboard()
-                        inviteAdapter.update(obj)
-
-                        // Search text query
-                        val searchText: TextView = inviteDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder =
-                            "${resources.getString(R.string.info_search_invite)} '${query}'"
-                        searchText.text = searchTextPlaceholder
-                        searchText.visibility = View.VISIBLE
-                    }
-                })
+        queryEditText.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                context?.closeKeyboardSoft(queryEditText.windowToken)
+            }
         }
 
+        queryEditText.addTextChangedListener(object : TextWatcher {
+            private var searchFor = ""
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchText = s.toString().trim()
+                if (searchText == searchFor)
+                    return
+
+                searchFor = searchText
+
+                launch {
+                    delay(500)  //debounce timeOut
+                    if (searchText != searchFor)
+                        return@launch
+
+                    if (!s.isNullOrEmpty() && s.length > 2) {
+                        inviteAdapter.clear()
+                        Api.client.searchUser(s.toString()).withCallback(
+                            object : Callback<MutableList<User>> {
+                                override fun onError(msg: String) {
+                                    inviteRecyclerView.showSnackBarError(msg)
+                                }
+
+                                override fun onSuccess(obj: MutableList<User>) {
+                                    inviteAdapter.update(obj)
+                                }
+                            })
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+        })
+
         // Load friends
-        request(
-            Singleton.apiClient().getFriends(),
+        Api.client.getFriends().withCallback(
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
                 }
@@ -191,7 +209,10 @@ class RoomUsersFragment :
                     inviteAdapter.update(obj)
                 }
             })
+    }
 
+    override fun onItemClicked(view: SwipeLayout) {
+        view.toggle()
     }
 
     override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
@@ -221,11 +242,10 @@ class RoomUsersFragment :
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
-        request(
-            roomUserModel.roomUser?.userId?.let { Singleton.apiClient().addFriend(it) },
+        Api.client.addFriend(roomUserModel.roomUser.userId).withCallback(
             object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
-                    roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
+                    roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user.name}")
                 }
 
                 override fun onError(msg: String) {
@@ -235,21 +255,19 @@ class RoomUsersFragment :
     }
 
     override fun onItemClicked(view: View, user: User) {
-        val roomId = (activity as RoomActivity).room?.id
+        val roomId = (activity as RoomActivity).room.id
         val userId = user.id
 
-        if (roomId != null && userId != null) {
-            request(Singleton.apiClient().inviteUser(roomId, userId),
-                object : Callback<RoomInvite> {
-                    override fun onSuccess(obj: RoomInvite) {
-                        inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
-                    }
+        Api.client.inviteUser(roomId, userId).withCallback(
+            object : Callback<RoomInvite> {
+                override fun onSuccess(obj: RoomInvite) {
+                    inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
+                }
 
-                    override fun onError(msg: String) {
-                        inviteDialogView.showSnackBarError(msg)
-                    }
-                })
-        }
+                override fun onError(msg: String) {
+                    inviteDialogView.showSnackBarError(msg)
+                }
+            })
     }
 
     override fun onOpen(layout: SwipeLayout?) {
@@ -259,7 +277,7 @@ class RoomUsersFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        val currentRole = roomViewModel.roomUserRole.value
         if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
             layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.VISIBLE
         } else {
@@ -271,6 +289,7 @@ class RoomUsersFragment :
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {
@@ -279,14 +298,11 @@ class RoomUsersFragment :
     override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
         changeRoleDialogView?.dismiss()
 
-        request(
-            roomUserModel.roomUser?.id?.let {
-                Singleton.apiClient().changeRoomUserRole(it, role.role)
-            },
+        Api.client.changeRoomUserRole(roomUserModel.roomUser.id, role.role).withCallback(
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
                     roomViewModel.onMessageInfo.postValue(
-                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                        "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
                     )
                 }
 

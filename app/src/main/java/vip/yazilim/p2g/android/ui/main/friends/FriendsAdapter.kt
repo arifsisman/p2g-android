@@ -11,6 +11,7 @@ import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -60,16 +61,16 @@ class FriendsAdapter(
 
         override fun bindView(item: FriendRequestModel) {
             bindEvent(item, requestClickListener)
-            val user = item.friendRequestUserModel?.user
+            val user = item.friendRequestUserModel.user
 
             val inviteDatePlaceholder =
-                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest?.requestDate?.toZonedDateTime()
-                    ?.getFormattedCompact()}"
+                "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest.requestDate.toZonedDateTime()
+                    .getFormattedCompact()}"
 
-            userName.text = user?.name
+            userName.text = user.name
             inviteDate.text = inviteDatePlaceholder
 
-            if (user?.imageUrl != null) {
+            if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
@@ -78,7 +79,7 @@ class FriendsAdapter(
                 profilePhoto.setImageResource(R.drawable.ic_profile_image)
             }
 
-            when (user?.onlineStatus) {
+            when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
                     onlineStatus.setImageResource(android.R.drawable.presence_online)
                     onlineStatus.visibility = View.VISIBLE
@@ -109,18 +110,24 @@ class FriendsAdapter(
         private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
             deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
-            joinButton.setOnClickListener { clickListener.onJoinClicked(friendModel.userModel?.room) }
+            joinButton.setOnClickListener {
+                friendModel.userModel.room?.let { room ->
+                    clickListener.onJoinClicked(
+                        room
+                    )
+                }
+            }
         }
 
         override fun bindView(item: FriendModel) {
             bindEvent(item, friendClickListener)
-            val user = item.userModel?.user
-            val room = item.userModel?.room
+            val user = item.userModel.user
+            val room = item.userModel.room
             val song = item.song
 
-            userName.text = user?.name
+            userName.text = user.name
 
-            if (user?.imageUrl != null) {
+            if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
@@ -129,7 +136,7 @@ class FriendsAdapter(
                 profilePhoto.setImageResource(R.drawable.ic_profile_image)
             }
 
-            when (user?.onlineStatus) {
+            when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
                     onlineStatus.setImageResource(android.R.drawable.presence_online)
                     onlineStatus.visibility = View.VISIBLE
@@ -165,9 +172,9 @@ class FriendsAdapter(
         fun onAcceptClicked(friendRequestModel: FriendRequestModel)
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
-        fun onJoinClicked(room: Room?)
-        fun onDeleteClicked(friendModel: FriendModel?)
-        fun onRowClicked(userModel: UserModel?)
+        fun onJoinClicked(room: Room)
+        fun onDeleteClicked(friendModel: FriendModel)
+        fun onRowClicked(userModel: UserModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderBase<*> {
@@ -220,13 +227,13 @@ class FriendsAdapter(
                     adapterDataListFull.forEach {
                         when (it) {
                             is FriendRequestModel -> {
-                                if (it.friendRequestUserModel?.user?.name?.contains(filter, true)!!
+                                if (it.friendRequestUserModel.user.name.contains(filter, true)
                                 ) {
                                     filteredList.add(it)
                                 }
                             }
                             is FriendModel -> {
-                                if (it.userModel?.user?.name?.contains(filter, true)!!
+                                if (it.userModel.user.name.contains(filter, true)
                                 ) {
                                     filteredList.add(it)
                                 }
@@ -252,7 +259,7 @@ class FriendsAdapter(
         adapterDataList.add(data)
         adapterDataList.sortBy { it is FriendModel }
         if (data is FriendModel) {
-            adapterDataList.sortBy { data.userModel?.user?.onlineStatus }
+            adapterDataList.sortBy { data.userModel.user.onlineStatus }
         }
         notifyItemInserted(adapterDataList.size)
     }
@@ -260,6 +267,12 @@ class FriendsAdapter(
     fun addAll(data: MutableList<Any>) {
         adapterDataList.addAll(data)
         adapterDataList.sortBy { it is FriendModel }
+        notifyDataSetChanged()
+    }
+
+    fun update(data: UserFriendModel) {
+        adapterDataList.addAll(data.friendRequestModelList)
+        adapterDataList.addAll(data.friendModelList)
         notifyDataSetChanged()
     }
 

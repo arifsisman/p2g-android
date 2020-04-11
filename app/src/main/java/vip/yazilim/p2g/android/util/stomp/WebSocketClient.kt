@@ -2,9 +2,8 @@ package vip.yazilim.p2g.android.util.stomp
 
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.constant.ApiConstants
-import vip.yazilim.p2g.android.constant.TokenConstants
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 
 /**
  * @author mustafaarifsisman - 25.01.2020
@@ -13,8 +12,7 @@ import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 class WebSocketClient {
     companion object {
         fun getRoomWebSocketClient(roomId: Long): StompClient {
-            val accessToken =
-                SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
+            val accessToken = Play2GetherApplication.accessToken
             val header: MutableMap<String, String> = mutableMapOf()
             header["Authorization"] = "Bearer $accessToken"
 
@@ -26,8 +24,7 @@ class WebSocketClient {
         }
 
         fun getUserWebSocketClient(userId: String): StompClient {
-            val accessToken =
-                SharedPrefSingleton.read(TokenConstants.ACCESS_TOKEN, TokenConstants.UNDEFINED)
+            val accessToken = Play2GetherApplication.accessToken
             val header: MutableMap<String, String> = mutableMapOf()
             header["Authorization"] = "Bearer $accessToken"
 

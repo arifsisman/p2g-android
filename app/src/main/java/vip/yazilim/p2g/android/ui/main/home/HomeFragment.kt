@@ -17,22 +17,22 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_butt
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 04.02.2020
@@ -114,22 +114,22 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
     }
 
-    private fun joinRoomEvent(roomModel: RoomModel) = request(
-        roomModel.room?.id?.let { Singleton.apiClient().joinRoom(it, UNDEFINED) },
-        object : Callback<RoomUser> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
+    private fun joinRoomEvent(roomModel: RoomModel) =
+        Api.client.joinRoom(roomModel.room.id, UNDEFINED).withCallback(
+            object : Callback<RoomUser> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-            override fun onSuccess(obj: RoomUser) {
-                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+                override fun onSuccess(obj: RoomUser) {
+                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
-                val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModel", roomModel)
-                intent.putExtra("roomUser", obj)
-                startActivity(intent)
-            }
-        })
+                    val intent = Intent(activity, RoomActivity::class.java)
+                    intent.putExtra("roomModel", roomModel)
+                    intent.putExtra("roomUser", obj)
+                    startActivity(intent)
+                }
+            })
 
 
     private fun joinPrivateRoomEvent(roomModel: RoomModel) {
@@ -163,10 +163,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click join
         joinButton.setOnClickListener {
-            request(
-                room?.id?.let { id ->
-                    Singleton.apiClient().joinRoom(id, roomPasswordEditText.text.toString())
-                },
+            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).withCallback(
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)
@@ -213,7 +210,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             }
         })
 
-        val roomNamePlaceholder = SharedPrefSingleton.read("userName", "UNKNOWN") + "'s Room"
+        val roomNamePlaceholder = Play2GetherApplication.userName + "'s Room"
         roomNameEditText.setText(roomNamePlaceholder)
 
         // For request focus and open keyboard
@@ -221,11 +218,10 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
 
         // Click create
         createButton.setOnClickListener {
-            request(
-                Singleton.apiClient().createRoom(
-                    roomNameEditText.text.toString(),
-                    roomPasswordEditText.text.toString()
-                ),
+            Api.client.createRoom(
+                roomNameEditText.text.toString(),
+                roomPasswordEditText.text.toString()
+            ).withCallback(
                 object : Callback<Room> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)
@@ -253,8 +249,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() = request(
-        Singleton.apiClient().getRoomModels(),
+    private fun refreshRoomsEvent() = Api.client.getRoomModels().withCallback(
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))

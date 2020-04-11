@@ -14,7 +14,6 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.ColorCodes.NEGATIVE_RED
 import vip.yazilim.p2g.android.constant.ColorCodes.SPOTIFY_GREEN
 import vip.yazilim.p2g.android.constant.ColorCodes.WHITE
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -69,12 +68,12 @@ class RoomQueueAdapter(
             }
 
             itemView.row_song.showMode = SwipeLayout.ShowMode.LayDown
-            itemView.row_song.isClickToClose = true
             itemView.row_song.isRightSwipeEnabled = false
             itemView.row_song.addDrag(SwipeLayout.DragEdge.Left, itemView.song_event_holder)
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
+            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_song) }
             itemView.swipePlayButton.setOnClickListener {
                 clickListener.onPlayClicked(
                     itemView.row_song,
@@ -108,6 +107,7 @@ class RoomQueueAdapter(
     }
 
     interface OnItemClickListener {
+        fun onItemClicked(view: SwipeLayout)
         fun onPlayClicked(view: SwipeLayout, song: Song)
         fun onUpvoteClicked(view: SwipeLayout, song: Song)
         fun onDownvoteClicked(view: SwipeLayout, song: Song)
@@ -149,14 +149,6 @@ class RoomQueueAdapter(
         notifyDataSetChanged()
     }
 
-    fun removeAt(position: Int) {
-        val size = songs.size
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, size)
-
-        songs.removeAt(position)
-    }
-
     fun remove(song: Song) {
         val position = songs.indexOf(song)
         val size = songs.size
@@ -164,23 +156,6 @@ class RoomQueueAdapter(
         notifyItemRangeChanged(position, size)
 
         songs.remove(song)
-    }
-
-    private fun MutableList<Song>.sortByActive(): MutableList<Song> {
-        var index: Int? = null
-        var activeSong: Song? = null
-        this.forEach {
-            if (it.songStatus == SongStatus.PLAYING.songStatus || it.songStatus == SongStatus.PAUSED.songStatus) {
-                activeSong = it.clone() as Song
-                index = this.indexOf(it)
-                return@forEach
-            }
-        }
-
-        index?.let { this.removeAt(it) }
-        activeSong?.let { this.add(0, it) }
-
-        return this
     }
 
 }

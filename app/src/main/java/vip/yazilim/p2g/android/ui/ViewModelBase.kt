@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.ui
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 /**
@@ -9,9 +8,9 @@ import androidx.lifecycle.ViewModel
  */
 abstract class ViewModelBase : ViewModel() {
 
-    val onViewLoading = MutableLiveData<Boolean>()
-    val onEmptyList = MutableLiveData<Boolean>()
-    val onMessageError = MutableLiveData<String>()
-    val onMessageInfo = MutableLiveData<String>()
+    val onViewLoading = SingleLiveEvent<Boolean>()
+    val onEmptyList = SingleLiveEvent<Boolean>()
+    val onMessageError = SingleLiveEvent<String>()
+    val onMessageInfo = SingleLiveEvent<String>()
 
 }

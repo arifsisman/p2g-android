@@ -48,7 +48,7 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
     override fun setupUI() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = ProfileAdapter(UserModel(), 0)
+        adapter = ProfileAdapter(null, 0)
         recyclerView.adapter = adapter
     }
 

@@ -3,12 +3,10 @@ package vip.yazilim.p2g.android.ui.room.roomqueue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
@@ -24,14 +22,11 @@ class SearchAdapter(
     RecyclerView.Adapter<SearchAdapter.MViewHolder>() {
     private lateinit var view: View
 
-    var selectedSearchModels = mutableListOf<SearchModel>()
-
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val searchModelName: TextView = itemView.findViewById(R.id.search_model_name)
         private val searchModelTypeAndArtists: TextView =
             itemView.findViewById(R.id.search_model_type_and_artists)
         private val searchModelImage: ImageView = itemView.findViewById(R.id.search_model_image)
-        private val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
 
         fun bindEvent(searchModel: SearchModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
@@ -54,9 +49,6 @@ class SearchAdapter(
                     .load(searchModel.imageUrl)
                     .into(searchModelImage)
             }
-
-            val isChecked = selectedSearchModels.contains(searchModel)
-            checkBox.isChecked = isChecked
         }
     }
 
@@ -80,42 +72,13 @@ class SearchAdapter(
         holder.bindEvent(roomModel, itemClickListener)
     }
 
-    fun update(data: MutableList<SearchModel>) {
-        searchModels = data
+    fun clear() {
+        searchModels.clear()
         notifyDataSetChanged()
     }
 
-    fun select(data: SearchModel): Boolean? {
-        return when {
-            checkConstraints() -> {
-                if (selectedSearchModels.contains(data)) {
-                    selectedSearchModels.remove(data)
-                } else {
-                    selectedSearchModels.add(data)
-                }
-                notifyDataSetChanged()
-
-                selectedSearchModels.isNotEmpty()
-            }
-            selectedSearchModels.contains(data) -> {
-                selectedSearchModels.remove(data)
-                notifyDataSetChanged()
-
-                selectedSearchModels.isNotEmpty()
-            }
-            else -> {
-                null
-            }
-        }
-    }
-
-    private fun checkConstraints(): Boolean {
-        selectedSearchModels.forEach {
-            if ((it.type == SearchType.ALBUM || it.type == SearchType.PLAYLIST)) {
-                return false
-            }
-        }
-
-        return selectedSearchModels.size < 10
+    fun update(data: MutableList<SearchModel>) {
+        searchModels = data
+        notifyDataSetChanged()
     }
 }

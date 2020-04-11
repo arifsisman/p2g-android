@@ -1,11 +1,11 @@
 package vip.yazilim.p2g.android.ui.user
 
 import androidx.lifecycle.MutableLiveData
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 11.02.2020
@@ -15,8 +15,7 @@ class UserViewModel : ViewModelBase() {
     val friendCounts = MutableLiveData<Int>()
     val roomModel = MutableLiveData<RoomModel>()
 
-    fun loadFriendsCount(userId: String) = request(
-        Singleton.apiClient().getFriendsCounts(userId),
+    fun loadFriendsCount(userId: String) = Api.client.getFriendsCounts(userId).withCallback(
         object : Callback<Int> {
             override fun onError(msg: String) {
             }
@@ -26,8 +25,7 @@ class UserViewModel : ViewModelBase() {
             }
         })
 
-    fun loadRoomModel(roomId: Long) = request(
-        Singleton.apiClient().getRoomModel(roomId),
+    fun loadRoomModel(roomId: Long) = Api.client.getRoomModel(roomId).withCallback(
         object : Callback<RoomModel> {
             override fun onError(msg: String) {
             }

@@ -1,38 +1,34 @@
 package vip.yazilim.p2g.android.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.ads.MobileAds
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.spotify.sdk.android.authentication.AuthenticationClient
-import com.spotify.sdk.android.authentication.AuthenticationRequest
-import com.spotify.sdk.android.authentication.AuthenticationResponse
+import com.spotify.sdk.android.auth.AuthorizationClient
 import okhttp3.Call
+import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
-import vip.yazilim.p2g.android.api.generic.spotifyRequest
-import vip.yazilim.p2g.android.constant.SharedPreferencesConstants
 import vip.yazilim.p2g.android.constant.SpotifyConstants
-import vip.yazilim.p2g.android.constant.TokenConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.model.spotify.TokenModel
-import vip.yazilim.p2g.android.util.data.SharedPrefSingleton
+import vip.yazilim.p2g.android.util.helper.SpotifyHelper.Companion.getAccessTokenFromSpotify
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 /**
  * @author mustafaarifsisman - 21.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private var mCall: Call? = null
 
@@ -41,23 +37,36 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         MobileAds.initialize(this)
+        Play2GetherApplication.currentActivity = this
         supportActionBar?.hide()
 
         // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
-        SharedPrefSingleton.init(this, SharedPreferencesConstants.INFO)
 
-        getAuthorizationCodeFromSpotify()
+        getAccessTokenFromSpotify()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // If the authorization code has been received successfully
-        if (SpotifyConstants.AUTH_CODE_REQUEST_CODE == requestCode) {
-            val response = AuthenticationClient.getResponse(resultCode, data)
-            if (response.code != null) {
-                getTokensFromSpotify(response.code)
+        // If the access token has been received successfully
+        if (SpotifyConstants.AUTH_TOKEN_REQUEST_CODE == requestCode) {
+            val response = AuthorizationClient.getResponse(resultCode, data)
+            if (response.accessToken != null) {
+                Api.build(response.accessToken)
+                Api.client.login().withCallback(
+                    object : Callback<User> {
+                        override fun onError(msg: String) {
+                            val alert = this@LoginActivity.showErrorDialog(msg)
+                            alert?.setOnCancelListener { getAccessTokenFromSpotify() }
+                        }
+
+                        override fun onSuccess(obj: User) {
+                            Play2GetherApplication.userId = obj.id
+                            Play2GetherApplication.userName = obj.name
+                            checkIsUserInRoom(obj)
+                        }
+                    })
             } else {
                 val msg = resources.getString(R.string.err_authorization_code)
                 Log.d(TAG, msg)
@@ -66,91 +75,53 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun handleUnauthorizedEvent() {
+        //Don't handle unauthorized event
+    }
+
     override fun onDestroy() {
         cancelCall()
         super.onDestroy()
     }
 
     private fun cancelCall() {
-        if (mCall != null) {
-            mCall!!.cancel()
+        mCall?.cancel()
+    }
+
+    private fun checkIsUserInRoom(user: User) = Api.client.getRoomModelMe().withCallback(
+        object : Callback<RoomModel> {
+            //user in room
+            override fun onSuccess(obj: RoomModel) {
+                val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                roomIntent.putExtra("roomModel", obj)
+                startActivity(roomIntent)
+            }
+
+            //user not in room
+            override fun onError(msg: String) {
+                val info = resources.getString(R.string.info_logged_in)
+                this@LoginActivity.showToastLong("$info ${user.name}")
+                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                startMainIntent.putExtra("user", user)
+                startActivity(startMainIntent)
+            }
+        })
+
+    fun Activity.showErrorDialog(message: String): AlertDialog? {
+        if (!this.isFinishing) {
+            val dialogBuilder = MaterialAlertDialogBuilder(this)
+                .setMessage(message)
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.cancel()
+                }
+
+            val alert = dialogBuilder.create()
+            alert.setTitle("Error")
+            alert.show()
+
+            return alert
         }
+
+        return null
     }
-
-    // getAuthorizationCodeFromSpotify via Spotify Android SDK
-    private fun getAuthorizationCodeFromSpotify() {
-        val request: AuthenticationRequest = AuthenticationRequest
-            .Builder(
-                SpotifyConstants.CLIENT_ID,
-                AuthenticationResponse.Type.CODE,
-                SpotifyConstants.REDIRECT_URI
-            )
-            .setShowDialog(false)
-            .setScopes(SpotifyConstants.SCOPE)
-            .build()
-
-        AuthenticationClient.openLoginActivity(
-            this,
-            SpotifyConstants.AUTH_CODE_REQUEST_CODE,
-            request
-        )
-    }
-
-    // getTokensFromSpotify via Spotify Web API
-    private fun getTokensFromSpotify(code: String) =
-        spotifyRequest(Singleton.spotifyApiClient().getTokens(
-            SpotifyConstants.CLIENT_ID,
-            SpotifyConstants.CLIENT_SECRET,
-            SpotifyConstants.GRANT_TYPE_AUTHORIZATION_CODE_REQUEST,
-            code,
-            SpotifyConstants.REDIRECT_URI
-        ), object : Callback<TokenModel> {
-            override fun onError(msg: String) {
-                this@LoginActivity.showToastLong(msg)
-            }
-
-            override fun onSuccess(obj: TokenModel) {
-                SharedPrefSingleton.write(TokenConstants.ACCESS_TOKEN, obj.access_token)
-                SharedPrefSingleton.write(TokenConstants.REFRESH_TOKEN, obj.refresh_token)
-                Singleton.initApis()
-                loginToPlay2Gether(obj)
-            }
-        })
-
-    // loginToPlay2Gether via Play2Gether Web API
-    private fun loginToPlay2Gether(tokenModel: TokenModel) = request(
-        Singleton.apiClient().login(),
-        object : Callback<User> {
-            override fun onError(msg: String) {
-                val alert = this@LoginActivity.showErrorDialog(msg)
-                alert?.setOnCancelListener { getAuthorizationCodeFromSpotify() }
-            }
-
-            override fun onSuccess(obj: User) {
-                SharedPrefSingleton.write("userName", obj.name)
-                SharedPrefSingleton.write("userId", obj.id)
-                checkIsUserInRoom(obj, tokenModel)
-            }
-        })
-
-
-    private fun checkIsUserInRoom(user: User, tokenModel: TokenModel) = request(
-            Singleton.apiClient().getRoomModelMe(),
-            object : Callback<RoomModel> {
-                override fun onSuccess(obj: RoomModel) {
-                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                    roomIntent.putExtra("roomModel", obj)
-                    startActivity(roomIntent)
-                }
-
-                override fun onError(msg: String) {
-                    val info = resources.getString(R.string.info_logged_in)
-                    this@LoginActivity.showToastLong("$info ${user.name}")
-                    val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startMainIntent.putExtra("user", user)
-                    startMainIntent.putExtra("tokenModel", tokenModel)
-                    startActivity(startMainIntent)
-                }
-            })
-
 }

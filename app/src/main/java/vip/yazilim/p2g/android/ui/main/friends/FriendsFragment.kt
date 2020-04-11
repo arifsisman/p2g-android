@@ -19,20 +19,21 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
+import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 
 class FriendsFragment : FragmentBase(
@@ -54,13 +55,12 @@ class FriendsFragment : FragmentBase(
         super.onResume()
         adapter.clearDataList()
         adapter.clearDataListFull()
-        viewModel.loadFriendRequestModel()
-        viewModel.loadFriends()
+        viewModel.loadUserFriendModel()
     }
 
     override fun setupViewModel() {
         super.setupDefaultObservers(viewModel)
-        viewModel.friendRequestModel.observe(this, renderData)
+        viewModel.userFriendModel.observe(this, renderData)
     }
 
 
@@ -68,29 +68,29 @@ class FriendsFragment : FragmentBase(
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        adapter = FriendsAdapter(viewModel.friendRequestModel.value ?: mutableListOf(), this, this)
+        adapter = FriendsAdapter(mutableListOf(), this, this)
         recyclerView.adapter = adapter
 
         // SwipeRefreshLayout
         swipeRefreshContainer.setOnRefreshListener {
             adapter.clearDataList()
             adapter.clearDataListFull()
-            loadFriendRequestModel()
-            loadFriends()
+            loadUserFriendModel()
         }
 
     }
 
     // Observer
-    private val renderData = Observer<MutableList<Any>> {
-        if (it.isNullOrEmpty() && adapter.adapterDataList.isNullOrEmpty()) {
+    private val renderData = Observer<UserFriendModel> {
+        if (it.friendRequestModelList.isEmpty() && it.friendModelList.isEmpty()) {
             viewModel.onEmptyList.postValue(true)
             adapter.clearDataList()
             adapter.clearDataListFull()
         } else {
             viewModel.onEmptyList.postValue(false)
-            adapter.addAll(it)
-            adapter.adapterDataListFull.addAll(it)
+            adapter.update(it)
+            it.friendModelList.forEach { friend -> adapter.adapterDataListFull.add(friend) }
+            it.friendRequestModelList.forEach { request -> adapter.adapterDataListFull.add(request) }
         }
     }
 
@@ -113,79 +113,75 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) = request(
-        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().accept(it) },
-        object : Callback<Boolean> {
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.accept(friendRequestModel.friendRequest.id)
+            .withCallback(object : Callback<Boolean> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: Boolean) {
                 adapter.remove(friendRequestModel)
-                friendRequestModel.friendRequestUserModel?.let {
-                    adapter.add(
-                        FriendModel(
-                            it,
-                            null
-                        )
+                adapter.add(FriendModel(friendRequestModel.friendRequestUserModel, null))
+                adapter.adapterDataListFull.add(
+                    FriendModel(
+                        friendRequestModel.friendRequestUserModel,
+                        null
                     )
+                )
+            }
+        })
+
+
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.reject(friendRequestModel.friendRequest.id).withCallback(
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
                 }
-                friendRequestModel.friendRequestUserModel?.let {
-                    adapter.adapterDataListFull.add(FriendModel(it, null))
+
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
                 }
+
             }
-        })
+        )
 
 
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) = request(
-        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().reject(it) },
-        object : Callback<Boolean> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
+    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
+        Api.client.ignore(friendRequestModel.friendRequest.id).withCallback(
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-            override fun onSuccess(obj: Boolean) {
-                adapter.remove(friendRequestModel)
-            }
-        })
-
-
-    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) = request(
-        friendRequestModel.friendRequest?.id?.let { Singleton.apiClient().ignore(it) },
-        object : Callback<Boolean> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
-
-            override fun onSuccess(obj: Boolean) {
-                adapter.remove(friendRequestModel)
-            }
-        })
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
+                }
+            })
+    }
 
 
-    override fun onJoinClicked(room: Room?) {
-        if (room?.password == null) {
-            room?.let { joinRoomEvent(it) }
+    override fun onJoinClicked(room: Room) {
+        if (room.password == null) {
+            joinRoomEvent(room)
         } else {
             joinPrivateRoomEvent(room)
         }
     }
 
-    override fun onDeleteClicked(friendModel: FriendModel?) {
+    override fun onDeleteClicked(friendModel: FriendModel) {
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    request(
-                        friendModel?.userModel?.user?.id?.let {
-                            Singleton.apiClient().deleteFriend(it)
-                        },
+                    Api.client.deleteFriend(friendModel.userModel.user.id).withCallback(
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
                                 viewModel.onMessageError.postValue(msg)
                             }
 
                             override fun onSuccess(obj: Boolean) {
-                                friendModel?.let { adapter.remove(it) }
+                                adapter.remove(friendModel)
                             }
                         })
                 }
@@ -200,63 +196,43 @@ class FriendsFragment : FragmentBase(
             .show()
     }
 
-    override fun onRowClicked(userModel: UserModel?) {
+    override fun onRowClicked(userModel: UserModel) {
         val intent = Intent(activity, UserActivity::class.java)
         intent.putExtra("userModel", userModel)
         startActivity(intent)
     }
 
-    private fun loadFriendRequestModel() = request(
-        Singleton.apiClient().getFriendRequestModels(),
-        object : Callback<MutableList<FriendRequestModel>> {
+    private fun loadUserFriendModel() = Api.client.getUserFriendModel().withCallback(
+        object : Callback<UserFriendModel> {
             override fun onError(msg: String) {
                 swipeRefreshContainer.isRefreshing = false
                 viewModel.onViewLoading.postValue(false)
                 viewModel.onMessageError.postValue(msg)
             }
 
-            @Suppress("UNCHECKED_CAST")
-            override fun onSuccess(obj: MutableList<FriendRequestModel>) {
+            override fun onSuccess(obj: UserFriendModel) {
                 swipeRefreshContainer.isRefreshing = false
                 viewModel.onViewLoading.postValue(false)
-                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
+                viewModel.userFriendModel.postValue(obj)
             }
         })
 
+    private fun joinRoomEvent(room: Room) =
+        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED).withCallback(
+            object : Callback<RoomUser> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-    private fun loadFriends() = request(
-        Singleton.apiClient().getFriendModels(),
-        object : Callback<MutableList<FriendModel>> {
-            override fun onError(msg: String) {
-                swipeRefreshContainer.isRefreshing = false
-                viewModel.onViewLoading.postValue(false)
-                viewModel.onMessageError.postValue(msg)
-            }
+                override fun onSuccess(obj: RoomUser) {
+                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
-            @Suppress("UNCHECKED_CAST")
-            override fun onSuccess(obj: MutableList<FriendModel>) {
-                swipeRefreshContainer.isRefreshing = false
-                viewModel.onViewLoading.postValue(false)
-                viewModel.friendRequestModel.postValue(obj as MutableList<Any>)
-            }
-        })
-
-    private fun joinRoomEvent(room: Room) = request(
-        room.id.let { Singleton.apiClient().joinRoom(it, GeneralConstants.UNDEFINED) },
-        object : Callback<RoomUser> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
-
-            override fun onSuccess(obj: RoomUser) {
-                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-
-                val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomUser", obj)
-                intent.putExtra("room", room)
-                startActivity(intent)
-            }
-        })
+                    val intent = Intent(activity, RoomActivity::class.java)
+                    intent.putExtra("roomUser", obj)
+                    intent.putExtra("room", room)
+                    startActivity(intent)
+                }
+            })
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
@@ -289,8 +265,7 @@ class FriendsFragment : FragmentBase(
         joinButton.setOnClickListener {
             val roomPassword = roomPasswordEditText.text.toString()
 
-            request(
-                room.id.let { it1 -> Singleton.apiClient().joinRoom(it1, roomPassword) },
+            Api.client.joinRoom(room.id, roomPassword).withCallback(
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)

@@ -13,7 +13,7 @@
     sothree:umanoShadowHeight="0dp"
     tools:context=".activity.RoomActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <RelativeLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,42 +22,47 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            app:tabRippleColor="@null"
-            android:elevation="3dp"
+            android:layout_height="35dp"
+            app:tabRippleColor="@android:color/transparent"
+            android:elevation="4dp"
             app:tabSelectedTextColor="@color/colorSelectedTab"
             app:tabTextColor="@color/colorSecondaryTab" />
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewPager"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/viewPagerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/tabLayout"
-            android:overScrollMode="never"
-            android:paddingTop="40dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:layout_below="@+id/tabLayout">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
             android:layout_marginBottom="60dp"
             android:backgroundTint="@color/colorAccentBlue"
             android:src="@drawable/ic_playlist_add_white_24dp"
             android:visibility="invisible"
             app:borderWidth="0dp"
-            app:layout_anchor="@+id/viewPager"
-            app:layout_anchorGravity="end|bottom"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             app:useCompatPadding="true" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </RelativeLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/playerCoordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="3dp">
+        android:elevation="4dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playerRecyclerView"

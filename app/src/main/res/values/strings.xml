@@ -84,7 +84,7 @@
     <string name="placeholder_song_vote">0</string>
     <string name="placeholder_add_song">Add song</string>
     <string name="placeholder_search_spotify">Search</string>
-    <string name="placeholder_search_spotify_expanded">Song, Album, Playlist, Artist…</string>
+    <string name="placeholder_search_spotify_expanded">Search</string>
     <string name="placeholder_search_model_name">Search Model Name</string>
     <string name="placeholder_search_model_artists">Search Model Artists</string>
     <string name="placeholder_search_model_type">Model Type</string>
@@ -110,6 +110,7 @@
     <string name="err_authorization_code">Can not get authorization code from Spotify</string>
     <string name="err_room_websocket_reconnect">Trying to reconnect the room.</string>
     <string name="err_room_websocket_closed">Connection to the room closed, please connect the room again.</string>
+    <string name="err_network_closed">No internet connection, please check your connection.</string>
     <string name="err_room_refresh">Rooms can not refreshed</string>
     <string name="err_room_invites_refresh">Rooms Invites can not refreshed</string>
     <string name="err_room_queue_refresh">Queue can not refreshed</string>
@@ -138,5 +139,6 @@
     <string name="info_change_owner2">\'s Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)</string>
     <string name="info_friend_request_send">Friend request sent to</string>
     <string name="info_room_invite_send">invited to room.</string>
+    <string name="info_room_websocket_connect">Connected to room.</string>
 
 </resources>

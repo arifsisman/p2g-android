@@ -18,8 +18,9 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
@@ -27,7 +28,6 @@ import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.refrofit.Singleton
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -111,54 +111,52 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         })
     }
 
-    override fun onAccept(roomInviteModel: RoomInviteModel) = request(
-        roomInviteModel.roomInvite?.let { Singleton.apiClient().acceptInvite(it) },
-        object : Callback<RoomUser> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
+    override fun onAccept(roomInviteModel: RoomInviteModel) =
+        Api.client.acceptInvite(roomInviteModel.roomInvite).withCallback(
+            object : Callback<RoomUser> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-            override fun onSuccess(obj: RoomUser) {
-                Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
+                override fun onSuccess(obj: RoomUser) {
+                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
 
-                val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra("roomModel", roomInviteModel.roomModel)
-                intent.putExtra("roomUser", obj)
-                startActivity(intent)
-            }
-        })
-
-
-    override fun onReject(roomInviteModel: RoomInviteModel) = request(
-        roomInviteModel.roomInvite?.id?.let { Singleton.apiClient().rejectInvite(it) },
-        object : Callback<Boolean> {
-            override fun onError(msg: String) {
-                Log.d(TAG, msg)
-                viewModel.onMessageError.postValue(msg)
-            }
-
-            override fun onSuccess(obj: Boolean) {
-                adapter.remove(roomInviteModel)
-            }
-        })
+                    val intent = Intent(activity, RoomActivity::class.java)
+                    intent.putExtra("roomModel", roomInviteModel.roomModel)
+                    intent.putExtra("roomUser", obj)
+                    startActivity(intent)
+                }
+            })
 
 
-    override fun onRowClicked(roomInviteModel: RoomInviteModel) = request(
-        roomInviteModel.roomInvite?.inviterId?.let { Singleton.apiClient().getUserModel(it) },
-        object : Callback<UserModel> {
-            override fun onError(msg: String) {
-            }
+    override fun onReject(roomInviteModel: RoomInviteModel) =
+        Api.client.rejectInvite(roomInviteModel.roomInvite.id).withCallback(
+            object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    Log.d(TAG, msg)
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-            override fun onSuccess(obj: UserModel) {
-                val intent = Intent(activity, UserActivity::class.java)
-                intent.putExtra("userModel", obj)
-                startActivity(intent)
-            }
-        })
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(roomInviteModel)
+                }
+            })
 
 
-    private fun refreshRoomInvitesEvent() = request(
-        Singleton.apiClient().getRoomInviteModels(),
+    override fun onRowClicked(roomInviteModel: RoomInviteModel) =
+        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).withCallback(
+            object : Callback<UserModel> {
+                override fun onError(msg: String) {
+                }
+
+                override fun onSuccess(obj: UserModel) {
+                    val intent = Intent(activity, UserActivity::class.java)
+                    intent.putExtra("userModel", obj)
+                    startActivity(intent)
+                }
+            })
+
+    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().withCallback(
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)

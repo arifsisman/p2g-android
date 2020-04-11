@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,19 +16,25 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
+import kotlinx.android.synthetic.main.layout_row_song_events.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.request
 import vip.yazilim.p2g.android.constant.enums.Role
-import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboardSoft
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.refrofit.Singleton
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
+import kotlin.coroutines.CoroutineContext
 
 
 /**
@@ -42,7 +45,10 @@ class RoomQueueFragment :
     FragmentBase(R.layout.fragment_room_queue),
     SearchAdapter.OnItemClickListener,
     RoomQueueAdapter.OnItemClickListener,
-    SwipeLayout.SwipeListener {
+    SwipeLayout.SwipeListener,
+    CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
 
     private lateinit var roomActivity: RoomActivity
     private lateinit var adapter: RoomQueueAdapter
@@ -84,8 +90,8 @@ class RoomQueueFragment :
         ) {})
 
         // Search with floating action button
-        val fab: FloatingActionButton = activity?.findViewById(R.id.fab)!!
-        fab.setOnClickListener { showSearchDialog() }
+        val fab: FloatingActionButton? = activity?.findViewById(R.id.fab)
+        fab?.setOnClickListener { showSearchDialog() }
 
         swipeRefreshContainer.setOnRefreshListener {
             refreshQueueEvent()
@@ -97,8 +103,7 @@ class RoomQueueFragment :
         roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
-    private fun refreshQueueEvent() = request(
-        roomActivity.room?.id?.let { Singleton.apiClient().getRoomSongs(it) },
+    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).withCallback(
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
                 roomViewModel.onMessageError.postValue(
@@ -113,17 +118,9 @@ class RoomQueueFragment :
             }
         })
 
+
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
-        var hasNext = false
-
-        songList.forEach { song ->
-            if (song.songStatus.equals(SongStatus.NEXT.songStatus)) {
-                hasNext = true
-            }
-        }
-
-        roomActivity.skipFlag = hasNext
         adapter.update(songList)
     }
 
@@ -135,110 +132,112 @@ class RoomQueueFragment :
         mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
         val queryEditText = searchDialogView.dialogQuery
-        val searchButton = searchDialogView.dialog_search_button
-        val addButton = searchDialogView.addButton
-        val cancelButton = searchDialogView.dialog_cancel_button
 
-        // For disable create button if name is empty
-        queryEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                searchButton.isEnabled = s.isNotEmpty()
+        // For request focus and open keyboard
+//        queryEditText.requestFocus()
+
+        // Adapter start and update with requested search model
+        val searchRecyclerView: RecyclerView =
+            searchDialogView.findViewById(R.id.searchRecyclerView)
+        searchRecyclerView.layoutManager = LinearLayoutManager(activity)
+        searchRecyclerView.setHasFixedSize(true)
+
+        searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
+        searchRecyclerView.adapter = searchAdapter
+
+        searchRecyclerView.addItemDecoration(object : DividerItemDecoration(
+            searchRecyclerView.context,
+            (searchRecyclerView.layoutManager as LinearLayoutManager).orientation
+        ) {})
+
+        searchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!searchRecyclerView.hasFocus()) {
+                    searchRecyclerView.requestFocus()
+                }
             }
         })
 
-        // For request focus and open keyboard
-        queryEditText.requestFocus()
-
-        // Click cancel
-        cancelButton.setOnClickListener {
-            mAlertDialog.cancel()
-            queryEditText.clearFocus()
+        queryEditText.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                context?.closeKeyboardSoft(queryEditText.windowToken)
+            }
         }
 
-        // Click search
-        searchButton.setOnClickListener {
-            // Adapter start and update with requested search model
-            val searchRecyclerView: RecyclerView =
-                searchDialogView.findViewById(R.id.searchRecyclerView)
-            searchRecyclerView.layoutManager = LinearLayoutManager(activity)
-            searchRecyclerView.setHasFixedSize(true)
+        queryEditText.addTextChangedListener(object : TextWatcher {
+            private var searchFor = ""
 
-            searchAdapter = SearchAdapter(mutableListOf(), this@RoomQueueFragment)
-            searchRecyclerView.adapter = searchAdapter
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val searchText = s.toString().trim()
+                if (searchText == searchFor)
+                    return
 
-            searchRecyclerView.addItemDecoration(object : DividerItemDecoration(
-                searchRecyclerView.context,
-                (searchRecyclerView.layoutManager as LinearLayoutManager).orientation
-            ) {})
+                searchFor = searchText
 
-            val query = queryEditText.text.toString()
+                launch {
+                    delay(500)  //debounce timeOut
+                    if (searchText != searchFor)
+                        return@launch
 
-            request(
-                Singleton.apiClient().searchSpotify(query),
-                object : Callback<MutableList<SearchModel>> {
-                    override fun onError(msg: String) {
-                        searchDialogView.showSnackBarError(msg)
+                    if (!s.isNullOrEmpty()) {
+                        searchAdapter.clear()
+                        Api.client.searchSpotify(s.toString()).withCallback(
+                            object : Callback<MutableList<SearchModel>> {
+                                override fun onError(msg: String) {
+                                    searchDialogView.showSnackBarError(msg)
+                                }
+
+                                override fun onSuccess(obj: MutableList<SearchModel>) {
+                                    searchAdapter.update(obj)
+                                }
+                            })
                     }
-
-                    override fun onSuccess(obj: MutableList<SearchModel>) {
-                        context?.closeKeyboard()
-
-                        // Hide search bar, search button and show addButton
-                        searchButton.visibility = View.GONE
-                        addButton.visibility = View.VISIBLE
-
-                        searchDialogView.findViewById<EditText>(R.id.dialogQuery).visibility =
-                            View.GONE
-
-                        searchAdapter.update(obj)
-
-                        // Search text query
-                        val searchText: TextView = searchDialogView.findViewById(R.id.searchText)
-                        val searchTextPlaceholder =
-                            "${resources.getString(R.string.info_search_queue)} '${query}'"
-                        searchText.text = searchTextPlaceholder
-                        searchText.visibility = View.VISIBLE
-                    }
-                })
-        }
-
-        addButton.setOnClickListener {
-            val selectedSearchModels = searchAdapter.selectedSearchModels
-
-            request(roomActivity.room?.id?.let {
-                Singleton.apiClient().addSongToRoom(it, selectedSearchModels)
-            }, object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                    cancelButton.performClick()
-                    selectedSearchModels.clear()
                 }
+            }
 
-                override fun onError(msg: String) {
-                    cancelButton.performClick()
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
-        }
+            override fun afterTextChanged(s: Editable?) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+        })
+
+        Api.client.getRecommendations().withCallback(object : Callback<MutableList<SearchModel>> {
+            override fun onSuccess(obj: MutableList<SearchModel>) {
+                searchAdapter.update(obj)
+            }
+
+            override fun onError(msg: String) {
+            }
+        })
 
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
-        if (::searchAdapter.isInitialized && ::searchDialogView.isInitialized) {
-            val isAnyItemsSelected = searchAdapter.select(searchModel)
-            if (isAnyItemsSelected != null) {
-                searchDialogView.findViewById<Button>(R.id.addButton).isEnabled = isAnyItemsSelected
-            } else {
-                searchDialogView.showSnackBarError(resources.getString(R.string.err_room_queue_add))
-            }
+        Api.client.addSongToRoom(roomActivity.room.id, listOf(searchModel))
+            .withCallback(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                    searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
+                }
+
+                override fun onError(msg: String) {
+                    searchDialogView.showSnackBarError(msg)
+                }
+            })
+    }
+
+    override fun onItemClicked(view: SwipeLayout) {
+        val openStatus = view.openStatus
+        if (openStatus == SwipeLayout.Status.Open) {
+            view.close()
+        } else if (openStatus == SwipeLayout.Status.Close) {
+            view.open(SwipeLayout.DragEdge.Left)
         }
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        request(Singleton.apiClient().play(song), object : Callback<Boolean> {
+        Api.client.play(song).withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -252,12 +251,12 @@ class RoomQueueFragment :
         view.close()
         val db = roomActivity.db
 
-        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
+        if (db.isVotedBefore(roomActivity.room, song)) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
-            request(Singleton.apiClient().upvoteSong(song.id), object : Callback<Int> {
+            Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    roomActivity.room?.let { db.insertVotedSong(it, song) }
+                    db.insertVotedSong(roomActivity.room, song)
                     roomViewModel.onMessageInfo.postValue(
                         "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
                     )
@@ -274,12 +273,12 @@ class RoomQueueFragment :
         view.close()
         val db = roomActivity.db
 
-        if (roomActivity.room?.let { db.isVotedBefore(it, song) }!!) {
+        if (db.isVotedBefore(roomActivity.room, song)) {
             roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
         } else {
-            request(Singleton.apiClient().downvoteSong(song.id), object : Callback<Int> {
+            Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
                 override fun onSuccess(obj: Int) {
-                    roomActivity.room?.let { db.insertVotedSong(it, song) }
+                    db.insertVotedSong(roomActivity.room, song)
                     roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
                 }
 
@@ -295,7 +294,7 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        request(Singleton.apiClient().removeSongFromRoom(song.id), object : Callback<Boolean> {
+        Api.client.removeSongFromRoom(song.id).withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -313,13 +312,13 @@ class RoomQueueFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserModel.value?.roomUser?.role
+        val currentRole = roomViewModel.roomUserRole.value
         if (currentRole == Role.ROOM_USER.role) {
-            layout?.findViewById<ImageButton>(R.id.swipePlayButton)?.visibility = View.GONE
-            layout?.findViewById<ImageButton>(R.id.swipeDeleteButton)?.visibility = View.GONE
+            layout?.swipePlayButton?.visibility = View.GONE
+            layout?.swipeDeleteButton?.visibility = View.GONE
         } else {
-            layout?.findViewById<ImageButton>(R.id.swipePlayButton)?.visibility = View.VISIBLE
-            layout?.findViewById<ImageButton>(R.id.swipeDeleteButton)?.visibility = View.VISIBLE
+            layout?.swipePlayButton?.visibility = View.VISIBLE
+            layout?.swipeDeleteButton?.visibility = View.VISIBLE
         }
     }
 
@@ -327,6 +326,7 @@ class RoomQueueFragment :
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
+        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {

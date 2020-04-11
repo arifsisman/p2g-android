@@ -101,7 +101,7 @@ class DBHelper(context: Context) :
         contentValues.put(COL_USER_COUNTRY_CODE, user.countryCode)
         contentValues.put(COL_USER_IMAGE_URL, user.imageUrl)
         contentValues.put(COL_USER_ANTHEM, user.anthemSongId)
-        contentValues.put(COL_USER_CREATION_DATE, user.creationDate?.format(formatter))
+        contentValues.put(COL_USER_CREATION_DATE, user.creationDate.format(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }
