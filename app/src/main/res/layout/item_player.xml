@@ -155,6 +155,32 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/song_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="26dp"
+                android:paddingBottom="20dp"
+                android:text="0:00"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar_exp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/song_max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="26dp"
+                android:paddingBottom="20dp"
+                android:text="x:xx"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/seek_bar_exp"
+                tools:ignore="HardcodedText" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player_controller_buttons"
                 android:layout_width="match_parent"
@@ -219,30 +245,6 @@
                     app:layout_constraintEnd_toStartOf="@+id/previous_button"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_repeat_white_64dp" />
-
-                <TextView
-                    android:id="@+id/song_current"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="26dp"
-                    android:text="0:00"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="HardcodedText" />
-
-                <TextView
-                    android:id="@+id/song_max"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="26dp"
-                    android:text="x:xx"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="HardcodedText" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
