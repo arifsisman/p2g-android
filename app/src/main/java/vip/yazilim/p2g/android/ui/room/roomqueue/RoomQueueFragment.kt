@@ -5,7 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.View.OnFocusChangeListener
-import android.view.WindowManager
+import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -57,6 +57,8 @@ class RoomQueueFragment :
     private lateinit var searchDialogView: View
 
     private lateinit var roomViewModel: RoomViewModel
+
+    private lateinit var queryEditText: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,13 +130,9 @@ class RoomQueueFragment :
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
         val mBuilder = MaterialAlertDialogBuilder(context)
             .setView(searchDialogView)
-        val mAlertDialog = mBuilder.show()
-        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        mBuilder.show()
 
-        val queryEditText = searchDialogView.dialogQuery
-
-        // For request focus and open keyboard
-//        queryEditText.requestFocus()
+        queryEditText = searchDialogView.dialogQuery
 
         // Adapter start and update with requested search model
         val searchRecyclerView: RecyclerView =
@@ -213,6 +211,8 @@ class RoomQueueFragment :
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
+        queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
+
         Api.client.addSongToRoom(roomActivity.room.id, listOf(searchModel))
             .withCallback(object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {

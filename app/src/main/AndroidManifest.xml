@@ -42,7 +42,7 @@
             android:name=".activity.RoomActivity"
             android:label="@string/title_activity_room"
             android:parentActivityName=".activity.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
@@ -54,15 +54,6 @@
             android:name=".service.RoomWebSocketService"
             android:stopWithTask="true" />
         <service android:name=".service.LogoutService" />
-
-        <!--        <receiver-->
-        <!--            android:name=".activity.RoomActivity"-->
-        <!--            android:enabled="false"-->
-        <!--            android:exported="false">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="com.spotify.music.active" />-->
-        <!--            </intent-filter>-->
-        <!--        </receiver>-->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

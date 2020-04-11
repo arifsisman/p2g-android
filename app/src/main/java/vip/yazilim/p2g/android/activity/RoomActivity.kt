@@ -295,11 +295,11 @@ class RoomActivity : BaseActivity(),
             roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
             roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
 
-            Log.d(TAG, "Is ${song.songName} playing? = ${roomViewModel.isPlaying.value}")
-            Log.d(TAG, "CURRENT MS ${roomViewModel.songCurrentMs.value}")
+            Log.v(TAG, "Is ${song.songName} playing? = ${roomViewModel.isPlaying.value}")
+            Log.v(TAG, "CURRENT MS ${roomViewModel.songCurrentMs.value}")
         } else {
             roomViewModel.isPlaying.postValue(false)
-            Log.d(TAG, "Not playing any song!")
+            Log.v(TAG, "Not playing any song!")
         }
     }
 
