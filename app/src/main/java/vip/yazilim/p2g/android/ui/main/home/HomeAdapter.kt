@@ -32,7 +32,7 @@ class HomeAdapter(
 
         fun bindView(roomModel: RoomModel) {
             val roomOwnerPlaceholder =
-                "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner.name}"
+                "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
 
             itemView.roomName.text = roomModel.room.name
             itemView.roomOwner.text = roomOwnerPlaceholder
@@ -45,7 +45,7 @@ class HomeAdapter(
             }
 
             try {
-                itemView.countryFlag.countryCode = roomModel.owner.countryCode
+                itemView.countryFlag.countryCode = roomModel.owner?.countryCode
             } catch (exception: Exception) {
                 itemView.countryFlag.visibility = View.GONE
             }
@@ -99,7 +99,10 @@ class HomeAdapter(
 
                     roomModelsFull.forEach {
                         if (it.room.name.contains(filter, true)
-                            || it.owner.name.contains(filter, true)
+                            || ((it.owner?.name != null) && it.owner?.name?.contains(
+                                filter,
+                                true
+                            )!!)
                         ) {
                             filteredList.add(it)
                         }

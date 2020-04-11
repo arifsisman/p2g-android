@@ -13,7 +13,7 @@ import vip.yazilim.p2g.android.entity.User
 @Parcelize
 data class RoomModel(
     var room: Room,
-    var owner: User,
+    var owner: User?,
     var song: Song?,
     var userCount: Int
 ) : Parcelable
