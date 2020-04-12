@@ -7,4 +7,5 @@ package vip.yazilim.p2g.android.constant
 object GeneralConstants {
     const val UNDEFINED = "undefined"
     const val PLAYER_UPDATE_MS: Int = 500
+    const val WEBSOCKET_RECONNECT_DELAY: Long = 2500
 }

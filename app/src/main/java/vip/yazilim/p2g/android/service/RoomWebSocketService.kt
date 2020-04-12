@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
@@ -189,7 +190,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
                             sendBroadcastSocketClosed()
 
                             launch {
-                                delay(2500)
+                                delay(WEBSOCKET_RECONNECT_DELAY)
                                 connectWebSocket(roomId)
                             }
 

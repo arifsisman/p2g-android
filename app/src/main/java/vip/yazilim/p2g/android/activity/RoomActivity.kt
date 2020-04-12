@@ -35,6 +35,8 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
@@ -42,6 +44,7 @@ import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
+import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
@@ -69,6 +72,7 @@ import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
+import vip.yazilim.p2g.android.util.helper.TimeHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
@@ -93,6 +97,8 @@ class RoomActivity : BaseActivity(),
     private lateinit var playerRecyclerView: RecyclerView
     private lateinit var deviceDialog: AlertDialog
     private lateinit var connectivityManager: ConnectivityManager
+
+    private lateinit var lastSync: LocalDateTime
 
     private var clearRoomQueueMenuItem: MenuItem? = null
     private var durationHandler: Handler = Handler()
@@ -376,19 +382,26 @@ class RoomActivity : BaseActivity(),
     private fun syncWithRoom() {
         checkWebSocketConnection()
 
-        Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-                if (obj) {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_sync))
-                } else {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
+        if (!this::lastSync.isInitialized || Duration
+                .between(lastSync, TimeHelper.getLocalDateTimeZonedUTC())
+                .toMillis()
+                .toInt() > WEBSOCKET_RECONNECT_DELAY
+        ) {
+            Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
+                override fun onSuccess(obj: Boolean) {
+                    lastSync = TimeHelper.getLocalDateTimeZonedUTC()
+                    if (obj) {
+                        viewPager.showSnackBarInfo(resources.getString(R.string.info_sync))
+                    } else {
+                        viewPager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
+                    }
                 }
-            }
 
-            override fun onError(msg: String) {
-                viewPager.showSnackBarError(msg)
-            }
-        })
+                override fun onError(msg: String) {
+                    viewPager.showSnackBarError(msg)
+                }
+            })
+        }
     }
 
     override fun onBackPressed() {
@@ -551,7 +564,7 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connect))
-                    Api.client.syncWithRoom().withCallback(null)
+                    syncWithRoom()
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
