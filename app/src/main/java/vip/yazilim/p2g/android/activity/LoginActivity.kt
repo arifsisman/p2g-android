@@ -1,12 +1,9 @@
 package vip.yazilim.p2g.android.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.ads.MobileAds
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.auth.AuthorizationClient
 import okhttp3.Call
@@ -20,6 +17,7 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.util.helper.SpotifyHelper.Companion.getAccessTokenFromSpotify
 import vip.yazilim.p2g.android.util.helper.TAG
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
 
@@ -106,22 +104,4 @@ class LoginActivity : BaseActivity() {
                 startActivity(startMainIntent)
             }
         })
-
-    fun Activity.showErrorDialog(message: String): AlertDialog? {
-        if (!this.isFinishing) {
-            val dialogBuilder = MaterialAlertDialogBuilder(this)
-                .setMessage(message)
-                .setPositiveButton("OK") { dialog, _ ->
-                    dialog.cancel()
-                }
-
-            val alert = dialogBuilder.create()
-            alert.setTitle("Error")
-            alert.show()
-
-            return alert
-        }
-
-        return null
-    }
 }

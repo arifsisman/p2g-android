@@ -68,8 +68,8 @@ import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarErrorIndefinite
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
@@ -148,10 +148,12 @@ class RoomActivity : BaseActivity(),
             connectivityManager.registerDefaultNetworkCallback(object :
                 ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
+                    stopRoomWebSocketService(broadcastReceiver)
+                    startRoomWebSocketService(broadcastReceiver)
                 }
 
                 override fun onLost(network: Network?) {
-                    viewPager.showSnackBarError(resources.getString(R.string.err_network_closed))
+                    this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
                 }
             })
         }
@@ -540,7 +542,12 @@ class RoomActivity : BaseActivity(),
                         startRoomWebSocketService(this)
                         roomWsReconnectCounter++
                     } else {
-                        viewPager.showSnackBarErrorIndefinite(resources.getString(R.string.err_room_websocket_closed))
+                        val alert =
+                            this@RoomActivity.showErrorDialog(resources.getString(R.string.err_room_websocket_closed))
+                        alert?.setOnCancelListener {
+                            stopRoomWebSocketService(this)
+                            startRoomWebSocketService(this)
+                        }
                     }
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
