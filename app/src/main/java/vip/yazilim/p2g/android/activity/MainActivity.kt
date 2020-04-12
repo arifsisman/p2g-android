@@ -27,6 +27,7 @@ import vip.yazilim.p2g.android.ui.main.MainViewModelFactory
 class MainActivity : BaseActivity() {
 
     private lateinit var mainViewModel: MainViewModel
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +36,15 @@ class MainActivity : BaseActivity() {
         mainViewModel =
             ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
 
+        user = intent.getParcelableExtra("user")
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         startService(Intent(baseContext, LogoutService::class.java))
 
-        intent.getParcelableExtra<User>("user")?.id?.let {
+        user?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
             intent.putExtra("userId", it)
 
@@ -47,6 +54,11 @@ class MainActivity : BaseActivity() {
                 startService(intent)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopService(Intent(this@MainActivity, UserWebSocketService::class.java))
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -71,11 +83,6 @@ class MainActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         return true
-    }
-
-    override fun onStop() {
-        super.onStop()
-        stopService(Intent(this@MainActivity, UserWebSocketService::class.java))
     }
 
 }

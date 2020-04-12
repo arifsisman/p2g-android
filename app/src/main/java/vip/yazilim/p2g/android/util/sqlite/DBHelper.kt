@@ -38,6 +38,7 @@ class DBHelper(context: Context) :
     private val COL_USER_SHOW_ACTIVITY_FLAG = "show_activity_flag"
     private val COL_USER_SHOW_FRIENDS_FLAG = "show_friends_flag"
     private val COL_USER_CREATION_DATE = "creation_date"
+    private val COL_USER_LAST_LOGIN = "last_login"
 
     private val COL_REFRESH_TOKEN = "refresh_token"
     private val COL_ACCESS_TOKEN = "access_token"
@@ -102,6 +103,7 @@ class DBHelper(context: Context) :
         contentValues.put(COL_USER_IMAGE_URL, user.imageUrl)
         contentValues.put(COL_USER_ANTHEM, user.anthemSongId)
         contentValues.put(COL_USER_CREATION_DATE, user.creationDate.format(formatter))
+        contentValues.put(COL_USER_LAST_LOGIN, user.lastLogin.format(formatter))
 
         sqliteDB.insert(USER_TABLE_NAME, null, contentValues)
     }
@@ -145,12 +147,11 @@ class DBHelper(context: Context) :
                 val userAnthem = result.getString(result.getColumnIndex(COL_USER_ANTHEM))
                 val userCreationDate =
                     LocalDateTime.parse(
-                        result.getString(
-                            result.getColumnIndex(
-                                COL_USER_CREATION_DATE
-                            )
-                        )
+                        result.getString(result.getColumnIndex(COL_USER_CREATION_DATE))
                     )
+                val lastLogin = LocalDateTime.parse(
+                    result.getString(result.getColumnIndex(COL_USER_LAST_LOGIN))
+                )
 
                 val user = User(
                     userId,
@@ -161,7 +162,8 @@ class DBHelper(context: Context) :
                     userCountryCode,
                     userImageUrl,
                     userAnthem,
-                    userCreationDate
+                    userCreationDate,
+                    lastLogin
                 )
                 userList.add(user)
             } while (result.moveToNext())

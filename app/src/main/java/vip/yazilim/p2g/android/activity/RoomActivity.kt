@@ -106,7 +106,8 @@ class RoomActivity : BaseActivity(),
 
         setupViewPager()
         setupViewModelBase()
-        setupRoomModelAndWebSocket()
+        setupRoomModel()
+        startRoomWebSocketService(broadcastReceiver)
         setupViewModel()
         setupSlidingUpPanel()
         setupPlayer()
@@ -124,14 +125,19 @@ class RoomActivity : BaseActivity(),
         updateSeekBarTime.run()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Api.client.leaveRoom().withCallback(null)
+    override fun onStart() {
+        super.onStart()
+        startRoomWebSocketService(broadcastReceiver)
     }
 
     override fun onStop() {
         super.onStop()
-        stopService(Intent(this@RoomActivity, RoomWebSocketService::class.java))
+        stopRoomWebSocketService(broadcastReceiver)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Api.client.leaveRoom().withCallback(null)
     }
 
     override fun onResume() {
@@ -158,7 +164,6 @@ class RoomActivity : BaseActivity(),
 
                 override fun onLost(network: Network?) {
                     this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
-//                    alert?.setOnCancelListener { checkWebSocketConnection() }
                 }
             })
         }
@@ -213,7 +218,7 @@ class RoomActivity : BaseActivity(),
         playerRecyclerView.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-    private fun setupRoomModelAndWebSocket() {
+    private fun setupRoomModel() {
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
 
@@ -233,8 +238,6 @@ class RoomActivity : BaseActivity(),
                 }
             }
         }
-
-        startRoomWebSocketService(broadcastReceiver)
     }
 
     private fun setupViewModel() {
