@@ -33,9 +33,9 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.CHECK_WEBSOCKET_CONNECTION
-import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
+import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
@@ -112,11 +112,11 @@ class RoomWebSocketService : Service(), CoroutineScope {
         sendBroadcast(intent)
     }
 
-    private fun sendBroadcastRoomStatus(status: String) {
+    private fun sendBroadcastRoomStatus(roomStatusModel: RoomStatusModel) {
         Log.v(TAG, "Sending broadcastRoomStatus to activity")
         val intent = Intent()
         intent.action = ACTION_ROOM_STATUS
-        intent.putExtra(ACTION_ROOM_STATUS, status)
+        intent.putExtra(ACTION_ROOM_STATUS, roomStatusModel)
         sendBroadcast(intent)
     }
 
@@ -255,8 +255,8 @@ class RoomWebSocketService : Service(), CoroutineScope {
                     val json = it.payload
                     Log.v(TAG, json)
 
-                    val roomStatus = gson.fromJson<RoomStatus>(json)
-                    sendBroadcastRoomStatus(roomStatus.status)
+                    val roomStatusModel = gson.fromJson<RoomStatusModel>(json)
+                    sendBroadcastRoomStatus(roomStatusModel)
                 }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
         }
     }

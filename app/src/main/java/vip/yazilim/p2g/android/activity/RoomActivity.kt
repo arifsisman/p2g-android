@@ -58,6 +58,7 @@ import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.entity.UserDevice
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.DeviceAdapter
@@ -552,11 +553,10 @@ class RoomActivity : BaseActivity(),
                     roomViewModel.loadRoomUsers(room.id)
                 }
                 ACTION_ROOM_STATUS -> {
-                    val status: String? = intent.getStringExtra(ACTION_ROOM_STATUS)
-                    if (status.equals(RoomStatus.CLOSED.status)) {
-                        val roomPlaceholder = resources.getString(R.string.title_room)
-                        val closedPlaceholder = resources.getString(R.string.info_closed)
-                        context?.showToastLong("$roomPlaceholder ${room.name} $closedPlaceholder - ${room.ownerId}")
+                    val roomStatusModel: RoomStatusModel? =
+                        intent.getParcelableExtra(ACTION_ROOM_STATUS)
+                    if (roomStatusModel?.roomStatus != null && roomStatusModel.roomStatus.status == RoomStatus.CLOSED.status) {
+                        context?.showToastLong(roomStatusModel.reason)
                         Api.client.leaveRoom().withCallback(null)
 
                         val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
