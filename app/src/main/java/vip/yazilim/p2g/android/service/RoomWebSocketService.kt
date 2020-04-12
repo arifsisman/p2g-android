@@ -18,6 +18,10 @@ import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
@@ -28,6 +32,7 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONN
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
+import vip.yazilim.p2g.android.constant.WebSocketActions.CHECK_WEBSOCKET_CONNECTION
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -35,13 +40,17 @@ import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.stomp.WebSocketClient
+import kotlin.coroutines.CoroutineContext
 
 
 /**
  * @author mustafaarifsisman - 24.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomWebSocketService : Service() {
+class RoomWebSocketService : Service(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
+
     private var roomId: Long? = null
     private lateinit var roomWSClient: StompClient
     private val gsonBuilder = GsonBuilder()
@@ -61,6 +70,13 @@ class RoomWebSocketService : Service() {
                         .subscribe({}, { t: Throwable? ->
                             Log.v(TAG, t?.message.toString())
                         })
+                }
+                CHECK_WEBSOCKET_CONNECTION -> {
+                    Log.v(TAG, "Checking websocket connection")
+                    if (!roomWSClient.isConnected) {
+                        Log.v(TAG, "Reconnecting websocket")
+                        roomId?.let { connectWebSocket(it) }
+                    }
                 }
             }
         }
@@ -126,7 +142,9 @@ class RoomWebSocketService : Service() {
             startForeground(2, Notification())
         }
 
-        val intentFilter = IntentFilter(ACTION_MESSAGE_SEND)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(ACTION_MESSAGE_SEND)
+        intentFilter.addAction(CHECK_WEBSOCKET_CONNECTION)
         registerReceiver(serviceReceiver, intentFilter)
     }
 
@@ -143,13 +161,7 @@ class RoomWebSocketService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         roomId = intent?.getLongExtra("roomId", -1L)
-        roomId?.run {
-            connectWebSocket(this)
-            subscribeRoomSongs("/p2g/room/${this}/songs")
-            subscribeRoomUsers("/p2g/room/${this}/users")
-            subscribeRoomMessages("/p2g/room/${this}/messages")
-            subscribeRoomStatus("/p2g/room/${this}/status")
-        }
+        roomId?.run { connectWebSocket(this) }
 
         return START_STICKY
     }
@@ -164,12 +176,23 @@ class RoomWebSocketService : Service() {
                     when (it.type) {
                         LifecycleEvent.Type.OPENED -> {
                             Log.i(TAG, it.toString())
+
+                            subscribeRoomSongs()
+                            subscribeRoomUsers()
+                            subscribeRoomMessages()
+                            subscribeRoomStatus()
+
                             sendBroadcastSocketConnected()
                         }
                         LifecycleEvent.Type.CLOSED -> {
                             Log.i(TAG, it.toString())
                             sendBroadcastSocketClosed()
-                            connectWebSocket(roomId)
+
+                            launch {
+                                delay(1000)
+                                connectWebSocket(roomId)
+                            }
+
                         }
                         LifecycleEvent.Type.ERROR -> {
                             Log.i(TAG, it.toString())
@@ -182,9 +205,9 @@ class RoomWebSocketService : Service() {
         }
     }
 
-    private fun subscribeRoomSongs(songsPath: String) {
+    private fun subscribeRoomSongs() {
         roomWSClient.run {
-            topic(songsPath)
+            topic("/p2g/room/$roomId/songs")
                 .subscribe({
                     val json = it.payload
                     Log.v(TAG, json)
@@ -199,9 +222,9 @@ class RoomWebSocketService : Service() {
         }
     }
 
-    private fun subscribeRoomUsers(usersPath: String) {
+    private fun subscribeRoomUsers() {
         roomWSClient.run {
-            topic(usersPath)
+            topic("/p2g/room/$roomId/users")
                 .subscribe({
                     val json = it.payload
                     Log.v(TAG, json)
@@ -212,9 +235,9 @@ class RoomWebSocketService : Service() {
         }
     }
 
-    private fun subscribeRoomMessages(messagesPath: String) {
+    private fun subscribeRoomMessages() {
         roomWSClient.run {
-            topic(messagesPath)
+            topic("/p2g/room/$roomId/messages")
                 .subscribe({
                     val json = it.payload
                     Log.v(TAG, json)
@@ -225,9 +248,9 @@ class RoomWebSocketService : Service() {
         }
     }
 
-    private fun subscribeRoomStatus(statusPath: String) {
+    private fun subscribeRoomStatus() {
         roomWSClient.run {
-            topic(statusPath)
+            topic("/p2g/room/$roomId/status")
                 .subscribe({
                     val json = it.payload
                     Log.v(TAG, json)

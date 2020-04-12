@@ -13,4 +13,5 @@ object WebSocketActions {
     const val ACTION_ROOM_INVITE = "RoomInviteReceive"
     const val ACTION_MESSAGE_SEND = "MessageSend"
     const val ACTION_MESSAGE_RECEIVE = "MessageReceive"
+    const val CHECK_WEBSOCKET_CONNECTION = "CheckWebSocketConnection"
 }

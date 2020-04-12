@@ -42,6 +42,7 @@ import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
+import vip.yazilim.p2g.android.constant.WebSocketActions
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONNECTED
@@ -150,12 +151,8 @@ class RoomActivity : BaseActivity(),
                 }
 
                 override fun onLost(network: Network?) {
-                    val alert =
-                        this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
-                    alert?.setOnCancelListener {
-                        stopRoomWebSocketService(broadcastReceiver)
-                        startRoomWebSocketService(broadcastReceiver)
-                    }
+                    this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
+//                    alert?.setOnCancelListener { checkWebSocketConnection() }
                 }
             })
         }
@@ -367,6 +364,8 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun syncWithRoom() {
+        checkWebSocketConnection()
+
         Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
                 if (obj) {
@@ -754,5 +753,11 @@ class RoomActivity : BaseActivity(),
             val badge: BadgeDrawable? = tabLayout.getTabAt(pos)?.orCreateBadge
             badge?.isVisible = true
         }
+    }
+
+    private fun checkWebSocketConnection() {
+        val intent = Intent()
+        intent.action = WebSocketActions.CHECK_WEBSOCKET_CONNECTION
+        sendBroadcast(intent)
     }
 }
