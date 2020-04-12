@@ -90,7 +90,6 @@ class RoomActivity : BaseActivity(),
     private lateinit var playerRecyclerView: RecyclerView
     private lateinit var deviceDialog: AlertDialog
     private lateinit var connectivityManager: ConnectivityManager
-    private var roomWsReconnectCounter = 0
 
     private var clearRoomQueueMenuItem: MenuItem? = null
     private var durationHandler: Handler = Handler()
@@ -148,12 +147,15 @@ class RoomActivity : BaseActivity(),
             connectivityManager.registerDefaultNetworkCallback(object :
                 ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
-                    stopRoomWebSocketService(broadcastReceiver)
-                    startRoomWebSocketService(broadcastReceiver)
                 }
 
                 override fun onLost(network: Network?) {
-                    this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
+                    val alert =
+                        this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
+                    alert?.setOnCancelListener {
+                        stopRoomWebSocketService(broadcastReceiver)
+                        startRoomWebSocketService(broadcastReceiver)
+                    }
                 }
             })
         }
@@ -536,19 +538,7 @@ class RoomActivity : BaseActivity(),
                     }
                 }
                 ACTION_ROOM_SOCKET_CLOSED -> {
-                    if (roomWsReconnectCounter < 22) {
-                        // refresh access token with LoginActivity maybe...
-                        stopRoomWebSocketService(this)
-                        startRoomWebSocketService(this)
-                        roomWsReconnectCounter++
-                    } else {
-                        val alert =
-                            this@RoomActivity.showErrorDialog(resources.getString(R.string.err_room_websocket_closed))
-                        alert?.setOnCancelListener {
-                            stopRoomWebSocketService(this)
-                            startRoomWebSocketService(this)
-                        }
-                    }
+                    viewPager.showSnackBarError(resources.getString(R.string.err_room_websocket_closed))
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connect))

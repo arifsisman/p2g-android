@@ -58,7 +58,9 @@ class RoomWebSocketService : Service() {
                     Log.v(TAG, "Sending chatMessage")
                     val chatMessage = intent.getParcelableExtra<ChatMessage>(ACTION_MESSAGE_SEND)
                     roomWSClient.send("/p2g/room/${roomId}/send", gson.toJson(chatMessage))
-                        .subscribe()
+                        .subscribe({}, { t: Throwable? ->
+                            Log.v(TAG, t?.message.toString())
+                        })
                 }
             }
         }
@@ -167,6 +169,7 @@ class RoomWebSocketService : Service() {
                         LifecycleEvent.Type.CLOSED -> {
                             Log.i(TAG, it.toString())
                             sendBroadcastSocketClosed()
+                            connectWebSocket(roomId)
                         }
                         LifecycleEvent.Type.ERROR -> {
                             Log.i(TAG, it.toString())
