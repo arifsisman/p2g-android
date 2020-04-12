@@ -128,6 +128,11 @@ class RoomActivity : BaseActivity(),
         Api.client.leaveRoom().withCallback(null)
     }
 
+    override fun onStop() {
+        super.onStop()
+        stopService(Intent(this@RoomActivity, RoomWebSocketService::class.java))
+    }
+
     override fun onResume() {
         super.onResume()
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client

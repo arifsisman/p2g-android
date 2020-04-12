@@ -73,4 +73,9 @@ class MainActivity : BaseActivity() {
         return true
     }
 
+    override fun onStop() {
+        super.onStop()
+        stopService(Intent(this@MainActivity, UserWebSocketService::class.java))
+    }
+
 }
