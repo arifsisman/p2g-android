@@ -10,7 +10,6 @@ import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl
 import kotlinx.android.synthetic.main.item_room_user_model.view.*
-import kotlinx.android.synthetic.main.item_song.view.*
 import kotlinx.android.synthetic.main.layout_row_user_events.view.*
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
@@ -40,7 +39,7 @@ class RoomUsersAdapter(
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_user_model)
         fun bindView(roomUserModel: RoomUserModel) {
-            itemView.row_user_model.close(false)
+            swipeLayout.close(false)
 
             val user = roomUserModel.user
             val roomUser = roomUserModel.roomUser
@@ -75,22 +74,16 @@ class RoomUsersAdapter(
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
             itemView.swipeChangeRoleButton.setOnClickListener {
-                clickListener.onChangeRoleClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
+                clickListener.onChangeRoleClicked(swipeLayout, roomUserModel)
             }
             itemView.swipeAddButton.setOnClickListener {
-                clickListener.onAddClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
+                clickListener.onAddClicked(swipeLayout, roomUserModel)
             }
             swipeLayout.addSwipeListener(swipeListener)
             swipeLayout.surfaceView.setOnClickListener { swipeLayout.open(true) }
             swipeLayout.isClickToClose = true
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, itemView.song_event_holder)
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, itemView.user_event_holder)
         }
 
         fun bindItemManager(position: Int) {
@@ -104,8 +97,7 @@ class RoomUsersAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view =
-            LayoutInflater.from(parent.context)
+        view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_room_user_model, parent, false)
         return MViewHolder(view)
     }
