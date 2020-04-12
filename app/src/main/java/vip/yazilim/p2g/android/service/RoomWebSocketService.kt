@@ -189,7 +189,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
                             sendBroadcastSocketClosed()
 
                             launch {
-                                delay(1000)
+                                delay(2500)
                                 connectWebSocket(roomId)
                             }
 

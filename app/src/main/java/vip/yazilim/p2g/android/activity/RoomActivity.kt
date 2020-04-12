@@ -74,6 +74,7 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
@@ -546,7 +547,7 @@ class RoomActivity : BaseActivity(),
                     }
                 }
                 ACTION_ROOM_SOCKET_CLOSED -> {
-                    viewPager.showSnackBarError(resources.getString(R.string.err_room_websocket_closed))
+                    viewPager.showSnackBarWarning(resources.getString(R.string.warn_room_websocket_closed))
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connect))

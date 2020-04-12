@@ -13,6 +13,7 @@ import com.androidadvance.topsnackbar.TSnackbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 import vip.yazilim.p2g.android.constant.ColorCodes.ERROR
+import vip.yazilim.p2g.android.constant.ColorCodes.WARN
 
 
 /**
@@ -50,6 +51,13 @@ class UIHelper {
             val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
             val snackView = snack?.view
             snackView?.setBackgroundColor(Color.parseColor(ERROR))
+            snack?.show()
+        }
+
+        fun View.showSnackBarWarning(message: String) {
+            val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(WARN))
             snack?.show()
         }
 

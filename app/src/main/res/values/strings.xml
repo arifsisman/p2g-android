@@ -109,7 +109,6 @@
     <!--Eng. Errors-->
     <string name="err_authorization_code">Can not get authorization code from Spotify</string>
     <string name="err_room_websocket_reconnect">Trying to reconnect the room.</string>
-    <string name="err_room_websocket_closed">Connection to the room closed.</string>
     <string name="err_network_closed">No internet connection, please check your connection.</string>
     <string name="err_room_refresh">Rooms can not refreshed</string>
     <string name="err_room_invites_refresh">Rooms Invites can not refreshed</string>
@@ -117,6 +116,9 @@
     <string name="err_room_user_refresh">Users can not refreshed</string>
     <string name="err_room_queue_add">10 songs or 1 Album/Playlist can be added in each search!</string>
     <string name="err_song_vote">Song voted before</string>
+
+    <!--Eng. Warnings-->
+    <string name="warn_room_websocket_closed">Reconnecting to room…</string>
 
     <!--Eng. Infos-->
     <string name="info_yes">Yes</string>
