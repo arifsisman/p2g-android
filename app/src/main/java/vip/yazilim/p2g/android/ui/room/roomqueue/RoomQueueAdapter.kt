@@ -83,10 +83,17 @@ class RoomQueueAdapter(
             }
 
             swipeLayout.addSwipeListener(swipeListener)
-            swipeLayout.surfaceView.setOnClickListener { swipeLayout.open(true) }
+            swipeLayout.surfaceView.setOnClickListener {
+                swipeLayout.open(
+                    true,
+                    SwipeLayout.DragEdge.Left
+                )
+            }
             swipeLayout.isClickToClose = true
+            swipeLayout.isRightSwipeEnabled = false
+            swipeLayout.isLeftSwipeEnabled = true
             swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
-            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, itemView.song_event_holder)
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Left, itemView.song_event_holder)
         }
 
         fun bindItemManager(position: Int) {
