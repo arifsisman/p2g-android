@@ -18,11 +18,14 @@ import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
-import vip.yazilim.p2g.android.api.WebSocketClient
+import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
@@ -54,7 +57,6 @@ class RoomWebSocketService : Service(), CoroutineScope {
     private lateinit var roomWSClient: StompClient
     private val gsonBuilder = GsonBuilder()
     private val gson: Gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
-//    private lateinit var job: Job
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -79,17 +81,11 @@ class RoomWebSocketService : Service(), CoroutineScope {
 
                         if (!roomWSClient.isConnected) {
                             Log.v(TAG, "Trying to reconnect the websocket")
-
-                            try {
-                                roomId?.let { connectWebSocket(it) }
-                            } catch (exception: Exception) {
-                                cancel()
-                            }
+                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_RECONNECTING))
+                            roomId?.let { connectWebSocket(it) }
                         } else {
                             Log.v(TAG, "Connected the websocket")
                         }
-
-                        sendBroadcast(Intent(ACTION_ROOM_SOCKET_RECONNECTING))
                     }
 
                 }
@@ -135,18 +131,6 @@ class RoomWebSocketService : Service(), CoroutineScope {
         sendBroadcast(intent)
     }
 
-    private fun sendBroadcastSocketClosed() {
-        val intent = Intent()
-        intent.action = ACTION_ROOM_SOCKET_CLOSED
-        sendBroadcast(intent)
-    }
-
-    private fun sendBroadcastSocketConnected() {
-        val intent = Intent()
-        intent.action = ACTION_ROOM_SOCKET_CONNECTED
-        sendBroadcast(intent)
-    }
-
     override fun onCreate() {
         super.onCreate()
         Log.v(TAG, "onCreate")
@@ -184,88 +168,52 @@ class RoomWebSocketService : Service(), CoroutineScope {
     }
 
     private fun connectWebSocket(roomId: Long) {
-        roomWSClient = WebSocketClient.getRoomWebSocketClient(roomId)
+        roomWSClient = Api.roomWebSocketClient(roomId)
         roomWSClient.run {
             connect()
 
             lifecycle()
-                .subscribe({
-                    when (it.type) {
+                .subscribe { lifecycleEvent ->
+                    when (lifecycleEvent.type) {
                         LifecycleEvent.Type.OPENED -> {
-                            Log.i(TAG, it.toString())
+                            topic("/p2g/room/$roomId/songs")
+                                .subscribe { msg ->
+                                    val json = msg.payload
+                                    val songList = gson.fromJson<MutableList<Song>>(json)
+                                    sendBroadcastSongList(songList)
+                                }
 
-                            subscribeRoomSongs()
-                            subscribeRoomUsers()
-                            subscribeRoomMessages()
-                            subscribeRoomStatus()
+                            topic("/p2g/room/$roomId/users")
+                                .subscribe { msg ->
+                                    val userList =
+                                        gson.fromJson<MutableList<RoomUserModel>>(msg.payload)
+                                    sendBroadcastUserList(userList)
+                                }
 
-                            sendBroadcastSocketConnected()
+                            topic("/p2g/room/$roomId/messages")
+                                .subscribe { msg ->
+                                    val chatMessage = gson.fromJson<ChatMessage>(msg.payload)
+                                    sendBroadcastChatMessage(chatMessage)
+                                }
+
+                            topic("/p2g/room/$roomId/status")
+                                .subscribe { msg ->
+                                    val roomStatusModel =
+                                        gson.fromJson<RoomStatusModel>(msg.payload)
+                                    sendBroadcastRoomStatus(roomStatusModel)
+                                }
+
+                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_CONNECTED))
                         }
                         LifecycleEvent.Type.CLOSED -> {
-                            Log.i(TAG, it.toString())
-                            sendBroadcastSocketClosed()
+                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
                         }
                         LifecycleEvent.Type.ERROR -> {
-                            Log.i(TAG, it.toString())
                         }
-                        else -> Log.i(TAG, it.toString())
+                        else -> {
+                        }
                     }
-                }, { t: Throwable? ->
-                    Log.v(TAG, t?.message.toString())
-                })
-        }
-    }
-
-    private fun subscribeRoomSongs() {
-        roomWSClient.run {
-            topic("/p2g/room/$roomId/songs")
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val songList = gson.fromJson<MutableList<Song>>(json)
-
-                    sendBroadcastSongList(songList)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
-    private fun subscribeRoomUsers() {
-        roomWSClient.run {
-            topic("/p2g/room/$roomId/users")
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val userList = gson.fromJson<MutableList<RoomUserModel>>(json)
-                    sendBroadcastUserList(userList)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
-    private fun subscribeRoomMessages() {
-        roomWSClient.run {
-            topic("/p2g/room/$roomId/messages")
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val chatMessage = gson.fromJson<ChatMessage>(json)
-                    sendBroadcastChatMessage(chatMessage)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
-    private fun subscribeRoomStatus() {
-        roomWSClient.run {
-            topic("/p2g/room/$roomId/status")
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val roomStatusModel = gson.fromJson<RoomStatusModel>(json)
-                    sendBroadcastRoomStatus(roomStatusModel)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
+                }
         }
     }
 

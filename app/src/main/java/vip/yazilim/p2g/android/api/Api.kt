@@ -10,6 +10,8 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.StompClient
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.Response
@@ -22,6 +24,7 @@ import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
 object Api {
     lateinit var client: Endpoints
+    private lateinit var httpClient: OkHttpClient
 
     fun build(accessToken: String) {
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
@@ -30,7 +33,7 @@ object Api {
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
 
-        val httpClient: OkHttpClient = OkHttpClient.Builder()
+        httpClient = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor(accessToken))
             .addInterceptor(UnauthorizedInterceptor())
             .addInterceptor(loggingInterceptor()).build()
@@ -68,6 +71,32 @@ object Api {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return httpLoggingInterceptor
+    }
+
+    fun roomWebSocketClient(roomId: Long): StompClient {
+        val accessToken = Play2GetherApplication.accessToken
+        val header: MutableMap<String, String> = mutableMapOf()
+        header["Authorization"] = "Bearer $accessToken"
+
+        return Stomp.over(
+            Stomp.ConnectionProvider.OKHTTP,
+            ApiConstants.BASE_WS_URL_ROOM + roomId,
+            header,
+            httpClient
+        )
+    }
+
+    fun userWebSocketClient(userId: String): StompClient {
+        val accessToken = Play2GetherApplication.accessToken
+        val header: MutableMap<String, String> = mutableMapOf()
+        header["Authorization"] = "Bearer $accessToken"
+
+        return Stomp.over(
+            Stomp.ConnectionProvider.OKHTTP,
+            ApiConstants.BASE_WS_URL_USER + userId,
+            header,
+            httpClient
+        )
     }
 
     inline fun <reified T> Call<Response<T>>.withCallback(callback: Callback<T>?) {

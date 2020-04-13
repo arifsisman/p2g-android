@@ -90,10 +90,10 @@ interface Endpoints {
     fun getRoomSongs(@Path("roomId") roomId: Long): Call<Response<MutableList<Song>>>
 
     @POST("/api/room/{roomId}/queue")
-    fun addSongToRoom(
+    fun addSongWithSearchModel(
         @Path("roomId") roomId: Long,
-        @Body searchModelList: List<SearchModel>
-    ): Call<Response<Boolean>>
+        @Body searchModel: SearchModel
+    ): Call<Response<MutableList<Song>>>
 
     @DELETE("/api/room/{roomId}/queue")
     fun clearQueue(@Path("roomId") roomId: Long): Call<Response<Boolean>>

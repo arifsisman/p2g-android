@@ -293,15 +293,11 @@ class RoomActivity : BaseActivity(),
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
 
-        if (song != null) {
-            roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
-            roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
-
-            Log.v(TAG, "Is ${song.songName} playing? = ${roomViewModel.isPlaying.value}")
-            Log.v(TAG, "CURRENT MS ${roomViewModel.songCurrentMs.value}")
-        } else {
+        if (song == null) {
             roomViewModel.isPlaying.postValue(false)
-            Log.v(TAG, "Not playing any song!")
+        } else {
+            roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
+            roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
         }
     }
 
@@ -311,24 +307,22 @@ class RoomActivity : BaseActivity(),
         }
     }
 
-
     private val renderSongCurrentMs = Observer<Int> { ms ->
         runOnUiThread {
             seek_bar_exp.progress = ms
             seek_bar.progress = ms
             song_current.text = ms.getHumanReadableTimestamp()
-            Log.v(TAG, "Song is playing! Views updated.")
+            Log.v(TAG, "Song current ms = $ms")
         }
         if (ms >= roomViewModel.playerSong.value?.durationMs?.minus(PLAYER_UPDATE_MS) ?: 0) {
-            Log.v(TAG, "Song is finished!")
             roomViewModel.isPlaying.postValue(false)
-            // Update player ui as played
             runOnUiThread {
                 song_current?.text =
                     roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
                 playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
                 playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
             }
+            Log.v(TAG, "Song is finished!")
         }
     }
 
@@ -356,7 +350,10 @@ class RoomActivity : BaseActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.sync_with_room -> syncWithRoom()
+            R.id.sync_with_room -> {
+                checkWebSocketConnection()
+                syncWithRoom()
+            }
             R.id.select_device -> selectDevice()
             R.id.clear_queue -> clearQueue()
             android.R.id.home -> leaveRoom()
@@ -365,8 +362,6 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun syncWithRoom() {
-        checkWebSocketConnection()
-
         if (!this::lastSync.isInitialized || Duration
                 .between(lastSync, TimeHelper.getLocalDateTimeZonedUTC())
                 .toMillis()
@@ -549,7 +544,7 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
-                    Api.client.syncWithRoom().withCallback(null)
+                    syncWithRoom()
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)

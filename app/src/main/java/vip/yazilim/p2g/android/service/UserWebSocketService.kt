@@ -12,12 +12,13 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
-import vip.yazilim.p2g.android.api.WebSocketClient
+import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE_RECEIVE
 import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
@@ -30,8 +31,11 @@ import vip.yazilim.p2g.android.util.helper.TAG
  * @contact mustafaarifsisman@gmail.com
  */
 class UserWebSocketService : Service() {
+
     private var userId: String? = null
     private lateinit var userWSClient: StompClient
+    private val gsonBuilder = GsonBuilder()
+    private val gson: Gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -76,53 +80,37 @@ class UserWebSocketService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         userId = intent?.getStringExtra("userId")
-        userId?.run {
-            connectWebSocket(this)
-            subscribe("/p2g/user/${this}/invites")
-        }
+        userId?.run { connectWebSocket(this) }
 
         return START_STICKY
     }
 
     private fun connectWebSocket(userId: String) {
-        userWSClient = WebSocketClient.getUserWebSocketClient(userId)
+        userWSClient = Api.userWebSocketClient(userId)
         userWSClient.run {
             connect()
 
             lifecycle()
-                .subscribe({
-                    when (it.type) {
+                .subscribe { lifecycleEvent ->
+                    when (lifecycleEvent.type) {
                         LifecycleEvent.Type.OPENED -> {
-                            Log.i(TAG, it.toString())
+                            topic("/p2g/user/$userId/invites")
+                                .subscribe { msg ->
+                                    val roomInviteModel =
+                                        gson.fromJson(msg.payload, RoomInviteModel::class.java)
+
+                                    sendBroadcastRoomInvite(roomInviteModel)
+                                    showInviteNotification(roomInviteModel.roomInvite)
+                                }
                         }
                         LifecycleEvent.Type.CLOSED -> {
-                            Log.i(TAG, it.toString())
                         }
                         LifecycleEvent.Type.ERROR -> {
-                            Log.i(TAG, it.toString())
                         }
-                        else -> Log.i(TAG, it.toString())
+                        else -> {
+                        }
                     }
-                }, { t: Throwable? ->
-                    Log.v(TAG, t?.message.toString())
-                })
-        }
-    }
-
-    private fun subscribe(destinationPath: String) {
-        userWSClient.run {
-            topic(destinationPath)
-                .subscribe({
-                    Log.v(TAG, it.payload)
-
-                    val gsonBuilder = GsonBuilder()
-                    val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
-
-                    val roomInviteModel = gson.fromJson(it.payload, RoomInviteModel::class.java)
-
-                    sendBroadcastRoomInvite(roomInviteModel)
-                    showInviteNotification(roomInviteModel.roomInvite)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
+                }
         }
     }
 

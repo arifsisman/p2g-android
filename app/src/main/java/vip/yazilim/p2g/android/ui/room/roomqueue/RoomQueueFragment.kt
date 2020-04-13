@@ -25,6 +25,7 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -211,10 +212,14 @@ class RoomQueueFragment :
     override fun onSearchItemClicked(searchModel: SearchModel) {
         queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
 
-        Api.client.addSongToRoom(roomActivity.room.id, listOf(searchModel))
-            .withCallback(object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                    searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
+        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel)
+            .withCallback(object : Callback<MutableList<Song>> {
+                override fun onSuccess(obj: MutableList<Song>) {
+                    if (searchModel.type == SearchType.SONG) {
+                        searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
+                    } else {
+                        searchDialogView.showSnackBarInfo("${obj.size} songs queued.")
+                    }
                 }
 
                 override fun onError(msg: String) {
