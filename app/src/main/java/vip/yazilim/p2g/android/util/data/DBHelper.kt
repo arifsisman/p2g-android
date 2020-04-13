@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.sqlite
+package vip.yazilim.p2g.android.util.data
 
 import android.content.ContentValues
 import android.content.Context
@@ -15,6 +15,7 @@ import vip.yazilim.p2g.android.model.spotify.TokenModel
  * @author mustafaarifsisman - 23.01.2020
  * @contact mustafaarifsisman@gmail.com
  */
+@Deprecated("Not required")
 class DBHelper(context: Context) :
     SQLiteOpenHelper(
         context,

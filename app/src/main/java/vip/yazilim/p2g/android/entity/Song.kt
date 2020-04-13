@@ -24,7 +24,7 @@ data class Song(
     var currentMs: Int,
     var repeatFlag: Boolean,
     var votes: Int,
-    var voters: ArrayList<String>
+    var voters: ArrayList<String>?
 ) : Parcelable, Cloneable {
     public override fun clone(): Any {
         return Song(

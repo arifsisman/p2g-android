@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.util.stomp
+package vip.yazilim.p2g.android.api
 
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient

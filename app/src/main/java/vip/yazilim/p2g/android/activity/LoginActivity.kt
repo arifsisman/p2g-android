@@ -77,12 +77,8 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        cancelCall()
-        super.onDestroy()
-    }
-
-    private fun cancelCall() {
         mCall?.cancel()
+        super.onDestroy()
     }
 
     private fun checkIsUserInRoom(user: User) = Api.client.getRoomModelMe().withCallback(
@@ -96,8 +92,7 @@ class LoginActivity : BaseActivity() {
 
             //user not in room
             override fun onError(msg: String) {
-                val info = resources.getString(R.string.info_logged_in)
-                this@LoginActivity.showToastLong("$info ${user.name}")
+                this@LoginActivity.showToastLong("${resources.getString(R.string.info_logged_in)} ${user.name}")
                 val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
                 startMainIntent.putExtra("user", user)
                 startActivity(startMainIntent)

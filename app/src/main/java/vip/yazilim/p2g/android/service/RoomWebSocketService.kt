@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.WebSocketClient
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
@@ -40,7 +41,6 @@ import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.stomp.WebSocketClient
 import kotlin.coroutines.CoroutineContext
 
 
@@ -212,9 +212,6 @@ class RoomWebSocketService : Service(), CoroutineScope {
                 .subscribe({
                     val json = it.payload
                     Log.v(TAG, json)
-
-                    val gsonBuilder = GsonBuilder()
-                    val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
 
                     val songList = gson.fromJson<MutableList<Song>>(json)
 
