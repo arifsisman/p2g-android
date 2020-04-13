@@ -18,10 +18,7 @@ import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
@@ -31,7 +28,8 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONNECTED
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_RECONNECTING
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.CHECK_WEBSOCKET_CONNECTION
@@ -56,6 +54,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
     private lateinit var roomWSClient: StompClient
     private val gsonBuilder = GsonBuilder()
     private val gson: Gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
+//    private lateinit var job: Job
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -73,11 +72,26 @@ class RoomWebSocketService : Service(), CoroutineScope {
                         })
                 }
                 CHECK_WEBSOCKET_CONNECTION -> {
-                    Log.v(TAG, "Checking websocket connection")
-                    if (!roomWSClient.isConnected) {
-                        Log.v(TAG, "Reconnecting websocket")
-                        roomId?.let { connectWebSocket(it) }
+                    Log.v(TAG, "Checking the websocket connection")
+
+                    launch {
+                        delay(WEBSOCKET_RECONNECT_DELAY)
+
+                        if (!roomWSClient.isConnected) {
+                            Log.v(TAG, "Trying to reconnect the websocket")
+
+                            try {
+                                roomId?.let { connectWebSocket(it) }
+                            } catch (exception: Exception) {
+                                cancel()
+                            }
+                        } else {
+                            Log.v(TAG, "Connected the websocket")
+                        }
+
+                        sendBroadcast(Intent(ACTION_ROOM_SOCKET_RECONNECTING))
                     }
+
                 }
             }
         }
@@ -116,8 +130,8 @@ class RoomWebSocketService : Service(), CoroutineScope {
     private fun sendBroadcastRoomStatus(roomStatusModel: RoomStatusModel) {
         Log.v(TAG, "Sending broadcastRoomStatus to activity")
         val intent = Intent()
-        intent.action = ACTION_ROOM_STATUS
-        intent.putExtra(ACTION_ROOM_STATUS, roomStatusModel)
+        intent.action = ACTION_ROOM_STATUS_RECEIVE
+        intent.putExtra(ACTION_ROOM_STATUS_RECEIVE, roomStatusModel)
         sendBroadcast(intent)
     }
 
@@ -161,8 +175,10 @@ class RoomWebSocketService : Service(), CoroutineScope {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        roomId = intent?.getLongExtra("roomId", -1L)
-        roomId?.run { connectWebSocket(this) }
+        if (roomId == null) {
+            roomId = intent?.getLongExtra("roomId", -1L)
+            roomId?.let { connectWebSocket(it) }
+        }
 
         return START_STICKY
     }
@@ -188,12 +204,6 @@ class RoomWebSocketService : Service(), CoroutineScope {
                         LifecycleEvent.Type.CLOSED -> {
                             Log.i(TAG, it.toString())
                             sendBroadcastSocketClosed()
-
-                            launch {
-                                delay(WEBSOCKET_RECONNECT_DELAY)
-                                connectWebSocket(roomId)
-                            }
-
                         }
                         LifecycleEvent.Type.ERROR -> {
                             Log.i(TAG, it.toString())
@@ -260,7 +270,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
     }
 
     private inline fun <reified T> Gson.fromJson(json: String): T =
-        fromJson<T>(json, object : TypeToken<T>() {}.type)
+        fromJson(json, object : TypeToken<T>() {}.type)
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startMyOwnForeground() {

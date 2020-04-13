@@ -21,7 +21,7 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE_RECEIVE
 import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -55,7 +55,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
         viewModel = ViewModelProvider(activity as MainActivity).get(MainViewModel::class.java)
 
-        val intentFilter = IntentFilter(ACTION_ROOM_INVITE)
+        val intentFilter = IntentFilter(ACTION_ROOM_INVITE_RECEIVE)
         activity?.registerReceiver(broadcastReceiver, intentFilter)
     }
 

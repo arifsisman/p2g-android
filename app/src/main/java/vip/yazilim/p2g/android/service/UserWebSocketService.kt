@@ -18,7 +18,7 @@ import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.api.WebSocketClient
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE_RECEIVE
 import vip.yazilim.p2g.android.entity.RoomInvite
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
@@ -45,7 +45,7 @@ class UserWebSocketService : Service() {
     private fun sendBroadcastRoomInvite(roomInviteModel: RoomInviteModel) {
         Log.v(TAG, "Sending broadcastRoomInvite to fragment")
         val intent = Intent()
-        intent.action = ACTION_ROOM_INVITE
+        intent.action = ACTION_ROOM_INVITE_RECEIVE
         intent.putExtra("roomInviteModel", roomInviteModel)
         sendBroadcast(intent)
     }
