@@ -16,7 +16,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
-import kotlinx.android.synthetic.main.layout_row_song_events.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,7 +25,6 @@ import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -289,14 +287,14 @@ class RoomQueueFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserRole.value
-        if (currentRole == Role.ROOM_USER.role) {
-            layout?.swipePlayButton?.visibility = View.GONE
-            layout?.swipeDeleteButton?.visibility = View.GONE
-        } else {
-            layout?.swipePlayButton?.visibility = View.VISIBLE
-            layout?.swipeDeleteButton?.visibility = View.VISIBLE
-        }
+//        val currentRole = roomViewModel.roomUserRole.value
+//        if (currentRole == Role.ROOM_USER.role) {
+//            layout?.swipePlayButton?.visibility = View.GONE
+//            layout?.swipeDeleteButton?.visibility = View.GONE
+//        } else {
+//            layout?.swipePlayButton?.visibility = View.VISIBLE
+//            layout?.swipeDeleteButton?.visibility = View.VISIBLE
+//        }
     }
 
     override fun onStartClose(layout: SwipeLayout?) {

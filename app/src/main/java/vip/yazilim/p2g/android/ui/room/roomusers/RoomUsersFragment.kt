@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -273,12 +272,12 @@ class RoomUsersFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserRole.value
-        if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
-            layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.VISIBLE
-        } else {
-            layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.GONE
-        }
+//        val currentRole = roomViewModel.roomUserRole.value
+//        if (currentRole == Role.ROOM_ADMIN.role || currentRole == Role.ROOM_OWNER.role) {
+//            layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.VISIBLE
+//        } else {
+//            layout?.findViewById<ImageButton>(R.id.swipeChangeRoleButton)?.visibility = View.GONE
+//        }
     }
 
     override fun onStartClose(layout: SwipeLayout?) {

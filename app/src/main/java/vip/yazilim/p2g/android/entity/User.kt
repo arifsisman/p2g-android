@@ -19,5 +19,5 @@ data class User(
     var imageUrl: String?,
     var anthemSongId: String?,
     var creationDate: LocalDateTime,
-    var lastLogin: LocalDateTime
+    var lastLogin: LocalDateTime?
 ) : Parcelable

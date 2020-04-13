@@ -82,13 +82,10 @@ class RoomQueueAdapter(
                 clickListener.onDeleteClicked(swipeLayout, song)
             }
 
-            swipeLayout.addSwipeListener(swipeListener)
             swipeLayout.surfaceView.setOnClickListener {
-                swipeLayout.open(
-                    true,
-                    SwipeLayout.DragEdge.Left
-                )
+                swipeLayout.open(true, SwipeLayout.DragEdge.Left)
             }
+            swipeLayout.addSwipeListener(swipeListener)
             swipeLayout.isClickToClose = true
             swipeLayout.isRightSwipeEnabled = false
             swipeLayout.isLeftSwipeEnabled = true
