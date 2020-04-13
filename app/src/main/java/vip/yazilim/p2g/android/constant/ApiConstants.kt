@@ -11,8 +11,7 @@ object ApiConstants {
     private const val HOST = BuildConfig.URL
     private const val PORT = "8097"
     const val BASE_URL = "http://$HOST:$PORT"
-    private const val BASE_WS_URL = "ws://$HOST:$PORT/p2g/"
-    const val BASE_WS_URL_ROOM = "${BASE_WS_URL}room/"
-    const val BASE_WS_URL_USER = "${BASE_WS_URL}user/"
+    const val BASE_WS_URL_ROOM = "ws://$HOST:$PORT/p2g/room"
+    const val BASE_WS_URL_USER = "ws://$HOST:$PORT/p2g/user"
 
 }

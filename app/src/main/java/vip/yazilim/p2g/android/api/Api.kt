@@ -74,27 +74,19 @@ object Api {
     }
 
     fun roomWebSocketClient(roomId: Long): StompClient {
-        val accessToken = Play2GetherApplication.accessToken
-        val header: MutableMap<String, String> = mutableMapOf()
-        header["Authorization"] = "Bearer $accessToken"
-
         return Stomp.over(
             Stomp.ConnectionProvider.OKHTTP,
-            ApiConstants.BASE_WS_URL_ROOM + roomId,
-            header,
+            "${ApiConstants.BASE_WS_URL_ROOM}/$roomId",
+            null,
             httpClient
         )
     }
 
     fun userWebSocketClient(userId: String): StompClient {
-        val accessToken = Play2GetherApplication.accessToken
-        val header: MutableMap<String, String> = mutableMapOf()
-        header["Authorization"] = "Bearer $accessToken"
-
         return Stomp.over(
             Stomp.ConnectionProvider.OKHTTP,
-            ApiConstants.BASE_WS_URL_USER + userId,
-            header,
+            "${ApiConstants.BASE_WS_URL_USER}/$userId",
+            null,
             httpClient
         )
     }
