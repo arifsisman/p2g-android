@@ -45,7 +45,8 @@ object Api {
     internal class UnauthorizedInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
             val response: okhttp3.Response = chain.proceed(chain.request())
-            if (response.code == 401) EventBus.getDefault().post(UnauthorizedEvent.instance)
+            if (response.code == 401 || response.code == 429) EventBus.getDefault()
+                .post(UnauthorizedEvent.instance)
             return response
         }
     }

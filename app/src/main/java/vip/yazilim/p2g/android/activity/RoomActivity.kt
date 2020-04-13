@@ -80,14 +80,11 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
-import vip.yazilim.p2g.android.util.sqlite.DBHelper
 
 class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
     PlayerAdapter.OnSeekBarChangeListener,
     DeviceAdapter.OnItemClickListener {
-    val db by lazy { DBHelper(this) }
-
     lateinit var room: Room
     lateinit var roomModel: RoomModel
 

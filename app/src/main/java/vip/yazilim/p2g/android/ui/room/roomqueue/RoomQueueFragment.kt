@@ -240,44 +240,30 @@ class RoomQueueFragment :
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        val db = roomActivity.db
+        Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
+            override fun onSuccess(obj: Int) {
+                roomViewModel.onMessageInfo.postValue(
+                    "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
+                )
+            }
 
-        if (db.isVotedBefore(roomActivity.room, song)) {
-            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
-        } else {
-            Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
-                override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(roomActivity.room, song)
-                    roomViewModel.onMessageInfo.postValue(
-                        "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
-                    )
-                }
-
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
-        }
+            override fun onError(msg: String) {
+                roomViewModel.onMessageError.postValue(msg)
+            }
+        })
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        val db = roomActivity.db
+        Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
+            override fun onSuccess(obj: Int) {
+                roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
+            }
 
-        if (db.isVotedBefore(roomActivity.room, song)) {
-            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
-        } else {
-            Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
-                override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(roomActivity.room, song)
-                    roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
-                }
-
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
-        }
+            override fun onError(msg: String) {
+                roomViewModel.onMessageError.postValue(msg)
+            }
+        })
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
