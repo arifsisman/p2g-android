@@ -210,7 +210,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             }
         })
 
-        val roomNamePlaceholder = Play2GetherApplication.userName + "'s Room"
+        val roomNamePlaceholder = Play2GetherApplication.user.name + "'s Room"
         roomNameEditText.setText(roomNamePlaceholder)
 
         // For request focus and open keyboard

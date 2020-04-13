@@ -123,7 +123,7 @@ class RoomUsersAdapter(
     }
 
     fun update(data: MutableList<RoomUserModel>) {
-        userIdMe = Play2GetherApplication.userId
+        userIdMe = Play2GetherApplication.user.id
         roomUserModelList = data
         notifyDataSetChanged()
     }

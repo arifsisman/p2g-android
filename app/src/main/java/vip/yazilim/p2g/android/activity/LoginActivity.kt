@@ -60,13 +60,12 @@ class LoginActivity : BaseActivity() {
                         }
 
                         override fun onSuccess(obj: User) {
-                            Play2GetherApplication.userId = obj.id
-                            Play2GetherApplication.userName = obj.name
+                            Play2GetherApplication.user = obj
                             checkIsUserInRoom(obj)
                         }
                     })
             } else {
-                val msg = resources.getString(R.string.err_authorization_code)
+                val msg = response.error
                 Log.d(TAG, msg)
                 this.showToastShort(msg)
             }

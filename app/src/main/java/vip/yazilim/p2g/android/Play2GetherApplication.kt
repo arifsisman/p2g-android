@@ -2,6 +2,7 @@ package vip.yazilim.p2g.android
 
 import android.app.Activity
 import android.app.Application
+import vip.yazilim.p2g.android.entity.User
 
 /**
  * @author mustafaarifsisman - 08.04.2020
@@ -17,8 +18,7 @@ class Play2GetherApplication : Application() {
     companion object {
         lateinit var instance: Play2GetherApplication private set
         lateinit var currentActivity: Activity
-        lateinit var userName: String
-        lateinit var userId: String
+        lateinit var user: User
         lateinit var accessToken: String
     }
 }
