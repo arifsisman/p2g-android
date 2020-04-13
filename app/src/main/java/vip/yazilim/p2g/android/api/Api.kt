@@ -14,9 +14,7 @@ import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.Response
-import vip.yazilim.p2g.android.api.generic.Result
-import vip.yazilim.p2g.android.api.generic.resultHelper
+import vip.yazilim.p2g.android.api.generic.RestResponse
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
@@ -91,24 +89,26 @@ object Api {
         )
     }
 
-    inline fun <reified T> Call<Response<T>>.withCallback(callback: Callback<T>?) {
-        this.resultHelper { result ->
-            when (result) {
-                is Result.Success -> if (result.response.isSuccessful) {
-                    callback?.onSuccess(result.response.body()?.data as T)
+    inline fun <reified T> Call<RestResponse<T>>.withCallback(callback: Callback<T>?) {
+        enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+                callback?.onError(error.message as String)
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+                if (response.isSuccessful) {
+                    callback?.onSuccess(response.body()?.data as T)
                 } else {
-                    val msg = result.response.errorBody()?.string()
+                    val msg = response.errorBody()?.string()
                     if (msg != null) {
                         Log.d("Request not successful ", msg)
                         callback?.onError(msg)
                     }
                 }
-                is Result.Failure -> {
-                    val msg = result.error.message as String
-                    Log.d("Request failed ", msg)
-                    callback?.onError(msg)
-                }
             }
-        }
+        })
     }
 }
