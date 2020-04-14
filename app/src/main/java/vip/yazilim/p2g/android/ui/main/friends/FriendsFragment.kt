@@ -113,28 +113,29 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) =
-        Api.client.accept(friendRequestModel.friendRequest.id)
-            .withCallback(object : Callback<Boolean> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(msg)
-            }
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
+        Api.client?.accept(friendRequestModel.friendRequest.id)
+            ?.withCallback(object : Callback<Boolean> {
+                override fun onError(msg: String) {
+                    viewModel.onMessageError.postValue(msg)
+                }
 
-            override fun onSuccess(obj: Boolean) {
-                adapter.remove(friendRequestModel)
-                adapter.add(FriendModel(friendRequestModel.friendRequestUserModel, null))
-                adapter.adapterDataListFull.add(
-                    FriendModel(
-                        friendRequestModel.friendRequestUserModel,
-                        null
+                override fun onSuccess(obj: Boolean) {
+                    adapter.remove(friendRequestModel)
+                    adapter.add(FriendModel(friendRequestModel.friendRequestUserModel, null))
+                    adapter.adapterDataListFull.add(
+                        FriendModel(
+                            friendRequestModel.friendRequestUserModel,
+                            null
+                        )
                     )
-                )
-            }
-        })
+                }
+            })
+    }
 
 
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) =
-        Api.client.reject(friendRequestModel.friendRequest.id).withCallback(
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
+        Api.client?.reject(friendRequestModel.friendRequest.id)?.withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -146,10 +147,11 @@ class FriendsFragment : FragmentBase(
 
             }
         )
+    }
 
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
-        Api.client.ignore(friendRequestModel.friendRequest.id).withCallback(
+        Api.client?.ignore(friendRequestModel.friendRequest.id)?.withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -174,7 +176,7 @@ class FriendsFragment : FragmentBase(
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.deleteFriend(friendModel.userModel.user.id).withCallback(
+                    Api.client?.deleteFriend(friendModel.userModel.user.id)?.withCallback(
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
                                 viewModel.onMessageError.postValue(msg)
@@ -202,7 +204,7 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadUserFriendModel() = Api.client.getUserFriendModel().withCallback(
+    private fun loadUserFriendModel() = Api.client?.getUserFriendModel()?.withCallback(
         object : Callback<UserFriendModel> {
             override fun onError(msg: String) {
                 swipeRefreshContainer.isRefreshing = false
@@ -218,7 +220,7 @@ class FriendsFragment : FragmentBase(
         })
 
     private fun joinRoomEvent(room: Room) =
-        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED).withCallback(
+        Api.client?.joinRoom(room.id, GeneralConstants.UNDEFINED)?.withCallback(
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -265,7 +267,7 @@ class FriendsFragment : FragmentBase(
         joinButton.setOnClickListener {
             val roomPassword = roomPasswordEditText.text.toString()
 
-            Api.client.joinRoom(room.id, roomPassword).withCallback(
+            Api.client?.joinRoom(room.id, roomPassword)?.withCallback(
                 object : Callback<RoomUser> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)

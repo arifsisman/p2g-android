@@ -26,7 +26,7 @@ class MainViewModel : ViewModelBase() {
     fun loadRooms() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomModels().withCallback(
+        Api.client?.getRoomModels()?.withCallback(
             object : Callback<MutableList<RoomModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -43,7 +43,7 @@ class MainViewModel : ViewModelBase() {
     fun loadUserFriendModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserFriendModel().withCallback(
+        Api.client?.getUserFriendModel()?.withCallback(
             object : Callback<UserFriendModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -60,7 +60,7 @@ class MainViewModel : ViewModelBase() {
     fun loadRoomInviteModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomInviteModels().withCallback(
+        Api.client?.getRoomInviteModels()?.withCallback(
             object : Callback<MutableList<RoomInviteModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -77,7 +77,7 @@ class MainViewModel : ViewModelBase() {
     fun loadUserModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserModelMe().withCallback(
+        Api.client?.getUserModelMe()?.withCallback(
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -91,7 +91,7 @@ class MainViewModel : ViewModelBase() {
             })
     }
 
-    fun loadFriendsCountMe() = Api.client.getFriendsCounts().withCallback(
+    fun loadFriendsCountMe() = Api.client?.getFriendsCounts()?.withCallback(
         object : Callback<Int> {
             override fun onError(msg: String) {
             }

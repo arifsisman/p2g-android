@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
@@ -40,6 +41,7 @@ import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
+import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
 import kotlin.coroutines.CoroutineContext
@@ -173,7 +175,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
             connect()
 
             lifecycle()
-                .subscribe { lifecycleEvent ->
+                .subscribe({ lifecycleEvent ->
                     when (lifecycleEvent.type) {
                         LifecycleEvent.Type.OPENED -> {
                             topic("/p2g/room/$roomId/songs")
@@ -208,12 +210,13 @@ class RoomWebSocketService : Service(), CoroutineScope {
                         LifecycleEvent.Type.CLOSED -> {
                             sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
                         }
-                        LifecycleEvent.Type.ERROR -> {
-                        }
                         else -> {
+                            EventBus.getDefault().post(UnauthorizedEvent.instance)
                         }
                     }
-                }
+                }, {
+                    EventBus.getDefault().post(UnauthorizedEvent.instance)
+                })
         }
     }
 

@@ -21,8 +21,25 @@ import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
 
 object Api {
-    lateinit var client: Endpoints
-    private lateinit var httpClient: OkHttpClient
+    var client: Endpoints? = null
+        get() {
+            return if (field != null) {
+                field
+            } else {
+                EventBus.getDefault().post(UnauthorizedEvent.instance)
+                return field
+            }
+        }
+
+    private var httpClient: OkHttpClient? = null
+        get() {
+            return if (field != null) {
+                field
+            } else {
+                EventBus.getDefault().post(UnauthorizedEvent.instance)
+                return field
+            }
+        }
 
     fun build(accessToken: String) {
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
@@ -34,13 +51,16 @@ object Api {
         httpClient = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor(accessToken))
             .addInterceptor(UnauthorizedInterceptor())
-            .addInterceptor(loggingInterceptor()).build()
+            .addInterceptor(loggingInterceptor())
+            .build()
 
-        val retrofit: Retrofit = builder.client(httpClient).build()
+        httpClient.let {
+            val retrofit: Retrofit = builder.client(httpClient).build()
 
-        client = retrofit.create(Endpoints::class.java) as Endpoints
-        client.updateAccessToken(accessToken).withCallback(null)
-        Play2GetherApplication.accessToken = accessToken
+            client = retrofit.create(Endpoints::class.java) as Endpoints
+            client?.updateAccessToken(accessToken)?.withCallback(null)
+            Play2GetherApplication.accessToken = accessToken
+        }
     }
 
     internal class UnauthorizedInterceptor : Interceptor {
@@ -90,8 +110,8 @@ object Api {
         )
     }
 
-    inline fun <reified T> Call<RestResponse<T>>.withCallback(callback: Callback<T>?) {
-        enqueue(object : retrofit2.Callback<RestResponse<T>> {
+    inline fun <reified T> Call<RestResponse<T>>?.withCallback(callback: Callback<T>?) {
+        this?.enqueue(object : retrofit2.Callback<RestResponse<T>> {
             override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
                 callback?.onError(error.message as String)
             }

@@ -111,8 +111,8 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
         })
     }
 
-    override fun onAccept(roomInviteModel: RoomInviteModel) =
-        Api.client.acceptInvite(roomInviteModel.roomInvite).withCallback(
+    override fun onAccept(roomInviteModel: RoomInviteModel) {
+        Api.client?.acceptInvite(roomInviteModel.roomInvite)?.withCallback(
             object : Callback<RoomUser> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -127,10 +127,11 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
                     startActivity(intent)
                 }
             })
+    }
 
 
-    override fun onReject(roomInviteModel: RoomInviteModel) =
-        Api.client.rejectInvite(roomInviteModel.roomInvite.id).withCallback(
+    override fun onReject(roomInviteModel: RoomInviteModel) {
+        Api.client?.rejectInvite(roomInviteModel.roomInvite.id)?.withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(TAG, msg)
@@ -141,10 +142,11 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
                     adapter.remove(roomInviteModel)
                 }
             })
+    }
 
 
-    override fun onRowClicked(roomInviteModel: RoomInviteModel) =
-        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).withCallback(
+    override fun onRowClicked(roomInviteModel: RoomInviteModel) {
+        Api.client?.getUserModel(roomInviteModel.roomInvite.inviterId)?.withCallback(
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                 }
@@ -155,8 +157,9 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
                     startActivity(intent)
                 }
             })
+    }
 
-    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().withCallback(
+    private fun refreshRoomInvitesEvent() = Api.client?.getRoomInviteModels()?.withCallback(
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)

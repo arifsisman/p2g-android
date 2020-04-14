@@ -34,7 +34,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadSongs(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomSongs(roomId).withCallback(
+        Api.client?.getRoomSongs(roomId)?.withCallback(
             object : Callback<MutableList<Song>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -53,7 +53,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomUsers(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomUserModels(roomId).withCallback(
+        Api.client?.getRoomUserModels(roomId)?.withCallback(
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     onViewLoading.postValue(false)
@@ -77,7 +77,7 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomUserMe() {
-        Api.client.getRoomUserModelMe().withCallback(object : Callback<RoomUserModel> {
+        Api.client?.getRoomUserModelMe()?.withCallback(object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
                 roomUserModel.postValue(obj)
                 roomUserRole.postValue(obj.roomUser.role)

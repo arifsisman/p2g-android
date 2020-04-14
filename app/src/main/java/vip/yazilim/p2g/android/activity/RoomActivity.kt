@@ -133,7 +133,6 @@ class RoomActivity : BaseActivity(),
         super.onDestroy()
         stopRoomWebSocketService()
         unregisterRoomWebSocketReceiver(broadcastReceiver)
-        Api.client.leaveRoom().withCallback(null)
     }
 
     override fun onResume() {
@@ -143,7 +142,7 @@ class RoomActivity : BaseActivity(),
         checkWebSocketConnection()
 
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
-        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
+        Api.client?.getUserDevices()?.withCallback(object : Callback<MutableList<UserDevice>> {
             override fun onSuccess(obj: MutableList<UserDevice>) {
             }
 
@@ -223,7 +222,7 @@ class RoomActivity : BaseActivity(),
         val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
 
         if (roomFromIntent == null && roomModelFromIntent == null) {
-            startMainActivityImmediately()
+            finish()
         } else {
             when {
                 roomFromIntent != null -> {
@@ -367,7 +366,7 @@ class RoomActivity : BaseActivity(),
                 .toMillis()
                 .toInt() > WEBSOCKET_RECONNECT_DELAY
         ) {
-            Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
+            Api.client?.syncWithRoom()?.withCallback(object : Callback<Boolean> {
                 override fun onSuccess(obj: Boolean) {
                     lastSync = TimeHelper.getLocalDateTimeZonedUTC()
                     if (obj) {
@@ -394,9 +393,8 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.leaveRoom().withCallback(null)
-
-                    startMainActivityImmediately()
+                    Api.client?.leaveRoom()?.withCallback(null)
+                    finish()
                 }
             }
         }
@@ -406,13 +404,6 @@ class RoomActivity : BaseActivity(),
             .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
             .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
             .show()
-    }
-
-    private fun startMainActivityImmediately() {
-        val mainIntent = Intent(this@RoomActivity, MainActivity::class.java)
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(mainIntent)
-        finish()
     }
 
     private fun stopRoomWebSocketService() {
@@ -457,7 +448,7 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.clearQueue(room.id).withCallback(
+                    Api.client?.clearQueue(room.id)?.withCallback(
                         object : Callback<Boolean> {
                             override fun onSuccess(obj: Boolean) {
                                 viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
@@ -479,7 +470,7 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun selectDevice() {
-        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
+        Api.client?.getUserDevices()?.withCallback(object : Callback<MutableList<UserDevice>> {
             override fun onSuccess(obj: MutableList<UserDevice>) {
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
@@ -513,7 +504,7 @@ class RoomActivity : BaseActivity(),
 
     private fun getRoomModel(roomId: Long) {
         // Get room model if not exists
-        Api.client.getRoomModel(roomId).withCallback(object : Callback<RoomModel> {
+        Api.client?.getRoomModel(roomId)?.withCallback(object : Callback<RoomModel> {
             override fun onSuccess(obj: RoomModel) {
                 roomModel = obj
             }
@@ -561,10 +552,7 @@ class RoomActivity : BaseActivity(),
                         intent.getParcelableExtra(ACTION_ROOM_STATUS_RECEIVE)
                     if (roomStatusModel?.roomStatus != null && roomStatusModel.roomStatus.status == RoomStatus.CLOSED.status) {
                         context?.showToastLong(roomStatusModel.reason)
-                        Api.client.leaveRoom().withCallback(null)
-
-                        val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
-                        startActivity(leaveIntent)
+                        finish()
                     }
                 }
                 ACTION_USER_LIST_RECEIVE -> {
@@ -646,7 +634,7 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onPlayPauseMiniClicked() {
-        Api.client.playPause(room.id).withCallback(object : Callback<Boolean> {
+        Api.client?.playPause(room.id)?.withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -657,7 +645,7 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onPlayPauseClicked() {
-        Api.client.playPause(room.id).withCallback(object : Callback<Boolean> {
+        Api.client?.playPause(room.id)?.withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -668,7 +656,7 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onNextClicked() {
-        Api.client.next(room.id).withCallback(object : Callback<Boolean> {
+        Api.client?.next(room.id)?.withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -679,7 +667,7 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onPreviousClicked() {
-        Api.client.previous(room.id).withCallback(object : Callback<Boolean> {
+        Api.client?.previous(room.id)?.withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -690,7 +678,7 @@ class RoomActivity : BaseActivity(),
     }
 
     override fun onRepeatClicked() {
-        Api.client.repeat(room.id).withCallback(object : Callback<Boolean> {
+        Api.client?.repeat(room.id)?.withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -701,7 +689,7 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun onSeekPerformed(ms: Int) {
-        Api.client.seek(room.id, ms).withCallback(object : Callback<Boolean> {
+        Api.client?.seek(room.id, ms)?.withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -737,8 +725,8 @@ class RoomActivity : BaseActivity(),
             deviceDialog.dismiss()
         }
 
-        Api.client.saveUsersActiveDevice(userDevice)
-            .withCallback(object : Callback<UserDevice> {
+        Api.client?.saveUsersActiveDevice(userDevice)
+            ?.withCallback(object : Callback<UserDevice> {
                 override fun onSuccess(obj: UserDevice) {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
                 }
