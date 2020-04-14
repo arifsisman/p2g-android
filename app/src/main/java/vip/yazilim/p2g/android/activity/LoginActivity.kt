@@ -65,9 +65,10 @@ class LoginActivity : BaseActivity() {
                         }
                     })
             } else {
-                val msg = response.error
-                Log.d(TAG, msg)
-                this.showToastShort(msg)
+                response.error.let {
+                    Log.d(TAG, it)
+                    this.showToastShort(it)
+                }
             }
         }
     }
