@@ -95,12 +95,30 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/room_status"
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="6dp">
+
+            <SeekBar
+                android:id="@+id/seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:paddingStart="0dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="0dp"
+                android:paddingBottom="0dp"
+                android:progressTint="@color/colorAccentBlue"
+                android:splitTrack="false"
+                android:thumbTint="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/song_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="10dp"
                 android:contentDescription="@string/description_song_cover_image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

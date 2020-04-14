@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_home.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 
@@ -54,19 +55,23 @@ class HomeAdapter(
                 itemView.countryFlag.visibility = View.GONE
             }
 
-            if (roomModel.song == null) {
-                itemView.song_status.visibility = View.GONE
-            } else {
-                if (roomModel.song?.imageUrl != null) {
+            if (roomModel.song != null) {
+                val song = roomModel.song
+                if (song?.imageUrl != null) {
                     GlideApp.with(view)
                         .load(roomModel.song?.imageUrl)
                         .into(songImage)
                 }
 
-                itemView.song_name.text = roomModel.song!!.songName
+                itemView.song_name.text = song?.songName
                 itemView.song_artists.text =
                     RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
+                itemView.seek_bar.max = song?.durationMs ?: 0
+                itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+            } else {
+                itemView.song_status.visibility = View.GONE
             }
+
         }
     }
 
@@ -90,7 +95,7 @@ class HomeAdapter(
     }
 
     fun update(data: MutableList<RoomModel>) {
-        roomModels = data
+        roomModels = data.asReversed()
         notifyDataSetChanged()
     }
 
