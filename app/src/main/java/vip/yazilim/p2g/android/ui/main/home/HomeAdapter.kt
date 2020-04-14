@@ -68,6 +68,8 @@ class HomeAdapter(
                     RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
                 itemView.seek_bar.max = song?.durationMs ?: 0
                 itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+
+                itemView.song_status.visibility = View.VISIBLE
             } else {
                 itemView.song_status.visibility = View.GONE
             }
