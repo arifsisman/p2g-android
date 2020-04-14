@@ -24,7 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:paddingBottom="90dp"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@+id/button_create_room"
             app:layout_constraintEnd_toEndOf="parent"

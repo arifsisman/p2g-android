@@ -143,5 +143,6 @@
     <string name="info_friend_request_send">Friend request sent to</string>
     <string name="info_room_invite_send">invited to room.</string>
     <string name="info_room_websocket_connected">Connected to room.</string>
+    <string name="description_owner_image">Owner Image</string>
 
 </resources>

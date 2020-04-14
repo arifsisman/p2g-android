@@ -535,7 +535,14 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     viewPager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
-                    syncWithRoom()
+                    Api.client?.syncWithRoom()?.withCallback(object : Callback<Boolean> {
+                        override fun onSuccess(obj: Boolean) {
+                        }
+
+                        override fun onError(msg: String) {
+                            viewPager.showSnackBarError(msg)
+                        }
+                    })
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)

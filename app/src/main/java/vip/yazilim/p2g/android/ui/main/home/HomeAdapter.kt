@@ -5,10 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_home.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
@@ -24,6 +26,8 @@ class HomeAdapter(
     var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
+
         fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener {
                 clickListener.onItemClicked(roomModel)
@@ -50,8 +54,19 @@ class HomeAdapter(
                 itemView.countryFlag.visibility = View.GONE
             }
 
-            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
-            itemView.roomSongStatus.text = songStatus
+            if (roomModel.song == null) {
+                itemView.song_status.visibility = View.GONE
+            } else {
+                if (roomModel.song?.imageUrl != null) {
+                    GlideApp.with(view)
+                        .load(roomModel.song?.imageUrl)
+                        .into(songImage)
+                }
+
+                itemView.song_name.text = roomModel.song!!.songName
+                itemView.song_artists.text =
+                    RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
+            }
         }
     }
 

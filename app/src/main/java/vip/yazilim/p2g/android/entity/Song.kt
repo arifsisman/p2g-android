@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.entity
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import org.threeten.bp.LocalDateTime
+import vip.yazilim.p2g.android.util.helper.RoomHelper.Companion.getArtistsPlaceholder
 
 /**
  * @author mustafaarifsisman - 26.01.2020
@@ -44,5 +45,9 @@ data class Song(
             this.votes,
             this.voters
         )
+    }
+
+    override fun toString(): String {
+        return songName + " - " + getArtistsPlaceholder(artistNames, "")
     }
 }
