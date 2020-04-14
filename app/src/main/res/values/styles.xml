@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents">
-        <item name="actionBarSize">50dp</item>
+        <!--        <item name="actionBarSize">50dp</item>-->
         <item name="materialAlertDialogTheme">
             @style/ThemeOverlay.MaterialComponents.MaterialAlertDialog
         </item>
