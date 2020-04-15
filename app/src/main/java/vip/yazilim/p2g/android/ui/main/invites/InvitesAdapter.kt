@@ -83,11 +83,7 @@ class InvitesAdapter(
                 itemView.lockImage.visibility = View.GONE
             }
 
-            try {
-                itemView.countryFlag.countryCode = roomModel.owner?.countryCode
-            } catch (exception: Exception) {
-                itemView.countryFlag.visibility = View.GONE
-            }
+            itemView.countryFlag.visibility = View.GONE
 
             if (roomModel.song != null) {
                 val song = roomModel.song

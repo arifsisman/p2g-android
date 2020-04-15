@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.item_friend.view.*
+import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.entity.Room
@@ -14,6 +16,7 @@ import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
+import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedCompact
@@ -98,14 +101,14 @@ class FriendsAdapter(
 
     inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
         private val userName: TextView = itemView.findViewById(R.id.userName)
-        private val roomName: TextView = itemView.findViewById(R.id.roomName)
-        private val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
         private val profilePhoto: ImageView = itemView.findViewById(R.id.profilePhoto)
         private val onlineStatus: ImageView =
             itemView.findViewById(R.id.onlineStatus)
 
         private val joinButton: ImageButton = itemView.findViewById(R.id.joinButton)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+
+        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
         private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
@@ -121,8 +124,9 @@ class FriendsAdapter(
 
         override fun bindView(item: FriendModel) {
             bindEvent(item, friendClickListener)
-            val user = item.userModel.user
-            val room = item.userModel.room
+            val userModel = item.userModel
+            val user = userModel.user
+            val room = userModel.room
             val song = item.song
 
             userName.text = user.name
@@ -152,18 +156,41 @@ class FriendsAdapter(
             }
 
             if (room != null) {
-                val roomNamePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
-                roomName.text = roomNamePlaceholder
+                val roomOwnerPlaceholder =
+                    "${view.resources.getString(R.string.placeholder_room_owner)} ${userModel.roomOwnerName}"
+
+                itemView.roomName.text = room.name
+                itemView.roomOwner.text = roomOwnerPlaceholder
+                itemView.userCount.text = userModel.roomUserCount.toString()
+
                 if (room.privateFlag) {
-                    joinButton.setImageResource(R.drawable.ic_lock_white_24dp)
+                    itemView.lockImage.visibility = View.VISIBLE
+                } else {
+                    itemView.lockImage.visibility = View.GONE
                 }
 
-                roomSongStatus.text = RoomHelper.getRoomSongStatus(view, song)
+                itemView.countryFlag.visibility = View.GONE
+
+                if (song != null) {
+                    if (song.imageUrl != null) {
+                        GlideApp.with(view)
+                            .load(song.imageUrl)
+                            .into(songImage)
+                    }
+
+                    itemView.song_name.text = song.songName
+                    itemView.song_artists.text =
+                        RoomHelper.getArtistsPlaceholder(song.artistNames, "")
+                    itemView.seek_bar.max = song.durationMs
+                    itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+
+                    itemView.song_status.visibility = View.VISIBLE
+                } else {
+                    itemView.song_status.visibility = View.GONE
+                }
             } else {
-                roomName.visibility = View.GONE
-                joinButton.visibility = View.GONE
-                roomSongStatus.visibility = View.GONE
+                itemView.room.visibility = View.GONE
+                itemView.divider.visibility = View.GONE
             }
         }
     }

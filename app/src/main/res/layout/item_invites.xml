@@ -23,7 +23,7 @@
                 android:id="@+id/room_inviter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="60dp"
+                android:paddingStart="50dp"
                 android:paddingEnd="50dp"
                 android:singleLine="true"
                 android:text="@string/placeholder_room_inviter"
