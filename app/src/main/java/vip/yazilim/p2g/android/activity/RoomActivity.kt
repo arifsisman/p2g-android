@@ -139,8 +139,7 @@ class RoomActivity : BaseActivity(),
     override fun onDestroy() {
         super.onDestroy()
         stopRoomWebSocketService()
-        //todo uncomment
-        //unregisterReceiver(broadcastReceiver)
+        unregisterReceiver(broadcastReceiver)
     }
 
     override fun onResume() {

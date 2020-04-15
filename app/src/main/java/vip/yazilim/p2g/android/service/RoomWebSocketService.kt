@@ -207,13 +207,13 @@ class RoomWebSocketService : Service(), CoroutineScope {
                             sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
                         }
                         else -> {
-                            if (job.isActive) {
+                            if (::job.isInitialized && job.isActive) {
                                 job.cancel()
                             }
                         }
                     }
                 }, {
-                    if (job.isActive) {
+                    if (::job.isInitialized && job.isActive) {
                         job.cancel()
                     }
                 })
