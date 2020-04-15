@@ -7,7 +7,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_home.view.*
+import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
@@ -73,7 +73,6 @@ class HomeAdapter(
             } else {
                 itemView.song_status.visibility = View.GONE
             }
-
         }
     }
 
