@@ -381,6 +381,7 @@ class RoomActivity : BaseActivity(),
                 DialogInterface.BUTTON_POSITIVE -> {
                     Api.client?.leaveRoom()?.withCallback(null)
                     finish()
+                    startActivity(Intent(this, MainActivity::class.java))
                 }
             }
         }
@@ -529,6 +530,7 @@ class RoomActivity : BaseActivity(),
                     if (roomStatusModel?.roomStatus != null && roomStatusModel.roomStatus.status == RoomStatus.CLOSED.status) {
                         context?.showToastLong(roomStatusModel.reason)
                         finish()
+                        startActivity(Intent(this@RoomActivity, MainActivity::class.java))
                     }
                 }
                 ACTION_USER_LIST_RECEIVE -> {

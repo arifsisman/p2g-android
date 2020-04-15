@@ -66,9 +66,9 @@ class RoomViewModel : ViewModelBase() {
                     roomUserModelList.postValue(obj)
 
                     obj.forEach {
-                        if (it.user.id == roomUserModel.value?.user?.id) {
+                        if (it.user?.id == roomUserModel.value?.user?.id) {
                             roomUserModel.postValue(it)
-                            roomUserRole.postValue(it.roomUser.roomRole)
+                            roomUserRole.postValue(it.roomUser?.roomRole)
                         }
                     }
 
@@ -80,7 +80,7 @@ class RoomViewModel : ViewModelBase() {
         Api.client?.getRoomUserModelMe()?.withCallback(object : Callback<RoomUserModel> {
             override fun onSuccess(obj: RoomUserModel) {
                 roomUserModel.postValue(obj)
-                roomUserRole.postValue(obj.roomUser.roomRole)
+                roomUserRole.postValue(obj.roomUser?.roomRole)
             }
 
             override fun onError(msg: String) {

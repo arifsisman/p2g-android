@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -54,6 +55,7 @@
         android:id="@+id/room_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="vertical">
 
         <TextView
@@ -79,23 +81,25 @@
 
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/song_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_below="@id/room_status"
-        android:layout_marginTop="6dp">
+        android:orientation="vertical">
 
         <SeekBar
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:clickable="false"
             android:focusable="false"
             android:paddingStart="0dp"
-            android:paddingTop="0dp"
             android:paddingEnd="0dp"
             android:paddingBottom="0dp"
+            android:overScrollMode="never"
+            android:paddingTop="0dp"
             android:progressTint="@color/colorAccentBlue"
             android:splitTrack="false"
             android:thumbTint="@android:color/transparent"
@@ -103,38 +107,47 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/song_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/description_song_cover_image"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/sample_cover_image" />
-
-        <TextView
-            android:id="@+id/song_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:paddingStart="60dp"
-            android:singleLine="true"
-            android:text="@string/placeholder_song_name"
-            app:layout_constraintTop_toTopOf="@+id/song_image"
-            tools:ignore="RtlSymmetry" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp">
 
-        <TextView
-            android:id="@+id/song_artists"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="60dp"
-            android:singleLine="true"
-            android:text="@string/placeholder_song_artists"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/song_name"
-            app:layout_constraintTop_toBottomOf="@+id/song_name"
-            tools:ignore="RtlSymmetry" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/song_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/description_song_cover_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/sample_cover_image" />
+
+            <TextView
+                android:id="@+id/song_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="60dp"
+                android:singleLine="true"
+                android:text="@string/placeholder_song_name"
+                app:layout_constraintTop_toTopOf="@+id/song_image"
+                tools:ignore="RtlSymmetry" />
+
+            <TextView
+                android:id="@+id/song_artists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="60dp"
+                android:singleLine="true"
+                android:text="@string/placeholder_song_artists"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/song_name"
+                app:layout_constraintTop_toBottomOf="@+id/song_name"
+                tools:ignore="RtlSymmetry" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 </RelativeLayout>

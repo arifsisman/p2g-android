@@ -44,31 +44,33 @@ class RoomUsersAdapter(
             val user = roomUserModel.user
             val roomUser = roomUserModel.roomUser
 
-            itemView.user_name.text = user.name
-            itemView.user_role.text = roomUser.roomRole
+            if (user != null && roomUser != null) {
+                itemView.user_name.text = user.name
+                itemView.user_role.text = roomUser.roomRole
 
-            when (roomUser.roomRole) {
-                Role.ROOM_OWNER.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(RED))
+                when (roomUser.roomRole) {
+                    Role.ROOM_OWNER.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(RED))
+                    }
+                    Role.ROOM_ADMIN.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(CYAN))
+                    }
+                    Role.ROOM_DJ.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(GREEN))
+                    }
+                    Role.ROOM_USER.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(WHITE))
+                    }
                 }
-                Role.ROOM_ADMIN.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(CYAN))
-                }
-                Role.ROOM_DJ.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(GREEN))
-                }
-                Role.ROOM_USER.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(WHITE))
-                }
-            }
 
-            if (user.imageUrl != null) {
-                GlideApp.with(view)
-                    .load(user.imageUrl)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(itemView.user_image)
-            } else {
-                itemView.user_image.setImageResource(R.drawable.ic_profile_image)
+                if (user.imageUrl != null) {
+                    GlideApp.with(view)
+                        .load(user.imageUrl)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(itemView.user_image)
+                } else {
+                    itemView.user_image.setImageResource(R.drawable.ic_profile_image)
+                }
             }
         }
 
@@ -98,7 +100,7 @@ class RoomUsersAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
         view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_room_user_model, parent, false)
+            .inflate(R.layout.item_room_user_model, parent, false)
         return MViewHolder(view)
     }
 
@@ -110,7 +112,7 @@ class RoomUsersAdapter(
         val roomUserModel = roomUserModelList[position]
         holder.bindView(roomUserModel)
 
-        if (roomUserModel.user.id == userIdMe) {
+        if (roomUserModel.user?.id == userIdMe) {
             holder.swipeLayout.isSwipeEnabled = false
         } else {
             holder.bindEvent(roomUserModelList[position], itemClickListener)

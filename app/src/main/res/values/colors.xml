@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#1e1e1e</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorLightGray">#9A9A9A</color>
+    <color name="colorLightGray">#474747</color>
     <color name="colorSelectedTab">#FFFFFF</color>
     <color name="colorSecondaryTab">#BDBDBD</color>
     <color name="colorText">#DCDCDC</color>

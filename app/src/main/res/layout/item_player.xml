@@ -23,6 +23,7 @@
             android:paddingTop="0dp"
             android:paddingEnd="0dp"
             android:paddingBottom="0dp"
+            android:overScrollMode="never"
             android:progressTint="@color/colorAccentBlue"
             android:splitTrack="false"
             android:clickable="false"

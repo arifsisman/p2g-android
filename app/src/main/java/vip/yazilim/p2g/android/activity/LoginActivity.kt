@@ -86,12 +86,11 @@ class LoginActivity : BaseActivity() {
         object : Callback<UserModel> {
             //user in room
             override fun onSuccess(obj: UserModel) {
-
                 if (obj.roomModel == null) {
                     this@LoginActivity.showToastLong("${resources.getString(R.string.info_logged_in)} ${user.name}")
-                    val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startMainIntent.putExtra("user", user)
-                    startActivity(startMainIntent)
+                    val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                    mainIntent.putExtra("user", user)
+                    startActivity(mainIntent)
                 } else {
                     val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
                     roomIntent.putExtra("room", obj.roomModel!!.room)

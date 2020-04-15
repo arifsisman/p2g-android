@@ -130,8 +130,8 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
                     }
 
                     override fun onSuccess(obj: RoomUserModel) {
-//                        context?.closeKeyboard()
-//                        mAlertDialog?.dismiss()
+                        context?.closeKeyboard()
+                        mAlertDialog?.dismiss()
 
                         val roomIntent = Intent(activity, RoomActivity::class.java)
                         roomIntent.putExtra("room", obj.room)

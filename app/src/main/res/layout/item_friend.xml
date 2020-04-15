@@ -75,17 +75,15 @@
             style="@style/Divider.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorPrimary" />
+            android:background="@color/colorLightGray" />
 
         <include
             android:id="@+id/room"
             layout="@layout/item_room"
-            android:layout_margin="10dp"
             android:clickable="true"
             android:focusable="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

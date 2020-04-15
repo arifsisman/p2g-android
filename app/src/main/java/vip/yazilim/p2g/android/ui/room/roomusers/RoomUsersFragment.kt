@@ -99,7 +99,7 @@ class RoomUsersFragment :
         adapter.update(roomUserModels)
 
         roomUserModels.forEach {
-            if (it.user.id == roomViewModel.roomUserModel.value?.user?.id) {
+            if (it.user?.id == roomViewModel.roomUserModel.value?.user?.id) {
                 roomViewModel.roomUserModel.postValue(it)
             }
         }
@@ -237,16 +237,18 @@ class RoomUsersFragment :
     override fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
         view.close()
 
-        Api.client?.addFriend(roomUserModel.roomUser.userId)?.withCallback(
-            object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                    roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user.name}")
-                }
+        roomUserModel.roomUser?.userId?.let {
+            Api.client?.addFriend(it)?.withCallback(
+                object : Callback<Boolean> {
+                    override fun onSuccess(obj: Boolean) {
+                        roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
+                    }
 
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
+                    override fun onError(msg: String) {
+                        roomViewModel.onMessageError.postValue(msg)
+                    }
+                })
+        }
     }
 
     override fun onItemClicked(view: View, user: User) {
@@ -292,17 +294,19 @@ class RoomUsersFragment :
     override fun onItemClicked(view: View, roomUserModel: RoomUserModel, role: Role) {
         changeRoleDialogView?.dismiss()
 
-        Api.client?.changeRoomUserRole(roomUserModel.roomUser.id, role.role)?.withCallback(
-            object : Callback<RoomUser> {
-                override fun onSuccess(obj: RoomUser) {
-                    roomViewModel.onMessageInfo.postValue(
-                        "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.roomRole}"
-                    )
-                }
+        roomUserModel.roomUser?.id?.let {
+            Api.client?.changeRoomUserRole(it, role.role)?.withCallback(
+                object : Callback<RoomUser> {
+                    override fun onSuccess(obj: RoomUser) {
+                        roomViewModel.onMessageInfo.postValue(
+                            "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.roomRole}"
+                        )
+                    }
 
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
+                    override fun onError(msg: String) {
+                        roomViewModel.onMessageError.postValue(msg)
+                    }
+                })
+        }
     }
 }
