@@ -54,6 +54,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
     private lateinit var roomWSClient: StompClient
     private val gsonBuilder = GsonBuilder()
     private val gson: Gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
+    private lateinit var job: Job
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -73,7 +74,7 @@ class RoomWebSocketService : Service(), CoroutineScope {
                 CHECK_WEBSOCKET_CONNECTION -> {
                     Log.v(TAG, "Checking the websocket connection")
 
-                    launch {
+                    job = launch {
                         delay(WEBSOCKET_RECONNECT_DELAY)
 
                         if (!roomWSClient.isConnected) {
@@ -206,11 +207,15 @@ class RoomWebSocketService : Service(), CoroutineScope {
                             sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
                         }
                         else -> {
-                            cancel()
+                            if (job.isActive) {
+                                job.cancel()
+                            }
                         }
                     }
                 }, {
-                    cancel()
+                    if (job.isActive) {
+                        job.cancel()
+                    }
                 })
         }
     }
