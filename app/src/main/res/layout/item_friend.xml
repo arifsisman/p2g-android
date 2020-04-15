@@ -48,6 +48,18 @@
                 app:srcCompat="@drawable/ic_profile_image" />
 
             <ImageButton
+                android:id="@+id/joinButton"
+                android:layout_width="30dp"
+                android:layout_height="0dp"
+                android:layout_margin="4dp"
+                android:background="?android:selectableItemBackground"
+                android:contentDescription="@string/description_join_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_play_circle_filled_white_24dp" />
+
+            <ImageButton
                 android:id="@+id/deleteButton"
                 android:layout_width="30dp"
                 android:layout_height="0dp"

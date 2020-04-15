@@ -105,7 +105,7 @@ class FriendsAdapter(
         private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
             itemView.user.setOnClickListener { clickListener.onRowClicked(userModel) }
             itemView.deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
-            itemView.room.setOnClickListener {
+            itemView.joinButton.setOnClickListener {
                 userModel.roomModel?.room?.let { room -> clickListener.onJoinClicked(room) }
             }
         }
@@ -177,6 +177,7 @@ class FriendsAdapter(
                     itemView.song_status.visibility = View.GONE
                 }
             } else {
+                itemView.joinButton.visibility = View.GONE
                 itemView.room.visibility = View.GONE
                 itemView.divider.visibility = View.GONE
             }

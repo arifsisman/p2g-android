@@ -166,23 +166,9 @@ class InvitesAdapter(
                 } else {
                     val filter = constraint.toString().trim()
                     roomInviteModelsFull.forEach {
-                        val roomName = it.userModel.roomModel?.room?.name
-                        val inviterName = it.userModel.user.name
-
-                        if (roomName != null) {
-                            if (roomName.contains(filter, true) || inviterName.contains(
-                                    filter,
-                                    true
-                                )
-                            ) {
-                                filteredList.add(it)
-                            }
-                        } else {
-                            if (inviterName.contains(filter, true)) {
-                                filteredList.add(it)
-                            }
+                        if (it.userModel.user.name.contains(filter, true)) {
+                            filteredList.add(it)
                         }
-
                     }
                 }
 
