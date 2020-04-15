@@ -22,8 +22,8 @@ import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE_RECEIVE
-import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
@@ -113,18 +113,17 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
     override fun onAccept(roomInviteModel: RoomInviteModel) {
         Api.client?.acceptInvite(roomInviteModel.roomInvite)?.withCallback(
-            object : Callback<RoomUser> {
+            object : Callback<RoomUserModel> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
                 }
 
-                override fun onSuccess(obj: RoomUser) {
-                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-
-                    val intent = Intent(activity, RoomActivity::class.java)
-                    intent.putExtra("roomModel", roomInviteModel.roomModel)
-                    intent.putExtra("roomUser", obj)
-                    startActivity(intent)
+                override fun onSuccess(obj: RoomUserModel) {
+                    val roomIntent = Intent(activity, RoomActivity::class.java)
+                    roomIntent.putExtra("room", obj.room)
+                    roomIntent.putExtra("user", obj.user)
+                    roomIntent.putExtra("roomUser", obj.roomUser)
+                    startActivity(roomIntent)
                 }
             })
     }

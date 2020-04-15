@@ -14,7 +14,7 @@ import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
-import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.helper.SpotifyHelper.Companion.getAccessTokenFromSpotify
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
@@ -83,11 +83,13 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun checkIsUserInRoom(user: User) = Api.client?.getRoomModelMe()?.withCallback(
-        object : Callback<RoomModel> {
+        object : Callback<RoomUserModel> {
             //user in room
-            override fun onSuccess(obj: RoomModel) {
+            override fun onSuccess(obj: RoomUserModel) {
                 val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                roomIntent.putExtra("roomModel", obj)
+                roomIntent.putExtra("room", obj.room)
+                roomIntent.putExtra("user", obj.user)
+                roomIntent.putExtra("roomUser", obj.roomUser)
                 startActivity(roomIntent)
             }
 

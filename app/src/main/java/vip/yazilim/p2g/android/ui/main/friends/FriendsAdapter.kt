@@ -100,25 +100,13 @@ class FriendsAdapter(
     }
 
     inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.userName)
-        private val profilePhoto: ImageView = itemView.findViewById(R.id.profilePhoto)
-        private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.onlineStatus)
-
-        private val joinButton: ImageButton = itemView.findViewById(R.id.joinButton)
-        private val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
         private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
-            deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
-            joinButton.setOnClickListener {
-                friendModel.userModel.room?.let { room ->
-                    clickListener.onJoinClicked(
-                        room
-                    )
-                }
+            itemView.user.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
+            itemView.deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
+            itemView.room.setOnClickListener {
+                friendModel.userModel.room?.let { room -> clickListener.onJoinClicked(room) }
             }
         }
 
@@ -129,29 +117,29 @@ class FriendsAdapter(
             val room = userModel.room
             val song = item.song
 
-            userName.text = user.name
+            itemView.user.userName.text = user.name
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profilePhoto)
+                    .into(itemView.user.profilePhoto)
             } else {
-                profilePhoto.setImageResource(R.drawable.ic_profile_image)
+                itemView.user.profilePhoto.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.user.onlineStatus.setImageResource(android.R.drawable.presence_online)
+                    itemView.user.onlineStatus.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.user.onlineStatus.setImageResource(android.R.drawable.presence_offline)
+                    itemView.user.onlineStatus.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.user.onlineStatus.setImageResource(android.R.drawable.presence_away)
+                    itemView.user.onlineStatus.visibility = View.VISIBLE
                 }
             }
 

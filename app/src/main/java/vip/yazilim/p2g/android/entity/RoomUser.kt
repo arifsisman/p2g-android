@@ -15,7 +15,7 @@ data class RoomUser(
     var roomId: Long,
     var userId: String,
     var userName: String,
-    var role: String,
+    var roomRole: String,
     var joinDate: LocalDateTime,
     var activeFlag: Boolean
 ) : Parcelable, IUser {

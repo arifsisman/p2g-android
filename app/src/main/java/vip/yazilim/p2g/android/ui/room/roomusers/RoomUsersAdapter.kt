@@ -45,9 +45,9 @@ class RoomUsersAdapter(
             val roomUser = roomUserModel.roomUser
 
             itemView.user_name.text = user.name
-            itemView.user_role.text = roomUser.role
+            itemView.user_role.text = roomUser.roomRole
 
-            when (roomUser.role) {
+            when (roomUser.roomRole) {
                 Role.ROOM_OWNER.role -> {
                     itemView.user_role.setTextColor(Color.parseColor(RED))
                 }

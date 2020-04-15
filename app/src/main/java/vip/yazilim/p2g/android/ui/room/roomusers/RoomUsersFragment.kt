@@ -296,7 +296,7 @@ class RoomUsersFragment :
             object : Callback<RoomUser> {
                 override fun onSuccess(obj: RoomUser) {
                     roomViewModel.onMessageInfo.postValue(
-                        "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.role}"
+                        "${roomUserModel.user.name}${resources.getString(R.string.info_promote_demote)} ${obj.roomRole}"
                     )
                 }
 

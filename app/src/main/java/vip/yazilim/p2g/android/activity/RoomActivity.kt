@@ -56,10 +56,7 @@ import vip.yazilim.p2g.android.constant.WebSocketActions.CHECK_WEBSOCKET_CONNECT
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.entity.RoomUser
-import vip.yazilim.p2g.android.entity.Song
-import vip.yazilim.p2g.android.entity.UserDevice
+import vip.yazilim.p2g.android.entity.*
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
@@ -107,32 +104,44 @@ class RoomActivity : BaseActivity(),
 
         Play2GetherApplication.currentActivity = this
 
-        setupRoomModel()
-        startRoomWebSocketService()
-        setupViewPager()
-        setupViewModel()
-        setupSlidingUpPanel()
-        setupPlayer()
+        val room = intent.getParcelableExtra<Room>("room")
+        val user = intent.getParcelableExtra<User>("user")
+        val roomUser = intent.getParcelableExtra<RoomUser>("roomUser")
 
-        setupNetworkConnectivityManager()
+        if (room == null || user == null || roomUser == null) {
+            finish()
+        } else {
+            this.room = room
+            title = room.name
+            getRoomModel(room.id)
 
-        registerRoomWebSocketReceiver(broadcastReceiver)
+            startRoomWebSocketService()
+            setupViewPager()
+            setupViewModel()
+            setupSlidingUpPanel()
+            setupPlayer()
 
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
-        mInterstitialAd.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                mInterstitialAd.show()
+            setupNetworkConnectivityManager()
+
+            registerRoomWebSocketReceiver(broadcastReceiver)
+
+            mInterstitialAd = InterstitialAd(this)
+            mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    mInterstitialAd.show()
+                }
             }
+            mInterstitialAd.loadAd(AdRequest.Builder().build())
+            updateSeekBarTime.run()
         }
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
-        updateSeekBarTime.run()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopRoomWebSocketService()
-        unregisterRoomWebSocketReceiver(broadcastReceiver)
+        //todo uncomment
+        //unregisterReceiver(broadcastReceiver)
     }
 
     override fun onResume() {
@@ -215,28 +224,6 @@ class RoomActivity : BaseActivity(),
 
         slidingUpPanel.panelState = if (show) COLLAPSED else HIDDEN
         playerRecyclerView.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    private fun setupRoomModel() {
-        val roomFromIntent = intent.getParcelableExtra<Room>("room")
-        val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
-
-        if (roomFromIntent == null && roomModelFromIntent == null) {
-            finish()
-        } else {
-            when {
-                roomFromIntent != null -> {
-                    title = roomFromIntent.name
-                    room = roomFromIntent
-                    getRoomModel(roomFromIntent.id)
-                }
-                roomModelFromIntent != null -> {
-                    title = roomModelFromIntent.room.name
-                    room = roomModelFromIntent.room
-                    roomModel = roomModelFromIntent
-                }
-            }
-        }
     }
 
     private fun setupSlidingUpPanel() {
@@ -407,19 +394,23 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun stopRoomWebSocketService() {
-        val stopServiceIntent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
-        stopServiceIntent.putExtra("roomId", room.id)
-        stopService(stopServiceIntent)
+        if (this::room.isInitialized) {
+            val stopServiceIntent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+            stopServiceIntent.putExtra("roomId", room.id)
+            stopService(stopServiceIntent)
+        }
     }
 
     private fun startRoomWebSocketService() {
-        val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
-        intent.putExtra("roomId", room.id)
+        if (this::room.isInitialized) {
+            val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+            intent.putExtra("roomId", room.id)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
         }
     }
 
@@ -434,14 +425,6 @@ class RoomActivity : BaseActivity(),
         intentFilter.addAction(ACTION_MESSAGE_RECEIVE)
         intentFilter.addAction(ACTION_ROOM_STATUS_RECEIVE)
         registerReceiver(broadcastReceiver, intentFilter)
-    }
-
-    private fun unregisterRoomWebSocketReceiver(broadcastReceiver: BroadcastReceiver) {
-        try {
-            unregisterReceiver(broadcastReceiver)
-        } catch (e: Exception) {
-            Log.d(TAG, "Room Web Socket not registered.")
-        }
     }
 
     private fun clearQueue() {
@@ -588,7 +571,7 @@ class RoomActivity : BaseActivity(),
     // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
         if (roomUser != null) {
-            return if (roomUser.role == Role.ROOM_USER.role) {
+            return if (roomUser.roomRole == Role.ROOM_USER.role) {
                 fab.hide()
                 playPause_button_mini.visibility = View.GONE
                 player_controller_buttons.visibility = View.GONE

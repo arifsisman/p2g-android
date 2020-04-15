@@ -6,8 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    android:clickable="true"
-    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp"
     tools:context=".activity.MainActivity">
@@ -15,12 +13,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/user"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:focusable="true">
 
             <TextView
                 android:id="@+id/userName"
@@ -45,17 +46,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_profile_image" />
-
-            <ImageButton
-                android:id="@+id/joinButton"
-                android:layout_width="30dp"
-                android:layout_height="0dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/description_join_button"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/deleteButton"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_play_circle_filled_white_24dp" />
 
             <ImageButton
                 android:id="@+id/deleteButton"
@@ -85,12 +75,14 @@
             style="@style/Divider.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
             android:background="@color/colorPrimary" />
 
         <include
             android:id="@+id/room"
             layout="@layout/item_room"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp" />

@@ -3,37 +3,28 @@ package vip.yazilim.p2g.android.ui.main.friends
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.*
-import androidx.appcompat.app.AlertDialog
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
-import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 
 
 class FriendsFragment : FragmentBase(
@@ -163,13 +154,8 @@ class FriendsFragment : FragmentBase(
             })
     }
 
-
     override fun onJoinClicked(room: Room) {
-        if (room.password == null) {
-            joinRoomEvent(room)
-        } else {
-            joinPrivateRoomEvent(room)
-        }
+        (activity as MainActivity).onItemClicked(room)
     }
 
     override fun onDeleteClicked(friendModel: FriendModel) {
@@ -219,78 +205,4 @@ class FriendsFragment : FragmentBase(
             }
         })
 
-    private fun joinRoomEvent(room: Room) =
-        Api.client?.joinRoom(room.id, GeneralConstants.UNDEFINED)?.withCallback(
-            object : Callback<RoomUser> {
-                override fun onError(msg: String) {
-                    viewModel.onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: RoomUser) {
-                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-
-                    val intent = Intent(activity, RoomActivity::class.java)
-                    intent.putExtra("roomUser", obj)
-                    intent.putExtra("room", room)
-                    startActivity(intent)
-                }
-            })
-
-    private fun joinPrivateRoomEvent(room: Room) {
-        val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = MaterialAlertDialogBuilder(context).setView(mDialogView)
-        val joinButton = mDialogView.dialog_join_room_button
-        val roomPasswordEditText = mDialogView.dialog_room_password
-        val mAlertDialog: AlertDialog
-        mAlertDialog = mBuilder.show()
-        mAlertDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-
-        roomPasswordEditText.requestFocus()
-
-        // For disable create button if password is empty
-        roomPasswordEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(
-                s: CharSequence,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                joinButton.isEnabled = s.isNotEmpty()
-            }
-        })
-
-        // Click join
-        joinButton.setOnClickListener {
-            val roomPassword = roomPasswordEditText.text.toString()
-
-            Api.client?.joinRoom(room.id, roomPassword)?.withCallback(
-                object : Callback<RoomUser> {
-                    override fun onError(msg: String) {
-                        mDialogView.showSnackBarError(msg)
-                    }
-
-                    override fun onSuccess(obj: RoomUser) {
-                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-                        mAlertDialog.dismiss()
-                        context?.closeKeyboard()
-
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        intent.putExtra("roomUser", obj)
-                        intent.putExtra("room", room)
-                        startActivity(intent)
-                    }
-                })
-        }
-
-        // Click cancel
-        mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog.cancel()
-            roomPasswordEditText.clearFocus()
-            context?.closeKeyboard()
-        }
-    }
 }

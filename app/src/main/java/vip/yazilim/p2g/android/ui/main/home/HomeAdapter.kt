@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
@@ -30,9 +31,7 @@ class HomeAdapter(
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
         fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener {
-                clickListener.onItemClicked(roomModel)
-            }
+            itemView.setOnClickListener { clickListener.onItemClicked(roomModel.room) }
         }
 
         fun bindView(roomModel: RoomModel) {
@@ -77,7 +76,7 @@ class HomeAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(roomModel: RoomModel)
+        fun onItemClicked(room: Room)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {

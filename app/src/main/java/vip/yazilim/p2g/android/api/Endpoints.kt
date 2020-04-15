@@ -31,7 +31,7 @@ interface Endpoints {
     fun createRoom(
         @Path("roomName") roomName: String,
         @Body roomPassword: String
-    ): Call<RestResponse<Room>>
+    ): Call<RestResponse<RoomUserModel>>
 
     @GET("/api/room/model/")
     fun getRoomModels(): Call<RestResponse<MutableList<RoomModel>>>
@@ -43,7 +43,7 @@ interface Endpoints {
     fun getRoomModel(@Path("id") roomId: Long): Call<RestResponse<RoomModel>>
 
     @GET("/api/room/model/me")
-    fun getRoomModelMe(): Call<RestResponse<RoomModel>>
+    fun getRoomModelMe(): Call<RestResponse<RoomUserModel>>
 
 
     // Room Invite API
@@ -54,7 +54,7 @@ interface Endpoints {
     ): Call<RestResponse<RoomInvite>>
 
     @POST("/api/room/invite/accept")
-    fun acceptInvite(@Body roomInvite: RoomInvite): Call<RestResponse<RoomUser>>
+    fun acceptInvite(@Body roomInvite: RoomInvite): Call<RestResponse<RoomUserModel>>
 
     @DELETE("/api/room/invite/{id}")
     fun rejectInvite(@Path("id") roomId: Long): Call<RestResponse<Boolean>>
@@ -65,7 +65,10 @@ interface Endpoints {
 
     // Room User API
     @POST("/api/room/{id}/join")
-    fun joinRoom(@Path("id") roomId: Long, @Body password: String): Call<RestResponse<RoomUser>>
+    fun joinRoom(
+        @Path("id") roomId: Long,
+        @Body password: String
+    ): Call<RestResponse<RoomUserModel>>
 
     @GET("/api/room/{id}/users")
     fun getRoomUsers(@Path("id") roomId: Long): Call<RestResponse<List<User>>>
