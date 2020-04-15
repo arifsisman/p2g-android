@@ -41,8 +41,8 @@ class InvitesAdapter(
         }
 
         fun bindView(roomInviteModel: RoomInviteModel) {
-            val roomModel = roomInviteModel.roomModel
-            val user = roomInviteModel.inviter
+            val roomModel = roomInviteModel.userModel.roomModel
+            val user = roomInviteModel.userModel.user
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
@@ -70,38 +70,40 @@ class InvitesAdapter(
                 }
             }
 
-            val roomOwnerPlaceholder =
-                "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner?.name}"
+            if (roomModel != null) {
+                val roomOwnerPlaceholder =
+                    "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner.name}"
 
-            itemView.roomName.text = roomModel.room.name
-            itemView.roomOwner.text = roomOwnerPlaceholder
-            itemView.userCount.text = roomModel.userCount.toString()
+                itemView.roomName.text = roomModel.room.name
+                itemView.roomOwner.text = roomOwnerPlaceholder
+                itemView.userCount.text = roomModel.userCount.toString()
 
-            if (roomModel.room.privateFlag) {
-                itemView.lockImage.visibility = View.VISIBLE
-            } else {
-                itemView.lockImage.visibility = View.GONE
-            }
-
-            itemView.countryFlag.visibility = View.GONE
-
-            if (roomModel.song != null) {
-                val song = roomModel.song
-                if (song?.imageUrl != null) {
-                    GlideApp.with(view)
-                        .load(roomModel.song?.imageUrl)
-                        .into(songImage)
+                if (roomModel.room.privateFlag) {
+                    itemView.lockImage.visibility = View.VISIBLE
+                } else {
+                    itemView.lockImage.visibility = View.GONE
                 }
 
-                itemView.song_name.text = song?.songName
-                itemView.song_artists.text =
-                    RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
-                itemView.seek_bar.max = song?.durationMs ?: 0
-                itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+                itemView.countryFlag.visibility = View.GONE
 
-                itemView.song_status.visibility = View.VISIBLE
-            } else {
-                itemView.song_status.visibility = View.GONE
+                if (roomModel.song != null) {
+                    val song = roomModel.song
+                    if (song?.imageUrl != null) {
+                        GlideApp.with(view)
+                            .load(roomModel.song?.imageUrl)
+                            .into(songImage)
+                    }
+
+                    itemView.song_name.text = song?.songName
+                    itemView.song_artists.text =
+                        RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
+                    itemView.seek_bar.max = song?.durationMs ?: 0
+                    itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+
+                    itemView.song_status.visibility = View.VISIBLE
+                } else {
+                    itemView.song_status.visibility = View.GONE
+                }
             }
         }
     }
@@ -164,13 +166,23 @@ class InvitesAdapter(
                 } else {
                     val filter = constraint.toString().trim()
                     roomInviteModelsFull.forEach {
-                        if (it.roomModel.room.name.contains(
-                                filter,
-                                true
-                            ) || it.inviter.name.contains(filter, true)
-                        ) {
-                            filteredList.add(it)
+                        val roomName = it.userModel.roomModel?.room?.name
+                        val inviterName = it.userModel.user.name
+
+                        if (roomName != null) {
+                            if (roomName.contains(filter, true) || inviterName.contains(
+                                    filter,
+                                    true
+                                )
+                            ) {
+                                filteredList.add(it)
+                            }
+                        } else {
+                            if (inviterName.contains(filter, true)) {
+                                filteredList.add(it)
+                            }
                         }
+
                     }
                 }
 

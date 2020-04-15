@@ -23,7 +23,6 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     private lateinit var viewModel: UserViewModel
     private lateinit var adapter: ProfileAdapter
     private var userModel: UserModel? = null
-    private var roomModel: RoomModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +35,6 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     override fun onResume() {
         super.onResume()
         userModel?.user?.id?.let { viewModel.loadFriendsCount(it) }
-        userModel?.room?.id?.let { viewModel.loadRoomModel(it) }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -53,7 +51,7 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     override fun setupUI() {
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = ProfileAdapter(userModel, roomModel, 0, false)
+        adapter = ProfileAdapter(userModel, userModel?.roomModel, 0, false)
         recyclerView.adapter = adapter
     }
 

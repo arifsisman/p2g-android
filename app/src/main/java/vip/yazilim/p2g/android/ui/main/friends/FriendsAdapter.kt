@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.model.p2g.FriendModel
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -57,14 +57,14 @@ class FriendsAdapter(
             friendRequestModel: FriendRequestModel,
             clickListener: OnItemClickListener
         ) {
-            itemView.setOnClickListener { clickListener.onRowClicked(friendRequestModel.friendRequestUserModel) }
+            itemView.setOnClickListener { clickListener.onRowClicked(friendRequestModel.userModel) }
             acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
             rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
         }
 
         override fun bindView(item: FriendRequestModel) {
             bindEvent(item, requestClickListener)
-            val user = item.friendRequestUserModel.user
+            val user = item.userModel.user
 
             val inviteDatePlaceholder =
                 "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest.requestDate.toZonedDateTime()
@@ -99,23 +99,21 @@ class FriendsAdapter(
         }
     }
 
-    inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
+    inner class FriendViewHolder(itemView: View) : ViewHolderBase<UserModel>(itemView) {
         private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
-        private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
-            itemView.user.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
-            itemView.deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
+        private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
+            itemView.user.setOnClickListener { clickListener.onRowClicked(userModel) }
+            itemView.deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
             itemView.room.setOnClickListener {
-                friendModel.userModel.room?.let { room -> clickListener.onJoinClicked(room) }
+                userModel.roomModel?.room?.let { room -> clickListener.onJoinClicked(room) }
             }
         }
 
-        override fun bindView(item: FriendModel) {
+        override fun bindView(item: UserModel) {
             bindEvent(item, friendClickListener)
-            val userModel = item.userModel
-            val user = userModel.user
-            val room = userModel.room
-            val song = item.song
+            val user = item.user
+            val roomModel = item.roomModel
 
             itemView.user.userName.text = user.name
 
@@ -143,15 +141,17 @@ class FriendsAdapter(
                 }
             }
 
-            if (room != null) {
+            if (roomModel != null) {
+                val song: Song? = roomModel.song
+
                 val roomOwnerPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_room_owner)} ${userModel.roomOwnerName}"
+                    "${view.resources.getString(R.string.placeholder_room_owner)} ${item.roomModel?.owner?.name}"
 
-                itemView.roomName.text = room.name
+                itemView.roomName.text = roomModel.room.name
                 itemView.roomOwner.text = roomOwnerPlaceholder
-                itemView.userCount.text = userModel.roomUserCount.toString()
+                itemView.userCount.text = roomModel.userCount.toString()
 
-                if (room.privateFlag) {
+                if (roomModel.room.privateFlag) {
                     itemView.lockImage.visibility = View.VISIBLE
                 } else {
                     itemView.lockImage.visibility = View.GONE
@@ -188,7 +188,7 @@ class FriendsAdapter(
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
         fun onJoinClicked(room: Room)
-        fun onDeleteClicked(friendModel: FriendModel)
+        fun onDeleteClicked(userModel: UserModel)
         fun onRowClicked(userModel: UserModel)
     }
 
@@ -212,14 +212,14 @@ class FriendsAdapter(
         val element = adapterDataList[position]
         when (holder) {
             is FriendRequestViewHolder -> holder.bindView(element as FriendRequestModel)
-            is FriendViewHolder -> holder.bindView(element as FriendModel)
+            is FriendViewHolder -> holder.bindView(element as UserModel)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (adapterDataList[position]) {
             is FriendRequestModel -> TYPE_REQUEST
-            is FriendModel -> TYPE_FRIEND
+            is UserModel -> TYPE_FRIEND
             else -> throw IllegalArgumentException("Invalid type of data $position")
         }
     }
@@ -242,13 +242,13 @@ class FriendsAdapter(
                     adapterDataListFull.forEach {
                         when (it) {
                             is FriendRequestModel -> {
-                                if (it.friendRequestUserModel.user.name.contains(filter, true)
+                                if (it.userModel.user.name.contains(filter, true)
                                 ) {
                                     filteredList.add(it)
                                 }
                             }
-                            is FriendModel -> {
-                                if (it.userModel.user.name.contains(filter, true)
+                            is UserModel -> {
+                                if (it.user.name.contains(filter, true)
                                 ) {
                                     filteredList.add(it)
                                 }
@@ -272,22 +272,22 @@ class FriendsAdapter(
 
     fun add(data: Any) {
         adapterDataList.add(data)
-        adapterDataList.sortBy { it is FriendModel }
-        if (data is FriendModel) {
-            adapterDataList.sortBy { data.userModel.user.onlineStatus }
+        adapterDataList.sortBy { it is UserModel }
+        if (data is UserModel) {
+            adapterDataList.sortBy { data.user.onlineStatus }
         }
         notifyItemInserted(adapterDataList.size)
     }
 
     fun addAll(data: MutableList<Any>) {
         adapterDataList.addAll(data)
-        adapterDataList.sortBy { it is FriendModel }
+        adapterDataList.sortBy { it is UserModel }
         notifyDataSetChanged()
     }
 
     fun update(data: UserFriendModel) {
-        adapterDataList.addAll(data.friendRequestModelList)
-        adapterDataList.addAll(data.friendModelList)
+        adapterDataList.addAll(data.requestModels)
+        adapterDataList.addAll(data.friendModels)
         notifyDataSetChanged()
     }
 

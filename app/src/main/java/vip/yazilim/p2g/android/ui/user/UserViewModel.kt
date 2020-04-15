@@ -25,14 +25,4 @@ class UserViewModel : ViewModelBase() {
             }
         })
 
-    fun loadRoomModel(roomId: Long) = Api.client?.getRoomModel(roomId)?.withCallback(
-        object : Callback<RoomModel> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: RoomModel) {
-                roomModel.postValue(obj)
-            }
-        })
-
 }

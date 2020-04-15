@@ -58,7 +58,6 @@ import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.*
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
-import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.service.RoomWebSocketService
@@ -84,7 +83,8 @@ class RoomActivity : BaseActivity(),
     PlayerAdapter.OnSeekBarChangeListener,
     DeviceAdapter.OnItemClickListener {
     lateinit var room: Room
-    lateinit var roomModel: RoomModel
+    lateinit var user: User
+    lateinit var roomUser: RoomUser
 
     private lateinit var roomViewModel: RoomViewModel
     private lateinit var playerAdapter: PlayerAdapter
@@ -104,37 +104,40 @@ class RoomActivity : BaseActivity(),
 
         Play2GetherApplication.currentActivity = this
 
-        val room = intent.getParcelableExtra<Room>("room")
-        val user = intent.getParcelableExtra<User>("user")
-        val roomUser = intent.getParcelableExtra<RoomUser>("roomUser")
+        val roomFromIntent = intent.getParcelableExtra<Room>("room")
+        val userFromIntent = intent.getParcelableExtra<User>("user")
+        val roomUserFromIntent = intent.getParcelableExtra<RoomUser>("roomUser")
 
-        if (room == null || user == null || roomUser == null) {
-            finish()
+        if (roomFromIntent == null) {
+            startActivity(Intent(this, MainActivity::class.java))
         } else {
-            this.room = room
-            title = room.name
-            getRoomModel(room.id)
-
-            startRoomWebSocketService()
-            setupViewPager()
-            setupViewModel()
-            setupSlidingUpPanel()
-            setupPlayer()
-
-            setupNetworkConnectivityManager()
-
-            registerRoomWebSocketReceiver(broadcastReceiver)
-
-            mInterstitialAd = InterstitialAd(this)
-            mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
-            mInterstitialAd.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    mInterstitialAd.show()
-                }
-            }
-            mInterstitialAd.loadAd(AdRequest.Builder().build())
-            updateSeekBarTime.run()
+            room = roomFromIntent
+//            user = userFromIntent
+//            roomUser = roomUserFromIntent
         }
+
+        title = room.name
+
+        startRoomWebSocketService()
+        setupViewPager()
+        setupViewModel()
+        setupSlidingUpPanel()
+        setupPlayer()
+
+        setupNetworkConnectivityManager()
+
+        registerRoomWebSocketReceiver(broadcastReceiver)
+
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
+        mInterstitialAd.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                mInterstitialAd.show()
+            }
+        }
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        updateSeekBarTime.run()
+
     }
 
     override fun onDestroy() {
@@ -480,19 +483,6 @@ class RoomActivity : BaseActivity(),
 
             override fun onError(msg: String) {
                 viewPager.showSnackBarError(msg)
-            }
-        })
-    }
-
-
-    private fun getRoomModel(roomId: Long) {
-        // Get room model if not exists
-        Api.client?.getRoomModel(roomId)?.withCallback(object : Callback<RoomModel> {
-            override fun onSuccess(obj: RoomModel) {
-                roomModel = obj
-            }
-
-            override fun onError(msg: String) {
             }
         })
     }

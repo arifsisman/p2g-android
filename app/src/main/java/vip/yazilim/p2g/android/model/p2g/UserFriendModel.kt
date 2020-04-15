@@ -9,6 +9,6 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class UserFriendModel(
-    var friendRequestModelList: List<FriendRequestModel>,
-    var friendModelList: List<FriendModel>
+    var requestModels: List<FriendRequestModel>,
+    var friendModels: List<UserModel>
 ) : Parcelable

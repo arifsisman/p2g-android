@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.model.p2g
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import vip.yazilim.p2g.android.entity.FriendRequest
-import vip.yazilim.p2g.android.entity.Song
 
 /**
  * @author mustafaarifsisman - 02.02.2020
@@ -12,6 +11,5 @@ import vip.yazilim.p2g.android.entity.Song
 @Parcelize
 data class FriendRequestModel(
     var friendRequest: FriendRequest,
-    var friendRequestUserModel: UserModel,
-    var song: Song?
+    var userModel: UserModel
 ) : Parcelable

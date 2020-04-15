@@ -19,7 +19,6 @@ import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.model.p2g.FriendModel
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
@@ -73,15 +72,15 @@ class FriendsFragment : FragmentBase(
 
     // Observer
     private val renderData = Observer<UserFriendModel> {
-        if (it.friendRequestModelList.isEmpty() && it.friendModelList.isEmpty()) {
+        if (it.requestModels.isEmpty() && it.friendModels.isEmpty()) {
             viewModel.onEmptyList.postValue(true)
             adapter.clearDataList()
             adapter.clearDataListFull()
         } else {
             viewModel.onEmptyList.postValue(false)
             adapter.update(it)
-            it.friendModelList.forEach { friend -> adapter.adapterDataListFull.add(friend) }
-            it.friendRequestModelList.forEach { request -> adapter.adapterDataListFull.add(request) }
+            it.friendModels.forEach { friend -> adapter.adapterDataListFull.add(friend) }
+            it.requestModels.forEach { request -> adapter.adapterDataListFull.add(request) }
         }
     }
 
@@ -113,13 +112,8 @@ class FriendsFragment : FragmentBase(
 
                 override fun onSuccess(obj: Boolean) {
                     adapter.remove(friendRequestModel)
-                    adapter.add(FriendModel(friendRequestModel.friendRequestUserModel, null))
-                    adapter.adapterDataListFull.add(
-                        FriendModel(
-                            friendRequestModel.friendRequestUserModel,
-                            null
-                        )
-                    )
+                    adapter.add(friendRequestModel.userModel)
+                    adapter.adapterDataListFull.add(friendRequestModel.userModel)
                 }
             })
     }
@@ -158,18 +152,18 @@ class FriendsFragment : FragmentBase(
         (activity as MainActivity).onItemClicked(room)
     }
 
-    override fun onDeleteClicked(friendModel: FriendModel) {
+    override fun onDeleteClicked(userModel: UserModel) {
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client?.deleteFriend(friendModel.userModel.user.id)?.withCallback(
+                    Api.client?.deleteFriend(userModel.user.id)?.withCallback(
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
                                 viewModel.onMessageError.postValue(msg)
                             }
 
                             override fun onSuccess(obj: Boolean) {
-                                adapter.remove(friendModel)
+                                adapter.remove(userModel)
                             }
                         })
                 }

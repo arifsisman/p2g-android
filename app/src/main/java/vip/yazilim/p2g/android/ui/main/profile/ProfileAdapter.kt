@@ -103,11 +103,11 @@ class ProfileAdapter(
             // Room
             if (room != null) {
                 val roomOwnerPlaceholder =
-                    "${view.resources.getString(R.string.placeholder_room_owner)} ${userModel.roomOwnerName}"
+                    "${view.resources.getString(R.string.placeholder_room_owner)} ${userModel.roomModel?.owner?.name}"
 
                 itemView.roomName.text = room.name
                 itemView.roomOwner.text = roomOwnerPlaceholder
-                itemView.userCount.text = userModel.roomUserCount.toString()
+                itemView.userCount.text = userModel.roomModel?.userCount.toString()
 
                 if (room.privateFlag) {
                     itemView.lockImage.visibility = View.VISIBLE
