@@ -14,7 +14,7 @@ import vip.yazilim.p2g.android.api.Api.withCallback
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
-import vip.yazilim.p2g.android.model.p2g.RoomUserModel
+import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.util.helper.SpotifyHelper.Companion.getAccessTokenFromSpotify
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
@@ -82,23 +82,26 @@ class LoginActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    private fun checkIsUserInRoom(user: User) = Api.client?.getRoomModelMe()?.withCallback(
-        object : Callback<RoomUserModel> {
+    private fun checkIsUserInRoom(user: User) = Api.client?.getUserModelMe()?.withCallback(
+        object : Callback<UserModel> {
             //user in room
-            override fun onSuccess(obj: RoomUserModel) {
-                val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
-                roomIntent.putExtra("room", obj.room)
-                roomIntent.putExtra("user", obj.user)
-                roomIntent.putExtra("roomUser", obj.roomUser)
-                startActivity(roomIntent)
+            override fun onSuccess(obj: UserModel) {
+
+                if (obj.roomModel == null) {
+                    this@LoginActivity.showToastLong("${resources.getString(R.string.info_logged_in)} ${user.name}")
+                    val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startMainIntent.putExtra("user", user)
+                    startActivity(startMainIntent)
+                } else {
+                    val roomIntent = Intent(this@LoginActivity, RoomActivity::class.java)
+                    roomIntent.putExtra("room", obj.roomModel!!.room)
+                    startActivity(roomIntent)
+                }
             }
 
             //user not in room
             override fun onError(msg: String) {
-                this@LoginActivity.showToastLong("${resources.getString(R.string.info_logged_in)} ${user.name}")
-                val startMainIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                startMainIntent.putExtra("user", user)
-                startActivity(startMainIntent)
+
             }
         })
 }

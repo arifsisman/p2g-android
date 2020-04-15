@@ -105,15 +105,11 @@ class RoomActivity : BaseActivity(),
         Play2GetherApplication.currentActivity = this
 
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
-        val userFromIntent = intent.getParcelableExtra<User>("user")
-        val roomUserFromIntent = intent.getParcelableExtra<RoomUser>("roomUser")
 
         if (roomFromIntent == null) {
             startActivity(Intent(this, MainActivity::class.java))
         } else {
             room = roomFromIntent
-//            user = userFromIntent
-//            roomUser = roomUserFromIntent
         }
 
         title = room.name
