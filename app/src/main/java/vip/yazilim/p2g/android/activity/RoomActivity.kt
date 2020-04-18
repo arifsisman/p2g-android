@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.main.item_player.*
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.BuildConfig
-import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
@@ -101,8 +100,6 @@ class RoomActivity : BaseActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
-
-        Play2GetherApplication.currentActivity = this
 
         val roomFromIntent = intent.getParcelableExtra<Room>("room")
 

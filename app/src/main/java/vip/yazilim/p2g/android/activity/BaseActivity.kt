@@ -23,16 +23,6 @@ open class BaseActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
-//    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-//        super.onCreate(savedInstanceState, persistentState)
-//        EventBus.getDefault().register(this)
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        EventBus.getDefault().unregister(this)
-//    }
-
     @Subscribe
     fun onUnauthorizedEvent(e: UnauthorizedEvent?) {
         handleUnauthorizedEvent()

@@ -6,6 +6,8 @@ import android.util.Log
 import com.google.android.gms.ads.MobileAds
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
 import okhttp3.Call
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
@@ -15,7 +17,6 @@ import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.UserModel
-import vip.yazilim.p2g.android.util.helper.SpotifyHelper.Companion.getAccessTokenFromSpotify
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
@@ -35,12 +36,10 @@ class LoginActivity : BaseActivity() {
         setContentView(R.layout.activity_login)
 
         MobileAds.initialize(this)
-        Play2GetherApplication.currentActivity = this
         supportActionBar?.hide()
 
         // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
-
         getAccessTokenFromSpotify()
     }
 
@@ -55,13 +54,13 @@ class LoginActivity : BaseActivity() {
                 Api.client.login().withCallback(
                     object : Callback<User> {
                         override fun onError(msg: String) {
-                            val alert = this@LoginActivity.showErrorDialog(msg)
-                            alert?.setOnCancelListener { getAccessTokenFromSpotify() }
+                            this@LoginActivity.showErrorDialog(msg, ::getAccessTokenFromSpotify)
                         }
 
                         override fun onSuccess(obj: User) {
-                            Play2GetherApplication.user = obj
-                            checkIsUserInRoom(obj)
+                            Play2GetherApplication.userName = obj.name
+                            Play2GetherApplication.userId = obj.id
+                            getUserModel(obj)
                         }
                     })
             } else {
@@ -82,9 +81,8 @@ class LoginActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    private fun checkIsUserInRoom(user: User) = Api.client.getUserModelMe().withCallback(
+    private fun getUserModel(user: User) = Api.client.getUserModelMe().withCallback(
         object : Callback<UserModel> {
-            //user in room
             override fun onSuccess(obj: UserModel) {
                 if (obj.roomModel == null) {
                     this@LoginActivity.showToastLong("${resources.getString(R.string.info_logged_in)} ${user.name}")
@@ -98,9 +96,26 @@ class LoginActivity : BaseActivity() {
                 }
             }
 
-            //user not in room
             override fun onError(msg: String) {
-
+                this@LoginActivity.showErrorDialog(msg)
             }
         })
+
+    fun getAccessTokenFromSpotify() {
+        val request: AuthorizationRequest = AuthorizationRequest
+            .Builder(
+                SpotifyConstants.CLIENT_ID,
+                AuthorizationResponse.Type.TOKEN,
+                SpotifyConstants.REDIRECT_URI
+            )
+            .setShowDialog(true)
+            .setScopes(SpotifyConstants.SCOPE)
+            .build()
+
+        AuthorizationClient.openLoginActivity(
+            this@LoginActivity,
+            SpotifyConstants.AUTH_TOKEN_REQUEST_CODE,
+            request
+        )
+    }
 }

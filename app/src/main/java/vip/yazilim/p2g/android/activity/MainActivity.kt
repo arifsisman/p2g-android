@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
 import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
-import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.withCallback
@@ -51,7 +50,6 @@ class MainActivity : BaseActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Play2GetherApplication.currentActivity = this
         viewModel =
             ViewModelProvider(this, MainViewModelFactory()).get(MainViewModel::class.java)
 
@@ -110,7 +108,6 @@ class MainActivity : BaseActivity(),
         } else {
             joinPrivateRoomEvent(room)
         }
-
     }
 
     private fun joinRoomEvent(room: Room) =

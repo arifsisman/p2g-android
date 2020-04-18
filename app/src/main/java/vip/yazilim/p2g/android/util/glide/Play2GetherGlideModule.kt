@@ -9,7 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 
 @GlideModule
-class P2GGlideModule : AppGlideModule() {
+class Play2GetherGlideModule : AppGlideModule() {
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         super.applyOptions(context, builder)

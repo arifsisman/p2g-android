@@ -12,7 +12,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
-import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.RestResponse
 import vip.yazilim.p2g.android.constant.ApiConstants
@@ -39,9 +38,8 @@ object Api {
 
         val retrofit: Retrofit = builder.client(httpClient).build()
 
-        client = retrofit.create(Endpoints::class.java) as Endpoints
+        client = retrofit.create(Endpoints::class.java)
         client.updateAccessToken(accessToken).withCallback(null)
-        Play2GetherApplication.accessToken = accessToken
     }
 
     internal class UnauthorizedInterceptor : Interceptor {
@@ -73,22 +71,30 @@ object Api {
         return httpLoggingInterceptor
     }
 
-    fun roomWebSocketClient(roomId: Long): StompClient {
-        return Stomp.over(
-            Stomp.ConnectionProvider.OKHTTP,
-            "${ApiConstants.BASE_WS_URL_ROOM}/$roomId",
-            null,
-            httpClient
-        )
+    fun roomWebSocketClient(roomId: Long): StompClient? {
+        return if (this::httpClient.isInitialized) {
+            Stomp.over(
+                Stomp.ConnectionProvider.OKHTTP,
+                "${ApiConstants.BASE_WS_URL_ROOM}/$roomId",
+                null,
+                httpClient
+            )
+        } else {
+            null
+        }
     }
 
-    fun userWebSocketClient(userId: String): StompClient {
-        return Stomp.over(
-            Stomp.ConnectionProvider.OKHTTP,
-            "${ApiConstants.BASE_WS_URL_USER}/$userId",
-            null,
-            httpClient
-        )
+    fun userWebSocketClient(userId: String): StompClient? {
+        return if (this::httpClient.isInitialized) {
+            Stomp.over(
+                Stomp.ConnectionProvider.OKHTTP,
+                "${ApiConstants.BASE_WS_URL_USER}/$userId",
+                null,
+                httpClient
+            )
+        } else {
+            null
+        }
     }
 
     inline fun <reified T> Call<RestResponse<T>>.withCallback(callback: Callback<T>?) {

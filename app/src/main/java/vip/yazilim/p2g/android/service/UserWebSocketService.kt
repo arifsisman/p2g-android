@@ -86,7 +86,15 @@ class UserWebSocketService : Service() {
     }
 
     private fun connectWebSocket(userId: String) {
-        userWSClient = Api.userWebSocketClient(userId)
+        try {
+            val userWsClientSafe = Api.userWebSocketClient(userId)
+            if (userWsClientSafe != null) {
+                userWSClient = userWsClientSafe
+            }
+        } catch (ignored: Exception) {
+            return
+        }
+
         userWSClient.run {
             connect()
 

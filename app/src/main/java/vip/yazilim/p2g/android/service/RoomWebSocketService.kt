@@ -166,7 +166,15 @@ class RoomWebSocketService : Service(), CoroutineScope {
     }
 
     private fun connectWebSocket(roomId: Long) {
-        roomWSClient = Api.roomWebSocketClient(roomId)
+        try {
+            val roomWsClientSafe = Api.roomWebSocketClient(roomId)
+            if (roomWsClientSafe != null) {
+                roomWSClient = roomWsClientSafe
+            }
+        } catch (ignored: Exception) {
+            return
+        }
+
         roomWSClient.run {
             connect()
 
