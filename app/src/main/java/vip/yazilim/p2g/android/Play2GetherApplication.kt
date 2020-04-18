@@ -10,7 +10,7 @@ class Play2GetherApplication : Application() {
 
     companion object {
         var userName: String = "UNKNOWN"
-        var userId: String = "UNKOWN"
+        var userId: String = "UNKNOWN"
     }
 
 }
