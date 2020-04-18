@@ -114,7 +114,7 @@ class MainActivity : BaseActivity(),
     }
 
     private fun joinRoomEvent(room: Room) =
-        Api.client?.joinRoom(room.id, GeneralConstants.UNDEFINED)?.withCallback(
+        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED).withCallback(
             object : Callback<RoomUserModel> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -159,7 +159,7 @@ class MainActivity : BaseActivity(),
 
         // Click join
         joinButton.setOnClickListener {
-            Api.client?.joinRoom(room.id, roomPasswordEditText.text.toString())?.withCallback(
+            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).withCallback(
                 object : Callback<RoomUserModel> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)

@@ -21,6 +21,6 @@ class LogoutService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        Api.client?.logout()?.withCallback(null)
+        Api.client.logout().withCallback(null)
     }
 }

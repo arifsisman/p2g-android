@@ -3,13 +3,9 @@ package vip.yazilim.p2g.android.ui.main.profile
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
-import com.haipq.android.flagkit.FlagImageView
 import kotlinx.android.synthetic.main.item_profile.view.*
-import kotlinx.android.synthetic.main.item_profile.view.countryFlag
 import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
@@ -36,20 +32,8 @@ class ProfileAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val memberSince: TextView = itemView.findViewById(R.id.member_since_text_view)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
-        private val flagImage: FlagImageView = itemView.findViewById(R.id.countryFlag)
-        private val email: TextView = itemView.findViewById(R.id.email_text_view)
-        private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.onlineStatus)
-        private val userName: TextView = itemView.findViewById(R.id.user_name_text_view)
-        private val friendCountsTextView: TextView =
-            itemView.findViewById(R.id.friend_counts_text_view)
-        private val spotifyId: TextView = itemView.findViewById(R.id.spotify_id_text_view)
-        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
         fun bindView(userModel: UserModel, roomModel: RoomModel?) {
-            // User
             val user = userModel.user
             val room = roomModel?.room
             val song = roomModel?.song
@@ -67,38 +51,38 @@ class ProfileAdapter(
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profileImage)
+                    .into(itemView.profile_photo)
             } else {
-                profileImage.setImageResource(R.drawable.ic_profile_image)
+                itemView.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
             try {
-                flagImage.countryCode = user.countryCode
+                itemView.user_country_flag.countryCode = user.countryCode
             } catch (exception: Exception) {
-                flagImage.visibility = View.GONE
+                itemView.user_country_flag.visibility = View.GONE
             }
 
-            userName.text = profileNamePlaceholder
-            memberSince.text = memberSincePlaceholder
+            itemView.user_name.text = profileNamePlaceholder
+            itemView.member_since.text = memberSincePlaceholder
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
             }
 
             val profileFriendCountsPlaceholder =
                 "$friendCounts ${view.resources.getString(R.string.placeholder_friend_counts)}"
-            friendCountsTextView.text = profileFriendCountsPlaceholder
+            itemView.friend_counts.text = profileFriendCountsPlaceholder
 
             // Room
             if (room != null) {
@@ -115,13 +99,13 @@ class ProfileAdapter(
                     itemView.lockImage.visibility = View.GONE
                 }
 
-                itemView.countryFlag.visibility = View.GONE
+                itemView.country_flag.visibility = View.GONE
 
                 if (song != null) {
                     if (song.imageUrl != null) {
                         GlideApp.with(view)
                             .load(song.imageUrl)
-                            .into(songImage)
+                            .into(itemView.song_image)
                     }
 
                     itemView.song_name.text = song.songName
@@ -144,8 +128,8 @@ class ProfileAdapter(
             if (isMe) {
                 itemView.user_public.visibility = View.VISIBLE
                 itemView.user_private.visibility = View.VISIBLE
-                email.text = profileEmailPlaceholder
-                spotifyId.text = profileSpotifyAccountIdPlaceholder
+                itemView.email.text = profileEmailPlaceholder
+                itemView.spotify_id.text = profileSpotifyAccountIdPlaceholder
             } else {
                 itemView.user_public.visibility = View.VISIBLE
                 itemView.user_private.visibility = View.GONE

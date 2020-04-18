@@ -49,9 +49,9 @@ class HomeAdapter(
             }
 
             try {
-                itemView.countryFlag.countryCode = roomModel.owner.countryCode
+                itemView.country_flag.countryCode = roomModel.owner.countryCode
             } catch (exception: Exception) {
-                itemView.countryFlag.visibility = View.GONE
+                itemView.country_flag.visibility = View.GONE
             }
 
             if (roomModel.song != null) {

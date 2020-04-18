@@ -38,7 +38,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/profilePhoto"
+                android:id="@+id/profile_photo"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:contentDescription="@string/description_profile_image"
@@ -71,13 +71,13 @@
                 app:srcCompat="@drawable/ic_delete_white_24dp" />
 
             <ImageView
-                android:id="@+id/onlineStatus"
+                android:id="@+id/online_status"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:contentDescription="@string/description_online_status"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/profilePhoto"
-                app:layout_constraintEnd_toEndOf="@+id/profilePhoto"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_photo"
+                app:layout_constraintEnd_toEndOf="@+id/profile_photo"
                 app:srcCompat="@android:drawable/presence_online" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

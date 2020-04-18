@@ -3,8 +3,8 @@ package vip.yazilim.p2g.android.ui.room
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.item_change_device.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.entity.UserDevice
 
@@ -20,20 +20,19 @@ class DeviceAdapter(
     private lateinit var view: View
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val deviceName: TextView = itemView.findViewById(R.id.device_name)
-        private val deviceType: TextView = itemView.findViewById(R.id.device_type)
-        private val activeBar: View = itemView.findViewById(R.id.divider)
-
         fun bindEvent(searchModel: UserDevice, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onDeviceClicked(searchModel) }
         }
 
         fun bindView(userDevice: UserDevice) {
-            deviceName.text = userDevice.deviceName
-            deviceType.text = userDevice.deviceType
+            itemView.device_name.text = userDevice.deviceName
+            itemView.device_type.text = userDevice.deviceType
 
-            if (userDevice.activeFlag) activeBar.visibility =
-                View.VISIBLE else activeBar.visibility = View.INVISIBLE
+            if (userDevice.activeFlag) {
+                itemView.divider.visibility = View.VISIBLE
+            } else {
+                itemView.divider.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -42,8 +41,8 @@ class DeviceAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_change_device, parent, false)
+        view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_change_device, parent, false)
         return MViewHolder(view)
     }
 

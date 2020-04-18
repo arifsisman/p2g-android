@@ -54,11 +54,11 @@ abstract class FragmentBase(var layout: Int) :
     // Default Observers
     private val onViewLoadingObserver = Observer<Boolean> {
         val visibility = if (it) View.VISIBLE else View.GONE
-        progressBar?.visibility = visibility
+        progress_bar?.visibility = visibility
     }
 
     private val onEmptyListObserver = Observer<Boolean> {
-        layoutEmpty?.visibility = if (it) View.VISIBLE else View.GONE
+        layout_empty?.visibility = if (it) View.VISIBLE else View.GONE
     }
 
     private val onMessageErrorObserver = Observer<String> { container.showSnackBarError(it) }

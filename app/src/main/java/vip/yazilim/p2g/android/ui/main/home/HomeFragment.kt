@@ -51,15 +51,15 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
     }
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
+        recycler_view.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(activity)
-        recyclerView.layoutManager = linearLayoutManager
+        recycler_view.layoutManager = linearLayoutManager
         adapter =
             HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), (activity as MainActivity))
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         fab.setOnClickListener { createRoomButtonEvent() }
-        swipeRefreshContainer.setOnRefreshListener { refreshRoomsEvent() }
+        swipe_refresh_container.setOnRefreshListener { refreshRoomsEvent() }
     }
 
     // Observer
@@ -120,10 +120,10 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
 
         // Click create
         createButton.setOnClickListener {
-            Api.client?.createRoom(
+            Api.client.createRoom(
                 roomNameEditText.text.toString(),
                 roomPasswordEditText.text.toString()
-            )?.withCallback(
+            ).withCallback(
                 object : Callback<RoomUserModel> {
                     override fun onError(msg: String) {
                         mDialogView.showSnackBarError(msg)
@@ -152,16 +152,16 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
         }
     }
 
-    private fun refreshRoomsEvent() = Api.client?.getRoomModels()?.withCallback(
+    private fun refreshRoomsEvent() = Api.client.getRoomModels().withCallback(
         object : Callback<MutableList<RoomModel>> {
             override fun onError(msg: String) {
                 viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<RoomModel>) {
                 viewModel.roomModels.postValue(obj)
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
             }
         })
 

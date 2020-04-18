@@ -41,7 +41,7 @@
             app:srcCompat="@drawable/ic_person_white_24dp" />
 
         <com.haipq.android.flagkit.FlagImageView
-            android:id="@+id/countryFlag"
+            android:id="@+id/country_flag"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

@@ -49,10 +49,10 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     }
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
         adapter = ProfileAdapter(userModel, userModel?.roomModel, 0, false)
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
     }
 
     // Observers

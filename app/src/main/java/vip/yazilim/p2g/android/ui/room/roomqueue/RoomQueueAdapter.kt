@@ -33,7 +33,7 @@ class RoomQueueAdapter(
     private var itemManager = SwipeItemRecyclerMangerImpl(this)
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_song)
+        private val swipeLayout: SwipeLayout = itemView.findViewById(R.id.swipe_layout)
 
         fun bindView(song: Song) {
             swipeLayout.close(false)
@@ -69,16 +69,16 @@ class RoomQueueAdapter(
         }
 
         fun bindEvent(song: Song, clickListener: OnItemClickListener) {
-            itemView.swipePlayButton.setOnClickListener {
+            itemView.swipe_play_button.setOnClickListener {
                 clickListener.onPlayClicked(swipeLayout, song)
             }
-            itemView.swipeUpvoteButton.setOnClickListener {
+            itemView.swipe_upvote_button.setOnClickListener {
                 clickListener.onUpvoteClicked(swipeLayout, song)
             }
-            itemView.swipeDownvoteButton.setOnClickListener {
+            itemView.swipe_downvote_button.setOnClickListener {
                 clickListener.onDownvoteClicked(swipeLayout, song)
             }
-            itemView.swipeDeleteButton.setOnClickListener {
+            itemView.swipe_delete_button.setOnClickListener {
                 clickListener.onDeleteClicked(swipeLayout, song)
             }
 
@@ -111,7 +111,7 @@ class RoomQueueAdapter(
     }
 
     override fun getSwipeLayoutResourceId(position: Int): Int {
-        return R.id.row_song
+        return R.id.swipe_layout
     }
 
     override fun onBindViewHolder(holder: MViewHolder, position: Int) {

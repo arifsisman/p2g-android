@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProvider
  */
 class RoomViewModelFactory : ViewModelProvider.Factory {
 
-    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return RoomViewModel() as T
+        return modelClass.newInstance()
     }
+
 }

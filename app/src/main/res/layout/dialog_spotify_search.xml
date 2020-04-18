@@ -6,7 +6,7 @@
     android:padding="8dp">
 
     <EditText
-        android:id="@+id/dialogQuery"
+        android:id="@+id/dialog_query"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/placeholder_search_spotify_expanded"

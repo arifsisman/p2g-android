@@ -68,22 +68,22 @@ class RoomUsersFragment :
     override fun setupUI() {
         roomActivity = activity as RoomActivity
 
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
 
         adapter =
             RoomUsersAdapter(roomViewModel.roomUserModelList.value ?: mutableListOf(), this, this)
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         // recyclerView divider
-        recyclerView.addItemDecoration(object : DividerItemDecoration(
-            recyclerView.context,
-            (recyclerView.layoutManager as LinearLayoutManager).orientation
+        recycler_view.addItemDecoration(object : DividerItemDecoration(
+            recycler_view.context,
+            (recycler_view.layoutManager as LinearLayoutManager).orientation
         ) {})
 
         roomViewModel.roomUserModelList.observe(this, renderRoomUserModelList)
 
-        swipeRefreshContainer.setOnRefreshListener {
+        swipe_refresh_container.setOnRefreshListener {
             refreshUsersEvent()
         }
 
@@ -106,16 +106,16 @@ class RoomUsersFragment :
     }
 
     private fun refreshUsersEvent() =
-        Api.client?.getRoomUserModels(roomActivity.room.id)?.withCallback(
+        Api.client.getRoomUserModels(roomActivity.room.id).withCallback(
             object : Callback<MutableList<RoomUserModel>> {
                 override fun onError(msg: String) {
                     roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
-                    swipeRefreshContainer.isRefreshing = false
+                    swipe_refresh_container.isRefreshing = false
                 }
 
                 override fun onSuccess(obj: MutableList<RoomUserModel>) {
                     roomViewModel.roomUserModelList.postValue(obj)
-                    swipeRefreshContainer.isRefreshing = false
+                    swipe_refresh_container.isRefreshing = false
                 }
             })
 
@@ -123,12 +123,14 @@ class RoomUsersFragment :
     private fun showInviteDialog() {
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
 
-        val mBuilder = MaterialAlertDialogBuilder(context)
-            .setView(inviteDialogView)
-        mBuilder.show()
+        val mBuilder = context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setView(inviteDialogView)
+        }
+        mBuilder?.show()
 
         val inviteRecyclerView: RecyclerView =
-            inviteDialogView.findViewById(R.id.inviteRecyclerView)
+            inviteDialogView.findViewById(R.id.invite_recycler_view)
         inviteRecyclerView.setHasFixedSize(true)
         inviteRecyclerView.layoutManager = LinearLayoutManager(activity)
 
@@ -145,7 +147,7 @@ class RoomUsersFragment :
             (inviteRecyclerView.layoutManager as LinearLayoutManager).orientation
         ) {})
 
-        val queryEditText = inviteDialogView.dialogQuery
+        val queryEditText = inviteDialogView.dialog_query
 
         inviteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -179,7 +181,7 @@ class RoomUsersFragment :
 
                     if (!s.isNullOrEmpty() && s.length > 2) {
                         inviteAdapter.clear()
-                        Api.client?.searchUser(s.toString())?.withCallback(
+                        Api.client.searchUser(s.toString()).withCallback(
                             object : Callback<MutableList<User>> {
                                 override fun onError(msg: String) {
                                     inviteRecyclerView.showSnackBarError(msg)
@@ -199,7 +201,7 @@ class RoomUsersFragment :
         })
 
         // Load friends
-        Api.client?.getFriends()?.withCallback(
+        Api.client.getFriends().withCallback(
             object : Callback<MutableList<User>> {
                 override fun onError(msg: String) {
                 }
@@ -238,7 +240,7 @@ class RoomUsersFragment :
         view.close()
 
         roomUserModel.roomUser?.userId?.let {
-            Api.client?.addFriend(it)?.withCallback(
+            Api.client.addFriend(it).withCallback(
                 object : Callback<Boolean> {
                     override fun onSuccess(obj: Boolean) {
                         roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
@@ -255,7 +257,7 @@ class RoomUsersFragment :
         val roomId = (activity as RoomActivity).room.id
         val userId = user.id
 
-        Api.client?.inviteUser(roomId, userId)?.withCallback(
+        Api.client.inviteUser(roomId, userId).withCallback(
             object : Callback<RoomInvite> {
                 override fun onSuccess(obj: RoomInvite) {
                     inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
@@ -295,7 +297,7 @@ class RoomUsersFragment :
         changeRoleDialogView?.dismiss()
 
         roomUserModel.roomUser?.id?.let {
-            Api.client?.changeRoomUserRole(it, role.role)?.withCallback(
+            Api.client.changeRoomUserRole(it, role.role).withCallback(
                 object : Callback<RoomUser> {
                     override fun onSuccess(obj: RoomUser) {
                         roomViewModel.onMessageInfo.postValue(

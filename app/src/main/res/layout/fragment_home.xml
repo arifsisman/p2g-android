@@ -8,7 +8,7 @@
     tools:context=".activity.MainActivity">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshContainer"
+        android:id="@+id/swipe_refresh_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="6dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
@@ -34,7 +34,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_bar"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -51,7 +51,7 @@
         tools:visibility="visible" />
 
     <include
-        android:id="@+id/layoutEmpty"
+        android:id="@+id/layout_empty"
         layout="@layout/layout_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
         app:borderWidth="0dp"
         android:layout_margin="@dimen/fab_margin"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/swipeRefreshContainer" />
+        app:layout_constraintEnd_toEndOf="@+id/swipe_refresh_container" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

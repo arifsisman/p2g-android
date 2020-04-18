@@ -71,13 +71,13 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
         adapter = InvitesAdapter(viewModel.roomInviteModel.value ?: mutableListOf(), this)
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         // SwipeRefreshLayout
-        swipeRefreshContainer.setOnRefreshListener { refreshRoomInvitesEvent() }
+        swipe_refresh_container.setOnRefreshListener { refreshRoomInvitesEvent() }
     }
 
     // Observers
@@ -112,7 +112,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun onAccept(roomInviteModel: RoomInviteModel) {
-        Api.client?.acceptInvite(roomInviteModel.roomInvite)?.withCallback(
+        Api.client.acceptInvite(roomInviteModel.roomInvite).withCallback(
             object : Callback<RoomUserModel> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -130,7 +130,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun onReject(roomInviteModel: RoomInviteModel) {
-        Api.client?.rejectInvite(roomInviteModel.roomInvite.id)?.withCallback(
+        Api.client.rejectInvite(roomInviteModel.roomInvite.id).withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     Log.d(TAG, msg)
@@ -145,7 +145,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) {
-        Api.client?.getUserModel(roomInviteModel.roomInvite.inviterId)?.withCallback(
+        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).withCallback(
             object : Callback<UserModel> {
                 override fun onError(msg: String) {
                 }
@@ -158,14 +158,14 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
             })
     }
 
-    private fun refreshRoomInvitesEvent() = Api.client?.getRoomInviteModels()?.withCallback(
+    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().withCallback(
         object : Callback<MutableList<RoomInviteModel>> {
             override fun onError(msg: String) {
                 Log.d(TAG, msg)
                 viewModel.onMessageError.postValue(
                     resources.getString(R.string.err_room_invites_refresh)
                 )
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<RoomInviteModel>) {
@@ -175,7 +175,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
                     viewModel.onEmptyList.postValue(false)
                     viewModel.roomInviteModel.postValue(obj)
                 }
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
             }
         })
 }

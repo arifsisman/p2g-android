@@ -3,9 +3,11 @@ package vip.yazilim.p2g.android.ui.main.invites
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.item_invites.view.*
 import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
@@ -27,17 +29,11 @@ class InvitesAdapter(
     var roomInviteModelsFull: MutableList<RoomInviteModel> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
-        private val onlineStatus: ImageView = itemView.findViewById(R.id.onlineStatus)
-        private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
-        private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
-        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
         fun bindEvent(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(roomInviteModel) }
-            acceptButton.setOnClickListener { clickListener.onAccept(roomInviteModel) }
-            rejectButton.setOnClickListener { clickListener.onReject(roomInviteModel) }
+            itemView.accept_button.setOnClickListener { clickListener.onAccept(roomInviteModel) }
+            itemView.reject_button.setOnClickListener { clickListener.onReject(roomInviteModel) }
         }
 
         fun bindView(roomInviteModel: RoomInviteModel) {
@@ -48,25 +44,25 @@ class InvitesAdapter(
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profileImage)
+                    .into(itemView.profile_photo)
             } else {
-                profileImage.setImageResource(R.drawable.ic_profile_image)
+                itemView.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
-            roomInviter.text = user.name
+            itemView.room_inviter.text = user.name
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
             }
 
@@ -84,14 +80,14 @@ class InvitesAdapter(
                     itemView.lockImage.visibility = View.GONE
                 }
 
-                itemView.countryFlag.visibility = View.GONE
+                itemView.country_flag.visibility = View.GONE
 
                 if (roomModel.song != null) {
                     val song = roomModel.song
                     if (song?.imageUrl != null) {
                         GlideApp.with(view)
                             .load(roomModel.song?.imageUrl)
-                            .into(songImage)
+                            .into(itemView.song_image)
                     }
 
                     itemView.song_name.text = song?.songName

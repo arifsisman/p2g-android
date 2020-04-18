@@ -75,10 +75,10 @@ class RoomUsersAdapter(
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.swipeChangeRoleButton.setOnClickListener {
+            itemView.swipe_change_role_button.setOnClickListener {
                 clickListener.onChangeRoleClicked(swipeLayout, roomUserModel)
             }
-            itemView.swipeAddButton.setOnClickListener {
+            itemView.swipe_add_button.setOnClickListener {
                 clickListener.onAddClicked(swipeLayout, roomUserModel)
             }
             swipeLayout.addSwipeListener(swipeListener)

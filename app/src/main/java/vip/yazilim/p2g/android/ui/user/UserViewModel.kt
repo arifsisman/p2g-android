@@ -15,7 +15,7 @@ class UserViewModel : ViewModelBase() {
     val friendCounts = MutableLiveData<Int>()
     val roomModel = MutableLiveData<RoomModel>()
 
-    fun loadFriendsCount(userId: String) = Api.client?.getFriendsCounts(userId)?.withCallback(
+    fun loadFriendsCount(userId: String) = Api.client.getFriendsCounts(userId).withCallback(
         object : Callback<Int> {
             override fun onError(msg: String) {
             }

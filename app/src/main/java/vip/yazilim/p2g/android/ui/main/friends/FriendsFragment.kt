@@ -55,14 +55,14 @@ class FriendsFragment : FragmentBase(
 
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
 
         adapter = FriendsAdapter(mutableListOf(), this, this)
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         // SwipeRefreshLayout
-        swipeRefreshContainer.setOnRefreshListener {
+        swipe_refresh_container.setOnRefreshListener {
             adapter.clearDataList()
             adapter.clearDataListFull()
             loadUserFriendModel()
@@ -104,8 +104,8 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
-        Api.client?.accept(friendRequestModel.friendRequest.id)
-            ?.withCallback(object : Callback<Boolean> {
+        Api.client.accept(friendRequestModel.friendRequest.id)
+            .withCallback(object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
                 }
@@ -120,7 +120,7 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
-        Api.client?.reject(friendRequestModel.friendRequest.id)?.withCallback(
+        Api.client.reject(friendRequestModel.friendRequest.id).withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -136,7 +136,7 @@ class FriendsFragment : FragmentBase(
 
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
-        Api.client?.ignore(friendRequestModel.friendRequest.id)?.withCallback(
+        Api.client.ignore(friendRequestModel.friendRequest.id).withCallback(
             object : Callback<Boolean> {
                 override fun onError(msg: String) {
                     viewModel.onMessageError.postValue(msg)
@@ -156,7 +156,7 @@ class FriendsFragment : FragmentBase(
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client?.deleteFriend(userModel.user.id)?.withCallback(
+                    Api.client.deleteFriend(userModel.user.id).withCallback(
                         object : Callback<Boolean> {
                             override fun onError(msg: String) {
                                 viewModel.onMessageError.postValue(msg)
@@ -171,11 +171,13 @@ class FriendsFragment : FragmentBase(
         }
 
 
-        MaterialAlertDialogBuilder(context)
-            .setMessage(resources.getString(R.string.info_delete_friend))
-            .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
-            .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
-            .show()
+        context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setMessage(resources.getString(R.string.info_delete_friend))
+                .setPositiveButton(resources.getString(R.string.info_yes), dialogClickListener)
+                .setNegativeButton(resources.getString(R.string.info_no), dialogClickListener)
+                .show()
+        }
     }
 
     override fun onRowClicked(userModel: UserModel) {
@@ -184,16 +186,16 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadUserFriendModel() = Api.client?.getUserFriendModel()?.withCallback(
+    private fun loadUserFriendModel() = Api.client.getUserFriendModel().withCallback(
         object : Callback<UserFriendModel> {
             override fun onError(msg: String) {
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
                 viewModel.onViewLoading.postValue(false)
                 viewModel.onMessageError.postValue(msg)
             }
 
             override fun onSuccess(obj: UserFriendModel) {
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
                 viewModel.onViewLoading.postValue(false)
                 viewModel.userFriendModel.postValue(obj)
             }

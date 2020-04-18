@@ -52,7 +52,7 @@ class LoginActivity : BaseActivity() {
             val response = AuthorizationClient.getResponse(resultCode, data)
             if (response.accessToken != null) {
                 Api.build(response.accessToken)
-                Api.client?.login()?.withCallback(
+                Api.client.login().withCallback(
                     object : Callback<User> {
                         override fun onError(msg: String) {
                             val alert = this@LoginActivity.showErrorDialog(msg)
@@ -82,7 +82,7 @@ class LoginActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    private fun checkIsUserInRoom(user: User) = Api.client?.getUserModelMe()?.withCallback(
+    private fun checkIsUserInRoom(user: User) = Api.client.getUserModelMe().withCallback(
         object : Callback<UserModel> {
             //user in room
             override fun onSuccess(obj: UserModel) {

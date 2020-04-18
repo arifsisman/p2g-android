@@ -3,10 +3,16 @@ package vip.yazilim.p2g.android.ui.main.friends
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.item_friend.view.*
+import kotlinx.android.synthetic.main.item_friend.view.divider
+import kotlinx.android.synthetic.main.item_friend.view.online_status
+import kotlinx.android.synthetic.main.item_friend.view.profile_photo
+import kotlinx.android.synthetic.main.item_friend_request.view.*
 import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
@@ -44,22 +50,22 @@ class FriendsAdapter(
 
     inner class FriendRequestViewHolder(itemView: View) :
         ViewHolderBase<FriendRequestModel>(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.rUserName)
-        private val inviteDate: TextView = itemView.findViewById(R.id.rInviteDate)
-        private val profilePhoto: ImageView = itemView.findViewById(R.id.rProfilePhoto)
-        private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.rOnlineStatus)
-
-        private val acceptButton: ImageButton = itemView.findViewById(R.id.rAcceptButton)
-        private val rejectButton: ImageButton = itemView.findViewById(R.id.rRejectButton)
 
         private fun bindEvent(
             friendRequestModel: FriendRequestModel,
             clickListener: OnItemClickListener
         ) {
             itemView.setOnClickListener { clickListener.onRowClicked(friendRequestModel.userModel) }
-            acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
-            rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
+            itemView.accept_button.setOnClickListener {
+                clickListener.onAcceptClicked(
+                    friendRequestModel
+                )
+            }
+            itemView.reject_button.setOnClickListener {
+                clickListener.onRejectClicked(
+                    friendRequestModel
+                )
+            }
         }
 
         override fun bindView(item: FriendRequestModel) {
@@ -70,30 +76,30 @@ class FriendsAdapter(
                 "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest.requestDate.toZonedDateTime()
                     .getFormattedCompact()}"
 
-            userName.text = user.name
-            inviteDate.text = inviteDatePlaceholder
+            itemView.user_name.text = user.name
+            itemView.invite_date.text = inviteDatePlaceholder
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profilePhoto)
+                    .into(itemView.profile_photo)
             } else {
-                profilePhoto.setImageResource(R.drawable.ic_profile_image)
+                itemView.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
             }
         }
@@ -121,23 +127,23 @@ class FriendsAdapter(
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(itemView.user.profilePhoto)
+                    .into(itemView.user.profile_photo)
             } else {
-                itemView.user.profilePhoto.setImageResource(R.drawable.ic_profile_image)
+                itemView.user.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    itemView.user.onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    itemView.user.onlineStatus.visibility = View.VISIBLE
+                    itemView.user.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.user.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    itemView.user.onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    itemView.user.onlineStatus.visibility = View.VISIBLE
+                    itemView.user.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.user.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    itemView.user.onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    itemView.user.onlineStatus.visibility = View.VISIBLE
+                    itemView.user.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.user.online_status.visibility = View.VISIBLE
                 }
             }
 
@@ -157,7 +163,7 @@ class FriendsAdapter(
                     itemView.lockImage.visibility = View.GONE
                 }
 
-                itemView.countryFlag.visibility = View.GONE
+                itemView.country_flag.visibility = View.GONE
 
                 if (song != null) {
                     if (song.imageUrl != null) {

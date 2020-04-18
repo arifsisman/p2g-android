@@ -72,8 +72,8 @@ class RoomQueueFragment :
     override fun setupUI() {
         roomActivity = activity as RoomActivity
 
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
 
         // QueueAdapter
         adapter = RoomQueueAdapter(
@@ -82,19 +82,19 @@ class RoomQueueFragment :
             , this
         )
 
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         // recyclerView divider
-        recyclerView.addItemDecoration(object : DividerItemDecoration(
-            recyclerView.context,
-            (recyclerView.layoutManager as LinearLayoutManager).orientation
+        recycler_view.addItemDecoration(object : DividerItemDecoration(
+            recycler_view.context,
+            (recycler_view.layoutManager as LinearLayoutManager).orientation
         ) {})
 
         // Search with floating action button
         val fab: FloatingActionButton? = activity?.findViewById(R.id.fab)
         fab?.setOnClickListener { showSearchDialog() }
 
-        swipeRefreshContainer.setOnRefreshListener {
+        swipe_refresh_container.setOnRefreshListener {
             refreshQueueEvent()
         }
     }
@@ -104,18 +104,18 @@ class RoomQueueFragment :
         roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
-    private fun refreshQueueEvent() = Api.client?.getRoomSongs(roomActivity.room.id)?.withCallback(
+    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).withCallback(
         object : Callback<MutableList<Song>> {
             override fun onError(msg: String) {
                 roomViewModel.onMessageError.postValue(
                     resources.getString(R.string.err_room_queue_refresh)
                 )
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
             }
 
             override fun onSuccess(obj: MutableList<Song>) {
                 roomViewModel.songList.postValue(obj)
-                swipeRefreshContainer.isRefreshing = false
+                swipe_refresh_container.isRefreshing = false
             }
         })
 
@@ -127,11 +127,13 @@ class RoomQueueFragment :
 
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
-        val mBuilder = MaterialAlertDialogBuilder(context)
-            .setView(searchDialogView)
-        mBuilder.show()
+        val mBuilder = context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setView(searchDialogView)
+        }
+        mBuilder?.show()
 
-        queryEditText = searchDialogView.dialogQuery
+        queryEditText = searchDialogView.dialog_query
 
         // Adapter start and update with requested search model
         val searchRecyclerView: RecyclerView =
@@ -179,7 +181,7 @@ class RoomQueueFragment :
 
                     if (!s.isNullOrEmpty()) {
                         searchAdapter.clear()
-                        Api.client?.searchSpotify(s.toString())?.withCallback(
+                        Api.client.searchSpotify(s.toString()).withCallback(
                             object : Callback<MutableList<SearchModel>> {
                                 override fun onError(msg: String) {
                                     searchDialogView.showSnackBarError(msg)
@@ -198,7 +200,7 @@ class RoomQueueFragment :
                 Unit
         })
 
-        Api.client?.getRecommendations()?.withCallback(object : Callback<MutableList<SearchModel>> {
+        Api.client.getRecommendations().withCallback(object : Callback<MutableList<SearchModel>> {
             override fun onSuccess(obj: MutableList<SearchModel>) {
                 searchAdapter.update(obj)
             }
@@ -212,8 +214,8 @@ class RoomQueueFragment :
     override fun onSearchItemClicked(searchModel: SearchModel) {
         queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
 
-        Api.client?.addSongWithSearchModel(roomActivity.room.id, searchModel)
-            ?.withCallback(object : Callback<MutableList<Song>> {
+        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel)
+            .withCallback(object : Callback<MutableList<Song>> {
                 override fun onSuccess(obj: MutableList<Song>) {
                     if (searchModel.type == SearchType.SONG) {
                         searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
@@ -231,7 +233,7 @@ class RoomQueueFragment :
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        Api.client?.play(song)?.withCallback(object : Callback<Boolean> {
+        Api.client.play(song).withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
@@ -243,7 +245,7 @@ class RoomQueueFragment :
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client?.upvoteSong(song.id)?.withCallback(object : Callback<Int> {
+        Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
             override fun onSuccess(obj: Int) {
                 roomViewModel.onMessageInfo.postValue(
                     "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
@@ -258,7 +260,7 @@ class RoomQueueFragment :
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client?.downvoteSong(song.id)?.withCallback(object : Callback<Int> {
+        Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
             override fun onSuccess(obj: Int) {
                 roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
             }
@@ -274,7 +276,7 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        Api.client?.removeSongFromRoom(song.id)?.withCallback(object : Callback<Boolean> {
+        Api.client.removeSongFromRoom(song.id).withCallback(object : Callback<Boolean> {
             override fun onSuccess(obj: Boolean) {
             }
 
