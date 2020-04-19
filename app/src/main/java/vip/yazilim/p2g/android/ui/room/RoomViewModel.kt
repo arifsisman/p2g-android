@@ -38,7 +38,11 @@ class RoomViewModel : ViewModelBase() {
             onViewLoading.postValue(false)
 
             songList.postValue(it)
-            playerSong.postValue(getCurrentSong(it))
+            if (it.isNullOrEmpty()) {
+                playerSong.postValue(null)
+            } else {
+                playerSong.postValue(it[0])
+            }
         }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
@@ -70,43 +74,6 @@ class RoomViewModel : ViewModelBase() {
             roomUserModel.postValue(it)
             roomUserRole.postValue(it.roomUser?.roomRole)
         })
-    }
-
-    fun getCurrentSong(songList: MutableList<Song>): Song? {
-        var playingSong: Song? = null
-        var pausedSong: Song? = null
-        var nextSong: Song? = null
-
-        songList.forEach {
-            when (it.songStatus) {
-                SongStatus.PLAYING.songStatus -> {
-                    playingSong = it
-                }
-                SongStatus.PAUSED.songStatus -> {
-                    pausedSong = it
-                }
-                SongStatus.NEXT.songStatus -> {
-                    if (nextSong == null) {
-                        nextSong = it
-                    }
-                }
-            }
-        }
-
-        return when {
-            playingSong != null -> {
-                playingSong
-            }
-            pausedSong != null -> {
-                pausedSong
-            }
-            nextSong != null -> {
-                nextSong
-            }
-            else -> {
-                null
-            }
-        }
     }
 
     companion object {

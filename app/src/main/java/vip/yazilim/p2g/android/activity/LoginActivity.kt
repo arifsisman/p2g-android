@@ -8,6 +8,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
+import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.Call
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
@@ -16,7 +17,7 @@ import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
 
@@ -54,13 +55,7 @@ class LoginActivity : BaseActivity() {
                         Play2GetherApplication.userName = it.name
                         Play2GetherApplication.userId = it.id
                         getUserModel(it)
-                    },
-                    onFailure = {
-                        this@LoginActivity.showErrorDialog(
-                            it,
-                            ::getAccessTokenFromSpotify
-                        )
-                    })
+                    }, onFailure = { container.showSnackBarError(it) })
             } else {
                 response.error.let {
                     Log.d(TAG, it)
@@ -93,9 +88,7 @@ class LoginActivity : BaseActivity() {
                     startActivity(roomIntent)
                 }
             },
-            onFailure = {
-                this@LoginActivity.showErrorDialog(it)
-            }
+            onFailure = { container.showSnackBarError(it) }
         )
     }
 

@@ -70,7 +70,6 @@ import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
@@ -163,7 +162,7 @@ class RoomActivity : BaseActivity(),
                 }
 
                 override fun onLost(network: Network?) {
-                    this@RoomActivity.showErrorDialog(resources.getString(R.string.err_network_closed))
+                    roomViewModel.onMessageError.postValue(resources.getString(R.string.err_network_closed))
                 }
             })
         }
@@ -481,10 +480,8 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
-                    Api.client.syncWithRoom().queueAndCallbackOnFailure(
-                        onFailure = {
-                            view_pager.showSnackBarError(it)
-                        })
+                    Api.client.syncWithRoom()
+                        .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
