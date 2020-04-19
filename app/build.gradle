@@ -39,7 +39,7 @@ android {
             buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-3940256099942544/1033173712---\"'
         }
         production {
-            buildConfigField 'String', 'URL', '\"142.93.239.61\"'
+            buildConfigField 'String', 'URL', '\"p2g.yazilim.vip\"'
             buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-9988109607477807/6243177559\"'
         }
     }

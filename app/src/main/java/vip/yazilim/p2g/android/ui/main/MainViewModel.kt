@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
@@ -25,66 +25,51 @@ class MainViewModel : ViewModelBase() {
     fun loadRooms() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomModels() then { obj, msg ->
-            obj?.let {
-                onViewLoading.postValue(false)
-                roomModels.postValue(obj)
-            }
-            msg?.let {
-                onViewLoading.postValue(false)
-                onMessageError.postValue(msg)
-            }
-        }
+        Api.client.getRoomModels().queue(success = {
+            onViewLoading.postValue(false)
+            roomModels.postValue(it)
+        }, failure = {
+            onViewLoading.postValue(false)
+            onMessageError.postValue(it)
+        })
     }
 
     fun loadUserFriendModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserFriendModel() then { obj, msg ->
-            obj?.let {
-                onViewLoading.postValue(false)
-                userFriendModel.postValue(obj)
-            }
-            msg?.let {
-                onViewLoading.postValue(false)
-                onMessageError.postValue(msg)
-            }
-        }
+        Api.client.getUserFriendModel().queue(success = {
+            onViewLoading.postValue(false)
+            userFriendModel.postValue(it)
+        }, failure = {
+            onViewLoading.postValue(false)
+            onMessageError.postValue(it)
+        })
     }
 
     fun loadRoomInviteModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomInviteModels() then { obj, msg ->
-            obj?.let {
-                onViewLoading.postValue(false)
-                roomInviteModel.postValue(obj)
-            }
-            msg?.let {
-                onViewLoading.postValue(false)
-                onMessageError.postValue(msg)
-            }
-        }
+        Api.client.getRoomInviteModels().queue(success = {
+            onViewLoading.postValue(false)
+            roomInviteModel.postValue(it)
+        }, failure = {
+            onViewLoading.postValue(false)
+            onMessageError.postValue(it)
+        })
     }
 
     fun loadUserModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserModelMe() then { obj, msg ->
-            obj?.let {
-                userModel.postValue(obj)
-                onViewLoading.postValue(false)
-            }
-            msg?.let {
-                onViewLoading.postValue(false)
-                onMessageError.postValue(msg)
-            }
-        }
+        Api.client.getUserModelMe().queue(success = {
+            userModel.postValue(it)
+            onViewLoading.postValue(false)
+        }, failure = {
+            onViewLoading.postValue(false)
+            onMessageError.postValue(it)
+        })
     }
 
-    fun loadFriendsCountMe() = Api.client.getFriendsCounts() then { obj, _ ->
-        obj?.let {
-            friendCountsMe.postValue(obj)
-        }
-    }
+    fun loadFriendsCountMe() = Api.client.getFriendsCounts()
+        .queue(success = { friendCountsMe.postValue(it) }, failure = {})
 }

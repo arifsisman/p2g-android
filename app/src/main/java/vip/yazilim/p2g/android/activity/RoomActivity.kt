@@ -40,7 +40,7 @@ import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
@@ -148,7 +148,8 @@ class RoomActivity : BaseActivity(),
         checkWebSocketConnection()
 
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
-        Api.client.getUserDevices() then { _, msg -> msg?.let { view_pager.showSnackBarError(it) } }
+        Api.client.getUserDevices()
+            .queue(success = {}, failure = { view_pager.showSnackBarError(it) })
     }
 
     private fun setupNetworkConnectivityManager() {
@@ -343,19 +344,16 @@ class RoomActivity : BaseActivity(),
                 .toMillis()
                 .toInt() > WEBSOCKET_RECONNECT_DELAY
         ) {
-            Api.client.syncWithRoom() then { obj, msg ->
-                obj?.let {
+            Api.client.syncWithRoom().queue(
+                success = {
                     lastSync = TimeHelper.getLocalDateTimeZonedUTC()
-                    if (obj) {
+                    if (it) {
                         view_pager.showSnackBarInfo(resources.getString(R.string.info_sync))
                     } else {
                         view_pager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
                     }
-                }
-                msg?.let {
-                    view_pager.showSnackBarError(msg)
-                }
-            }
+                },
+                failure = { view_pager.showSnackBarError(it) })
         }
     }
 
@@ -369,7 +367,7 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.leaveRoom() then { _, _ -> }
+                    Api.client.leaveRoom().queue({}, {})
                     finish()
                 }
             }
@@ -420,10 +418,11 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.clearQueue(room.id) then { obj, msg ->
-                        obj?.let { view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared)) }
-                        msg?.let { view_pager.showSnackBarError(msg) }
-                    }
+                    Api.client.clearQueue(room.id)
+                        .queue(
+                            success = { view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared)) },
+                            failure = { view_pager.showSnackBarError(it) }
+                        )
                 }
             }
         }
@@ -436,34 +435,29 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun selectDevice() {
-        Api.client.getUserDevices() then { obj, msg ->
-            obj?.let {
-                val deviceDialogView =
-                    View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
-                val mBuilder =
-                    MaterialAlertDialogBuilder(this@RoomActivity).setView(deviceDialogView)
-                deviceDialog = mBuilder.show()
+        Api.client.getUserDevices().queue(success = {
+            val deviceDialogView =
+                View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
+            val mBuilder =
+                MaterialAlertDialogBuilder(this@RoomActivity).setView(deviceDialogView)
+            deviceDialog = mBuilder.show()
 
-                // Adapter start and update with requested search model
-                val selectDeviceRecyclerView: RecyclerView =
-                    deviceDialogView.findViewById(R.id.select_device_recycler_view)
-                selectDeviceRecyclerView.layoutManager = LinearLayoutManager(this@RoomActivity)
-                selectDeviceRecyclerView.setHasFixedSize(true)
+            // Adapter start and update with requested search model
+            val selectDeviceRecyclerView: RecyclerView =
+                deviceDialogView.findViewById(R.id.select_device_recycler_view)
+            selectDeviceRecyclerView.layoutManager = LinearLayoutManager(this@RoomActivity)
+            selectDeviceRecyclerView.setHasFixedSize(true)
 
-                val deviceAdapter = DeviceAdapter(mutableListOf(), this@RoomActivity)
-                selectDeviceRecyclerView.adapter = deviceAdapter
+            val deviceAdapter = DeviceAdapter(mutableListOf(), this@RoomActivity)
+            selectDeviceRecyclerView.adapter = deviceAdapter
 
-                selectDeviceRecyclerView.addItemDecoration(object : DividerItemDecoration(
-                    selectDeviceRecyclerView.context,
-                    (selectDeviceRecyclerView.layoutManager as LinearLayoutManager).orientation
-                ) {})
+            selectDeviceRecyclerView.addItemDecoration(object : DividerItemDecoration(
+                selectDeviceRecyclerView.context,
+                (selectDeviceRecyclerView.layoutManager as LinearLayoutManager).orientation
+            ) {})
 
-                deviceAdapter.update(obj)
-            }
-            msg?.let {
-                view_pager.showSnackBarError(msg)
-            }
-        }
+            deviceAdapter.update(it)
+        }, failure = { view_pager.showSnackBarError(it) })
     }
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -478,18 +472,19 @@ class RoomActivity : BaseActivity(),
                             roomViewModel.playerSong.postValue(null)
                         } else {
                             roomViewModel.songList.postValue(songList)
-                            roomViewModel.playerSong.postValue(
-                                roomViewModel.getCurrentSong(songList)
-                            )
+//                            roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
+                            roomViewModel.playerSong.postValue(songList[0])
                             showBadgeAt(0)
                         }
                     }
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
-                    Api.client.syncWithRoom() then { _, msg ->
-                        msg?.let { view_pager.showSnackBarError(it) }
-                    }
+                    Api.client.syncWithRoom().queue(
+                        success = {},
+                        failure = {
+                            view_pager.showSnackBarError(it)
+                        })
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
@@ -587,29 +582,35 @@ class RoomActivity : BaseActivity(),
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id) then { _, msg ->
-        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
-    }
+    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queue(
+        success = {},
+        failure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    override fun onPlayPauseClicked() = Api.client.playPause(room.id) then { _, msg ->
-        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
-    }
+    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queue(
+        success = {},
+        failure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    override fun onNextClicked() = Api.client.next(room.id) then { _, msg ->
-        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
-    }
+    override fun onNextClicked() = Api.client.next(room.id).queue(
+        success = {},
+        failure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    override fun onPreviousClicked() = Api.client.previous(room.id) then { _, msg ->
-        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
-    }
+    override fun onPreviousClicked() = Api.client.previous(room.id).queue(
+        success = {},
+        failure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    override fun onRepeatClicked() = Api.client.repeat(room.id) then { _, msg ->
-        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
-    }
+    override fun onRepeatClicked() = Api.client.repeat(room.id).queue(
+        success = {},
+        failure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms) then { _, msg ->
-        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
-    }
+    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queue(
+        success = {},
+        failure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
     override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {
         return object : SeekBar.OnSeekBarChangeListener {
@@ -637,10 +638,10 @@ class RoomActivity : BaseActivity(),
             deviceDialog.dismiss()
         }
 
-        Api.client.saveUsersActiveDevice(userDevice) then { obj, msg ->
-            obj?.let { view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change)) }
-            msg?.let { view_pager.showSnackBarError(msg) }
-        }
+        Api.client.saveUsersActiveDevice(userDevice).queue(
+            success = { view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change)) },
+            failure = { view_pager.showSnackBarError(it) }
+        )
     }
 
     fun closeKeyboard() {

@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
@@ -104,18 +104,15 @@ class RoomQueueFragment :
     }
 
     private fun refreshQueueEvent() =
-        Api.client.getRoomSongs(roomActivity.room.id) then { obj, msg ->
-            obj?.let {
-                roomViewModel.songList.postValue(obj)
-                swipe_refresh_container.isRefreshing = false
-            }
-            msg?.let {
-                roomViewModel.onMessageError.postValue(
-                    resources.getString(R.string.err_room_queue_refresh)
-                )
-                swipe_refresh_container.isRefreshing = false
-            }
-        }
+        Api.client.getRoomSongs(roomActivity.room.id).queue(success = {
+            roomViewModel.songList.postValue(it)
+            swipe_refresh_container.isRefreshing = false
+        }, failure = {
+            roomViewModel.onMessageError.postValue(
+                resources.getString(R.string.err_room_queue_refresh)
+            )
+            swipe_refresh_container.isRefreshing = false
+        })
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
@@ -178,14 +175,9 @@ class RoomQueueFragment :
 
                     if (!s.isNullOrEmpty()) {
                         searchAdapter.clear()
-                        Api.client.searchSpotify(s.toString()) then { obj, msg ->
-                            obj?.let {
-                                searchAdapter.update(obj)
-                            }
-                            msg?.let {
-                                searchDialogView.showSnackBarError(msg)
-                            }
-                        }
+                        Api.client.searchSpotify(s.toString())
+                            .queue(success = { searchAdapter.update(it) },
+                                failure = { searchDialogView.showSnackBarError(it) })
                     }
                 }
             }
@@ -195,65 +187,45 @@ class RoomQueueFragment :
                 Unit
         })
 
-        Api.client.getRecommendations() then { obj, _ ->
-            obj?.let {
-                searchAdapter.update(obj)
-            }
-        }
+        Api.client.getRecommendations().queue(success = { searchAdapter.update(it) }, failure = {})
 
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
         queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
 
-        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel) then { obj, msg ->
-            obj?.let {
-                if (searchModel.type == SearchType.SONG) {
-                    searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
-                } else {
-                    searchDialogView.showSnackBarInfo("${obj.size} songs queued.")
-                }
+        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel).queue(success = {
+            if (searchModel.type == SearchType.SONG) {
+                searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
+            } else {
+                searchDialogView.showSnackBarInfo("${it.size} songs queued.")
             }
-            msg?.let {
-                searchDialogView.showSnackBarError(msg)
-            }
-        }
+        }, failure = { searchDialogView.showSnackBarError(it) })
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        Api.client.play(song) then { _, msg ->
-            msg?.let {
-                roomViewModel.onMessageError.postValue(msg)
-            }
-        }
+        Api.client.play(song)
+            .queue(success = {}, failure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client.upvoteSong(song.id) then { obj, msg ->
-            obj?.let {
-                roomViewModel.onMessageInfo.postValue(
-                    "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
-                )
-            }
-            msg?.let {
-                roomViewModel.onMessageError.postValue(msg)
-            }
-        }
+        Api.client.upvoteSong(song.id).queue(success = {
+            roomViewModel.onMessageInfo.postValue(
+                "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
+            )
+        }, failure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client.downvoteSong(song.id) then { obj, msg ->
-            obj?.let {
-                roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
-            }
-            msg?.let {
-                roomViewModel.onMessageError.postValue(msg)
-            }
-        }
+        Api.client.downvoteSong(song.id).queue(success = {
+            roomViewModel.onMessageInfo.postValue(
+                "${song.songName} ${resources.getString(R.string.info_song_downvoted)}"
+            )
+        }, failure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
@@ -261,12 +233,10 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        Api.client.removeSongFromRoom(song.id) then { _, msg ->
-            msg?.let {
-                roomViewModel.onMessageError.postValue(msg)
-                adapter.add(song, position)
-            }
-        }
+        Api.client.removeSongFromRoom(song.id).queue(success = {}, failure = {
+            roomViewModel.onMessageError.postValue(it)
+            adapter.add(song, position)
+        })
     }
 
     override fun onOpen(layout: SwipeLayout?) {

@@ -1,4 +1,4 @@
-package vip.yazilim.p2g.android.api.generic
+package vip.yazilim.p2g.android.api
 
 /**
  * @author mustafaarifsisman - 22.01.2020

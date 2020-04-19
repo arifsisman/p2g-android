@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_passwo
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.User
@@ -109,18 +109,16 @@ class MainActivity : BaseActivity(),
     }
 
     private fun joinRoomEvent(room: Room) =
-        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED) then { obj, msg ->
-            obj?.let {
+        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED).queue(
+            success = {
                 val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
-                roomIntent.putExtra("room", obj.room)
-                roomIntent.putExtra("user", obj.user)
-                roomIntent.putExtra("roomUser", obj.roomUser)
+                roomIntent.putExtra("room", it.room)
+                roomIntent.putExtra("user", it.user)
+                roomIntent.putExtra("roomUser", it.roomUser)
                 startActivity(roomIntent)
-            }
-            msg?.let {
-                viewModel.onMessageError.postValue(msg)
-            }
-        }
+            }, failure = {
+                viewModel.onMessageError.postValue(it)
+            })
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(this, R.layout.dialog_room_password, null)
@@ -151,28 +149,23 @@ class MainActivity : BaseActivity(),
 
         // Click join
         joinButton.setOnClickListener {
-            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()) then { obj, msg ->
-                obj?.let {
+            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).queue(
+                success = {
                     mAlertDialog?.dismiss()
 
                     val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
-                    roomIntent.putExtra("room", obj.room)
-                    roomIntent.putExtra("user", obj.user)
-                    roomIntent.putExtra("roomUser", obj.roomUser)
+                    roomIntent.putExtra("room", it.room)
+                    roomIntent.putExtra("user", it.user)
+                    roomIntent.putExtra("roomUser", it.roomUser)
                     startActivity(roomIntent)
-                }
-                msg?.let {
-                    mDialogView.showSnackBarError(msg)
-                }
+                }, failure = { mDialogView.showSnackBarError(it) })
+
+            // Click cancel
+            mDialogView.dialog_cancel_button.setOnClickListener {
+                mAlertDialog?.cancel()
+                roomPasswordEditText.clearFocus()
+                applicationContext?.closeKeyboard()
             }
-        }
-
-
-        // Click cancel
-        mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog?.cancel()
-            roomPasswordEditText.clearFocus()
-            applicationContext?.closeKeyboard()
         }
     }
 }

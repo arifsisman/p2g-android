@@ -2,7 +2,6 @@ package vip.yazilim.p2g.android.api
 
 import retrofit2.Call
 import retrofit2.http.*
-import vip.yazilim.p2g.android.api.generic.RestResponse
 import vip.yazilim.p2g.android.entity.*
 import vip.yazilim.p2g.android.model.p2g.*
 

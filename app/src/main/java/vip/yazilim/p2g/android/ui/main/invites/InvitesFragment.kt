@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -19,12 +18,11 @@ import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_INVITE_RECEIVE
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
 
 /**
  * @author mustafaarifsisman - 31.01.2020
@@ -109,57 +107,39 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun onAccept(roomInviteModel: RoomInviteModel) =
-        Api.client.acceptInvite(roomInviteModel.roomInvite) then { obj, msg ->
-            obj?.let {
-                val roomIntent = Intent(activity, RoomActivity::class.java)
-                roomIntent.putExtra("room", obj.room)
-                roomIntent.putExtra("user", obj.user)
-                roomIntent.putExtra("roomUser", obj.roomUser)
-                startActivity(roomIntent)
-            }
-            msg?.let {
-                viewModel.onMessageError.postValue(msg)
-            }
-        }
+        Api.client.acceptInvite(roomInviteModel.roomInvite).queue(success = {
+            val roomIntent = Intent(activity, RoomActivity::class.java)
+            roomIntent.putExtra("room", it.room)
+            roomIntent.putExtra("user", it.user)
+            roomIntent.putExtra("roomUser", it.roomUser)
+            startActivity(roomIntent)
+        }, failure = { viewModel.onMessageError.postValue(it) })
 
     override fun onReject(roomInviteModel: RoomInviteModel) =
-        Api.client.rejectInvite(roomInviteModel.roomInvite.id) then { obj, msg ->
-            obj?.let {
-                adapter.remove(roomInviteModel)
-            }
-            msg?.let {
-                Log.d(TAG, msg)
-                viewModel.onMessageError.postValue(msg)
-            }
-        }
+        Api.client.rejectInvite(roomInviteModel.roomInvite.id)
+            .queue(success = { adapter.remove(roomInviteModel) },
+                failure = { viewModel.onMessageError.postValue(it) })
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) =
-        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId) then { obj, msg ->
-            obj?.let {
-                val intent = Intent(activity, UserActivity::class.java)
-                intent.putExtra("userModel", obj)
-                startActivity(intent)
-            }
-            msg?.let {
-                viewModel.onMessageError.postValue(msg)
-            }
-        }
+        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).queue(success = {
+            val intent = Intent(activity, UserActivity::class.java)
+            intent.putExtra("userModel", it)
+            startActivity(intent)
+        }, failure = { viewModel.onMessageError.postValue(it) })
 
-    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels() then { obj, msg ->
-        obj?.let {
-            if (obj.isNullOrEmpty()) {
-                viewModel.onEmptyList.postValue(true)
-            } else {
-                viewModel.onEmptyList.postValue(false)
-                viewModel.roomInviteModel.postValue(obj)
-            }
-            swipe_refresh_container.isRefreshing = false
+
+    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().queue(success = {
+        if (it.isNullOrEmpty()) {
+            viewModel.onEmptyList.postValue(true)
+        } else {
+            viewModel.onEmptyList.postValue(false)
+            viewModel.roomInviteModel.postValue(it)
         }
-        msg?.let {
-            viewModel.onMessageError.postValue(
-                resources.getString(R.string.err_room_invites_refresh)
-            )
-            swipe_refresh_container.isRefreshing = false
-        }
-    }
+        swipe_refresh_container.isRefreshing = false
+    }, failure = {
+        viewModel.onMessageError.postValue(
+            resources.getString(R.string.err_room_invites_refresh)
+        )
+        swipe_refresh_container.isRefreshing = false
+    })
 }

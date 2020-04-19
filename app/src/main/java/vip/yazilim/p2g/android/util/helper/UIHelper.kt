@@ -22,6 +22,7 @@ import kotlin.reflect.KFunction0
  */
 class UIHelper {
     companion object {
+        //todo
         fun Activity.showErrorDialog(
             message: String,
             kFunction0: KFunction0<Unit>

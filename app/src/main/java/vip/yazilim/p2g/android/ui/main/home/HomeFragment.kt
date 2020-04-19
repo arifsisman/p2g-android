@@ -17,7 +17,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
@@ -121,23 +121,17 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
             Api.client.createRoom(
                 roomNameEditText.text.toString(),
                 roomPasswordEditText.text.toString()
-            ) then { obj, msg ->
-                obj?.let {
-                    context?.closeKeyboard()
-                    mAlertDialog?.dismiss()
+            ).queue(success = {
+                context?.closeKeyboard()
+                mAlertDialog?.dismiss()
 
-                    val roomIntent = Intent(activity, RoomActivity::class.java)
-                    roomIntent.putExtra("room", obj.room)
-                    roomIntent.putExtra("user", obj.user)
-                    roomIntent.putExtra("roomUser", obj.roomUser)
-                    startActivity(roomIntent)
-                }
-                msg?.let {
-                    mDialogView.showSnackBarError(msg)
-                }
-            }
+                val roomIntent = Intent(activity, RoomActivity::class.java)
+                roomIntent.putExtra("room", it.room)
+                roomIntent.putExtra("user", it.user)
+                roomIntent.putExtra("roomUser", it.roomUser)
+                startActivity(roomIntent)
+            }, failure = { mDialogView.showSnackBarError(it) })
         }
-
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
@@ -148,14 +142,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
         }
     }
 
-    private fun refreshRoomsEvent() = Api.client.getRoomModels() then { obj, msg ->
-        obj?.let {
-            viewModel.roomModels.postValue(obj)
+    private fun refreshRoomsEvent() = Api.client.getRoomModels().queue(
+        success = {
+            viewModel.roomModels.postValue(it)
             swipe_refresh_container.isRefreshing = false
-        }
-        msg?.let {
+        }, failure = {
             viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
             swipe_refresh_container.isRefreshing = false
-        }
-    }
+        })
 }

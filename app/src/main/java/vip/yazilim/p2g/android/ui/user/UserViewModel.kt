@@ -2,7 +2,7 @@ package vip.yazilim.p2g.android.ui.user
 
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.then
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 
@@ -14,9 +14,6 @@ class UserViewModel : ViewModelBase() {
     val friendCounts = MutableLiveData<Int>()
     val roomModel = MutableLiveData<RoomModel>()
 
-    fun loadFriendsCount(userId: String) = Api.client.getFriendsCounts(userId) then { obj, _ ->
-        obj?.let {
-            friendCounts.postValue(obj)
-        }
-    }
+    fun loadFriendsCount(userId: String) = Api.client.getFriendsCounts(userId)
+        .queue(success = { friendCounts.postValue(it) }, failure = {})
 }
