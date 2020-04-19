@@ -2,8 +2,7 @@ package vip.yazilim.p2g.android.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
@@ -26,78 +25,66 @@ class MainViewModel : ViewModelBase() {
     fun loadRooms() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomModels().withCallback(
-            object : Callback<MutableList<RoomModel>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: MutableList<RoomModel>) {
-                    onViewLoading.postValue(false)
-                    roomModels.postValue(obj)
-                }
-            })
+        Api.client.getRoomModels() then { obj, msg ->
+            obj?.let {
+                onViewLoading.postValue(false)
+                roomModels.postValue(obj)
+            }
+            msg?.let {
+                onViewLoading.postValue(false)
+                onMessageError.postValue(msg)
+            }
+        }
     }
 
     fun loadUserFriendModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserFriendModel().withCallback(
-            object : Callback<UserFriendModel> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: UserFriendModel) {
-                    onViewLoading.postValue(false)
-                    userFriendModel.postValue(obj)
-                }
-            })
+        Api.client.getUserFriendModel() then { obj, msg ->
+            obj?.let {
+                onViewLoading.postValue(false)
+                userFriendModel.postValue(obj)
+            }
+            msg?.let {
+                onViewLoading.postValue(false)
+                onMessageError.postValue(msg)
+            }
+        }
     }
 
     fun loadRoomInviteModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomInviteModels().withCallback(
-            object : Callback<MutableList<RoomInviteModel>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: MutableList<RoomInviteModel>) {
-                    onViewLoading.postValue(false)
-                    roomInviteModel.postValue(obj)
-                }
-            })
+        Api.client.getRoomInviteModels() then { obj, msg ->
+            obj?.let {
+                onViewLoading.postValue(false)
+                roomInviteModel.postValue(obj)
+            }
+            msg?.let {
+                onViewLoading.postValue(false)
+                onMessageError.postValue(msg)
+            }
+        }
     }
 
     fun loadUserModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserModelMe().withCallback(
-            object : Callback<UserModel> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: UserModel) {
-                    userModel.postValue(obj)
-                    onViewLoading.postValue(false)
-                }
-            })
+        Api.client.getUserModelMe() then { obj, msg ->
+            obj?.let {
+                userModel.postValue(obj)
+                onViewLoading.postValue(false)
+            }
+            msg?.let {
+                onViewLoading.postValue(false)
+                onMessageError.postValue(msg)
+            }
+        }
     }
 
-    fun loadFriendsCountMe() = Api.client.getFriendsCounts().withCallback(
-        object : Callback<Int> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: Int) {
-                friendCountsMe.postValue(obj)
-            }
-        })
+    fun loadFriendsCountMe() = Api.client.getFriendsCounts() then { obj, _ ->
+        obj?.let {
+            friendCountsMe.postValue(obj)
+        }
+    }
 }

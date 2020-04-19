@@ -40,8 +40,7 @@ import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
@@ -73,7 +72,6 @@ import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadable
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showErrorDialog
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 import vip.yazilim.p2g.android.util.helper.release
@@ -150,14 +148,7 @@ class RoomActivity : BaseActivity(),
         checkWebSocketConnection()
 
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
-        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
-            override fun onSuccess(obj: MutableList<UserDevice>) {
-            }
-
-            override fun onError(msg: String) {
-                view_pager.showSnackBarError(msg)
-            }
-        })
+        Api.client.getUserDevices() then { _, msg -> msg?.let { view_pager.showSnackBarError(it) } }
     }
 
     private fun setupNetworkConnectivityManager() {
@@ -352,8 +343,8 @@ class RoomActivity : BaseActivity(),
                 .toMillis()
                 .toInt() > WEBSOCKET_RECONNECT_DELAY
         ) {
-            Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
+            Api.client.syncWithRoom() then { obj, msg ->
+                obj?.let {
                     lastSync = TimeHelper.getLocalDateTimeZonedUTC()
                     if (obj) {
                         view_pager.showSnackBarInfo(resources.getString(R.string.info_sync))
@@ -361,11 +352,10 @@ class RoomActivity : BaseActivity(),
                         view_pager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
                     }
                 }
-
-                override fun onError(msg: String) {
+                msg?.let {
                     view_pager.showSnackBarError(msg)
                 }
-            })
+            }
         }
     }
 
@@ -379,7 +369,7 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.leaveRoom().withCallback(null)
+                    Api.client.leaveRoom() then { _, _ -> }
                     finish()
                 }
             }
@@ -430,16 +420,10 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.clearQueue(room.id).withCallback(
-                        object : Callback<Boolean> {
-                            override fun onSuccess(obj: Boolean) {
-                                view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
-                            }
-
-                            override fun onError(msg: String) {
-                                view_pager.showSnackBarError(msg)
-                            }
-                        })
+                    Api.client.clearQueue(room.id) then { obj, msg ->
+                        obj?.let { view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared)) }
+                        msg?.let { view_pager.showSnackBarError(msg) }
+                    }
                 }
             }
         }
@@ -452,8 +436,8 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun selectDevice() {
-        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
-            override fun onSuccess(obj: MutableList<UserDevice>) {
+        Api.client.getUserDevices() then { obj, msg ->
+            obj?.let {
                 val deviceDialogView =
                     View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
                 val mBuilder =
@@ -476,11 +460,10 @@ class RoomActivity : BaseActivity(),
 
                 deviceAdapter.update(obj)
             }
-
-            override fun onError(msg: String) {
+            msg?.let {
                 view_pager.showSnackBarError(msg)
             }
-        })
+        }
     }
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -504,14 +487,9 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
-                    Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
-                        override fun onSuccess(obj: Boolean) {
-                        }
-
-                        override fun onError(msg: String) {
-                            view_pager.showSnackBarError(msg)
-                        }
-                    })
+                    Api.client.syncWithRoom() then { _, msg ->
+                        msg?.let { view_pager.showSnackBarError(it) }
+                    }
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
@@ -609,70 +587,28 @@ class RoomActivity : BaseActivity(),
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseMiniClicked() {
-        Api.client.playPause(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                player_coordinator_layout.showSnackBarError(msg)
-            }
-        })
+    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id) then { _, msg ->
+        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
     }
 
-    override fun onPlayPauseClicked() {
-        Api.client.playPause(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                player_coordinator_layout.showSnackBarPlayerError(msg)
-            }
-        })
+    override fun onPlayPauseClicked() = Api.client.playPause(room.id) then { _, msg ->
+        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
     }
 
-    override fun onNextClicked() {
-        Api.client.next(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                player_coordinator_layout.showSnackBarPlayerError(msg)
-            }
-        })
+    override fun onNextClicked() = Api.client.next(room.id) then { _, msg ->
+        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
     }
 
-    override fun onPreviousClicked() {
-        Api.client.previous(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                player_coordinator_layout.showSnackBarPlayerError(msg)
-            }
-        })
+    override fun onPreviousClicked() = Api.client.previous(room.id) then { _, msg ->
+        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
     }
 
-    override fun onRepeatClicked() {
-        Api.client.repeat(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                player_coordinator_layout.showSnackBarPlayerError(msg)
-            }
-        })
+    override fun onRepeatClicked() = Api.client.repeat(room.id) then { _, msg ->
+        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
     }
 
-    private fun onSeekPerformed(ms: Int) {
-        Api.client.seek(room.id, ms).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                player_coordinator_layout.showSnackBarPlayerError(msg)
-            }
-        })
+    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms) then { _, msg ->
+        msg?.let { player_coordinator_layout.showSnackBarError(msg) }
     }
 
     override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {
@@ -701,16 +637,10 @@ class RoomActivity : BaseActivity(),
             deviceDialog.dismiss()
         }
 
-        Api.client.saveUsersActiveDevice(userDevice)
-            .withCallback(object : Callback<UserDevice> {
-                override fun onSuccess(obj: UserDevice) {
-                    view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change))
-                }
-
-                override fun onError(msg: String) {
-                    view_pager.showSnackBarError(msg)
-                }
-            })
+        Api.client.saveUsersActiveDevice(userDevice) then { obj, msg ->
+            obj?.let { view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change)) }
+            msg?.let { view_pager.showSnackBarError(msg) }
+        }
     }
 
     fun closeKeyboard() {

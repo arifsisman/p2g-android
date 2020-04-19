@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
@@ -104,21 +103,19 @@ class RoomQueueFragment :
         roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
-    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).withCallback(
-        object : Callback<MutableList<Song>> {
-            override fun onError(msg: String) {
+    private fun refreshQueueEvent() =
+        Api.client.getRoomSongs(roomActivity.room.id) then { obj, msg ->
+            obj?.let {
+                roomViewModel.songList.postValue(obj)
+                swipe_refresh_container.isRefreshing = false
+            }
+            msg?.let {
                 roomViewModel.onMessageError.postValue(
                     resources.getString(R.string.err_room_queue_refresh)
                 )
                 swipe_refresh_container.isRefreshing = false
             }
-
-            override fun onSuccess(obj: MutableList<Song>) {
-                roomViewModel.songList.postValue(obj)
-                swipe_refresh_container.isRefreshing = false
-            }
-        })
-
+        }
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
@@ -181,16 +178,14 @@ class RoomQueueFragment :
 
                     if (!s.isNullOrEmpty()) {
                         searchAdapter.clear()
-                        Api.client.searchSpotify(s.toString()).withCallback(
-                            object : Callback<MutableList<SearchModel>> {
-                                override fun onError(msg: String) {
-                                    searchDialogView.showSnackBarError(msg)
-                                }
-
-                                override fun onSuccess(obj: MutableList<SearchModel>) {
-                                    searchAdapter.update(obj)
-                                }
-                            })
+                        Api.client.searchSpotify(s.toString()) then { obj, msg ->
+                            obj?.let {
+                                searchAdapter.update(obj)
+                            }
+                            msg?.let {
+                                searchDialogView.showSnackBarError(msg)
+                            }
+                        }
                     }
                 }
             }
@@ -200,75 +195,65 @@ class RoomQueueFragment :
                 Unit
         })
 
-        Api.client.getRecommendations().withCallback(object : Callback<MutableList<SearchModel>> {
-            override fun onSuccess(obj: MutableList<SearchModel>) {
+        Api.client.getRecommendations() then { obj, _ ->
+            obj?.let {
                 searchAdapter.update(obj)
             }
-
-            override fun onError(msg: String) {
-            }
-        })
+        }
 
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
         queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
 
-        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel)
-            .withCallback(object : Callback<MutableList<Song>> {
-                override fun onSuccess(obj: MutableList<Song>) {
-                    if (searchModel.type == SearchType.SONG) {
-                        searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
-                    } else {
-                        searchDialogView.showSnackBarInfo("${obj.size} songs queued.")
-                    }
+        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel) then { obj, msg ->
+            obj?.let {
+                if (searchModel.type == SearchType.SONG) {
+                    searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
+                } else {
+                    searchDialogView.showSnackBarInfo("${obj.size} songs queued.")
                 }
-
-                override fun onError(msg: String) {
-                    searchDialogView.showSnackBarError(msg)
-                }
-            })
+            }
+            msg?.let {
+                searchDialogView.showSnackBarError(msg)
+            }
+        }
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        Api.client.play(song).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
+        Api.client.play(song) then { _, msg ->
+            msg?.let {
                 roomViewModel.onMessageError.postValue(msg)
             }
-        })
+        }
     }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
-            override fun onSuccess(obj: Int) {
+        Api.client.upvoteSong(song.id) then { obj, msg ->
+            obj?.let {
                 roomViewModel.onMessageInfo.postValue(
                     "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
                 )
             }
-
-            override fun onError(msg: String) {
+            msg?.let {
                 roomViewModel.onMessageError.postValue(msg)
             }
-        })
+        }
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
-            override fun onSuccess(obj: Int) {
+        Api.client.downvoteSong(song.id) then { obj, msg ->
+            obj?.let {
                 roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
             }
-
-            override fun onError(msg: String) {
+            msg?.let {
                 roomViewModel.onMessageError.postValue(msg)
             }
-        })
+        }
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
@@ -276,15 +261,12 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        Api.client.removeSongFromRoom(song.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
+        Api.client.removeSongFromRoom(song.id) then { _, msg ->
+            msg?.let {
                 roomViewModel.onMessageError.postValue(msg)
                 adapter.add(song, position)
             }
-        })
+        }
     }
 
     override fun onOpen(layout: SwipeLayout?) {

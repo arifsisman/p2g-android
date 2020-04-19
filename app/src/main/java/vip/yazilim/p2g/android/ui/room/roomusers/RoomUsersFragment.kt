@@ -21,11 +21,8 @@ import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.constant.enums.Role
-import vip.yazilim.p2g.android.entity.RoomInvite
-import vip.yazilim.p2g.android.entity.RoomUser
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -106,19 +103,16 @@ class RoomUsersFragment :
     }
 
     private fun refreshUsersEvent() =
-        Api.client.getRoomUserModels(roomActivity.room.id).withCallback(
-            object : Callback<MutableList<RoomUserModel>> {
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
-                    swipe_refresh_container.isRefreshing = false
-                }
-
-                override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                    roomViewModel.roomUserModelList.postValue(obj)
-                    swipe_refresh_container.isRefreshing = false
-                }
-            })
-
+        Api.client.getRoomUserModels(roomActivity.room.id) then { obj, msg ->
+            obj?.let {
+                roomViewModel.roomUserModelList.postValue(obj)
+                swipe_refresh_container.isRefreshing = false
+            }
+            msg?.let {
+                roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
+                swipe_refresh_container.isRefreshing = false
+            }
+        }
 
     private fun showInviteDialog() {
         inviteDialogView = View.inflate(context, R.layout.dialog_room_invite, null)
@@ -181,16 +175,14 @@ class RoomUsersFragment :
 
                     if (!s.isNullOrEmpty() && s.length > 2) {
                         inviteAdapter.clear()
-                        Api.client.searchUser(s.toString()).withCallback(
-                            object : Callback<MutableList<User>> {
-                                override fun onError(msg: String) {
-                                    inviteRecyclerView.showSnackBarError(msg)
-                                }
-
-                                override fun onSuccess(obj: MutableList<User>) {
-                                    inviteAdapter.update(obj)
-                                }
-                            })
+                        Api.client.searchUser(s.toString()) then { obj, msg ->
+                            obj?.let {
+                                inviteAdapter.update(obj)
+                            }
+                            msg?.let {
+                                inviteRecyclerView.showSnackBarError(msg)
+                            }
+                        }
                     }
                 }
             }
@@ -201,15 +193,11 @@ class RoomUsersFragment :
         })
 
         // Load friends
-        Api.client.getFriends().withCallback(
-            object : Callback<MutableList<User>> {
-                override fun onError(msg: String) {
-                }
-
-                override fun onSuccess(obj: MutableList<User>) {
-                    inviteAdapter.update(obj)
-                }
-            })
+        Api.client.getFriends() then { obj, _ ->
+            obj?.let {
+                inviteAdapter.update(obj)
+            }
+        }
     }
 
     override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {
@@ -240,16 +228,14 @@ class RoomUsersFragment :
         view.close()
 
         roomUserModel.roomUser?.userId?.let {
-            Api.client.addFriend(it).withCallback(
-                object : Callback<Boolean> {
-                    override fun onSuccess(obj: Boolean) {
-                        roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
-                    }
-
-                    override fun onError(msg: String) {
-                        roomViewModel.onMessageError.postValue(msg)
-                    }
-                })
+            Api.client.addFriend(it) then { obj, msg ->
+                obj?.let {
+                    roomViewModel.onMessageInfo.postValue("${resources.getString(R.string.info_friend_request_send)} ${roomUserModel.user?.name}")
+                }
+                msg?.let {
+                    roomViewModel.onMessageError.postValue(msg)
+                }
+            }
         }
     }
 
@@ -257,16 +243,14 @@ class RoomUsersFragment :
         val roomId = (activity as RoomActivity).room.id
         val userId = user.id
 
-        Api.client.inviteUser(roomId, userId).withCallback(
-            object : Callback<RoomInvite> {
-                override fun onSuccess(obj: RoomInvite) {
-                    inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
-                }
-
-                override fun onError(msg: String) {
-                    inviteDialogView.showSnackBarError(msg)
-                }
-            })
+        Api.client.inviteUser(roomId, userId) then { obj, msg ->
+            obj?.let {
+                inviteDialogView.showSnackBarInfo("${user.name} ${resources.getString(R.string.info_room_invite_send)}")
+            }
+            msg?.let {
+                inviteDialogView.showSnackBarError(msg)
+            }
+        }
     }
 
     override fun onOpen(layout: SwipeLayout?) {
@@ -297,18 +281,16 @@ class RoomUsersFragment :
         changeRoleDialogView?.dismiss()
 
         roomUserModel.roomUser?.id?.let {
-            Api.client.changeRoomUserRole(it, role.role).withCallback(
-                object : Callback<RoomUser> {
-                    override fun onSuccess(obj: RoomUser) {
-                        roomViewModel.onMessageInfo.postValue(
-                            "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.roomRole}"
-                        )
-                    }
-
-                    override fun onError(msg: String) {
-                        roomViewModel.onMessageError.postValue(msg)
-                    }
-                })
+            Api.client.changeRoomUserRole(it, role.role) then { obj, msg ->
+                obj?.let {
+                    roomViewModel.onMessageInfo.postValue(
+                        "${roomUserModel.user?.name}${resources.getString(R.string.info_promote_demote)} ${obj.roomRole}"
+                    )
+                }
+                msg?.let {
+                    roomViewModel.onMessageError.postValue(msg)
+                }
+            }
         }
     }
 }

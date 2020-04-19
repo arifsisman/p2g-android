@@ -16,8 +16,7 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
@@ -103,50 +102,37 @@ class FriendsFragment : FragmentBase(
         })
     }
 
-    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) {
-        Api.client.accept(friendRequestModel.friendRequest.id)
-            .withCallback(object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    viewModel.onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(friendRequestModel)
-                    adapter.add(friendRequestModel.userModel)
-                    adapter.adapterDataListFull.add(friendRequestModel.userModel)
-                }
-            })
-    }
-
-
-    override fun onRejectClicked(friendRequestModel: FriendRequestModel) {
-        Api.client.reject(friendRequestModel.friendRequest.id).withCallback(
-            object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    viewModel.onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(friendRequestModel)
-                }
-
+    override fun onAcceptClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.accept(friendRequestModel.friendRequest.id) then { obj, msg ->
+            obj?.let {
+                adapter.remove(friendRequestModel)
+                adapter.add(friendRequestModel.userModel)
+                adapter.adapterDataListFull.add(friendRequestModel.userModel)
             }
-        )
-    }
+            msg?.let {
+                viewModel.onMessageError.postValue(msg)
+            }
+        }
 
+    override fun onRejectClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.reject(friendRequestModel.friendRequest.id) then { obj, msg ->
+            obj?.let {
+                adapter.remove(friendRequestModel)
+            }
+            msg?.let {
+                viewModel.onMessageError.postValue(msg)
+            }
+        }
 
-    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) {
-        Api.client.ignore(friendRequestModel.friendRequest.id).withCallback(
-            object : Callback<Boolean> {
-                override fun onError(msg: String) {
-                    viewModel.onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: Boolean) {
-                    adapter.remove(friendRequestModel)
-                }
-            })
-    }
+    override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) =
+        Api.client.ignore(friendRequestModel.friendRequest.id) then { obj, msg ->
+            obj?.let {
+                adapter.remove(friendRequestModel)
+            }
+            msg?.let {
+                viewModel.onMessageError.postValue(msg)
+            }
+        }
 
     override fun onJoinClicked(room: Room) {
         (activity as MainActivity).onItemClicked(room)
@@ -156,20 +142,17 @@ class FriendsFragment : FragmentBase(
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.deleteFriend(userModel.user.id).withCallback(
-                        object : Callback<Boolean> {
-                            override fun onError(msg: String) {
-                                viewModel.onMessageError.postValue(msg)
-                            }
-
-                            override fun onSuccess(obj: Boolean) {
-                                adapter.remove(userModel)
-                            }
-                        })
+                    Api.client.deleteFriend(userModel.user.id) then { obj, msg ->
+                        obj?.let {
+                            adapter.remove(userModel)
+                        }
+                        msg?.let {
+                            viewModel.onMessageError.postValue(msg)
+                        }
+                    }
                 }
             }
         }
-
 
         context?.let {
             MaterialAlertDialogBuilder(it)
@@ -186,19 +169,16 @@ class FriendsFragment : FragmentBase(
         startActivity(intent)
     }
 
-    private fun loadUserFriendModel() = Api.client.getUserFriendModel().withCallback(
-        object : Callback<UserFriendModel> {
-            override fun onError(msg: String) {
-                swipe_refresh_container.isRefreshing = false
-                viewModel.onViewLoading.postValue(false)
-                viewModel.onMessageError.postValue(msg)
-            }
-
-            override fun onSuccess(obj: UserFriendModel) {
-                swipe_refresh_container.isRefreshing = false
-                viewModel.onViewLoading.postValue(false)
-                viewModel.userFriendModel.postValue(obj)
-            }
-        })
-
+    private fun loadUserFriendModel() = Api.client.getUserFriendModel() then { obj, msg ->
+        obj?.let {
+            swipe_refresh_container.isRefreshing = false
+            viewModel.onViewLoading.postValue(false)
+            viewModel.userFriendModel.postValue(obj)
+        }
+        msg?.let {
+            swipe_refresh_container.isRefreshing = false
+            viewModel.onViewLoading.postValue(false)
+            viewModel.onMessageError.postValue(msg)
+        }
+    }
 }

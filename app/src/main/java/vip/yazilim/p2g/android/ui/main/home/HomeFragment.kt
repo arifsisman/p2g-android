@@ -17,10 +17,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.model.p2g.RoomModel
-import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
@@ -123,23 +121,21 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
             Api.client.createRoom(
                 roomNameEditText.text.toString(),
                 roomPasswordEditText.text.toString()
-            ).withCallback(
-                object : Callback<RoomUserModel> {
-                    override fun onError(msg: String) {
-                        mDialogView.showSnackBarError(msg)
-                    }
+            ) then { obj, msg ->
+                obj?.let {
+                    context?.closeKeyboard()
+                    mAlertDialog?.dismiss()
 
-                    override fun onSuccess(obj: RoomUserModel) {
-                        context?.closeKeyboard()
-                        mAlertDialog?.dismiss()
-
-                        val roomIntent = Intent(activity, RoomActivity::class.java)
-                        roomIntent.putExtra("room", obj.room)
-                        roomIntent.putExtra("user", obj.user)
-                        roomIntent.putExtra("roomUser", obj.roomUser)
-                        startActivity(roomIntent)
-                    }
-                })
+                    val roomIntent = Intent(activity, RoomActivity::class.java)
+                    roomIntent.putExtra("room", obj.room)
+                    roomIntent.putExtra("user", obj.user)
+                    roomIntent.putExtra("roomUser", obj.roomUser)
+                    startActivity(roomIntent)
+                }
+                msg?.let {
+                    mDialogView.showSnackBarError(msg)
+                }
+            }
         }
 
 
@@ -152,17 +148,14 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
         }
     }
 
-    private fun refreshRoomsEvent() = Api.client.getRoomModels().withCallback(
-        object : Callback<MutableList<RoomModel>> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
-                swipe_refresh_container.isRefreshing = false
-            }
-
-            override fun onSuccess(obj: MutableList<RoomModel>) {
-                viewModel.roomModels.postValue(obj)
-                swipe_refresh_container.isRefreshing = false
-            }
-        })
-
+    private fun refreshRoomsEvent() = Api.client.getRoomModels() then { obj, msg ->
+        obj?.let {
+            viewModel.roomModels.postValue(obj)
+            swipe_refresh_container.isRefreshing = false
+        }
+        msg?.let {
+            viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
+            swipe_refresh_container.isRefreshing = false
+        }
+    }
 }

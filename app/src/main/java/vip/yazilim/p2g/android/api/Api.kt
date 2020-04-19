@@ -12,7 +12,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
-import vip.yazilim.p2g.android.api.generic.Callback
 import vip.yazilim.p2g.android.api.generic.RestResponse
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
@@ -39,7 +38,7 @@ object Api {
         val retrofit: Retrofit = builder.client(httpClient).build()
 
         client = retrofit.create(Endpoints::class.java)
-        client.updateAccessToken(accessToken).withCallback(null)
+        client.updateAccessToken(accessToken) then { _, _ -> }
     }
 
     internal class UnauthorizedInterceptor : Interceptor {
@@ -97,10 +96,32 @@ object Api {
         }
     }
 
-    inline fun <reified T> Call<RestResponse<T>>.withCallback(callback: Callback<T>?) {
+//    inline fun <reified T> Call<RestResponse<T>>.withCallback(callback: Callback<T>?) =
+//        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+//            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+//                callback?.onError(error.message as String)
+//            }
+//
+//            override fun onResponse(
+//                call: Call<RestResponse<T>>,
+//                response: retrofit2.Response<RestResponse<T>>
+//            ) {
+//                if (response.isSuccessful) {
+//                    callback?.onSuccess(response.body()?.data as T)
+//                } else {
+//                    val msg = response.errorBody()?.string()
+//                    if (msg != null) {
+//                        Log.d("Request not successful ", msg)
+//                        callback?.onError(msg)
+//                    }
+//                }
+//            }
+//        })
+
+    infix fun <T> Call<RestResponse<T>>.then(cb: (obj: T?, msg: String?) -> Unit) =
         this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
             override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
-                callback?.onError(error.message as String)
+                cb(null, error.message)
             }
 
             override fun onResponse(
@@ -108,15 +129,14 @@ object Api {
                 response: retrofit2.Response<RestResponse<T>>
             ) {
                 if (response.isSuccessful) {
-                    callback?.onSuccess(response.body()?.data as T)
+                    cb(response.body()?.data, null)
                 } else {
                     val msg = response.errorBody()?.string()
                     if (msg != null) {
                         Log.d("Request not successful ", msg)
-                        callback?.onError(msg)
+                        cb(null, msg)
                     }
                 }
             }
         })
-    }
 }

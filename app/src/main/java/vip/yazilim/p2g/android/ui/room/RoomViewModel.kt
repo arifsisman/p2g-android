@@ -3,8 +3,7 @@ package vip.yazilim.p2g.android.ui.room
 import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -34,58 +33,50 @@ class RoomViewModel : ViewModelBase() {
     fun loadSongs(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomSongs(roomId).withCallback(
-            object : Callback<MutableList<Song>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
+        Api.client.getRoomSongs(roomId) then { obj, msg ->
+            obj?.let {
+                onViewLoading.postValue(false)
 
-                override fun onSuccess(obj: MutableList<Song>) {
-                    onViewLoading.postValue(false)
-
-                    songList.postValue(obj)
-                    playerSong.postValue(getCurrentSong(obj))
-                }
-            })
+                songList.postValue(obj)
+                playerSong.postValue(getCurrentSong(obj))
+            }
+            msg?.let {
+                onViewLoading.postValue(false)
+                onMessageError.postValue(msg)
+            }
+        }
     }
 
     fun loadRoomUsers(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomUserModels(roomId).withCallback(
-            object : Callback<MutableList<RoomUserModel>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
+        Api.client.getRoomUserModels(roomId) then { obj, msg ->
+            obj?.let {
+                onViewLoading.postValue(false)
 
-                override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                    onViewLoading.postValue(false)
+                roomUserModelList.postValue(obj)
 
-                    roomUserModelList.postValue(obj)
-
-                    obj.forEach {
-                        if (it.user?.id == roomUserModel.value?.user?.id) {
-                            roomUserModel.postValue(it)
-                            roomUserRole.postValue(it.roomUser?.roomRole)
-                        }
+                obj.forEach {
+                    if (it.user?.id == roomUserModel.value?.user?.id) {
+                        roomUserModel.postValue(it)
+                        roomUserRole.postValue(it.roomUser?.roomRole)
                     }
-
                 }
-            })
+            }
+            msg?.let {
+                onViewLoading.postValue(false)
+                onMessageError.postValue(msg)
+            }
+        }
     }
 
     fun loadRoomUserMe() {
-        Api.client.getRoomUserModelMe().withCallback(object : Callback<RoomUserModel> {
-            override fun onSuccess(obj: RoomUserModel) {
+        Api.client.getRoomUserModelMe() then { obj, _ ->
+            obj?.let {
                 roomUserModel.postValue(obj)
                 roomUserRole.postValue(obj.roomUser?.roomRole)
             }
-
-            override fun onError(msg: String) {
-            }
-        })
+        }
     }
 
     fun getCurrentSong(songList: MutableList<Song>): Song? {

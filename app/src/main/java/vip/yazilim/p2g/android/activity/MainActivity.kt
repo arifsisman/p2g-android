@@ -22,12 +22,10 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_passwo
 import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.then
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.User
-import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.service.LogoutService
 import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.ui.main.MainViewModel
@@ -111,21 +109,18 @@ class MainActivity : BaseActivity(),
     }
 
     private fun joinRoomEvent(room: Room) =
-        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED).withCallback(
-            object : Callback<RoomUserModel> {
-                override fun onError(msg: String) {
-                    viewModel.onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: RoomUserModel) {
-                    val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
-                    roomIntent.putExtra("room", obj.room)
-                    roomIntent.putExtra("user", obj.user)
-                    roomIntent.putExtra("roomUser", obj.roomUser)
-                    startActivity(roomIntent)
-                }
-            })
-
+        Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED) then { obj, msg ->
+            obj?.let {
+                val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
+                roomIntent.putExtra("room", obj.room)
+                roomIntent.putExtra("user", obj.user)
+                roomIntent.putExtra("roomUser", obj.roomUser)
+                startActivity(roomIntent)
+            }
+            msg?.let {
+                viewModel.onMessageError.postValue(msg)
+            }
+        }
 
     private fun joinPrivateRoomEvent(room: Room) {
         val mDialogView = View.inflate(this, R.layout.dialog_room_password, null)
@@ -156,22 +151,20 @@ class MainActivity : BaseActivity(),
 
         // Click join
         joinButton.setOnClickListener {
-            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).withCallback(
-                object : Callback<RoomUserModel> {
-                    override fun onError(msg: String) {
-                        mDialogView.showSnackBarError(msg)
-                    }
+            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()) then { obj, msg ->
+                obj?.let {
+                    mAlertDialog?.dismiss()
 
-                    override fun onSuccess(obj: RoomUserModel) {
-                        mAlertDialog?.dismiss()
-
-                        val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
-                        roomIntent.putExtra("room", obj.room)
-                        roomIntent.putExtra("user", obj.user)
-                        roomIntent.putExtra("roomUser", obj.roomUser)
-                        startActivity(roomIntent)
-                    }
-                })
+                    val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
+                    roomIntent.putExtra("room", obj.room)
+                    roomIntent.putExtra("user", obj.user)
+                    roomIntent.putExtra("roomUser", obj.roomUser)
+                    startActivity(roomIntent)
+                }
+                msg?.let {
+                    mDialogView.showSnackBarError(msg)
+                }
+            }
         }
 
 
