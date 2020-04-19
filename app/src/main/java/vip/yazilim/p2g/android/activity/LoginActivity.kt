@@ -9,7 +9,6 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import kotlinx.android.synthetic.main.activity_login.*
-import okhttp3.Call
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
@@ -19,7 +18,6 @@ import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
 
 
 /**
@@ -28,8 +26,6 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastShort
  */
 class LoginActivity : BaseActivity() {
 
-    private var mCall: Call? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -37,7 +33,6 @@ class LoginActivity : BaseActivity() {
         MobileAds.initialize(this)
         supportActionBar?.hide()
 
-        // Init DB and AndroidThreeTen
         AndroidThreeTen.init(this)
         getAccessTokenFromSpotify()
     }
@@ -57,9 +52,9 @@ class LoginActivity : BaseActivity() {
                         getUserModel(it)
                     }, onFailure = { container.showSnackBarError(it) })
             } else {
-                response.error.let {
+                response.error?.let {
                     Log.d(TAG, it)
-                    this.showToastShort(it)
+                    container.showSnackBarError(it)
                 }
             }
         }
@@ -67,11 +62,6 @@ class LoginActivity : BaseActivity() {
 
     override fun handleUnauthorizedEvent() {
         //Don't handle unauthorized event
-    }
-
-    override fun onDestroy() {
-        mCall?.cancel()
-        super.onDestroy()
     }
 
     private fun getUserModel(user: User) {
