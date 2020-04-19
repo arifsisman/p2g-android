@@ -76,6 +76,7 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
+import vip.yazilim.p2g.android.util.helper.release
 
 class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
@@ -121,14 +122,17 @@ class RoomActivity : BaseActivity(),
 
         registerRoomWebSocketReceiver(broadcastReceiver)
 
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
-        mInterstitialAd.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                mInterstitialAd.show()
+        release {
+            mInterstitialAd = InterstitialAd(this)
+            mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    mInterstitialAd.show()
+                }
             }
+            mInterstitialAd.loadAd(AdRequest.Builder().build())
         }
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
+
         updateSeekBarTime.run()
 
     }
@@ -725,4 +729,5 @@ class RoomActivity : BaseActivity(),
     private fun checkWebSocketConnection() {
         sendBroadcast(Intent(CHECK_WEBSOCKET_CONNECTION))
     }
+
 }
