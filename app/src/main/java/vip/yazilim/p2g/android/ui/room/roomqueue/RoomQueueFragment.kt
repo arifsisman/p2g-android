@@ -24,6 +24,8 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnFailure
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
@@ -104,10 +106,10 @@ class RoomQueueFragment :
     }
 
     private fun refreshQueueEvent() =
-        Api.client.getRoomSongs(roomActivity.room.id).queue(success = {
+        Api.client.getRoomSongs(roomActivity.room.id).queue(onSuccess = {
             roomViewModel.songList.postValue(it)
             swipe_refresh_container.isRefreshing = false
-        }, failure = {
+        }, onFailure = {
             roomViewModel.onMessageError.postValue(
                 resources.getString(R.string.err_room_queue_refresh)
             )
@@ -176,8 +178,8 @@ class RoomQueueFragment :
                     if (!s.isNullOrEmpty()) {
                         searchAdapter.clear()
                         Api.client.searchSpotify(s.toString())
-                            .queue(success = { searchAdapter.update(it) },
-                                failure = { searchDialogView.showSnackBarError(it) })
+                            .queue(onSuccess = { searchAdapter.update(it) },
+                                onFailure = { searchDialogView.showSnackBarError(it) })
                     }
                 }
             }
@@ -187,45 +189,46 @@ class RoomQueueFragment :
                 Unit
         })
 
-        Api.client.getRecommendations().queue(success = { searchAdapter.update(it) }, failure = {})
+        Api.client.getRecommendations()
+            .queueAndCallbackOnSuccess(onSuccess = { searchAdapter.update(it) })
 
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
         queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
 
-        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel).queue(success = {
+        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel).queue(onSuccess = {
             if (searchModel.type == SearchType.SONG) {
                 searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
             } else {
                 searchDialogView.showSnackBarInfo("${it.size} songs queued.")
             }
-        }, failure = { searchDialogView.showSnackBarError(it) })
+        }, onFailure = { searchDialogView.showSnackBarError(it) })
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
         Api.client.play(song)
-            .queue(success = {}, failure = { roomViewModel.onMessageError.postValue(it) })
+            .queueAndCallbackOnFailure(onFailure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client.upvoteSong(song.id).queue(success = {
+        Api.client.upvoteSong(song.id).queue(onSuccess = {
             roomViewModel.onMessageInfo.postValue(
                 "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
             )
-        }, failure = { roomViewModel.onMessageError.postValue(it) })
+        }, onFailure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        Api.client.downvoteSong(song.id).queue(success = {
+        Api.client.downvoteSong(song.id).queue(onSuccess = {
             roomViewModel.onMessageInfo.postValue(
                 "${song.songName} ${resources.getString(R.string.info_song_downvoted)}"
             )
-        }, failure = { roomViewModel.onMessageError.postValue(it) })
+        }, onFailure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
@@ -233,7 +236,7 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        Api.client.removeSongFromRoom(song.id).queue(success = {}, failure = {
+        Api.client.removeSongFromRoom(song.id).queueAndCallbackOnFailure(onFailure = {
             roomViewModel.onMessageError.postValue(it)
             adapter.add(song, position)
         })

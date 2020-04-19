@@ -50,12 +50,12 @@ class LoginActivity : BaseActivity() {
             if (response.accessToken != null) {
                 Api.build(response.accessToken)
                 Api.client.login().queue(
-                    success = {
+                    onSuccess = {
                         Play2GetherApplication.userName = it.name
                         Play2GetherApplication.userId = it.id
                         getUserModel(it)
                     },
-                    failure = {
+                    onFailure = {
                         this@LoginActivity.showErrorDialog(
                             it,
                             ::getAccessTokenFromSpotify
@@ -81,7 +81,7 @@ class LoginActivity : BaseActivity() {
 
     private fun getUserModel(user: User) {
         Api.client.getUserModelMe().queue(
-            success = {
+            onSuccess = {
                 if (it.roomModel == null) {
                     this@LoginActivity.showToastLong("${resources.getString(R.string.info_logged_in)} ${user.name}")
                     val mainIntent = Intent(this@LoginActivity, MainActivity::class.java)
@@ -93,13 +93,13 @@ class LoginActivity : BaseActivity() {
                     startActivity(roomIntent)
                 }
             },
-            failure = {
+            onFailure = {
                 this@LoginActivity.showErrorDialog(it)
             }
         )
     }
 
-    fun getAccessTokenFromSpotify() {
+    private fun getAccessTokenFromSpotify() {
         val request: AuthorizationRequest = AuthorizationRequest
             .Builder(
                 SpotifyConstants.CLIENT_ID,

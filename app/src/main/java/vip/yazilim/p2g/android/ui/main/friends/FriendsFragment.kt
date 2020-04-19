@@ -102,21 +102,21 @@ class FriendsFragment : FragmentBase(
     }
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) =
-        Api.client.accept(friendRequestModel.friendRequest.id).queue(success = {
+        Api.client.accept(friendRequestModel.friendRequest.id).queue(onSuccess = {
             adapter.remove(friendRequestModel)
             adapter.add(friendRequestModel.userModel)
             adapter.adapterDataListFull.add(friendRequestModel.userModel)
-        }, failure = { viewModel.onMessageError.postValue(it) })
+        }, onFailure = { viewModel.onMessageError.postValue(it) })
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) =
         Api.client.reject(friendRequestModel.friendRequest.id)
-            .queue(success = { adapter.remove(friendRequestModel) },
-                failure = { viewModel.onMessageError.postValue(it) })
+            .queue(onSuccess = { adapter.remove(friendRequestModel) },
+                onFailure = { viewModel.onMessageError.postValue(it) })
 
     override fun onIgnoreClicked(friendRequestModel: FriendRequestModel) =
         Api.client.ignore(friendRequestModel.friendRequest.id)
-            .queue(success = { adapter.remove(friendRequestModel) },
-                failure = { viewModel.onMessageError.postValue(it) })
+            .queue(onSuccess = { adapter.remove(friendRequestModel) },
+                onFailure = { viewModel.onMessageError.postValue(it) })
 
     override fun onJoinClicked(room: Room) {
         (activity as MainActivity).onItemClicked(room)
@@ -127,8 +127,8 @@ class FriendsFragment : FragmentBase(
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
                     Api.client.deleteFriend(userModel.user.id)
-                        .queue(success = { adapter.remove(userModel) },
-                            failure = { viewModel.onMessageError.postValue(it) })
+                        .queue(onSuccess = { adapter.remove(userModel) },
+                            onFailure = { viewModel.onMessageError.postValue(it) })
                 }
             }
         }
@@ -149,12 +149,12 @@ class FriendsFragment : FragmentBase(
     }
 
     private fun loadUserFriendModel() = Api.client.getUserFriendModel().queue(
-        success = {
+        onSuccess = {
             swipe_refresh_container.isRefreshing = false
             viewModel.onViewLoading.postValue(false)
             viewModel.userFriendModel.postValue(it)
         },
-        failure = {
+        onFailure = {
             swipe_refresh_container.isRefreshing = false
             viewModel.onViewLoading.postValue(false)
             viewModel.onMessageError.postValue(it)

@@ -121,7 +121,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
             Api.client.createRoom(
                 roomNameEditText.text.toString(),
                 roomPasswordEditText.text.toString()
-            ).queue(success = {
+            ).queue(onSuccess = {
                 context?.closeKeyboard()
                 mAlertDialog?.dismiss()
 
@@ -130,7 +130,7 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
                 roomIntent.putExtra("user", it.user)
                 roomIntent.putExtra("roomUser", it.roomUser)
                 startActivity(roomIntent)
-            }, failure = { mDialogView.showSnackBarError(it) })
+            }, onFailure = { mDialogView.showSnackBarError(it) })
         }
 
         // Click cancel
@@ -143,10 +143,10 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
     }
 
     private fun refreshRoomsEvent() = Api.client.getRoomModels().queue(
-        success = {
+        onSuccess = {
             viewModel.roomModels.postValue(it)
             swipe_refresh_container.isRefreshing = false
-        }, failure = {
+        }, onFailure = {
             viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
             swipe_refresh_container.isRefreshing = false
         })

@@ -110,13 +110,13 @@ class MainActivity : BaseActivity(),
 
     private fun joinRoomEvent(room: Room) =
         Api.client.joinRoom(room.id, GeneralConstants.UNDEFINED).queue(
-            success = {
+            onSuccess = {
                 val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
                 roomIntent.putExtra("room", it.room)
                 roomIntent.putExtra("user", it.user)
                 roomIntent.putExtra("roomUser", it.roomUser)
                 startActivity(roomIntent)
-            }, failure = {
+            }, onFailure = {
                 viewModel.onMessageError.postValue(it)
             })
 
@@ -150,7 +150,7 @@ class MainActivity : BaseActivity(),
         // Click join
         joinButton.setOnClickListener {
             Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).queue(
-                success = {
+                onSuccess = {
                     mAlertDialog?.dismiss()
 
                     val roomIntent = Intent(this@MainActivity, RoomActivity::class.java)
@@ -158,7 +158,7 @@ class MainActivity : BaseActivity(),
                     roomIntent.putExtra("user", it.user)
                     roomIntent.putExtra("roomUser", it.roomUser)
                     startActivity(roomIntent)
-                }, failure = { mDialogView.showSnackBarError(it) })
+                }, onFailure = { mDialogView.showSnackBarError(it) })
 
             // Click cancel
             mDialogView.dialog_cancel_button.setOnClickListener {

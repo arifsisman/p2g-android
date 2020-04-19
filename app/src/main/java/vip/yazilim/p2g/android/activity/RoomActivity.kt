@@ -41,6 +41,7 @@ import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnFailure
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
@@ -149,7 +150,7 @@ class RoomActivity : BaseActivity(),
 
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
         Api.client.getUserDevices()
-            .queue(success = {}, failure = { view_pager.showSnackBarError(it) })
+            .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
     }
 
     private fun setupNetworkConnectivityManager() {
@@ -345,7 +346,7 @@ class RoomActivity : BaseActivity(),
                 .toInt() > WEBSOCKET_RECONNECT_DELAY
         ) {
             Api.client.syncWithRoom().queue(
-                success = {
+                onSuccess = {
                     lastSync = TimeHelper.getLocalDateTimeZonedUTC()
                     if (it) {
                         view_pager.showSnackBarInfo(resources.getString(R.string.info_sync))
@@ -353,7 +354,7 @@ class RoomActivity : BaseActivity(),
                         view_pager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
                     }
                 },
-                failure = { view_pager.showSnackBarError(it) })
+                onFailure = { view_pager.showSnackBarError(it) })
         }
     }
 
@@ -420,8 +421,8 @@ class RoomActivity : BaseActivity(),
                 DialogInterface.BUTTON_POSITIVE -> {
                     Api.client.clearQueue(room.id)
                         .queue(
-                            success = { view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared)) },
-                            failure = { view_pager.showSnackBarError(it) }
+                            onSuccess = { view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared)) },
+                            onFailure = { view_pager.showSnackBarError(it) }
                         )
                 }
             }
@@ -435,7 +436,7 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun selectDevice() {
-        Api.client.getUserDevices().queue(success = {
+        Api.client.getUserDevices().queue(onSuccess = {
             val deviceDialogView =
                 View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
             val mBuilder =
@@ -457,7 +458,7 @@ class RoomActivity : BaseActivity(),
             ) {})
 
             deviceAdapter.update(it)
-        }, failure = { view_pager.showSnackBarError(it) })
+        }, onFailure = { view_pager.showSnackBarError(it) })
     }
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -480,9 +481,8 @@ class RoomActivity : BaseActivity(),
                 }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
-                    Api.client.syncWithRoom().queue(
-                        success = {},
-                        failure = {
+                    Api.client.syncWithRoom().queueAndCallbackOnFailure(
+                        onFailure = {
                             view_pager.showSnackBarError(it)
                         })
                     roomViewModel.loadRoomUserMe()
@@ -582,34 +582,28 @@ class RoomActivity : BaseActivity(),
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queue(
-        success = {},
-        failure = { player_coordinator_layout.showSnackBarError(it) }
+    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queue(
-        success = {},
-        failure = { player_coordinator_layout.showSnackBarError(it) }
+    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onNextClicked() = Api.client.next(room.id).queue(
-        success = {},
-        failure = { player_coordinator_layout.showSnackBarError(it) }
+    override fun onNextClicked() = Api.client.next(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onPreviousClicked() = Api.client.previous(room.id).queue(
-        success = {},
-        failure = { player_coordinator_layout.showSnackBarError(it) }
+    override fun onPreviousClicked() = Api.client.previous(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onRepeatClicked() = Api.client.repeat(room.id).queue(
-        success = {},
-        failure = { player_coordinator_layout.showSnackBarError(it) }
+    override fun onRepeatClicked() = Api.client.repeat(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queue(
-        success = {},
-        failure = { player_coordinator_layout.showSnackBarError(it) }
+    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
     override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {
@@ -639,8 +633,8 @@ class RoomActivity : BaseActivity(),
         }
 
         Api.client.saveUsersActiveDevice(userDevice).queue(
-            success = { view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change)) },
-            failure = { view_pager.showSnackBarError(it) }
+            onSuccess = { view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change)) },
+            onFailure = { view_pager.showSnackBarError(it) }
         )
     }
 

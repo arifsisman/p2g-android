@@ -107,28 +107,28 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
     }
 
     override fun onAccept(roomInviteModel: RoomInviteModel) =
-        Api.client.acceptInvite(roomInviteModel.roomInvite).queue(success = {
+        Api.client.acceptInvite(roomInviteModel.roomInvite).queue(onSuccess = {
             val roomIntent = Intent(activity, RoomActivity::class.java)
             roomIntent.putExtra("room", it.room)
             roomIntent.putExtra("user", it.user)
             roomIntent.putExtra("roomUser", it.roomUser)
             startActivity(roomIntent)
-        }, failure = { viewModel.onMessageError.postValue(it) })
+        }, onFailure = { viewModel.onMessageError.postValue(it) })
 
     override fun onReject(roomInviteModel: RoomInviteModel) =
         Api.client.rejectInvite(roomInviteModel.roomInvite.id)
-            .queue(success = { adapter.remove(roomInviteModel) },
-                failure = { viewModel.onMessageError.postValue(it) })
+            .queue(onSuccess = { adapter.remove(roomInviteModel) },
+                onFailure = { viewModel.onMessageError.postValue(it) })
 
     override fun onRowClicked(roomInviteModel: RoomInviteModel) =
-        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).queue(success = {
+        Api.client.getUserModel(roomInviteModel.roomInvite.inviterId).queue(onSuccess = {
             val intent = Intent(activity, UserActivity::class.java)
             intent.putExtra("userModel", it)
             startActivity(intent)
-        }, failure = { viewModel.onMessageError.postValue(it) })
+        }, onFailure = { viewModel.onMessageError.postValue(it) })
 
 
-    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().queue(success = {
+    private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().queue(onSuccess = {
         if (it.isNullOrEmpty()) {
             viewModel.onEmptyList.postValue(true)
         } else {
@@ -136,7 +136,7 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
             viewModel.roomInviteModel.postValue(it)
         }
         swipe_refresh_container.isRefreshing = false
-    }, failure = {
+    }, onFailure = {
         viewModel.onMessageError.postValue(
             resources.getString(R.string.err_room_invites_refresh)
         )

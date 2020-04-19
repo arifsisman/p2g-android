@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.ui.main
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
@@ -25,10 +26,10 @@ class MainViewModel : ViewModelBase() {
     fun loadRooms() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomModels().queue(success = {
+        Api.client.getRoomModels().queue(onSuccess = {
             onViewLoading.postValue(false)
             roomModels.postValue(it)
-        }, failure = {
+        }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
         })
@@ -37,10 +38,10 @@ class MainViewModel : ViewModelBase() {
     fun loadUserFriendModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserFriendModel().queue(success = {
+        Api.client.getUserFriendModel().queue(onSuccess = {
             onViewLoading.postValue(false)
             userFriendModel.postValue(it)
-        }, failure = {
+        }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
         })
@@ -49,10 +50,10 @@ class MainViewModel : ViewModelBase() {
     fun loadRoomInviteModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomInviteModels().queue(success = {
+        Api.client.getRoomInviteModels().queue(onSuccess = {
             onViewLoading.postValue(false)
             roomInviteModel.postValue(it)
-        }, failure = {
+        }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
         })
@@ -61,15 +62,15 @@ class MainViewModel : ViewModelBase() {
     fun loadUserModel() {
         onViewLoading.postValue(true)
 
-        Api.client.getUserModelMe().queue(success = {
+        Api.client.getUserModelMe().queue(onSuccess = {
             userModel.postValue(it)
             onViewLoading.postValue(false)
-        }, failure = {
+        }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
         })
     }
 
     fun loadFriendsCountMe() = Api.client.getFriendsCounts()
-        .queue(success = { friendCountsMe.postValue(it) }, failure = {})
+        .queueAndCallbackOnSuccess(onSuccess = { friendCountsMe.postValue(it) })
 }

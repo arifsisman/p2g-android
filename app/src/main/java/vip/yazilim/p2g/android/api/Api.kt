@@ -36,7 +36,7 @@ object Api {
         val retrofit: Retrofit = builder.client(httpClient).build()
 
         client = retrofit.create(Endpoints::class.java)
-        client.updateAccessToken(accessToken).queue(success = {}, failure = {})
+        client.updateAccessToken(accessToken).queueAndForget()
     }
 
     internal class UnauthorizedInterceptor : Interceptor {
@@ -95,12 +95,12 @@ object Api {
     }
 
     inline fun <T> Call<RestResponse<T>>.queue(
-        crossinline success: (T) -> Unit,
-        crossinline failure: ((String) -> Unit)
+        crossinline onSuccess: (T) -> Unit,
+        crossinline onFailure: ((String) -> Unit)
     ) =
         this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
             override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
-                error.message?.let { failure(it) }
+                error.message?.let { onFailure(it) }
             }
 
             override fun onResponse(
@@ -108,9 +108,56 @@ object Api {
                 response: retrofit2.Response<RestResponse<T>>
             ) {
                 if (response.isSuccessful) {
-                    response.body()?.data?.let { success(it) }
+                    response.body()?.data?.let { onSuccess(it) }
                 } else {
-                    response.errorBody()?.string()?.let { failure(it) }
+                    response.errorBody()?.string()?.let { onFailure(it) }
+                }
+            }
+        })
+
+    fun <T> Call<RestResponse<T>>.queueAndForget() =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+            }
+        })
+
+    inline fun <T> Call<RestResponse<T>>.queueAndCallbackOnSuccess(
+        crossinline onSuccess: (T) -> Unit
+    ) =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.data?.let { onSuccess(it) }
+                }
+            }
+        })
+
+    inline fun <T> Call<RestResponse<T>>.queueAndCallbackOnFailure(
+        crossinline onFailure: ((String) -> Unit)
+    ) =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+                error.message?.let { onFailure(it) }
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+                if (!response.isSuccessful) {
+                    response.errorBody()?.string()?.let { onFailure(it) }
                 }
             }
         })

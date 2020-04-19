@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -33,12 +34,12 @@ class RoomViewModel : ViewModelBase() {
     fun loadSongs(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomSongs(roomId).queue(success = {
+        Api.client.getRoomSongs(roomId).queue(onSuccess = {
             onViewLoading.postValue(false)
 
             songList.postValue(it)
             playerSong.postValue(getCurrentSong(it))
-        }, failure = {
+        }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
         })
@@ -47,7 +48,7 @@ class RoomViewModel : ViewModelBase() {
     fun loadRoomUsers(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomUserModels(roomId).queue(success = { roomUsers ->
+        Api.client.getRoomUserModels(roomId).queue(onSuccess = { roomUsers ->
             onViewLoading.postValue(false)
 
             roomUserModelList.postValue(roomUsers)
@@ -58,17 +59,17 @@ class RoomViewModel : ViewModelBase() {
                     roomUserRole.postValue(it.roomUser?.roomRole)
                 }
             }
-        }, failure = {
+        }, onFailure = {
             onViewLoading.postValue(false)
             onMessageError.postValue(it)
         })
     }
 
     fun loadRoomUserMe() {
-        Api.client.getRoomUserModelMe().queue(success = {
+        Api.client.getRoomUserModelMe().queueAndCallbackOnSuccess(onSuccess = {
             roomUserModel.postValue(it)
             roomUserRole.postValue(it.roomUser?.roomRole)
-        }, failure = {})
+        })
     }
 
     fun getCurrentSong(songList: MutableList<Song>): Song? {
