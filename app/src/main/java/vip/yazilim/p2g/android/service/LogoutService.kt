@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
+import vip.yazilim.p2g.android.api.Api.queueAndForget
 
 /**
  * @author mustafaarifsisman - 25.03.2020
@@ -21,6 +21,6 @@ class LogoutService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        Api.client.logout().withCallback(null)
+        Api.client.logout().queueAndForget()
     }
 }

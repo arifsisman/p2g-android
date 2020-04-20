@@ -39,57 +39,53 @@ class RoomUsersAdapter(
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val swipeLayout: SwipeLayout = itemView.findViewById(R.id.row_user_model)
         fun bindView(roomUserModel: RoomUserModel) {
-            itemView.row_user_model.close(false)
+            swipeLayout.close(false)
 
             val user = roomUserModel.user
             val roomUser = roomUserModel.roomUser
 
-            itemView.user_name.text = user.name
-            itemView.user_role.text = roomUser.role
+            if (user != null && roomUser != null) {
+                itemView.user_name.text = user.name
+                itemView.user_role.text = roomUser.roomRole
 
-            when (roomUser.role) {
-                Role.ROOM_OWNER.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(RED))
+                when (roomUser.roomRole) {
+                    Role.ROOM_OWNER.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(RED))
+                    }
+                    Role.ROOM_ADMIN.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(CYAN))
+                    }
+                    Role.ROOM_DJ.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(GREEN))
+                    }
+                    Role.ROOM_USER.role -> {
+                        itemView.user_role.setTextColor(Color.parseColor(WHITE))
+                    }
                 }
-                Role.ROOM_ADMIN.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(CYAN))
-                }
-                Role.ROOM_DJ.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(GREEN))
-                }
-                Role.ROOM_USER.role -> {
-                    itemView.user_role.setTextColor(Color.parseColor(WHITE))
+
+                if (user.imageUrl != null) {
+                    GlideApp.with(view)
+                        .load(user.imageUrl)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(itemView.user_image)
+                } else {
+                    itemView.user_image.setImageResource(R.drawable.ic_profile_image)
                 }
             }
-
-            if (user.imageUrl != null) {
-                GlideApp.with(view)
-                    .load(user.imageUrl)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(itemView.user_image)
-            } else {
-                itemView.user_image.setImageResource(R.drawable.ic_profile_image)
-            }
-
-            itemView.row_user_model.showMode = SwipeLayout.ShowMode.LayDown
-            itemView.row_user_model.addDrag(SwipeLayout.DragEdge.Right, itemView.user_event_holder)
         }
 
         fun bindEvent(roomUserModel: RoomUserModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onItemClicked(itemView.row_user_model) }
-            itemView.swipeChangeRoleButton.setOnClickListener {
-                clickListener.onChangeRoleClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
+            itemView.swipe_change_role_button.setOnClickListener {
+                clickListener.onChangeRoleClicked(swipeLayout, roomUserModel)
             }
-            itemView.swipeAddButton.setOnClickListener {
-                clickListener.onAddClicked(
-                    itemView.row_user_model,
-                    roomUserModel
-                )
+            itemView.swipe_add_button.setOnClickListener {
+                clickListener.onAddClicked(swipeLayout, roomUserModel)
             }
             swipeLayout.addSwipeListener(swipeListener)
+            swipeLayout.surfaceView.setOnClickListener { swipeLayout.open(true) }
+            swipeLayout.isClickToClose = true
+            swipeLayout.showMode = SwipeLayout.ShowMode.LayDown
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Right, itemView.user_event_holder)
         }
 
         fun bindItemManager(position: Int) {
@@ -98,15 +94,13 @@ class RoomUsersAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(view: SwipeLayout)
         fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
         fun onAddClicked(view: SwipeLayout, roomUserModel: RoomUserModel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
-        view =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_room_user_model, parent, false)
+        view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_room_user_model, parent, false)
         return MViewHolder(view)
     }
 
@@ -118,7 +112,7 @@ class RoomUsersAdapter(
         val roomUserModel = roomUserModelList[position]
         holder.bindView(roomUserModel)
 
-        if (roomUserModel.user.id == userIdMe) {
+        if (roomUserModel.user?.id == userIdMe) {
             holder.swipeLayout.isSwipeEnabled = false
         } else {
             holder.bindEvent(roomUserModelList[position], itemClickListener)

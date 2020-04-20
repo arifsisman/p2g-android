@@ -3,8 +3,8 @@ package vip.yazilim.p2g.android.ui.room
 import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -34,95 +34,46 @@ class RoomViewModel : ViewModelBase() {
     fun loadSongs(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomSongs(roomId).withCallback(
-            object : Callback<MutableList<Song>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
-                }
+        Api.client.getRoomSongs(roomId).queue(onSuccess = {
+            onViewLoading.postValue(false)
 
-                override fun onSuccess(obj: MutableList<Song>) {
-                    onViewLoading.postValue(false)
-
-                    songList.postValue(obj)
-                    playerSong.postValue(getCurrentSong(obj))
-                }
-            })
+            songList.postValue(it)
+            if (it.isNullOrEmpty()) {
+                playerSong.postValue(null)
+            } else {
+                playerSong.postValue(it[0])
+            }
+        }, onFailure = {
+            onViewLoading.postValue(false)
+            onMessageError.postValue(it)
+        })
     }
 
     fun loadRoomUsers(roomId: Long) {
         onViewLoading.postValue(true)
 
-        Api.client.getRoomUserModels(roomId).withCallback(
-            object : Callback<MutableList<RoomUserModel>> {
-                override fun onError(msg: String) {
-                    onViewLoading.postValue(false)
-                    onMessageError.postValue(msg)
+        Api.client.getRoomUserModels(roomId).queue(onSuccess = { roomUsers ->
+            onViewLoading.postValue(false)
+
+            roomUserModelList.postValue(roomUsers)
+
+            roomUsers.forEach {
+                if (it.user?.id == roomUserModel.value?.user?.id) {
+                    roomUserModel.postValue(it)
+                    roomUserRole.postValue(it.roomUser?.roomRole)
                 }
-
-                override fun onSuccess(obj: MutableList<RoomUserModel>) {
-                    onViewLoading.postValue(false)
-
-                    roomUserModelList.postValue(obj)
-
-                    obj.forEach {
-                        if (it.user.id == roomUserModel.value?.user?.id) {
-                            roomUserModel.postValue(it)
-                            roomUserRole.postValue(it.roomUser.role)
-                        }
-                    }
-
-                }
-            })
-    }
-
-    fun loadRoomUserMe() {
-        Api.client.getRoomUserModelMe().withCallback(object : Callback<RoomUserModel> {
-            override fun onSuccess(obj: RoomUserModel) {
-                roomUserModel.postValue(obj)
-                roomUserRole.postValue(obj.roomUser.role)
             }
-
-            override fun onError(msg: String) {
-            }
+        }, onFailure = {
+            onViewLoading.postValue(false)
+            onMessageError.postValue(it)
         })
     }
 
-    fun getCurrentSong(songList: MutableList<Song>): Song? {
-        var playingSong: Song? = null
-        var pausedSong: Song? = null
-        var nextSong: Song? = null
-
-        songList.forEach {
-            when (it.songStatus) {
-                SongStatus.PLAYING.songStatus -> {
-                    playingSong = it
-                }
-                SongStatus.PAUSED.songStatus -> {
-                    pausedSong = it
-                }
-                SongStatus.NEXT.songStatus -> {
-                    if (nextSong == null) {
-                        nextSong = it
-                    }
-                }
-            }
-        }
-
-        return when {
-            playingSong != null -> {
-                playingSong
-            }
-            pausedSong != null -> {
-                pausedSong
-            }
-            nextSong != null -> {
-                nextSong
-            }
-            else -> {
-                null
-            }
-        }
+    fun loadRoomUserMe() {
+        Api.client.getRoomUserModelMe().queueAndCallbackOnSuccess(onSuccess = {
+            roomUserModel.postValue(it)
+            roomUserRole.postValue(it.roomUser?.roomRole)
+        })
     }
 
     companion object {

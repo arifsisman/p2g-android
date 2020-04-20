@@ -35,28 +35,29 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState.*
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.BuildConfig
-import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnFailure
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
+import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONNECTED
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_RECONNECTING
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
+import vip.yazilim.p2g.android.constant.WebSocketActions.CHECK_WEBSOCKET_CONNECTION
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.constant.enums.RoomStatus
 import vip.yazilim.p2g.android.constant.enums.SongStatus
-import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.entity.RoomUser
-import vip.yazilim.p2g.android.entity.Song
-import vip.yazilim.p2g.android.entity.UserDevice
+import vip.yazilim.p2g.android.entity.*
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
-import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.service.RoomWebSocketService
 import vip.yazilim.p2g.android.ui.room.DeviceAdapter
@@ -67,30 +68,28 @@ import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
 import vip.yazilim.p2g.android.util.helper.TAG
+import vip.yazilim.p2g.android.util.helper.TimeHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarErrorIndefinite
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarPlayerError
+import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
-import vip.yazilim.p2g.android.util.sqlite.DBHelper
+import vip.yazilim.p2g.android.util.helper.release
 
 class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
     PlayerAdapter.OnSeekBarChangeListener,
     DeviceAdapter.OnItemClickListener {
-    val db by lazy { DBHelper(this) }
-
     lateinit var room: Room
-    lateinit var roomModel: RoomModel
+    lateinit var user: User
+    lateinit var roomUser: RoomUser
 
     private lateinit var roomViewModel: RoomViewModel
     private lateinit var playerAdapter: PlayerAdapter
-    private lateinit var slidingUpPanel: SlidingUpPanelLayout
-    private lateinit var playerRecyclerView: RecyclerView
     private lateinit var deviceDialog: AlertDialog
     private lateinit var connectivityManager: ConnectivityManager
-    private var roomWsReconnectCounter = 0
+
+    private lateinit var lastSync: LocalDateTime
 
     private var clearRoomQueueMenuItem: MenuItem? = null
     private var durationHandler: Handler = Handler()
@@ -101,44 +100,56 @@ class RoomActivity : BaseActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
-        Play2GetherApplication.currentActivity = this
+        val roomFromIntent = intent.getParcelableExtra<Room>("room")
 
+        if (roomFromIntent == null) {
+            finish()
+        } else {
+            room = roomFromIntent
+        }
+
+        title = room.name
+
+        startRoomWebSocketService()
         setupViewPager()
-        setupViewModelBase()
-        setupRoomModelAndWebSocket()
         setupViewModel()
         setupSlidingUpPanel()
         setupPlayer()
 
         setupNetworkConnectivityManager()
 
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
-        mInterstitialAd.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                mInterstitialAd.show()
+        registerRoomWebSocketReceiver(broadcastReceiver)
+
+        release {
+            mInterstitialAd = InterstitialAd(this)
+            mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    mInterstitialAd.show()
+                }
             }
+            mInterstitialAd.loadAd(AdRequest.Builder().build())
         }
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
+
         updateSeekBarTime.run()
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Api.client.leaveRoom().withCallback(null)
+        stopRoomWebSocketService()
+        unregisterReceiver(broadcastReceiver)
     }
 
     override fun onResume() {
         super.onResume()
-        //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
-        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
-            override fun onSuccess(obj: MutableList<UserDevice>) {
-            }
 
-            override fun onError(msg: String) {
-                viewPager.showSnackBarError(msg)
-            }
-        })
+        // Check socket connection
+        checkWebSocketConnection()
+
+        //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
+        Api.client.getUserDevices()
+            .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
     }
 
     private fun setupNetworkConnectivityManager() {
@@ -151,7 +162,7 @@ class RoomActivity : BaseActivity(),
                 }
 
                 override fun onLost(network: Network?) {
-                    viewPager.showSnackBarError(resources.getString(R.string.err_network_closed))
+                    roomViewModel.onMessageError.postValue(resources.getString(R.string.err_network_closed))
                 }
             })
         }
@@ -160,9 +171,9 @@ class RoomActivity : BaseActivity(),
     // Setups
     private fun setupViewPager() {
         val sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        viewPager.adapter = sectionsPagerAdapter
+        view_pager.adapter = sectionsPagerAdapter
 
-        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
+        view_pager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -182,64 +193,32 @@ class RoomActivity : BaseActivity(),
                     }
                 }
 
-                tabLayout.getTabAt(position)?.removeBadge()
+                tab_layout.getTabAt(position)?.removeBadge()
                 closeKeyboard()
             }
 
             override fun onPageScrollStateChanged(state: Int) {}
         })
 
-        tabLayout.setupWithViewPager(viewPager)
+        tab_layout.setupWithViewPager(view_pager)
 
-        tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_queue_music_white_24dp)
-        tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_people_white_24dp)
-        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_chat_white_24dp)
+        tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_queue_music_white_24dp)
+        tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_people_white_24dp)
+        tab_layout.getTabAt(2)?.setIcon(R.drawable.ic_chat_white_24dp)
     }
 
     private fun setPlayerVisibility(show: Boolean) {
         val transition: Transition = Slide(Gravity.BOTTOM)
         transition.duration = 300
-        transition.addTarget(R.id.playerRecyclerView)
-        TransitionManager.beginDelayedTransition(slidingUpPanel, transition)
+        transition.addTarget(player_recycler_view)
+        TransitionManager.beginDelayedTransition(sliding_up_panel, transition)
 
-        slidingUpPanel.panelState = if (show) COLLAPSED else HIDDEN
-        playerRecyclerView.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    private fun setupRoomModelAndWebSocket() {
-        val roomFromIntent = intent.getParcelableExtra<Room>("room")
-        val roomModelFromIntent = intent.getParcelableExtra<RoomModel>("roomModel")
-
-        if (roomFromIntent == null && roomModelFromIntent == null) {
-            startMainActivity()
-        } else {
-            when {
-                roomFromIntent != null -> {
-                    title = roomFromIntent.name
-                    room = roomFromIntent
-                    getRoomModel(roomFromIntent.id)
-                }
-                roomModelFromIntent != null -> {
-                    title = roomModelFromIntent.room.name
-                    room = roomModelFromIntent.room
-                    roomModel = roomModelFromIntent
-                }
-            }
-        }
-
-        startRoomWebSocketService(broadcastReceiver)
-    }
-
-    private fun setupViewModel() {
-        roomViewModel.playerSong.observe(this, renderPlayerSong)
-        roomViewModel.roomUserModel.observe(this, renderRoomUserModel)
-        roomViewModel.songCurrentMs.observe(this, renderSongCurrentMs)
+        sliding_up_panel.panelState = if (show) COLLAPSED else HIDDEN
+        player_recycler_view.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun setupSlidingUpPanel() {
-        slidingUpPanel = findViewById(R.id.slidingUpPanel)
-
-        slidingUpPanel.addPanelSlideListener(object :
+        sliding_up_panel.addPanelSlideListener(object :
             SlidingUpPanelLayout.SimplePanelSlideListener() {
             override fun onPanelSlide(view: View, v: Float) {}
 
@@ -248,7 +227,7 @@ class RoomActivity : BaseActivity(),
                 previousState: SlidingUpPanelLayout.PanelState?,
                 newState: SlidingUpPanelLayout.PanelState?
             ) {
-                if (viewPager.currentItem == 0) {
+                if (view_pager.currentItem == 0) {
                     when (newState) {
                         DRAGGING -> {
                             if (previousState == COLLAPSED) {
@@ -267,66 +246,60 @@ class RoomActivity : BaseActivity(),
             }
         })
 
-        slidingUpPanel.setFadeOnClickListener {
-            showMinimizedPlayer()
-        }
+        sliding_up_panel.setFadeOnClickListener { showMinimizedPlayer() }
     }
 
     private fun setupPlayer() {
-        playerRecyclerView = findViewById(R.id.playerRecyclerView)
-        playerRecyclerView.setHasFixedSize(true)
-        playerRecyclerView.layoutManager = LinearLayoutManager(this)
+        player_recycler_view.setHasFixedSize(true)
+        player_recycler_view.layoutManager = LinearLayoutManager(this)
 
         // PlayerAdapter
         playerAdapter = PlayerAdapter(roomViewModel.playerSong.value, this, this)
-        playerRecyclerView.adapter = playerAdapter
+        player_recycler_view.adapter = playerAdapter
     }
 
-    private fun setupViewModelBase() {
+    private fun setupViewModel() {
         roomViewModel =
             ViewModelProvider(this, RoomViewModelFactory()).get(RoomViewModel::class.java)
+        roomViewModel.playerSong.observe(this, renderPlayerSong)
+        roomViewModel.roomUserModel.observe(this, renderRoomUserModel)
+        roomViewModel.songCurrentMs.observe(this, renderSongCurrentMs)
     }
 
     // Observers
     private val renderPlayerSong = Observer<Song> { song ->
         playerAdapter.updatePlayerSong(song)
 
-        if (song != null) {
-            roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
-            roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
-
-            Log.d(TAG, "Is ${song.songName} playing? = ${roomViewModel.isPlaying.value}")
-            Log.d(TAG, "CURRENT MS ${roomViewModel.songCurrentMs.value}")
-        } else {
+        if (song == null) {
             roomViewModel.isPlaying.postValue(false)
-            Log.d(TAG, "Not playing any song!")
+        } else {
+            roomViewModel.songCurrentMs.postValue(RoomViewModel.getCurrentSongMs(song))
+            roomViewModel.isPlaying.postValue(song.songStatus == SongStatus.PLAYING.songStatus)
         }
     }
 
     private val renderRoomUserModel = Observer<RoomUserModel> { roomUserModel ->
-        if (viewPager.currentItem == 0) {
+        if (view_pager.currentItem == 0) {
             canUserAddAndControlSongs(roomUserModel.roomUser)
         }
     }
-
 
     private val renderSongCurrentMs = Observer<Int> { ms ->
         runOnUiThread {
             seek_bar_exp.progress = ms
             seek_bar.progress = ms
             song_current.text = ms.getHumanReadableTimestamp()
-            Log.v(TAG, "Song is playing! Views updated.")
+            Log.v(TAG, "Song current ms = $ms")
         }
         if (ms >= roomViewModel.playerSong.value?.durationMs?.minus(PLAYER_UPDATE_MS) ?: 0) {
-            Log.v(TAG, "Song is finished!")
             roomViewModel.isPlaying.postValue(false)
-            // Update player ui as played
             runOnUiThread {
                 song_current?.text =
                     roomViewModel.playerSong.value?.durationMs?.getHumanReadableTimestamp()
                 playPause_button.setImageResource(R.drawable.ic_play_circle_filled_white_64dp)
                 playPause_button_mini.setImageResource(R.drawable.ic_play_arrow_white_24dp)
             }
+            Log.v(TAG, "Song is finished!")
         }
     }
 
@@ -354,7 +327,10 @@ class RoomActivity : BaseActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.sync_with_room -> syncWithRoom()
+            R.id.sync_with_room -> {
+                checkWebSocketConnection()
+                syncWithRoom()
+            }
             R.id.select_device -> selectDevice()
             R.id.clear_queue -> clearQueue()
             android.R.id.home -> leaveRoom()
@@ -363,23 +339,26 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun syncWithRoom() {
-        Api.client.syncWithRoom().withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-                if (obj) {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_sync))
-                } else {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
-                }
-            }
-
-            override fun onError(msg: String) {
-                viewPager.showSnackBarError(msg)
-            }
-        })
+        if (!this::lastSync.isInitialized || Duration
+                .between(lastSync, TimeHelper.getLocalDateTimeZonedUTC())
+                .toMillis()
+                .toInt() > WEBSOCKET_RECONNECT_DELAY
+        ) {
+            Api.client.syncWithRoom().queue(
+                onSuccess = {
+                    lastSync = TimeHelper.getLocalDateTimeZonedUTC()
+                    if (it) {
+                        view_pager.showSnackBarInfo(resources.getString(R.string.info_sync))
+                    } else {
+                        view_pager.showSnackBarInfo(resources.getString(R.string.info_not_playing))
+                    }
+                },
+                onFailure = { view_pager.showSnackBarError(it) })
+        }
     }
 
     override fun onBackPressed() {
-        if (viewPager.currentItem == 0 && slidingUpPanel.panelState != COLLAPSED) {
+        if (view_pager.currentItem == 0 && sliding_up_panel.panelState != COLLAPSED) {
             showMinimizedPlayer()
         }
     }
@@ -388,9 +367,8 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.leaveRoom().withCallback(null)
-
-                    startMainActivity()
+                    Api.client.leaveRoom().queue({}, {})
+                    finish()
                 }
             }
         }
@@ -402,45 +380,37 @@ class RoomActivity : BaseActivity(),
             .show()
     }
 
-    private fun startMainActivity() {
-        val mainIntent = Intent(this@RoomActivity, MainActivity::class.java)
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(mainIntent)
-        stopRoomWebSocketService(broadcastReceiver)
-        finish()
-    }
-
-    private fun stopRoomWebSocketService(broadcastReceiver: BroadcastReceiver) {
-        // stop service and unregister service
-        val stopServiceIntent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
-        stopServiceIntent.putExtra("roomId", room.id)
-        stopService(stopServiceIntent)
-
-        try {
-            unregisterReceiver(broadcastReceiver)
-        } catch (e: Exception) {
-            Log.d(TAG, "Room Web Socket not registered.")
+    private fun stopRoomWebSocketService() {
+        if (this::room.isInitialized) {
+            val stopServiceIntent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+            stopServiceIntent.putExtra("roomId", room.id)
+            stopService(stopServiceIntent)
         }
     }
 
-    private fun startRoomWebSocketService(broadcastReceiver: BroadcastReceiver) {
-        // start service and register service
-        val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
-        intent.putExtra("roomId", room.id)
+    private fun startRoomWebSocketService() {
+        if (this::room.isInitialized) {
+            val intent = Intent(this@RoomActivity, RoomWebSocketService::class.java)
+            intent.putExtra("roomId", room.id)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
+            }
         }
+    }
 
+    private fun registerRoomWebSocketReceiver(broadcastReceiver: BroadcastReceiver) {
         val intentFilter = IntentFilter()
+        intentFilter.addAction(ACTION_ROOM_SOCKET_RECONNECTING)
+        intentFilter.addAction(ACTION_ROOM_SOCKET_CONNECTED)
+        intentFilter.addAction(ACTION_ROOM_SOCKET_CLOSED)
+
         intentFilter.addAction(ACTION_SONG_LIST_RECEIVE)
         intentFilter.addAction(ACTION_USER_LIST_RECEIVE)
         intentFilter.addAction(ACTION_MESSAGE_RECEIVE)
-        intentFilter.addAction(ACTION_ROOM_SOCKET_CLOSED)
-        intentFilter.addAction(ACTION_ROOM_SOCKET_CONNECTED)
-        intentFilter.addAction(ACTION_ROOM_STATUS)
+        intentFilter.addAction(ACTION_ROOM_STATUS_RECEIVE)
         registerReceiver(broadcastReceiver, intentFilter)
     }
 
@@ -448,16 +418,11 @@ class RoomActivity : BaseActivity(),
         val dialogClickListener = DialogInterface.OnClickListener { _, ans ->
             when (ans) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    Api.client.clearQueue(room.id).withCallback(
-                        object : Callback<Boolean> {
-                            override fun onSuccess(obj: Boolean) {
-                                viewPager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared))
-                            }
-
-                            override fun onError(msg: String) {
-                                viewPager.showSnackBarError(msg)
-                            }
-                        })
+                    Api.client.clearQueue(room.id)
+                        .queue(
+                            onSuccess = { view_pager.showSnackBarInfo(resources.getString(R.string.info_queue_cleared)) },
+                            onFailure = { view_pager.showSnackBarError(it) }
+                        )
                 }
             }
         }
@@ -470,48 +435,29 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun selectDevice() {
-        Api.client.getUserDevices().withCallback(object : Callback<MutableList<UserDevice>> {
-            override fun onSuccess(obj: MutableList<UserDevice>) {
-                val deviceDialogView =
-                    View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
-                val mBuilder =
-                    MaterialAlertDialogBuilder(this@RoomActivity).setView(deviceDialogView)
-                deviceDialog = mBuilder.show()
+        Api.client.getUserDevices().queue(onSuccess = {
+            val deviceDialogView =
+                View.inflate(this@RoomActivity, R.layout.dialog_select_device, null)
+            val mBuilder =
+                MaterialAlertDialogBuilder(this@RoomActivity).setView(deviceDialogView)
+            deviceDialog = mBuilder.show()
 
-                // Adapter start and update with requested search model
-                val selectDeviceRecyclerView: RecyclerView =
-                    deviceDialogView.findViewById(R.id.selectDeviceRecyclerView)
-                selectDeviceRecyclerView.layoutManager = LinearLayoutManager(this@RoomActivity)
-                selectDeviceRecyclerView.setHasFixedSize(true)
+            // Adapter start and update with requested search model
+            val selectDeviceRecyclerView: RecyclerView =
+                deviceDialogView.findViewById(R.id.select_device_recycler_view)
+            selectDeviceRecyclerView.layoutManager = LinearLayoutManager(this@RoomActivity)
+            selectDeviceRecyclerView.setHasFixedSize(true)
 
-                val deviceAdapter = DeviceAdapter(mutableListOf(), this@RoomActivity)
-                selectDeviceRecyclerView.adapter = deviceAdapter
+            val deviceAdapter = DeviceAdapter(mutableListOf(), this@RoomActivity)
+            selectDeviceRecyclerView.adapter = deviceAdapter
 
-                selectDeviceRecyclerView.addItemDecoration(object : DividerItemDecoration(
-                    selectDeviceRecyclerView.context,
-                    (selectDeviceRecyclerView.layoutManager as LinearLayoutManager).orientation
-                ) {})
+            selectDeviceRecyclerView.addItemDecoration(object : DividerItemDecoration(
+                selectDeviceRecyclerView.context,
+                (selectDeviceRecyclerView.layoutManager as LinearLayoutManager).orientation
+            ) {})
 
-                deviceAdapter.update(obj)
-            }
-
-            override fun onError(msg: String) {
-                viewPager.showSnackBarError(msg)
-            }
-        })
-    }
-
-
-    private fun getRoomModel(roomId: Long) {
-        // Get room model if not exists
-        Api.client.getRoomModel(roomId).withCallback(object : Callback<RoomModel> {
-            override fun onSuccess(obj: RoomModel) {
-                roomModel = obj
-            }
-
-            override fun onError(msg: String) {
-            }
-        })
+            deviceAdapter.update(it)
+        }, onFailure = { view_pager.showSnackBarError(it) })
     }
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -526,42 +472,33 @@ class RoomActivity : BaseActivity(),
                             roomViewModel.playerSong.postValue(null)
                         } else {
                             roomViewModel.songList.postValue(songList)
-                            roomViewModel.playerSong.postValue(
-                                roomViewModel.getCurrentSong(songList)
-                            )
+//                            roomViewModel.playerSong.postValue(roomViewModel.getCurrentSong(songList))
+                            roomViewModel.playerSong.postValue(songList[0])
                             showBadgeAt(0)
                         }
                     }
                 }
-                ACTION_ROOM_SOCKET_CLOSED -> {
-                    if (roomWsReconnectCounter < 22) {
-                        // refresh access token with LoginActivity maybe...
-                        stopRoomWebSocketService(this)
-                        startRoomWebSocketService(this)
-                        roomWsReconnectCounter++
-                    } else {
-                        viewPager.showSnackBarErrorIndefinite(resources.getString(R.string.err_room_websocket_closed))
-                    }
-                }
                 ACTION_ROOM_SOCKET_CONNECTED -> {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connect))
-                    Api.client.syncWithRoom().withCallback(null)
+                    view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
+                    Api.client.syncWithRoom()
+                        .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
                 }
-                ACTION_ROOM_STATUS -> {
-                    val status: String? = intent.getStringExtra(ACTION_ROOM_STATUS)
-                    if (status.equals(RoomStatus.CLOSED.status)) {
-                        val roomPlaceholder = resources.getString(R.string.title_room)
-                        val closedPlaceholder = resources.getString(R.string.info_closed)
-                        context?.showToastLong("$roomPlaceholder ${room.name} $closedPlaceholder - ${room.ownerId}")
-                        Api.client.leaveRoom().withCallback(null)
-
-                        val leaveIntent = Intent(this@RoomActivity, MainActivity::class.java)
-                        startActivity(leaveIntent)
-
-                        stopRoomWebSocketService(this)
+                ACTION_ROOM_SOCKET_CLOSED -> {
+                    view_pager.showSnackBarError(resources.getString(R.string.warn_room_websocket_closed))
+                    checkWebSocketConnection()
+                }
+                ACTION_ROOM_SOCKET_RECONNECTING -> {
+                    view_pager.showSnackBarWarning(resources.getString(R.string.warn_room_websocket_reconnecting))
+                }
+                ACTION_ROOM_STATUS_RECEIVE -> {
+                    val roomStatusModel: RoomStatusModel? =
+                        intent.getParcelableExtra(ACTION_ROOM_STATUS_RECEIVE)
+                    if (roomStatusModel?.roomStatus != null && roomStatusModel.roomStatus.status == RoomStatus.CLOSED.status) {
+                        context?.showToastLong(roomStatusModel.reason)
+                        finish()
                     }
                 }
                 ACTION_USER_LIST_RECEIVE -> {
@@ -590,7 +527,7 @@ class RoomActivity : BaseActivity(),
     // Helpers
     fun canUserAddAndControlSongs(roomUser: RoomUser?): Boolean {
         if (roomUser != null) {
-            return if (roomUser.role == Role.ROOM_USER.role) {
+            return if (roomUser.roomRole == Role.ROOM_USER.role) {
                 fab.hide()
                 playPause_button_mini.visibility = View.GONE
                 player_controller_buttons.visibility = View.GONE
@@ -630,83 +567,41 @@ class RoomActivity : BaseActivity(),
 
     private fun showMinimizedPlayer() {
         player_mini.visibility = View.VISIBLE
-        slidingUpPanel.panelState = COLLAPSED
+        sliding_up_panel.panelState = COLLAPSED
     }
 
     private fun showMaximizedPlayer() {
         player_mini.visibility = View.GONE
-        slidingUpPanel.panelState = EXPANDED
+        sliding_up_panel.panelState = EXPANDED
     }
 
     override fun onPlayerMiniClicked() {
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseMiniClicked() {
-        Api.client.playPause(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarError(msg)
-            }
-        })
-    }
+    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    override fun onPlayPauseClicked() {
-        Api.client.playPause(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onNextClicked() = Api.client.next(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
-    }
+    override fun onPreviousClicked() = Api.client.previous(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-    override fun onNextClicked() {
-        Api.client.next(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
+    override fun onRepeatClicked() = Api.client.repeat(room.id).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
-    }
-
-    override fun onPreviousClicked() {
-        Api.client.previous(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
-    }
-
-    override fun onRepeatClicked() {
-        Api.client.repeat(room.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
-    }
-
-    private fun onSeekPerformed(ms: Int) {
-        Api.client.seek(room.id, ms).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                playerCoordinatorLayout.showSnackBarPlayerError(msg)
-            }
-        })
-    }
+    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queueAndCallbackOnFailure(
+        onFailure = { player_coordinator_layout.showSnackBarError(it) }
+    )
 
     override fun onSeekBarChanged(): SeekBar.OnSeekBarChangeListener {
         return object : SeekBar.OnSeekBarChangeListener {
@@ -734,16 +629,10 @@ class RoomActivity : BaseActivity(),
             deviceDialog.dismiss()
         }
 
-        Api.client.saveUsersActiveDevice(userDevice)
-            .withCallback(object : Callback<UserDevice> {
-                override fun onSuccess(obj: UserDevice) {
-                    viewPager.showSnackBarInfo(resources.getString(R.string.info_device_change))
-                }
-
-                override fun onError(msg: String) {
-                    viewPager.showSnackBarError(msg)
-                }
-            })
+        Api.client.saveUsersActiveDevice(userDevice).queue(
+            onSuccess = { view_pager.showSnackBarInfo(resources.getString(R.string.info_device_change)) },
+            onFailure = { view_pager.showSnackBarError(it) }
+        )
     }
 
     fun closeKeyboard() {
@@ -753,9 +642,14 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun showBadgeAt(pos: Int) {
-        if (viewPager.currentItem != pos) {
-            val badge: BadgeDrawable? = tabLayout.getTabAt(pos)?.orCreateBadge
+        if (view_pager.currentItem != pos) {
+            val badge: BadgeDrawable? = tab_layout.getTabAt(pos)?.orCreateBadge
             badge?.isVisible = true
         }
     }
+
+    private fun checkWebSocketConnection() {
+        sendBroadcast(Intent(CHECK_WEBSOCKET_CONNECTION))
+    }
+
 }

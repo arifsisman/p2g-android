@@ -75,7 +75,7 @@
     <string name="placeholder_settings">Settings</string>
     <string name="placeholder_set_anthem">Set Anthem</string>
     <string name="placeholder_app_description">Listen to Spotify with your friends</string>
-    <string name="placeholder_room_inviter">From</string>
+    <string name="placeholder_room_inviter">Inviter Name</string>
     <string name="placeholder_member_since">Member since</string>
     <string name="placeholder_user_name">Username</string>
     <string name="placeholder_friend_request_date">Request Date:</string>
@@ -109,7 +109,6 @@
     <!--Eng. Errors-->
     <string name="err_authorization_code">Can not get authorization code from Spotify</string>
     <string name="err_room_websocket_reconnect">Trying to reconnect the room.</string>
-    <string name="err_room_websocket_closed">Connection to the room closed, please connect the room again.</string>
     <string name="err_network_closed">No internet connection, please check your connection.</string>
     <string name="err_room_refresh">Rooms can not refreshed</string>
     <string name="err_room_invites_refresh">Rooms Invites can not refreshed</string>
@@ -117,6 +116,10 @@
     <string name="err_room_user_refresh">Users can not refreshed</string>
     <string name="err_room_queue_add">10 songs or 1 Album/Playlist can be added in each search!</string>
     <string name="err_song_vote">Song voted before</string>
+
+    <!--Eng. Warnings-->
+    <string name="warn_room_websocket_closed">Connection to the room closed…</string>
+    <string name="warn_room_websocket_reconnecting">Reconnecting the room…</string>
 
     <!--Eng. Infos-->
     <string name="info_yes">Yes</string>
@@ -139,6 +142,7 @@
     <string name="info_change_owner2">\'s Role ROOM_OWNER? (Your role will be demoted to ROOM_ADMIN)</string>
     <string name="info_friend_request_send">Friend request sent to</string>
     <string name="info_room_invite_send">invited to room.</string>
-    <string name="info_room_websocket_connect">Connected to room.</string>
+    <string name="info_room_websocket_connected">Connected to room.</string>
+    <string name="description_owner_image">Owner Image</string>
 
 </resources>

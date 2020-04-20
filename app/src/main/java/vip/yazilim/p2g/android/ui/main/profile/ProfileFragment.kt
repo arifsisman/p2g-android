@@ -46,18 +46,13 @@ class ProfileFragment : FragmentBase(R.layout.fragment_profile) {
     }
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = ProfileAdapter(null, 0)
-        recyclerView.adapter = adapter
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        adapter = ProfileAdapter(null, null, 0, true)
+        recycler_view.adapter = adapter
     }
 
     // Observers
-    private val renderUser = Observer<UserModel> {
-        adapter.update(it)
-    }
-
-    private val renderFriendsCount = Observer<Int> {
-        adapter.update(it)
-    }
+    private val renderUser = Observer<UserModel> { adapter.update(it) }
+    private val renderFriendsCount = Observer<Int> { adapter.update(it) }
 }

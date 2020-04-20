@@ -12,6 +12,7 @@ import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
  * @contact mustafaarifsisman@gmail.com
  */
 open class BaseActivity : AppCompatActivity() {
+
     public override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

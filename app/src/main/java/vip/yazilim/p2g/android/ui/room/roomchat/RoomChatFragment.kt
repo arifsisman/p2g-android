@@ -55,7 +55,7 @@ class RoomChatFragment :
         )
 
         messagesAdapter = MessagesListAdapter<ChatMessage>(senderId, holdersConfig, imageLoader)
-        messagesList.setAdapter(messagesAdapter)
+        messages_list.setAdapter(messagesAdapter)
 
         input.setInputListener { input ->
             return@setInputListener messageInputHandler(input)
@@ -107,7 +107,7 @@ class RoomChatFragment :
         MessageHolders.IncomingTextMessageViewHolder<ChatMessage?>(itemView, payload) {
         override fun onBind(message: ChatMessage?) {
             super.onBind(message)
-            itemView.messageAuthor.text = message?.roomUser?.name ?: ""
+            itemView.message_author.text = message?.roomUser?.name ?: ""
         }
     }
 

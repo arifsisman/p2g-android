@@ -12,6 +12,6 @@ object ColorCodes {
     const val GREEN = "#03a100"
     const val RED = "#cf0000"
     const val CYAN = "#008ea1"
-    const val EMPTY = "#b98f1d"
+    const val WARN = "#b98f1d"
     const val ERROR = "#b91d47"
 }

@@ -3,12 +3,16 @@ package vip.yazilim.p2g.android.ui.main.invites
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.item_invites.view.*
+import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
+import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 
@@ -25,56 +29,78 @@ class InvitesAdapter(
     var roomInviteModelsFull: MutableList<RoomInviteModel> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val roomInviter: TextView = itemView.findViewById(R.id.room_inviter)
-        private val roomName: TextView = itemView.findViewById(R.id.roomName)
-        private val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
-        private val profileImage: ImageView = itemView.findViewById(R.id.profilePhoto)
-        private val onlineStatus: ImageView = itemView.findViewById(R.id.onlineStatus)
-        private val acceptButton: ImageButton = itemView.findViewById(R.id.accept_button)
-        private val rejectButton: ImageButton = itemView.findViewById(R.id.reject_button)
 
         fun bindEvent(roomInviteModel: RoomInviteModel, clickListener: OnItemClickListener) {
             itemView.setOnClickListener { clickListener.onRowClicked(roomInviteModel) }
-            acceptButton.setOnClickListener { clickListener.onAccept(roomInviteModel) }
-            rejectButton.setOnClickListener { clickListener.onReject(roomInviteModel) }
+            itemView.accept_button.setOnClickListener { clickListener.onAccept(roomInviteModel) }
+            itemView.reject_button.setOnClickListener { clickListener.onReject(roomInviteModel) }
         }
 
         fun bindView(roomInviteModel: RoomInviteModel) {
-            val roomModel = roomInviteModel.roomModel
-            val user = roomInviteModel.inviter
+            val roomModel = roomInviteModel.userModel.roomModel
+            val user = roomInviteModel.userModel.user
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profileImage)
+                    .into(itemView.profile_photo)
             } else {
-                profileImage.setImageResource(R.drawable.ic_profile_image)
+                itemView.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
-            roomInviter.text = user.name
-
-            val roomNamePlaceholder =
-                "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${roomModel.room.name}"
-            roomName.text = roomNamePlaceholder
+            itemView.room_inviter.text = user.name
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
             }
 
-            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
-            roomSongStatus.text = songStatus
+            if (roomModel != null) {
+                val roomOwnerPlaceholder =
+                    "${view.resources.getString(R.string.placeholder_room_owner)} ${roomModel.owner.name}"
+
+                itemView.roomName.text = roomModel.room.name
+                itemView.roomOwner.text = roomOwnerPlaceholder
+                itemView.userCount.text = roomModel.userCount.toString()
+
+                if (roomModel.room.privateFlag) {
+                    itemView.lockImage.visibility = View.VISIBLE
+                } else {
+                    itemView.lockImage.visibility = View.GONE
+                }
+
+                itemView.country_flag.visibility = View.GONE
+
+                if (roomModel.song != null) {
+                    val song = roomModel.song
+                    if (song?.imageUrl != null) {
+                        GlideApp.with(view)
+                            .load(roomModel.song?.imageUrl)
+                            .into(itemView.song_image)
+                    }
+
+                    itemView.song_name.text = song?.songName
+                    itemView.song_artists.text =
+                        RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
+                    itemView.seek_bar.max = song?.durationMs ?: 0
+                    itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+
+                    itemView.song_status.visibility = View.VISIBLE
+                } else {
+                    itemView.song_status.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -136,11 +162,7 @@ class InvitesAdapter(
                 } else {
                     val filter = constraint.toString().trim()
                     roomInviteModelsFull.forEach {
-                        if (it.roomModel.room.name.contains(
-                                filter,
-                                true
-                            ) || it.inviter.name.contains(filter, true)
-                        ) {
+                        if (it.userModel.user.name.contains(filter, true)) {
                             filteredList.add(it)
                         }
                     }

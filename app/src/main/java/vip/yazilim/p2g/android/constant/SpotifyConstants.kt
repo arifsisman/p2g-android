@@ -13,6 +13,7 @@ object SpotifyConstants {
         "user-modify-playback-state",
         "user-read-email",
         "user-read-playback-state",
-        "user-read-private"
+        "user-read-private",
+        "user-top-read"
     )
 }

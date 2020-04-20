@@ -18,8 +18,8 @@ class UserActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         userModel = intent.getParcelableExtra("userModel")
         setContentView(R.layout.activity_user)
-        userViewModel =
-            ViewModelProvider(this, UserViewModelFactory()).get(UserViewModel::class.java)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory())
+            .get(UserViewModel::class.java)
         val actionBar = supportActionBar
         actionBar?.title = ""
         actionBar?.setDisplayHomeAsUpEnabled(true)

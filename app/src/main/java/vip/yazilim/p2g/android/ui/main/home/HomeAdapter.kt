@@ -5,10 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_home.view.*
+import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.model.p2g.RoomModel
+import vip.yazilim.p2g.android.ui.room.RoomViewModel
+import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 
 /**
@@ -24,10 +28,10 @@ class HomeAdapter(
     var roomModelsFull: MutableList<RoomModel> = mutableListOf()
 
     inner class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
+
         fun bindEvent(roomModel: RoomModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener {
-                clickListener.onItemClicked(roomModel)
-            }
+            itemView.setOnClickListener { clickListener.onItemClicked(roomModel.room) }
         }
 
         fun bindView(roomModel: RoomModel) {
@@ -45,18 +49,34 @@ class HomeAdapter(
             }
 
             try {
-                itemView.countryFlag.countryCode = roomModel.owner.countryCode
+                itemView.country_flag.countryCode = roomModel.owner.countryCode
             } catch (exception: Exception) {
-                itemView.countryFlag.visibility = View.GONE
+                itemView.country_flag.visibility = View.GONE
             }
 
-            val songStatus = RoomHelper.getRoomSongStatus(view, roomModel.song)
-            itemView.roomSongStatus.text = songStatus
+            if (roomModel.song != null) {
+                val song = roomModel.song
+                if (song?.imageUrl != null) {
+                    GlideApp.with(view)
+                        .load(roomModel.song?.imageUrl)
+                        .into(songImage)
+                }
+
+                itemView.song_name.text = song?.songName
+                itemView.song_artists.text =
+                    RoomHelper.getArtistsPlaceholder(roomModel.song!!.artistNames, "")
+                itemView.seek_bar.max = song?.durationMs ?: 0
+                itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+
+                itemView.song_status.visibility = View.VISIBLE
+            } else {
+                itemView.song_status.visibility = View.GONE
+            }
         }
     }
 
     interface OnItemClickListener {
-        fun onItemClicked(roomModel: RoomModel)
+        fun onItemClicked(room: Room)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MViewHolder {
@@ -75,7 +95,7 @@ class HomeAdapter(
     }
 
     fun update(data: MutableList<RoomModel>) {
-        roomModels = data
+        roomModels = data.asReversed()
         notifyDataSetChanged()
     }
 
@@ -98,8 +118,10 @@ class HomeAdapter(
                     val filter = constraint.toString().trim()
 
                     roomModelsFull.forEach {
-                        if (it.room.name.contains(filter, true)
-                            || it.owner.name.contains(filter, true)
+                        if (it.room.name.contains(filter, true) || (it.owner.name.contains(
+                                filter,
+                                true
+                            ))
                         ) {
                             filteredList.add(it)
                         }

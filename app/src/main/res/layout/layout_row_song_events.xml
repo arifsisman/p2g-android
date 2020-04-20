@@ -7,7 +7,7 @@
     android:orientation="horizontal">
 
     <ImageButton
-        android:id="@+id/swipeDownvoteButton"
+        android:id="@+id/swipe_downvote_button"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="@color/colorRed"
@@ -16,14 +16,14 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/swipePlayButton"
+        app:layout_constraintStart_toEndOf="@+id/swipe_play_button"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_thumb_down_black_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 
     <ImageButton
-        android:id="@+id/swipeUpvoteButton"
+        android:id="@+id/swipe_upvote_button"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="@color/colorGreen"
@@ -32,7 +32,7 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/swipeDownvoteButton"
+        app:layout_constraintStart_toEndOf="@+id/swipe_downvote_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_thumb_up_white_24dp"
@@ -40,7 +40,7 @@
         tools:targetApi="m" />
 
     <ImageButton
-        android:id="@+id/swipePlayButton"
+        android:id="@+id/swipe_play_button"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark"
@@ -49,14 +49,14 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/swipePlayButton"
+        app:layout_constraintStart_toEndOf="@+id/swipe_play_button"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_play_arrow_white_24dp"
         tools:ignore="UnusedAttribute"
         tools:targetApi="m" />
 
     <ImageButton
-        android:id="@+id/swipeDeleteButton"
+        android:id="@+id/swipe_delete_button"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:background="@color/colorLightGray"
@@ -65,7 +65,7 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/swipeUpvoteButton"
+        app:layout_constraintStart_toEndOf="@+id/swipe_upvote_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_delete_black_24dp"

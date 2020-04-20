@@ -1,137 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:layout_height="wrap_content"
     android:visibility="invisible"
-    app:cardBackgroundColor="@android:color/transparent"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="0dp">
+    app:cardBackgroundColor="@android:color/transparent">
 
-    <ImageView
-        android:id="@+id/profilePhoto"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@string/description_profile_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_profile_image" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/user_public"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/user_name_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="25dp"
-        android:text="@string/placeholder_name"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePhoto" />
+        <ImageView
+            android:id="@+id/profile_photo"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/description_profile_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_profile_image" />
 
-    <TextView
-        android:id="@+id/friend_counts_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/placeholder_friend_counts"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/member_since_text_view" />
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="25dp"
+            android:text="@string/placeholder_name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_photo" />
+
+        <TextView
+            android:id="@+id/friend_counts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_friend_counts"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/member_since" />
+
+        <ImageView
+            android:id="@+id/online_status"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="4dp"
+            android:contentDescription="@string/description_online_status"
+            app:layout_constraintEnd_toStartOf="@+id/user_name"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_photo"
+            app:srcCompat="@android:drawable/presence_online" />
+
+        <com.haipq.android.flagkit.FlagImageView
+            android:id="@+id/user_country_flag"
+            android:layout_width="22dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="18dp"
+            android:contentDescription="@string/description_country_flag_image"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            app:countryCode="FR"
+            app:layout_constraintStart_toEndOf="@+id/user_name"
+            app:layout_constraintTop_toBottomOf="@+id/profile_photo"
+            tools:src="@drawable/flag_de" />
+
+        <TextView
+            android:id="@+id/member_since"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
+            android:text="@string/placeholder_member_since"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_name" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
-        android:id="@+id/separator1"
+        android:id="@+id/divider"
         style="@style/Divider.Horizontal"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/friend_counts_text_view" />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/user_public"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorLightGray" />
 
-    <TextView
-        android:id="@+id/email_text_view"
+    <LinearLayout
+        android:id="@+id/user_private"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/divider"
+        android:layout_margin="15dp"
+        android:orientation="vertical">
 
-        android:layout_marginTop="6dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:singleLine="true"
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/placeholder_email" />
 
-        android:text="@string/placeholder_email"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/separator1" />
+        <TextView
+            android:id="@+id/spotify_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/placeholder_spotify_account_id" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/anthem_text_view"
-        android:layout_width="match_parent"
-
-        android:layout_height="wrap_content"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:singleLine="true"
-
-        android:text="@string/placeholder_anthem"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spotify_id_text_view" />
-
-    <TextView
-        android:id="@+id/spotify_id_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:singleLine="true"
-        android:text="@string/placeholder_spotify_account_id"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_text_view" />
-
-    <ImageView
-        android:id="@+id/onlineStatus"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="4dp"
-        android:contentDescription="@string/description_online_status"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/user_name_text_view"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePhoto"
-        app:srcCompat="@android:drawable/presence_online" />
-
-    <com.haipq.android.flagkit.FlagImageView
-        android:id="@+id/countryFlag"
-        android:layout_width="22dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="18dp"
-        android:contentDescription="@string/description_country_flag_image"
-        android:paddingTop="0dp"
-        android:paddingBottom="0dp"
-        app:countryCode="FR"
-        app:layout_constraintStart_toEndOf="@+id/user_name_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/profilePhoto"
-        tools:src="@drawable/flag_de" />
-
-    <TextView
-        android:id="@+id/member_since_text_view"
+    <include
+        android:id="@+id/room"
+        layout="@layout/item_room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:singleLine="true"
-        android:text="@string/placeholder_member_since"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name_text_view" />
+        android:layout_below="@id/user_private" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

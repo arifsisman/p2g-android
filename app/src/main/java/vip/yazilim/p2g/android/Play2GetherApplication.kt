@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android
 
-import android.app.Activity
 import android.app.Application
 
 /**
@@ -9,16 +8,9 @@ import android.app.Application
  */
 class Play2GetherApplication : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-        instance = this
+    companion object {
+        var userName: String = "UNKNOWN"
+        var userId: String = "UNKNOWN"
     }
 
-    companion object {
-        lateinit var instance: Play2GetherApplication private set
-        lateinit var currentActivity: Activity
-        lateinit var userName: String
-        lateinit var userId: String
-        lateinit var accessToken: String
-    }
 }

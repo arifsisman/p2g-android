@@ -3,6 +3,7 @@ package vip.yazilim.p2g.android.entity
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import org.threeten.bp.LocalDateTime
+import vip.yazilim.p2g.android.util.helper.RoomHelper.Companion.getArtistsPlaceholder
 
 /**
  * @author mustafaarifsisman - 26.01.2020
@@ -23,7 +24,8 @@ data class Song(
     var playingTime: LocalDateTime?,
     var currentMs: Int,
     var repeatFlag: Boolean,
-    var votes: Int
+    var votes: Int,
+    var voters: ArrayList<String>?
 ) : Parcelable, Cloneable {
     public override fun clone(): Any {
         return Song(
@@ -40,7 +42,12 @@ data class Song(
             this.playingTime,
             this.currentMs,
             this.repeatFlag,
-            this.votes
+            this.votes,
+            this.voters
         )
+    }
+
+    override fun toString(): String {
+        return songName + " - " + getArtistsPlaceholder(artistNames, "")
     }
 }

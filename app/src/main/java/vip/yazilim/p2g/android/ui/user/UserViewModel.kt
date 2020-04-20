@@ -2,8 +2,7 @@ package vip.yazilim.p2g.android.ui.user
 
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.ViewModelBase
 
@@ -15,24 +14,6 @@ class UserViewModel : ViewModelBase() {
     val friendCounts = MutableLiveData<Int>()
     val roomModel = MutableLiveData<RoomModel>()
 
-    fun loadFriendsCount(userId: String) = Api.client.getFriendsCounts(userId).withCallback(
-        object : Callback<Int> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: Int) {
-                friendCounts.postValue(obj)
-            }
-        })
-
-    fun loadRoomModel(roomId: Long) = Api.client.getRoomModel(roomId).withCallback(
-        object : Callback<RoomModel> {
-            override fun onError(msg: String) {
-            }
-
-            override fun onSuccess(obj: RoomModel) {
-                roomModel.postValue(obj)
-            }
-        })
-
+    fun loadFriendsCount(userId: String) = Api.client.getFriendsCounts(userId)
+        .queueAndCallbackOnSuccess(onSuccess = { friendCounts.postValue(it) })
 }

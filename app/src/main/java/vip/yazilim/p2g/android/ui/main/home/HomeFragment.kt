@@ -4,33 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
-import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_cancel_button
-import kotlinx.android.synthetic.main.dialog_create_room.view.dialog_room_password
-import kotlinx.android.synthetic.main.dialog_room_password.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.MainActivity
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.constant.GeneralConstants.UNDEFINED
-import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.entity.RoomUser
+import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.ui.FragmentBase
 import vip.yazilim.p2g.android.ui.main.MainViewModel
-import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.closeKeyboard
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 
@@ -38,8 +28,7 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
  * @author mustafaarifsisman - 04.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class HomeFragment : FragmentBase(R.layout.fragment_home),
-    HomeAdapter.OnItemClickListener {
+class HomeFragment : FragmentBase(R.layout.fragment_home) {
     private lateinit var adapter: HomeAdapter
     private lateinit var viewModel: MainViewModel
 
@@ -60,16 +49,15 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
     }
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
+        recycler_view.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(activity)
-        linearLayoutManager.reverseLayout = true
-        linearLayoutManager.stackFromEnd = true
-        recyclerView.layoutManager = linearLayoutManager
-        adapter = HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), this)
-        recyclerView.adapter = adapter
+        recycler_view.layoutManager = linearLayoutManager
+        adapter =
+            HomeAdapter(viewModel.roomModels.value ?: mutableListOf(), (activity as MainActivity))
+        recycler_view.adapter = adapter
 
         fab.setOnClickListener { createRoomButtonEvent() }
-        swipeRefreshContainer.setOnRefreshListener { refreshRoomsEvent() }
+        swipe_refresh_container.setOnRefreshListener { refreshRoomsEvent() }
     }
 
     // Observer
@@ -103,94 +91,6 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         })
     }
 
-    override fun onItemClicked(roomModel: RoomModel) {
-        val room: Room? = roomModel.room
-
-        if (room?.password == null) {
-            joinRoomEvent(roomModel)
-        } else {
-            joinPrivateRoomEvent(roomModel)
-        }
-
-    }
-
-    private fun joinRoomEvent(roomModel: RoomModel) =
-        Api.client.joinRoom(roomModel.room.id, UNDEFINED).withCallback(
-            object : Callback<RoomUser> {
-                override fun onError(msg: String) {
-                    viewModel.onMessageError.postValue(msg)
-                }
-
-                override fun onSuccess(obj: RoomUser) {
-                    Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-
-                    val intent = Intent(activity, RoomActivity::class.java)
-                    intent.putExtra("roomModel", roomModel)
-                    intent.putExtra("roomUser", obj)
-                    startActivity(intent)
-                }
-            })
-
-
-    private fun joinPrivateRoomEvent(roomModel: RoomModel) {
-        val room = roomModel.room
-
-        val mDialogView = View.inflate(context, R.layout.dialog_room_password, null)
-        val mBuilder = MaterialAlertDialogBuilder(context).setView(mDialogView)
-        val joinButton = mDialogView.dialog_join_room_button
-        val roomPasswordEditText = mDialogView.dialog_room_password
-        val mAlertDialog: AlertDialog?
-        mAlertDialog = mBuilder.show()
-        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-
-        roomPasswordEditText.requestFocus()
-
-        // For disable create button if password is empty
-        roomPasswordEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(
-                s: CharSequence,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                joinButton.isEnabled = s.isNotEmpty()
-            }
-        })
-
-        // Click join
-        joinButton.setOnClickListener {
-            Api.client.joinRoom(room.id, roomPasswordEditText.text.toString()).withCallback(
-                object : Callback<RoomUser> {
-                    override fun onError(msg: String) {
-                        mDialogView.showSnackBarError(msg)
-                    }
-
-                    override fun onSuccess(obj: RoomUser) {
-                        Log.d(TAG, "Joined room with roomUser ID: " + obj.id)
-                        mAlertDialog?.dismiss()
-                        context?.closeKeyboard()
-
-                        val intent = Intent(activity, RoomActivity::class.java)
-                        intent.putExtra("roomModel", roomModel)
-                        intent.putExtra("roomUser", obj)
-                        startActivity(intent)
-                    }
-                })
-        }
-
-
-        // Click cancel
-        mDialogView.dialog_cancel_button.setOnClickListener {
-            mAlertDialog?.cancel()
-            roomPasswordEditText.clearFocus()
-            context?.closeKeyboard()
-        }
-    }
-
     private fun createRoomButtonEvent() {
         val mDialogView = View.inflate(context, R.layout.dialog_create_room, null)
         val mBuilder = context?.let { MaterialAlertDialogBuilder(it).setView(mDialogView) }
@@ -221,24 +121,17 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
             Api.client.createRoom(
                 roomNameEditText.text.toString(),
                 roomPasswordEditText.text.toString()
-            ).withCallback(
-                object : Callback<Room> {
-                    override fun onError(msg: String) {
-                        mDialogView.showSnackBarError(msg)
-                    }
+            ).queue(onSuccess = {
+                context?.closeKeyboard()
+                mAlertDialog?.dismiss()
 
-                    override fun onSuccess(obj: Room) {
-                        Log.d(TAG, "Room created with ID: " + obj.id)
-                        context?.closeKeyboard()
-                        mAlertDialog?.dismiss()
-
-                        val roomIntent = Intent(activity, RoomActivity::class.java)
-                        roomIntent.putExtra("room", obj)
-                        startActivity(roomIntent)
-                    }
-                })
+                val roomIntent = Intent(activity, RoomActivity::class.java)
+                roomIntent.putExtra("room", it.room)
+                roomIntent.putExtra("user", it.user)
+                roomIntent.putExtra("roomUser", it.roomUser)
+                startActivity(roomIntent)
+            }, onFailure = { mDialogView.showSnackBarError(it) })
         }
-
 
         // Click cancel
         mDialogView.dialog_cancel_button.setOnClickListener {
@@ -249,17 +142,12 @@ class HomeFragment : FragmentBase(R.layout.fragment_home),
         }
     }
 
-    private fun refreshRoomsEvent() = Api.client.getRoomModels().withCallback(
-        object : Callback<MutableList<RoomModel>> {
-            override fun onError(msg: String) {
-                viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
-                swipeRefreshContainer.isRefreshing = false
-            }
-
-            override fun onSuccess(obj: MutableList<RoomModel>) {
-                viewModel.roomModels.postValue(obj)
-                swipeRefreshContainer.isRefreshing = false
-            }
+    private fun refreshRoomsEvent() = Api.client.getRoomModels().queue(
+        onSuccess = {
+            viewModel.roomModels.postValue(it)
+            swipe_refresh_container.isRefreshing = false
+        }, onFailure = {
+            viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
+            swipe_refresh_container.isRefreshing = false
         })
-
 }

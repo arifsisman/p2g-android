@@ -3,17 +3,26 @@ package vip.yazilim.p2g.android.ui.main.friends
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.item_friend.view.*
+import kotlinx.android.synthetic.main.item_friend.view.divider
+import kotlinx.android.synthetic.main.item_friend.view.online_status
+import kotlinx.android.synthetic.main.item_friend.view.profile_photo
+import kotlinx.android.synthetic.main.item_friend_request.view.*
+import kotlinx.android.synthetic.main.item_room.view.*
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.constant.enums.OnlineStatus
 import vip.yazilim.p2g.android.entity.Room
-import vip.yazilim.p2g.android.model.p2g.FriendModel
+import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.FriendRequestModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.ViewHolderBase
+import vip.yazilim.p2g.android.ui.room.RoomViewModel
 import vip.yazilim.p2g.android.util.glide.GlideApp
 import vip.yazilim.p2g.android.util.helper.RoomHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getFormattedCompact
@@ -41,129 +50,142 @@ class FriendsAdapter(
 
     inner class FriendRequestViewHolder(itemView: View) :
         ViewHolderBase<FriendRequestModel>(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.rUserName)
-        private val inviteDate: TextView = itemView.findViewById(R.id.rInviteDate)
-        private val profilePhoto: ImageView = itemView.findViewById(R.id.rProfilePhoto)
-        private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.rOnlineStatus)
-
-        private val acceptButton: ImageButton = itemView.findViewById(R.id.rAcceptButton)
-        private val rejectButton: ImageButton = itemView.findViewById(R.id.rRejectButton)
 
         private fun bindEvent(
             friendRequestModel: FriendRequestModel,
             clickListener: OnItemClickListener
         ) {
-            itemView.setOnClickListener { clickListener.onRowClicked(friendRequestModel.friendRequestUserModel) }
-            acceptButton.setOnClickListener { clickListener.onAcceptClicked(friendRequestModel) }
-            rejectButton.setOnClickListener { clickListener.onRejectClicked(friendRequestModel) }
+            itemView.setOnClickListener { clickListener.onRowClicked(friendRequestModel.userModel) }
+            itemView.accept_button.setOnClickListener {
+                clickListener.onAcceptClicked(
+                    friendRequestModel
+                )
+            }
+            itemView.reject_button.setOnClickListener {
+                clickListener.onRejectClicked(
+                    friendRequestModel
+                )
+            }
         }
 
         override fun bindView(item: FriendRequestModel) {
             bindEvent(item, requestClickListener)
-            val user = item.friendRequestUserModel.user
+            val user = item.userModel.user
 
             val inviteDatePlaceholder =
                 "${view.resources.getString(R.string.placeholder_friend_request_date)} ${item.friendRequest.requestDate.toZonedDateTime()
                     .getFormattedCompact()}"
 
-            userName.text = user.name
-            inviteDate.text = inviteDatePlaceholder
+            itemView.user_name.text = user.name
+            itemView.invite_date.text = inviteDatePlaceholder
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profilePhoto)
+                    .into(itemView.profile_photo)
             } else {
-                profilePhoto.setImageResource(R.drawable.ic_profile_image)
+                itemView.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.online_status.visibility = View.VISIBLE
                 }
             }
         }
     }
 
-    inner class FriendViewHolder(itemView: View) : ViewHolderBase<FriendModel>(itemView) {
-        private val userName: TextView = itemView.findViewById(R.id.userName)
-        private val roomName: TextView = itemView.findViewById(R.id.roomName)
-        private val roomSongStatus: TextView = itemView.findViewById(R.id.roomSongStatus)
-        private val profilePhoto: ImageView = itemView.findViewById(R.id.profilePhoto)
-        private val onlineStatus: ImageView =
-            itemView.findViewById(R.id.onlineStatus)
+    inner class FriendViewHolder(itemView: View) : ViewHolderBase<UserModel>(itemView) {
+        private val songImage: ImageView = itemView.findViewById(R.id.song_image)
 
-        private val joinButton: ImageButton = itemView.findViewById(R.id.joinButton)
-        private val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-
-        private fun bindEvent(friendModel: FriendModel, clickListener: OnItemClickListener) {
-            itemView.setOnClickListener { clickListener.onRowClicked(friendModel.userModel) }
-            deleteButton.setOnClickListener { clickListener.onDeleteClicked(friendModel) }
-            joinButton.setOnClickListener {
-                friendModel.userModel.room?.let { room ->
-                    clickListener.onJoinClicked(
-                        room
-                    )
-                }
+        private fun bindEvent(userModel: UserModel, clickListener: OnItemClickListener) {
+            itemView.user.setOnClickListener { clickListener.onRowClicked(userModel) }
+            itemView.deleteButton.setOnClickListener { clickListener.onDeleteClicked(userModel) }
+            itemView.joinButton.setOnClickListener {
+                userModel.roomModel?.room?.let { room -> clickListener.onJoinClicked(room) }
             }
         }
 
-        override fun bindView(item: FriendModel) {
+        override fun bindView(item: UserModel) {
             bindEvent(item, friendClickListener)
-            val user = item.userModel.user
-            val room = item.userModel.room
-            val song = item.song
+            val user = item.user
+            val roomModel = item.roomModel
 
-            userName.text = user.name
+            itemView.user.userName.text = user.name
 
             if (user.imageUrl != null) {
                 GlideApp.with(view)
                     .load(user.imageUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(profilePhoto)
+                    .into(itemView.user.profile_photo)
             } else {
-                profilePhoto.setImageResource(R.drawable.ic_profile_image)
+                itemView.user.profile_photo.setImageResource(R.drawable.ic_profile_image)
             }
 
             when (user.onlineStatus) {
                 OnlineStatus.ONLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_online)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.user.online_status.setImageResource(android.R.drawable.presence_online)
+                    itemView.user.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.OFFLINE.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_offline)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.user.online_status.setImageResource(android.R.drawable.presence_offline)
+                    itemView.user.online_status.visibility = View.VISIBLE
                 }
                 OnlineStatus.AWAY.onlineStatus -> {
-                    onlineStatus.setImageResource(android.R.drawable.presence_away)
-                    onlineStatus.visibility = View.VISIBLE
+                    itemView.user.online_status.setImageResource(android.R.drawable.presence_away)
+                    itemView.user.online_status.visibility = View.VISIBLE
                 }
             }
 
-            if (room != null) {
-                val roomNamePlaceholder =
-                    "${view.resources.getString(R.string.placeholder_room_name_expanded)} ${room.name}"
-                roomName.text = roomNamePlaceholder
-                if (room.privateFlag) {
-                    joinButton.setImageResource(R.drawable.ic_lock_white_24dp)
+            if (roomModel != null) {
+                val song: Song? = roomModel.song
+
+                val roomOwnerPlaceholder =
+                    "${view.resources.getString(R.string.placeholder_room_owner)} ${item.roomModel?.owner?.name}"
+
+                itemView.roomName.text = roomModel.room.name
+                itemView.roomOwner.text = roomOwnerPlaceholder
+                itemView.userCount.text = roomModel.userCount.toString()
+
+                if (roomModel.room.privateFlag) {
+                    itemView.lockImage.visibility = View.VISIBLE
+                } else {
+                    itemView.lockImage.visibility = View.GONE
                 }
 
-                roomSongStatus.text = RoomHelper.getRoomSongStatus(view, song)
+                itemView.country_flag.visibility = View.GONE
+
+                if (song != null) {
+                    if (song.imageUrl != null) {
+                        GlideApp.with(view)
+                            .load(song.imageUrl)
+                            .into(songImage)
+                    }
+
+                    itemView.song_name.text = song.songName
+                    itemView.song_artists.text =
+                        RoomHelper.getArtistsPlaceholder(song.artistNames, "")
+                    itemView.seek_bar.max = song.durationMs
+                    itemView.seek_bar.progress = RoomViewModel.getCurrentSongMs(song)
+
+                    itemView.song_status.visibility = View.VISIBLE
+                } else {
+                    itemView.song_status.visibility = View.GONE
+                }
             } else {
-                roomName.visibility = View.GONE
-                joinButton.visibility = View.GONE
-                roomSongStatus.visibility = View.GONE
+                itemView.joinButton.visibility = View.GONE
+                itemView.room.visibility = View.GONE
+                itemView.divider.visibility = View.GONE
             }
         }
     }
@@ -173,7 +195,7 @@ class FriendsAdapter(
         fun onRejectClicked(friendRequestModel: FriendRequestModel)
         fun onIgnoreClicked(friendRequestModel: FriendRequestModel)
         fun onJoinClicked(room: Room)
-        fun onDeleteClicked(friendModel: FriendModel)
+        fun onDeleteClicked(userModel: UserModel)
         fun onRowClicked(userModel: UserModel)
     }
 
@@ -197,14 +219,14 @@ class FriendsAdapter(
         val element = adapterDataList[position]
         when (holder) {
             is FriendRequestViewHolder -> holder.bindView(element as FriendRequestModel)
-            is FriendViewHolder -> holder.bindView(element as FriendModel)
+            is FriendViewHolder -> holder.bindView(element as UserModel)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (adapterDataList[position]) {
             is FriendRequestModel -> TYPE_REQUEST
-            is FriendModel -> TYPE_FRIEND
+            is UserModel -> TYPE_FRIEND
             else -> throw IllegalArgumentException("Invalid type of data $position")
         }
     }
@@ -227,13 +249,13 @@ class FriendsAdapter(
                     adapterDataListFull.forEach {
                         when (it) {
                             is FriendRequestModel -> {
-                                if (it.friendRequestUserModel.user.name.contains(filter, true)
+                                if (it.userModel.user.name.contains(filter, true)
                                 ) {
                                     filteredList.add(it)
                                 }
                             }
-                            is FriendModel -> {
-                                if (it.userModel.user.name.contains(filter, true)
+                            is UserModel -> {
+                                if (it.user.name.contains(filter, true)
                                 ) {
                                     filteredList.add(it)
                                 }
@@ -257,22 +279,22 @@ class FriendsAdapter(
 
     fun add(data: Any) {
         adapterDataList.add(data)
-        adapterDataList.sortBy { it is FriendModel }
-        if (data is FriendModel) {
-            adapterDataList.sortBy { data.userModel.user.onlineStatus }
+        adapterDataList.sortBy { it is UserModel }
+        if (data is UserModel) {
+            adapterDataList.sortBy { data.user.onlineStatus }
         }
         notifyItemInserted(adapterDataList.size)
     }
 
     fun addAll(data: MutableList<Any>) {
         adapterDataList.addAll(data)
-        adapterDataList.sortBy { it is FriendModel }
+        adapterDataList.sortBy { it is UserModel }
         notifyDataSetChanged()
     }
 
     fun update(data: UserFriendModel) {
-        adapterDataList.addAll(data.friendRequestModelList)
-        adapterDataList.addAll(data.friendModelList)
+        adapterDataList.addAll(data.requestModels)
+        adapterDataList.addAll(data.friendModels)
         notifyDataSetChanged()
     }
 

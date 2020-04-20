@@ -1,5 +1,6 @@
 package vip.yazilim.p2g.android.util.helper
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.IBinder
@@ -8,8 +9,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.androidadvance.topsnackbar.TSnackbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import vip.yazilim.p2g.android.constant.ColorCodes.ACCENT_BLUE
 import vip.yazilim.p2g.android.constant.ColorCodes.ERROR
+import vip.yazilim.p2g.android.constant.ColorCodes.WARN
+import kotlin.reflect.KFunction0
 
 
 /**
@@ -29,6 +33,13 @@ class UIHelper {
             val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
             val snackView = snack?.view
             snackView?.setBackgroundColor(Color.parseColor(ERROR))
+            snack?.show()
+        }
+
+        fun View.showSnackBarWarning(message: String) {
+            val snack: TSnackbar? = TSnackbar.make(this, message, TSnackbar.LENGTH_SHORT)
+            val snackView = snack?.view
+            snackView?.setBackgroundColor(Color.parseColor(WARN))
             snack?.show()
         }
 
@@ -78,6 +89,40 @@ class UIHelper {
 
         fun Context.pxFromDp(dp: Float): Float {
             return dp * this.resources.displayMetrics.density
+        }
+
+        @Deprecated("Causes crash if app was backgrounded and tries re-login")
+        fun Activity.showErrorDialog(
+            message: String,
+            kFunction0: KFunction0<Unit>
+        ) {
+            if (!this.isFinishing) {
+                val dialogBuilder = MaterialAlertDialogBuilder(this)
+                    .setMessage(message)
+                    .setPositiveButton("OK") { dialog, _ ->
+                        dialog.cancel()
+                    }
+
+                val alert = dialogBuilder.create()
+                alert.setTitle("Error")
+                alert.show()
+                alert.setOnCancelListener { kFunction0() }
+            }
+        }
+
+        @Deprecated("Causes crash if app was backgrounded and tries re-login")
+        fun Activity.showErrorDialog(message: String) {
+            if (!this.isFinishing) {
+                val dialogBuilder = MaterialAlertDialogBuilder(this)
+                    .setMessage(message)
+                    .setPositiveButton("OK") { dialog, _ ->
+                        dialog.cancel()
+                    }
+
+                val alert = dialogBuilder.create()
+                alert.setTitle("Error")
+                alert.show()
+            }
         }
     }
 }

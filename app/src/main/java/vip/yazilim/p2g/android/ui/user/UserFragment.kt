@@ -11,6 +11,7 @@ import vip.yazilim.p2g.android.activity.UserActivity
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserModel
 import vip.yazilim.p2g.android.ui.FragmentBase
+import vip.yazilim.p2g.android.ui.main.profile.ProfileAdapter
 
 
 /**
@@ -20,7 +21,7 @@ import vip.yazilim.p2g.android.ui.FragmentBase
 class UserFragment : FragmentBase(R.layout.fragment_user) {
 
     private lateinit var viewModel: UserViewModel
-    private lateinit var adapter: UserAdapter
+    private lateinit var adapter: ProfileAdapter
     private var userModel: UserModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +35,7 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     override fun onResume() {
         super.onResume()
         userModel?.user?.id?.let { viewModel.loadFriendsCount(it) }
-        userModel?.room?.id?.let { viewModel.loadRoomModel(it) }
     }
-
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val item = menu.findItem(R.id.action_search)
@@ -50,18 +49,14 @@ class UserFragment : FragmentBase(R.layout.fragment_user) {
     }
 
     override fun setupUI() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        adapter = UserAdapter(userModel, null, 0)
-        recyclerView.adapter = adapter
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        adapter = ProfileAdapter(userModel, userModel?.roomModel, 0, false)
+        recycler_view.adapter = adapter
     }
 
     // Observers
-    private val renderFriendsCount = Observer<Int> {
-        adapter.update(it)
-    }
+    private val renderFriendsCount = Observer<Int> { adapter.update(it) }
+    private val renderRoomModel = Observer<RoomModel> { adapter.update(it) }
 
-    private val renderRoomModel = Observer<RoomModel> {
-        adapter.update(it)
-    }
 }

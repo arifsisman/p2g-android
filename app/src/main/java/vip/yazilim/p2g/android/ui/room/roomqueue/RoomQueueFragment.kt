@@ -5,7 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.View.OnFocusChangeListener
-import android.view.WindowManager
+import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,7 +16,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.dialog_spotify_search.view.*
 import kotlinx.android.synthetic.main.fragment_room_queue.*
-import kotlinx.android.synthetic.main.layout_row_song_events.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -24,9 +23,10 @@ import kotlinx.coroutines.launch
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
-import vip.yazilim.p2g.android.api.Api.withCallback
-import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.constant.enums.Role
+import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnFailure
+import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
+import vip.yazilim.p2g.android.constant.enums.SearchType
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.SearchModel
 import vip.yazilim.p2g.android.ui.FragmentBase
@@ -58,6 +58,8 @@ class RoomQueueFragment :
 
     private lateinit var roomViewModel: RoomViewModel
 
+    private lateinit var queryEditText: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         roomViewModel = ViewModelProvider(activity as RoomActivity).get(RoomViewModel::class.java)
@@ -71,8 +73,8 @@ class RoomQueueFragment :
     override fun setupUI() {
         roomActivity = activity as RoomActivity
 
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recycler_view.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
 
         // QueueAdapter
         adapter = RoomQueueAdapter(
@@ -81,19 +83,19 @@ class RoomQueueFragment :
             , this
         )
 
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         // recyclerView divider
-        recyclerView.addItemDecoration(object : DividerItemDecoration(
-            recyclerView.context,
-            (recyclerView.layoutManager as LinearLayoutManager).orientation
+        recycler_view.addItemDecoration(object : DividerItemDecoration(
+            recycler_view.context,
+            (recycler_view.layoutManager as LinearLayoutManager).orientation
         ) {})
 
         // Search with floating action button
         val fab: FloatingActionButton? = activity?.findViewById(R.id.fab)
         fab?.setOnClickListener { showSearchDialog() }
 
-        swipeRefreshContainer.setOnRefreshListener {
+        swipe_refresh_container.setOnRefreshListener {
             refreshQueueEvent()
         }
     }
@@ -103,21 +105,16 @@ class RoomQueueFragment :
         roomViewModel.songList.observe(this, renderRoomQueue)
     }
 
-    private fun refreshQueueEvent() = Api.client.getRoomSongs(roomActivity.room.id).withCallback(
-        object : Callback<MutableList<Song>> {
-            override fun onError(msg: String) {
-                roomViewModel.onMessageError.postValue(
-                    resources.getString(R.string.err_room_queue_refresh)
-                )
-                swipeRefreshContainer.isRefreshing = false
-            }
-
-            override fun onSuccess(obj: MutableList<Song>) {
-                roomViewModel.songList.postValue(obj)
-                swipeRefreshContainer.isRefreshing = false
-            }
+    private fun refreshQueueEvent() =
+        Api.client.getRoomSongs(roomActivity.room.id).queue(onSuccess = {
+            roomViewModel.songList.postValue(it)
+            swipe_refresh_container.isRefreshing = false
+        }, onFailure = {
+            roomViewModel.onMessageError.postValue(
+                resources.getString(R.string.err_room_queue_refresh)
+            )
+            swipe_refresh_container.isRefreshing = false
         })
-
 
     // Observer
     private val renderRoomQueue = Observer<MutableList<Song>> { songList ->
@@ -126,15 +123,13 @@ class RoomQueueFragment :
 
     private fun showSearchDialog() {
         searchDialogView = View.inflate(context, R.layout.dialog_spotify_search, null)
-        val mBuilder = MaterialAlertDialogBuilder(context)
-            .setView(searchDialogView)
-        val mAlertDialog = mBuilder.show()
-        mAlertDialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        val mBuilder = context?.let {
+            MaterialAlertDialogBuilder(it)
+                .setView(searchDialogView)
+        }
+        mBuilder?.show()
 
-        val queryEditText = searchDialogView.dialogQuery
-
-        // For request focus and open keyboard
-//        queryEditText.requestFocus()
+        queryEditText = searchDialogView.dialog_query
 
         // Adapter start and update with requested search model
         val searchRecyclerView: RecyclerView =
@@ -182,16 +177,9 @@ class RoomQueueFragment :
 
                     if (!s.isNullOrEmpty()) {
                         searchAdapter.clear()
-                        Api.client.searchSpotify(s.toString()).withCallback(
-                            object : Callback<MutableList<SearchModel>> {
-                                override fun onError(msg: String) {
-                                    searchDialogView.showSnackBarError(msg)
-                                }
-
-                                override fun onSuccess(obj: MutableList<SearchModel>) {
-                                    searchAdapter.update(obj)
-                                }
-                            })
+                        Api.client.searchSpotify(s.toString())
+                            .queue(onSuccess = { searchAdapter.update(it) },
+                                onFailure = { searchDialogView.showSnackBarError(it) })
                     }
                 }
             }
@@ -201,92 +189,46 @@ class RoomQueueFragment :
                 Unit
         })
 
-        Api.client.getRecommendations().withCallback(object : Callback<MutableList<SearchModel>> {
-            override fun onSuccess(obj: MutableList<SearchModel>) {
-                searchAdapter.update(obj)
-            }
-
-            override fun onError(msg: String) {
-            }
-        })
+        Api.client.getRecommendations()
+            .queueAndCallbackOnSuccess(onSuccess = { searchAdapter.update(it) })
 
     }
 
     override fun onSearchItemClicked(searchModel: SearchModel) {
-        Api.client.addSongToRoom(roomActivity.room.id, listOf(searchModel))
-            .withCallback(object : Callback<Boolean> {
-                override fun onSuccess(obj: Boolean) {
-                    searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
-                }
+        queryEditText.windowToken.let { context?.closeKeyboardSoft(it) }
 
-                override fun onError(msg: String) {
-                    searchDialogView.showSnackBarError(msg)
-                }
-            })
-    }
-
-    override fun onItemClicked(view: SwipeLayout) {
-        val openStatus = view.openStatus
-        if (openStatus == SwipeLayout.Status.Open) {
-            view.close()
-        } else if (openStatus == SwipeLayout.Status.Close) {
-            view.open(SwipeLayout.DragEdge.Left)
-        }
+        Api.client.addSongWithSearchModel(roomActivity.room.id, searchModel).queue(onSuccess = {
+            if (searchModel.type == SearchType.SONG) {
+                searchDialogView.showSnackBarInfo("${searchModel.name} queued.")
+            } else {
+                searchDialogView.showSnackBarInfo("${it.size} songs queued.")
+            }
+        }, onFailure = { searchDialogView.showSnackBarError(it) })
     }
 
     override fun onPlayClicked(view: SwipeLayout, song: Song) {
         view.close()
 
-        Api.client.play(song).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                roomViewModel.onMessageError.postValue(msg)
-            }
-        })
+        Api.client.play(song)
+            .queueAndCallbackOnFailure(onFailure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onUpvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        val db = roomActivity.db
-
-        if (db.isVotedBefore(roomActivity.room, song)) {
-            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
-        } else {
-            Api.client.upvoteSong(song.id).withCallback(object : Callback<Int> {
-                override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(roomActivity.room, song)
-                    roomViewModel.onMessageInfo.postValue(
-                        "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
-                    )
-                }
-
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
-        }
+        Api.client.upvoteSong(song.id).queue(onSuccess = {
+            roomViewModel.onMessageInfo.postValue(
+                "${song.songName} ${resources.getString(R.string.info_song_upvoted)}"
+            )
+        }, onFailure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onDownvoteClicked(view: SwipeLayout, song: Song) {
         view.close()
-        val db = roomActivity.db
-
-        if (db.isVotedBefore(roomActivity.room, song)) {
-            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_song_vote))
-        } else {
-            Api.client.downvoteSong(song.id).withCallback(object : Callback<Int> {
-                override fun onSuccess(obj: Int) {
-                    db.insertVotedSong(roomActivity.room, song)
-                    roomViewModel.onMessageInfo.postValue("${song.songName} ${resources.getString(R.string.info_song_downvoted)}")
-                }
-
-                override fun onError(msg: String) {
-                    roomViewModel.onMessageError.postValue(msg)
-                }
-            })
-        }
+        Api.client.downvoteSong(song.id).queue(onSuccess = {
+            roomViewModel.onMessageInfo.postValue(
+                "${song.songName} ${resources.getString(R.string.info_song_downvoted)}"
+            )
+        }, onFailure = { roomViewModel.onMessageError.postValue(it) })
     }
 
     override fun onDeleteClicked(view: SwipeLayout, song: Song) {
@@ -294,14 +236,9 @@ class RoomQueueFragment :
         val position = adapter.songs.indexOf(song)
         adapter.remove(song)
 
-        Api.client.removeSongFromRoom(song.id).withCallback(object : Callback<Boolean> {
-            override fun onSuccess(obj: Boolean) {
-            }
-
-            override fun onError(msg: String) {
-                roomViewModel.onMessageError.postValue(msg)
-                adapter.add(song, position)
-            }
+        Api.client.removeSongFromRoom(song.id).queueAndCallbackOnFailure(onFailure = {
+            roomViewModel.onMessageError.postValue(it)
+            adapter.add(song, position)
         })
     }
 
@@ -312,21 +249,20 @@ class RoomQueueFragment :
     }
 
     override fun onStartOpen(layout: SwipeLayout?) {
-        val currentRole = roomViewModel.roomUserRole.value
-        if (currentRole == Role.ROOM_USER.role) {
-            layout?.swipePlayButton?.visibility = View.GONE
-            layout?.swipeDeleteButton?.visibility = View.GONE
-        } else {
-            layout?.swipePlayButton?.visibility = View.VISIBLE
-            layout?.swipeDeleteButton?.visibility = View.VISIBLE
-        }
+//        val currentRole = roomViewModel.roomUserRole.value
+//        if (currentRole == Role.ROOM_USER.role) {
+//            layout?.swipePlayButton?.visibility = View.GONE
+//            layout?.swipeDeleteButton?.visibility = View.GONE
+//        } else {
+//            layout?.swipePlayButton?.visibility = View.VISIBLE
+//            layout?.swipeDeleteButton?.visibility = View.VISIBLE
+//        }
     }
 
     override fun onStartClose(layout: SwipeLayout?) {
     }
 
     override fun onHandRelease(layout: SwipeLayout?, xvel: Float, yvel: Float) {
-        //todo open/close
     }
 
     override fun onClose(layout: SwipeLayout?) {

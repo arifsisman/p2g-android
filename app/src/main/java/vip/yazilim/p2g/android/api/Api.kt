@@ -1,6 +1,5 @@
 package vip.yazilim.p2g.android.api
 
-import android.util.Log
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -10,11 +9,8 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import vip.yazilim.p2g.android.Play2GetherApplication
-import vip.yazilim.p2g.android.api.generic.Callback
-import vip.yazilim.p2g.android.api.generic.Response
-import vip.yazilim.p2g.android.api.generic.Result
-import vip.yazilim.p2g.android.api.generic.resultHelper
+import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.StompClient
 import vip.yazilim.p2g.android.constant.ApiConstants
 import vip.yazilim.p2g.android.util.event.UnauthorizedEvent
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
@@ -22,6 +18,7 @@ import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 
 object Api {
     lateinit var client: Endpoints
+    private lateinit var httpClient: OkHttpClient
 
     fun build(accessToken: String) {
         val gson = ThreeTenGsonAdapter.registerLocalDateTime(GsonBuilder()).create()
@@ -30,22 +27,24 @@ object Api {
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
 
-        val httpClient: OkHttpClient = OkHttpClient.Builder()
+        httpClient = OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor(accessToken))
             .addInterceptor(UnauthorizedInterceptor())
-            .addInterceptor(loggingInterceptor()).build()
+            .addInterceptor(loggingInterceptor())
+            .build()
 
         val retrofit: Retrofit = builder.client(httpClient).build()
 
-        client = retrofit.create(Endpoints::class.java) as Endpoints
-        client.updateAccessToken(accessToken).withCallback(null)
-        Play2GetherApplication.accessToken = accessToken
+        client = retrofit.create(Endpoints::class.java)
+        client.updateAccessToken(accessToken).queueAndForget()
     }
 
     internal class UnauthorizedInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
             val response: okhttp3.Response = chain.proceed(chain.request())
-            if (response.code == 401) EventBus.getDefault().post(UnauthorizedEvent.instance)
+            if (response.code == 401 || response.code == 429) {
+                EventBus.getDefault().post(UnauthorizedEvent.instance)
+            }
             return response
         }
     }
@@ -69,24 +68,97 @@ object Api {
         return httpLoggingInterceptor
     }
 
-    inline fun <reified T> Call<Response<T>>.withCallback(callback: Callback<T>?) {
-        this.resultHelper { result ->
-            when (result) {
-                is Result.Success -> if (result.response.isSuccessful) {
-                    callback?.onSuccess(result.response.body()?.data as T)
-                } else {
-                    val msg = result.response.errorBody()?.string()
-                    if (msg != null) {
-                        Log.d("Request not successful ", msg)
-                        callback?.onError(msg)
-                    }
-                }
-                is Result.Failure -> {
-                    val msg = result.error.message as String
-                    Log.d("Request failed ", msg)
-                    callback?.onError(msg)
-                }
-            }
+    fun roomWebSocketClient(roomId: Long): StompClient? {
+        return if (this::httpClient.isInitialized) {
+            Stomp.over(
+                Stomp.ConnectionProvider.OKHTTP,
+                "${ApiConstants.BASE_WS_URL_ROOM}/$roomId",
+                null,
+                httpClient
+            )
+        } else {
+            null
         }
     }
+
+    fun userWebSocketClient(userId: String): StompClient? {
+        return if (this::httpClient.isInitialized) {
+            Stomp.over(
+                Stomp.ConnectionProvider.OKHTTP,
+                "${ApiConstants.BASE_WS_URL_USER}/$userId",
+                null,
+                httpClient
+            )
+        } else {
+            null
+        }
+    }
+
+    inline fun <T> Call<RestResponse<T>>.queue(
+        crossinline onSuccess: (T) -> Unit,
+        crossinline onFailure: ((String) -> Unit)
+    ) =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+                error.message?.let { onFailure(it) }
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.data?.let { onSuccess(it) }
+                } else {
+                    response.errorBody()?.string()?.let { onFailure(it) }
+                }
+            }
+        })
+
+    fun <T> Call<RestResponse<T>>.queueAndForget() =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+            }
+        })
+
+    inline fun <T> Call<RestResponse<T>>.queueAndCallbackOnSuccess(
+        crossinline onSuccess: (T) -> Unit
+    ) =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.data?.let { onSuccess(it) }
+                }
+            }
+        })
+
+    inline fun <T> Call<RestResponse<T>>.queueAndCallbackOnFailure(
+        crossinline onFailure: ((String) -> Unit)
+    ) =
+        this.enqueue(object : retrofit2.Callback<RestResponse<T>> {
+            override fun onFailure(call: Call<RestResponse<T>>, error: Throwable) {
+                error.message?.let { onFailure(it) }
+            }
+
+            override fun onResponse(
+                call: Call<RestResponse<T>>,
+                response: retrofit2.Response<RestResponse<T>>
+            ) {
+                if (!response.isSuccessful) {
+                    response.errorBody()?.string()?.let { onFailure(it) }
+                }
+            }
+        })
 }

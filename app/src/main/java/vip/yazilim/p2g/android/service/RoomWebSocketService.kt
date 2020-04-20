@@ -18,34 +18,43 @@ import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.*
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import vip.yazilim.p2g.android.R
+import vip.yazilim.p2g.android.api.Api
+import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_SEND
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CLOSED
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_CONNECTED
-import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_SOCKET_RECONNECTING
+import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_ROOM_STATUS_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_SONG_LIST_RECEIVE
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_USER_LIST_RECEIVE
-import vip.yazilim.p2g.android.constant.enums.RoomStatus
+import vip.yazilim.p2g.android.constant.WebSocketActions.CHECK_WEBSOCKET_CONNECTION
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
+import vip.yazilim.p2g.android.model.p2g.RoomStatusModel
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
 import vip.yazilim.p2g.android.util.gson.ThreeTenGsonAdapter
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.stomp.WebSocketClient
+import kotlin.coroutines.CoroutineContext
 
 
 /**
  * @author mustafaarifsisman - 24.02.2020
  * @contact mustafaarifsisman@gmail.com
  */
-class RoomWebSocketService : Service() {
+class RoomWebSocketService : Service(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Dispatchers.Main
+
     private var roomId: Long? = null
     private lateinit var roomWSClient: StompClient
     private val gsonBuilder = GsonBuilder()
     private val gson: Gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
+    private lateinit var job: Job
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -58,7 +67,25 @@ class RoomWebSocketService : Service() {
                     Log.v(TAG, "Sending chatMessage")
                     val chatMessage = intent.getParcelableExtra<ChatMessage>(ACTION_MESSAGE_SEND)
                     roomWSClient.send("/p2g/room/${roomId}/send", gson.toJson(chatMessage))
-                        .subscribe()
+                        .subscribe({}, { t: Throwable? ->
+                            Log.v(TAG, t?.message.toString())
+                        })
+                }
+                CHECK_WEBSOCKET_CONNECTION -> {
+                    Log.v(TAG, "Checking the websocket connection")
+
+                    job = launch {
+                        delay(WEBSOCKET_RECONNECT_DELAY)
+
+                        if (!roomWSClient.isConnected) {
+                            Log.v(TAG, "Trying to reconnect the websocket")
+                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_RECONNECTING))
+                            roomId?.let { connectWebSocket(it) }
+                        } else {
+                            Log.v(TAG, "Connected the websocket")
+                        }
+                    }
+
                 }
             }
         }
@@ -94,23 +121,11 @@ class RoomWebSocketService : Service() {
         sendBroadcast(intent)
     }
 
-    private fun sendBroadcastRoomStatus(status: String) {
+    private fun sendBroadcastRoomStatus(roomStatusModel: RoomStatusModel) {
         Log.v(TAG, "Sending broadcastRoomStatus to activity")
         val intent = Intent()
-        intent.action = ACTION_ROOM_STATUS
-        intent.putExtra(ACTION_ROOM_STATUS, status)
-        sendBroadcast(intent)
-    }
-
-    private fun sendBroadcastSocketClosed() {
-        val intent = Intent()
-        intent.action = ACTION_ROOM_SOCKET_CLOSED
-        sendBroadcast(intent)
-    }
-
-    private fun sendBroadcastSocketConnected() {
-        val intent = Intent()
-        intent.action = ACTION_ROOM_SOCKET_CONNECTED
+        intent.action = ACTION_ROOM_STATUS_RECEIVE
+        intent.putExtra(ACTION_ROOM_STATUS_RECEIVE, roomStatusModel)
         sendBroadcast(intent)
     }
 
@@ -124,7 +139,9 @@ class RoomWebSocketService : Service() {
             startForeground(2, Notification())
         }
 
-        val intentFilter = IntentFilter(ACTION_MESSAGE_SEND)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(ACTION_MESSAGE_SEND)
+        intentFilter.addAction(CHECK_WEBSOCKET_CONNECTION)
         registerReceiver(serviceReceiver, intentFilter)
     }
 
@@ -140,103 +157,79 @@ class RoomWebSocketService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        roomId = intent?.getLongExtra("roomId", -1L)
-        roomId?.run {
-            connectWebSocket(this)
-            subscribeRoomSongs("/p2g/room/${this}/songs")
-            subscribeRoomUsers("/p2g/room/${this}/users")
-            subscribeRoomMessages("/p2g/room/${this}/messages")
-            subscribeRoomStatus("/p2g/room/${this}/status")
+        if (roomId == null) {
+            roomId = intent?.getLongExtra("roomId", -1L)
+            roomId?.let { connectWebSocket(it) }
         }
 
         return START_STICKY
     }
 
     private fun connectWebSocket(roomId: Long) {
-        roomWSClient = WebSocketClient.getRoomWebSocketClient(roomId)
+        try {
+            val roomWsClientSafe = Api.roomWebSocketClient(roomId)
+            if (roomWsClientSafe != null) {
+                roomWSClient = roomWsClientSafe
+            }
+        } catch (ignored: Exception) {
+            return
+        }
+
         roomWSClient.run {
             connect()
 
             lifecycle()
-                .subscribe({
-                    when (it.type) {
+                .subscribe({ lifecycleEvent ->
+                    when (lifecycleEvent.type) {
                         LifecycleEvent.Type.OPENED -> {
-                            Log.i(TAG, it.toString())
-                            sendBroadcastSocketConnected()
+                            topic("/p2g/room/$roomId/songs")
+                                .subscribe { msg ->
+                                    val json = msg.payload
+                                    val songList = gson.fromJson<MutableList<Song>>(json)
+                                    sendBroadcastSongList(songList)
+                                }
+
+                            topic("/p2g/room/$roomId/users")
+                                .subscribe { msg ->
+                                    val userList =
+                                        gson.fromJson<MutableList<RoomUserModel>>(msg.payload)
+                                    sendBroadcastUserList(userList)
+                                }
+
+                            topic("/p2g/room/$roomId/messages")
+                                .subscribe { msg ->
+                                    val chatMessage = gson.fromJson<ChatMessage>(msg.payload)
+                                    sendBroadcastChatMessage(chatMessage)
+                                }
+
+                            topic("/p2g/room/$roomId/status")
+                                .subscribe { msg ->
+                                    val roomStatusModel =
+                                        gson.fromJson<RoomStatusModel>(msg.payload)
+                                    sendBroadcastRoomStatus(roomStatusModel)
+                                }
+
+                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_CONNECTED))
                         }
                         LifecycleEvent.Type.CLOSED -> {
-                            Log.i(TAG, it.toString())
-                            sendBroadcastSocketClosed()
+                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
                         }
-                        LifecycleEvent.Type.ERROR -> {
-                            Log.i(TAG, it.toString())
+                        else -> {
+                            if (::job.isInitialized && job.isActive) {
+                                job.cancel()
+                            }
                         }
-                        else -> Log.i(TAG, it.toString())
                     }
-                }, { t: Throwable? ->
-                    Log.v(TAG, t?.message.toString())
+                }, {
+                    if (::job.isInitialized && job.isActive) {
+                        job.cancel()
+                    }
                 })
         }
     }
 
-    private fun subscribeRoomSongs(songsPath: String) {
-        roomWSClient.run {
-            topic(songsPath)
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val gsonBuilder = GsonBuilder()
-                    val gson = ThreeTenGsonAdapter.registerLocalDateTime(gsonBuilder).create()
-
-                    val songList = gson.fromJson<MutableList<Song>>(json)
-
-                    sendBroadcastSongList(songList)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
-    private fun subscribeRoomUsers(usersPath: String) {
-        roomWSClient.run {
-            topic(usersPath)
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val userList = gson.fromJson<MutableList<RoomUserModel>>(json)
-                    sendBroadcastUserList(userList)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
-    private fun subscribeRoomMessages(messagesPath: String) {
-        roomWSClient.run {
-            topic(messagesPath)
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val chatMessage = gson.fromJson<ChatMessage>(json)
-                    sendBroadcastChatMessage(chatMessage)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
-    private fun subscribeRoomStatus(statusPath: String) {
-        roomWSClient.run {
-            topic(statusPath)
-                .subscribe({
-                    val json = it.payload
-                    Log.v(TAG, json)
-
-                    val roomStatus = gson.fromJson<RoomStatus>(json)
-                    sendBroadcastRoomStatus(roomStatus.status)
-                }, { t: Throwable? -> Log.v(TAG, t?.message.toString()) })
-        }
-    }
-
     private inline fun <reified T> Gson.fromJson(json: String): T =
-        fromJson<T>(json, object : TypeToken<T>() {}.type)
+        fromJson(json, object : TypeToken<T>() {}.type)
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startMyOwnForeground() {
