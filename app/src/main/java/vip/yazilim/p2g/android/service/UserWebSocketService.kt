@@ -95,30 +95,32 @@ class UserWebSocketService : Service() {
             return
         }
 
-        userWSClient.run {
-            connect()
+        if (this::userWSClient.isInitialized) {
+            userWSClient.run {
+                connect()
 
-            lifecycle()
-                .subscribe { lifecycleEvent ->
-                    when (lifecycleEvent.type) {
-                        LifecycleEvent.Type.OPENED -> {
-                            topic("/p2g/user/$userId/invites")
-                                .subscribe { msg ->
-                                    val roomInviteModel =
-                                        gson.fromJson(msg.payload, RoomInviteModel::class.java)
+                lifecycle()
+                    .subscribe { lifecycleEvent ->
+                        when (lifecycleEvent.type) {
+                            LifecycleEvent.Type.OPENED -> {
+                                topic("/p2g/user/$userId/invites")
+                                    .subscribe { msg ->
+                                        val roomInviteModel =
+                                            gson.fromJson(msg.payload, RoomInviteModel::class.java)
 
-                                    sendBroadcastRoomInvite(roomInviteModel)
-                                    showInviteNotification(roomInviteModel.roomInvite)
-                                }
-                        }
-                        LifecycleEvent.Type.CLOSED -> {
-                        }
-                        LifecycleEvent.Type.ERROR -> {
-                        }
-                        else -> {
+                                        sendBroadcastRoomInvite(roomInviteModel)
+                                        showInviteNotification(roomInviteModel.roomInvite)
+                                    }
+                            }
+                            LifecycleEvent.Type.CLOSED -> {
+                            }
+                            LifecycleEvent.Type.ERROR -> {
+                            }
+                            else -> {
+                            }
                         }
                     }
-                }
+            }
         }
     }
 
