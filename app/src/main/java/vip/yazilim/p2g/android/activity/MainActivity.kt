@@ -159,13 +159,13 @@ class MainActivity : BaseActivity(),
                     roomIntent.putExtra("roomUser", it.roomUser)
                     startActivity(roomIntent)
                 }, onFailure = { mDialogView.showSnackBarError(it) })
+        }
 
-            // Click cancel
-            mDialogView.dialog_cancel_button.setOnClickListener {
-                mAlertDialog?.cancel()
-                roomPasswordEditText.clearFocus()
-                applicationContext?.closeKeyboard()
-            }
+        // Click cancel
+        mDialogView.dialog_cancel_button.setOnClickListener {
+            mAlertDialog?.cancel()
+            roomPasswordEditText.clearFocus()
+            applicationContext?.closeKeyboard()
         }
     }
 }

@@ -32,16 +32,16 @@
 
         <TextView
             android:id="@+id/invite_date"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_width="match_parent"
             android:paddingStart="60dp"
             android:paddingEnd="15dp"
             android:singleLine="true"
+            android:text="@string/placeholder_friend_request_date"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_name"
-            tools:layout_editor_absoluteX="61dp"
-            tools:text="@string/placeholder_friend_request_date" />
+            tools:layout_editor_absoluteX="61dp" />
 
         <ImageView
             android:id="@+id/profile_photo"
