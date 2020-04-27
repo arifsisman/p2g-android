@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import com.androidadvance.topsnackbar.TSnackbar
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
@@ -104,8 +104,10 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun failureHandler(msg: String) {
-        val snack: TSnackbar? = TSnackbar.make(container, msg, TSnackbar.LENGTH_INDEFINITE)
+        val snack: Snackbar? = Snackbar.make(container, msg, Snackbar.LENGTH_INDEFINITE)
         snack?.setAction(R.string.retry) { getAccessTokenFromSpotify() }
+        snack?.setActionTextColor(Color.WHITE)
+        snack?.setTextColor(Color.WHITE)
         val snackView = snack?.view
         snackView?.setBackgroundColor(Color.parseColor(ColorCodes.ERROR))
         snack?.show()

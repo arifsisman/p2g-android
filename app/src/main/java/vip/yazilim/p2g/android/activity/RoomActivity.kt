@@ -126,13 +126,8 @@ class RoomActivity : BaseActivity(),
 
     private fun setupAd() {
         MobileAds.initialize(this)
-
-        release {
-            adId = "ca-app-pub-9988109607477807/5824550161"
-        }
-        debug {
-            adId = "ca-app-pub-3940256099942544/5224354917"
-        }
+        release { adId = "ca-app-pub-9988109607477807/5824550161" }
+        debug { adId = "ca-app-pub-3940256099942544/5224354917-" }
 
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
         mRewardedVideoAd.rewardedVideoAdListener = this

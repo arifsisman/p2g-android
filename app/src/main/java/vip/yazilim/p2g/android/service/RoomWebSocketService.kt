@@ -165,6 +165,12 @@ class RoomWebSocketService : Service(), CoroutineScope {
         return START_STICKY
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
+        Log.d(TAG, "onTaskRemoved")
+    }
+
     private fun connectWebSocket(roomId: Long) {
         try {
             val roomWsClientSafe = Api.roomWebSocketClient(roomId)

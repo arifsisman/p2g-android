@@ -54,6 +54,12 @@ class UserWebSocketService : Service() {
         sendBroadcast(intent)
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
+        Log.d(TAG, "onTaskRemoved")
+    }
+
     override fun onCreate() {
         super.onCreate()
         Log.v(TAG, "onCreate")
