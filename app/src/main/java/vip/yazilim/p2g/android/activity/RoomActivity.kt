@@ -28,7 +28,9 @@ import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
 import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -66,7 +68,6 @@ import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
-import vip.yazilim.p2g.android.util.AdListener
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
@@ -80,7 +81,8 @@ import vip.yazilim.p2g.android.util.helper.release
 class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
     PlayerAdapter.OnSeekBarChangeListener,
-    DeviceAdapter.OnItemClickListener {
+    DeviceAdapter.OnItemClickListener,
+    RewardedVideoAdListener {
     lateinit var room: Room
     lateinit var user: User
     lateinit var roomUser: RoomUser
@@ -96,8 +98,6 @@ class RoomActivity : BaseActivity(),
     private var durationHandler: Handler = Handler()
 
     private lateinit var adId: String
-
-    //    private lateinit var adRequest: AdRequest
     private lateinit var mRewardedVideoAd: RewardedVideoAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,26 +125,26 @@ class RoomActivity : BaseActivity(),
     }
 
     private fun setupAd() {
-        MobileAds.initialize(this, "ca-app-pub-9988109607477807~7124820860")
+        MobileAds.initialize(this)
 
         release {
             adId = "ca-app-pub-9988109607477807/5824550161"
-//            adRequest = AdRequest.Builder().build()
         }
         debug {
             adId = "ca-app-pub-3940256099942544/5224354917"
-//            adRequest = AdRequest.Builder()
-//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-//                .addTestDevice("FC0F4AC5B70F92601713ECE40A58C71D")
-//                .build()
         }
 
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
-        mRewardedVideoAd.rewardedVideoAdListener = AdListener()
+        mRewardedVideoAd.rewardedVideoAdListener = this
 
+        loadRewardedVideoAd()
+    }
+
+    private fun loadRewardedVideoAd() {
         if (this::adId.isInitialized) {
             mRewardedVideoAd.loadAd(adId, AdRequest.Builder().build())
 
+            mRewardedVideoAd.show()
             if (mRewardedVideoAd.isLoaded) {
                 mRewardedVideoAd.show()
             }
@@ -676,5 +676,38 @@ class RoomActivity : BaseActivity(),
         sendBroadcast(Intent(CHECK_WEBSOCKET_CONNECTION))
     }
 
+    override fun onRewardedVideoAdClosed() {
+//        loadRewardedVideoAd()
+        Log.d(TAG, "onRewardedVideoAdClosed")
+    }
+
+    override fun onRewardedVideoAdLeftApplication() {
+        Log.d(TAG, "onRewardedVideoAdLeftApplication")
+    }
+
+    override fun onRewardedVideoAdLoaded() {
+        mRewardedVideoAd.show()
+        Log.d(TAG, "onRewardedVideoAdLoaded")
+    }
+
+    override fun onRewardedVideoAdOpened() {
+        Log.d(TAG, "onRewardedVideoAdOpened")
+    }
+
+    override fun onRewardedVideoCompleted() {
+        Log.d(TAG, "onRewardedVideoCompleted")
+    }
+
+    override fun onRewarded(p0: RewardItem?) {
+        Log.d(TAG, p0.toString())
+    }
+
+    override fun onRewardedVideoStarted() {
+        Log.d(TAG, "onRewardedVideoStarted")
+    }
+
+    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
+        Log.d(TAG, p0.toString())
+    }
 
 }
