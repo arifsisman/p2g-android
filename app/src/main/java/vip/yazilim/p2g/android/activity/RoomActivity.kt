@@ -26,9 +26,9 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardedVideoAd
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -37,7 +37,6 @@ import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
-import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
@@ -67,6 +66,7 @@ import vip.yazilim.p2g.android.ui.room.RoomViewModelFactory
 import vip.yazilim.p2g.android.ui.room.roomchat.RoomChatFragment
 import vip.yazilim.p2g.android.ui.room.roomqueue.RoomQueueFragment
 import vip.yazilim.p2g.android.ui.room.roomusers.RoomUsersFragment
+import vip.yazilim.p2g.android.util.AdListener
 import vip.yazilim.p2g.android.util.helper.TAG
 import vip.yazilim.p2g.android.util.helper.TimeHelper
 import vip.yazilim.p2g.android.util.helper.TimeHelper.Companion.getHumanReadableTimestamp
@@ -74,6 +74,7 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
+import vip.yazilim.p2g.android.util.helper.debug
 import vip.yazilim.p2g.android.util.helper.release
 
 class RoomActivity : BaseActivity(),
@@ -94,7 +95,10 @@ class RoomActivity : BaseActivity(),
     private var clearRoomQueueMenuItem: MenuItem? = null
     private var durationHandler: Handler = Handler()
 
-    private lateinit var mInterstitialAd: InterstitialAd
+    private lateinit var adId: String
+
+    //    private lateinit var adRequest: AdRequest
+    private lateinit var mRewardedVideoAd: RewardedVideoAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,43 +110,63 @@ class RoomActivity : BaseActivity(),
             finish()
         } else {
             room = roomFromIntent
+            title = room.name
+
+            setupAd()
+            startRoomWebSocketService()
+            setupViewPager()
+            setupViewModel()
+            setupSlidingUpPanel()
+            setupPlayer()
+            setupNetworkConnectivityManager()
+            registerRoomWebSocketReceiver(broadcastReceiver)
+            updateSeekBarTime.run()
         }
+    }
 
-        title = room.name
-
-        startRoomWebSocketService()
-        setupViewPager()
-        setupViewModel()
-        setupSlidingUpPanel()
-        setupPlayer()
-
-        setupNetworkConnectivityManager()
-
-        registerRoomWebSocketReceiver(broadcastReceiver)
+    private fun setupAd() {
+        MobileAds.initialize(this, "ca-app-pub-9988109607477807~7124820860")
 
         release {
-            mInterstitialAd = InterstitialAd(this)
-            mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
-            mInterstitialAd.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    mInterstitialAd.show()
-                }
-            }
-            mInterstitialAd.loadAd(AdRequest.Builder().build())
+            adId = "ca-app-pub-9988109607477807/5824550161"
+//            adRequest = AdRequest.Builder().build()
+        }
+        debug {
+            adId = "ca-app-pub-3940256099942544/5224354917"
+//            adRequest = AdRequest.Builder()
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                .addTestDevice("FC0F4AC5B70F92601713ECE40A58C71D")
+//                .build()
         }
 
-        updateSeekBarTime.run()
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+        mRewardedVideoAd.rewardedVideoAdListener = AdListener()
 
+        if (this::adId.isInitialized) {
+            mRewardedVideoAd.loadAd(adId, AdRequest.Builder().build())
+
+            if (mRewardedVideoAd.isLoaded) {
+                mRewardedVideoAd.show()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mRewardedVideoAd.pause(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopRoomWebSocketService()
         unregisterReceiver(broadcastReceiver)
+        mRewardedVideoAd.destroy(this)
     }
 
     override fun onResume() {
         super.onResume()
+
+        mRewardedVideoAd.resume(this)
 
         // Check socket connection
         checkWebSocketConnection()
@@ -651,5 +675,6 @@ class RoomActivity : BaseActivity(),
     private fun checkWebSocketConnection() {
         sendBroadcast(Intent(CHECK_WEBSOCKET_CONNECTION))
     }
+
 
 }
