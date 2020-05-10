@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Duration
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
-import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.constant.enums.SongStatus
 import vip.yazilim.p2g.android.entity.Song
 import vip.yazilim.p2g.android.model.p2g.ChatMessage
@@ -70,7 +69,7 @@ class RoomViewModel : ViewModelBase() {
     }
 
     fun loadRoomUserMe() {
-        Api.client.getRoomUserModelMe().queueAndCallbackOnSuccess(onSuccess = {
+        Api.client.getRoomUserModelMe().queue(onSuccess = {
             roomUserModel.postValue(it)
             roomUserRole.postValue(it.roomUser?.roomRole)
         })

@@ -103,9 +103,11 @@ class FriendsFragment : FragmentBase(
 
     override fun onAcceptClicked(friendRequestModel: FriendRequestModel) =
         Api.client.accept(friendRequestModel.friendRequest.id).queue(onSuccess = {
-            adapter.remove(friendRequestModel)
-            adapter.add(friendRequestModel.userModel)
-            adapter.adapterDataListFull.add(friendRequestModel.userModel)
+            adapter.run {
+                adapterDataListFull.add(friendRequestModel.userModel)
+                remove(friendRequestModel)
+                add(friendRequestModel.userModel)
+            }
         }, onFailure = { viewModel.onMessageError.postValue(it) })
 
     override fun onRejectClicked(friendRequestModel: FriendRequestModel) =

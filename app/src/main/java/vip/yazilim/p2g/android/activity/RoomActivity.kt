@@ -42,7 +42,6 @@ import org.threeten.bp.LocalDateTime
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
-import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnFailure
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
@@ -168,7 +167,7 @@ class RoomActivity : BaseActivity(),
 
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
         Api.client.getUserDevices()
-            .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
+            .queue(onFailure = { view_pager.showSnackBarError(it) })
     }
 
     private fun setupNetworkConnectivityManager() {
@@ -500,7 +499,7 @@ class RoomActivity : BaseActivity(),
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
                     Api.client.syncWithRoom()
-                        .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
+                        .queue(onFailure = { view_pager.showSnackBarError(it) })
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
@@ -598,27 +597,27 @@ class RoomActivity : BaseActivity(),
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onNextClicked() = Api.client.next(room.id).queueAndCallbackOnFailure(
+    override fun onNextClicked() = Api.client.next(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onPreviousClicked() = Api.client.previous(room.id).queueAndCallbackOnFailure(
+    override fun onPreviousClicked() = Api.client.previous(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onRepeatClicked() = Api.client.repeat(room.id).queueAndCallbackOnFailure(
+    override fun onRepeatClicked() = Api.client.repeat(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queueAndCallbackOnFailure(
+    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
