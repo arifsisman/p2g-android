@@ -22,7 +22,6 @@ import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.activity.RoomActivity
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
-import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.constant.enums.Role
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.model.p2g.RoomUserModel
@@ -105,11 +104,11 @@ class RoomUsersFragment :
 
     private fun refreshUsersEvent() =
         Api.client.getRoomUserModels(roomActivity.room.id).queue(onSuccess = {
+            swipe_refresh_container.isRefreshing = false
             roomViewModel.roomUserModelList.postValue(it)
-            swipe_refresh_container.isRefreshing = false
         }, onFailure = {
-            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
             swipe_refresh_container.isRefreshing = false
+            roomViewModel.onMessageError.postValue(resources.getString(R.string.err_room_user_refresh))
         })
 
     private fun showInviteDialog() {
@@ -186,7 +185,7 @@ class RoomUsersFragment :
         })
 
         // Load friends
-        Api.client.getFriends().queueAndCallbackOnSuccess(onSuccess = { inviteAdapter.update(it) })
+        Api.client.getFriends().queue(onSuccess = { inviteAdapter.update(it) })
     }
 
     override fun onChangeRoleClicked(view: SwipeLayout, roomUserModel: RoomUserModel) {

@@ -3,7 +3,6 @@ package vip.yazilim.p2g.android.ui.main
 import androidx.lifecycle.MutableLiveData
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
-import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnSuccess
 import vip.yazilim.p2g.android.model.p2g.RoomInviteModel
 import vip.yazilim.p2g.android.model.p2g.RoomModel
 import vip.yazilim.p2g.android.model.p2g.UserFriendModel
@@ -71,6 +70,6 @@ class MainViewModel : ViewModelBase() {
         })
     }
 
-    fun loadFriendsCountMe() = Api.client.getFriendsCounts()
-        .queueAndCallbackOnSuccess(onSuccess = { friendCountsMe.postValue(it) })
+    fun loadFriendsCountMe() =
+        Api.client.getFriendsCounts().queue(onSuccess = { friendCountsMe.postValue(it) })
 }

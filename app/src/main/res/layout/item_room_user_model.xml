@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/row_user_model"
     android:soundEffectsEnabled="false"
     android:layout_width="match_parent"
@@ -24,12 +23,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingStart="60dp"
+            android:text="@string/placeholder_user_name"
             android:paddingEnd="15dp"
             android:singleLine="true"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/user_image"
-            app:layout_constraintTop_toTopOf="@+id/user_image"
-            tools:text="@string/placeholder_user_name" />
+            app:layout_constraintTop_toTopOf="@+id/user_image" />
 
         <TextView
             android:id="@+id/user_role"

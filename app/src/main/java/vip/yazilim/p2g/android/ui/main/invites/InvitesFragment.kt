@@ -129,17 +129,15 @@ class InvitesFragment : FragmentBase(R.layout.fragment_invites),
 
 
     private fun refreshRoomInvitesEvent() = Api.client.getRoomInviteModels().queue(onSuccess = {
+        swipe_refresh_container.isRefreshing = false
         if (it.isNullOrEmpty()) {
             viewModel.onEmptyList.postValue(true)
         } else {
             viewModel.onEmptyList.postValue(false)
             viewModel.roomInviteModel.postValue(it)
         }
-        swipe_refresh_container.isRefreshing = false
     }, onFailure = {
-        viewModel.onMessageError.postValue(
-            resources.getString(R.string.err_room_invites_refresh)
-        )
         swipe_refresh_container.isRefreshing = false
+        viewModel.onMessageError.postValue(resources.getString(R.string.err_room_invites_refresh))
     })
 }

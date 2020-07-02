@@ -165,6 +165,12 @@ class RoomWebSocketService : Service(), CoroutineScope {
         return START_STICKY
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
+        Log.d(TAG, "onTaskRemoved")
+    }
+
     private fun connectWebSocket(roomId: Long) {
         try {
             val roomWsClientSafe = Api.roomWebSocketClient(roomId)
@@ -175,56 +181,58 @@ class RoomWebSocketService : Service(), CoroutineScope {
             return
         }
 
-        roomWSClient.run {
-            connect()
+        if (this::roomWSClient.isInitialized) {
+            roomWSClient.run {
+                connect()
 
-            lifecycle()
-                .subscribe({ lifecycleEvent ->
-                    when (lifecycleEvent.type) {
-                        LifecycleEvent.Type.OPENED -> {
-                            topic("/p2g/room/$roomId/songs")
-                                .subscribe { msg ->
-                                    val json = msg.payload
-                                    val songList = gson.fromJson<MutableList<Song>>(json)
-                                    sendBroadcastSongList(songList)
+                lifecycle()
+                    .subscribe({ lifecycleEvent ->
+                        when (lifecycleEvent.type) {
+                            LifecycleEvent.Type.OPENED -> {
+                                topic("/p2g/room/$roomId/songs")
+                                    .subscribe { msg ->
+                                        val json = msg.payload
+                                        val songList = gson.fromJson<MutableList<Song>>(json)
+                                        sendBroadcastSongList(songList)
+                                    }
+
+                                topic("/p2g/room/$roomId/users")
+                                    .subscribe { msg ->
+                                        val userList =
+                                            gson.fromJson<MutableList<RoomUserModel>>(msg.payload)
+                                        sendBroadcastUserList(userList)
+                                    }
+
+                                topic("/p2g/room/$roomId/messages")
+                                    .subscribe { msg ->
+                                        val chatMessage = gson.fromJson<ChatMessage>(msg.payload)
+                                        sendBroadcastChatMessage(chatMessage)
+                                    }
+
+                                topic("/p2g/room/$roomId/status")
+                                    .subscribe { msg ->
+                                        val roomStatusModel =
+                                            gson.fromJson<RoomStatusModel>(msg.payload)
+                                        sendBroadcastRoomStatus(roomStatusModel)
+                                    }
+
+                                sendBroadcast(Intent(ACTION_ROOM_SOCKET_CONNECTED))
+                            }
+                            LifecycleEvent.Type.CLOSED -> {
+                                sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
+                            }
+                            else -> {
+                                if (::job.isInitialized && job.isActive) {
+                                    job.cancel()
                                 }
-
-                            topic("/p2g/room/$roomId/users")
-                                .subscribe { msg ->
-                                    val userList =
-                                        gson.fromJson<MutableList<RoomUserModel>>(msg.payload)
-                                    sendBroadcastUserList(userList)
-                                }
-
-                            topic("/p2g/room/$roomId/messages")
-                                .subscribe { msg ->
-                                    val chatMessage = gson.fromJson<ChatMessage>(msg.payload)
-                                    sendBroadcastChatMessage(chatMessage)
-                                }
-
-                            topic("/p2g/room/$roomId/status")
-                                .subscribe { msg ->
-                                    val roomStatusModel =
-                                        gson.fromJson<RoomStatusModel>(msg.payload)
-                                    sendBroadcastRoomStatus(roomStatusModel)
-                                }
-
-                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_CONNECTED))
-                        }
-                        LifecycleEvent.Type.CLOSED -> {
-                            sendBroadcast(Intent(ACTION_ROOM_SOCKET_CLOSED))
-                        }
-                        else -> {
-                            if (::job.isInitialized && job.isActive) {
-                                job.cancel()
                             }
                         }
-                    }
-                }, {
-                    if (::job.isInitialized && job.isActive) {
-                        job.cancel()
-                    }
-                })
+                    }, {
+                        if (::job.isInitialized && job.isActive) {
+                            job.cancel()
+                        }
+                    })
+            }
         }
     }
 

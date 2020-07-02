@@ -26,9 +26,11 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
+import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -37,11 +39,9 @@ import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_player.*
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
-import vip.yazilim.p2g.android.BuildConfig
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
-import vip.yazilim.p2g.android.api.Api.queueAndCallbackOnFailure
 import vip.yazilim.p2g.android.constant.GeneralConstants.PLAYER_UPDATE_MS
 import vip.yazilim.p2g.android.constant.GeneralConstants.WEBSOCKET_RECONNECT_DELAY
 import vip.yazilim.p2g.android.constant.WebSocketActions.ACTION_MESSAGE_RECEIVE
@@ -74,12 +74,14 @@ import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarInfo
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarWarning
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
+import vip.yazilim.p2g.android.util.helper.debug
 import vip.yazilim.p2g.android.util.helper.release
 
 class RoomActivity : BaseActivity(),
     PlayerAdapter.OnItemClickListener,
     PlayerAdapter.OnSeekBarChangeListener,
-    DeviceAdapter.OnItemClickListener {
+    DeviceAdapter.OnItemClickListener,
+    RewardedVideoAdListener {
     lateinit var room: Room
     lateinit var user: User
     lateinit var roomUser: RoomUser
@@ -94,7 +96,8 @@ class RoomActivity : BaseActivity(),
     private var clearRoomQueueMenuItem: MenuItem? = null
     private var durationHandler: Handler = Handler()
 
-    private lateinit var mInterstitialAd: InterstitialAd
+    private lateinit var adId: String
+    private lateinit var mRewardedVideoAd: RewardedVideoAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,50 +109,65 @@ class RoomActivity : BaseActivity(),
             finish()
         } else {
             room = roomFromIntent
+            title = room.name
+
+            setupAd()
+            startRoomWebSocketService()
+            setupViewPager()
+            setupViewModel()
+            setupSlidingUpPanel()
+            setupPlayer()
+            setupNetworkConnectivityManager()
+            registerRoomWebSocketReceiver(broadcastReceiver)
+            updateSeekBarTime.run()
         }
+    }
 
-        title = room.name
+    private fun setupAd() {
+        MobileAds.initialize(this)
+        release { adId = "ca-app-pub-9988109607477807/5824550161" }
+        debug { adId = "ca-app-pub-3940256099942544/5224354917-" }
 
-        startRoomWebSocketService()
-        setupViewPager()
-        setupViewModel()
-        setupSlidingUpPanel()
-        setupPlayer()
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+        mRewardedVideoAd.rewardedVideoAdListener = this
 
-        setupNetworkConnectivityManager()
+        loadRewardedVideoAd()
+    }
 
-        registerRoomWebSocketReceiver(broadcastReceiver)
+    private fun loadRewardedVideoAd() {
+        if (this::adId.isInitialized) {
+            mRewardedVideoAd.loadAd(adId, AdRequest.Builder().build())
 
-        release {
-            mInterstitialAd = InterstitialAd(this)
-            mInterstitialAd.adUnitId = BuildConfig.INTERSTITIAL_AD_ID
-            mInterstitialAd.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    mInterstitialAd.show()
-                }
+            mRewardedVideoAd.show()
+            if (mRewardedVideoAd.isLoaded) {
+                mRewardedVideoAd.show()
             }
-            mInterstitialAd.loadAd(AdRequest.Builder().build())
         }
+    }
 
-        updateSeekBarTime.run()
-
+    override fun onPause() {
+        super.onPause()
+        mRewardedVideoAd.pause(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopRoomWebSocketService()
         unregisterReceiver(broadcastReceiver)
+        mRewardedVideoAd.destroy(this)
     }
 
     override fun onResume() {
         super.onResume()
+
+        mRewardedVideoAd.resume(this)
 
         // Check socket connection
         checkWebSocketConnection()
 
         //Try request if unauthorized activity returns to LoginActivity for refresh access token and build authorized API client
         Api.client.getUserDevices()
-            .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
+            .queue(onFailure = { view_pager.showSnackBarError(it) })
     }
 
     private fun setupNetworkConnectivityManager() {
@@ -481,7 +499,7 @@ class RoomActivity : BaseActivity(),
                 ACTION_ROOM_SOCKET_CONNECTED -> {
                     view_pager.showSnackBarInfo(resources.getString(R.string.info_room_websocket_connected))
                     Api.client.syncWithRoom()
-                        .queueAndCallbackOnFailure(onFailure = { view_pager.showSnackBarError(it) })
+                        .queue(onFailure = { view_pager.showSnackBarError(it) })
                     roomViewModel.loadRoomUserMe()
                     roomViewModel.loadSongs(room.id)
                     roomViewModel.loadRoomUsers(room.id)
@@ -579,27 +597,27 @@ class RoomActivity : BaseActivity(),
         showMaximizedPlayer()
     }
 
-    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+    override fun onPlayPauseMiniClicked() = Api.client.playPause(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queueAndCallbackOnFailure(
+    override fun onPlayPauseClicked() = Api.client.playPause(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onNextClicked() = Api.client.next(room.id).queueAndCallbackOnFailure(
+    override fun onNextClicked() = Api.client.next(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onPreviousClicked() = Api.client.previous(room.id).queueAndCallbackOnFailure(
+    override fun onPreviousClicked() = Api.client.previous(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    override fun onRepeatClicked() = Api.client.repeat(room.id).queueAndCallbackOnFailure(
+    override fun onRepeatClicked() = Api.client.repeat(room.id).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
-    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queueAndCallbackOnFailure(
+    private fun onSeekPerformed(ms: Int) = Api.client.seek(room.id, ms).queue(
         onFailure = { player_coordinator_layout.showSnackBarError(it) }
     )
 
@@ -650,6 +668,40 @@ class RoomActivity : BaseActivity(),
 
     private fun checkWebSocketConnection() {
         sendBroadcast(Intent(CHECK_WEBSOCKET_CONNECTION))
+    }
+
+    override fun onRewardedVideoAdClosed() {
+//        loadRewardedVideoAd()
+        Log.d(TAG, "onRewardedVideoAdClosed")
+    }
+
+    override fun onRewardedVideoAdLeftApplication() {
+        Log.d(TAG, "onRewardedVideoAdLeftApplication")
+    }
+
+    override fun onRewardedVideoAdLoaded() {
+        mRewardedVideoAd.show()
+        Log.d(TAG, "onRewardedVideoAdLoaded")
+    }
+
+    override fun onRewardedVideoAdOpened() {
+        Log.d(TAG, "onRewardedVideoAdOpened")
+    }
+
+    override fun onRewardedVideoCompleted() {
+        Log.d(TAG, "onRewardedVideoCompleted")
+    }
+
+    override fun onRewarded(p0: RewardItem?) {
+        Log.d(TAG, p0.toString())
+    }
+
+    override fun onRewardedVideoStarted() {
+        Log.d(TAG, "onRewardedVideoStarted")
+    }
+
+    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
+        Log.d(TAG, p0.toString())
     }
 
 }

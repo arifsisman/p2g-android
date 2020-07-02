@@ -11,8 +11,8 @@ android {
         applicationId "vip.yazilim.p2g.android"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 12
-        versionName "1.1.5"
+        versionCode 13
+        versionName "1.1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.debug
@@ -36,11 +36,9 @@ android {
     productFlavors {
         development {
             buildConfigField 'String', 'URL', '\"192.168.1.150\"'
-            buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-3940256099942544/1033173712---\"'
         }
         production {
             buildConfigField 'String', 'URL', '\"p2g.yazilim.vip\"'
-            buildConfigField 'String', 'INTERSTITIAL_AD_ID', '\"ca-app-pub-9988109607477807/6243177559\"'
         }
     }
 }
@@ -115,7 +113,7 @@ dependencies {
     implementation 'com.github.stfalcon:chatkit:0.3.3'
 
     // Ad SDK
-    implementation 'com.google.android.gms:play-services-ads:19.0.1'
+    implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
     // Event Bus
     implementation 'org.greenrobot:eventbus:3.2.0'

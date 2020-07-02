@@ -26,7 +26,6 @@ import vip.yazilim.p2g.android.api.Api.queue
 import vip.yazilim.p2g.android.constant.GeneralConstants
 import vip.yazilim.p2g.android.entity.Room
 import vip.yazilim.p2g.android.entity.User
-import vip.yazilim.p2g.android.service.LogoutService
 import vip.yazilim.p2g.android.service.UserWebSocketService
 import vip.yazilim.p2g.android.ui.main.MainViewModel
 import vip.yazilim.p2g.android.ui.main.MainViewModelFactory
@@ -56,8 +55,6 @@ class MainActivity : BaseActivity(),
 
     override fun onStart() {
         super.onStart()
-
-        startService(Intent(baseContext, LogoutService::class.java))
 
         user?.id?.let {
             val intent = Intent(this@MainActivity, UserWebSocketService::class.java)
@@ -159,13 +156,13 @@ class MainActivity : BaseActivity(),
                     roomIntent.putExtra("roomUser", it.roomUser)
                     startActivity(roomIntent)
                 }, onFailure = { mDialogView.showSnackBarError(it) })
+        }
 
-            // Click cancel
-            mDialogView.dialog_cancel_button.setOnClickListener {
-                mAlertDialog?.cancel()
-                roomPasswordEditText.clearFocus()
-                applicationContext?.closeKeyboard()
-            }
+        // Click cancel
+        mDialogView.dialog_cancel_button.setOnClickListener {
+            mAlertDialog?.cancel()
+            roomPasswordEditText.clearFocus()
+            applicationContext?.closeKeyboard()
         }
     }
 }

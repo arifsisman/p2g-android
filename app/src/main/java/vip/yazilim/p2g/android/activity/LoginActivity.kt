@@ -1,9 +1,10 @@
 package vip.yazilim.p2g.android.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import com.google.android.gms.ads.MobileAds
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
@@ -13,10 +14,10 @@ import vip.yazilim.p2g.android.Play2GetherApplication
 import vip.yazilim.p2g.android.R
 import vip.yazilim.p2g.android.api.Api
 import vip.yazilim.p2g.android.api.Api.queue
+import vip.yazilim.p2g.android.constant.ColorCodes
 import vip.yazilim.p2g.android.constant.SpotifyConstants
 import vip.yazilim.p2g.android.entity.User
 import vip.yazilim.p2g.android.util.helper.TAG
-import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showSnackBarError
 import vip.yazilim.p2g.android.util.helper.UIHelper.Companion.showToastLong
 
 
@@ -30,7 +31,6 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        MobileAds.initialize(this)
         supportActionBar?.hide()
 
         AndroidThreeTen.init(this)
@@ -50,11 +50,14 @@ class LoginActivity : BaseActivity() {
                         Play2GetherApplication.userName = it.name
                         Play2GetherApplication.userId = it.id
                         getUserModel(it)
-                    }, onFailure = { container.showSnackBarError(it) })
+                    },
+                    onFailure = {
+                        failureHandler(it)
+                    })
             } else {
                 response.error?.let {
                     Log.d(TAG, it)
-                    container.showSnackBarError(it)
+                    failureHandler(it)
                 }
             }
         }
@@ -78,7 +81,7 @@ class LoginActivity : BaseActivity() {
                     startActivity(roomIntent)
                 }
             },
-            onFailure = { container.showSnackBarError(it) }
+            onFailure = { failureHandler(it) }
         )
     }
 
@@ -98,5 +101,15 @@ class LoginActivity : BaseActivity() {
             SpotifyConstants.AUTH_TOKEN_REQUEST_CODE,
             request
         )
+    }
+
+    private fun failureHandler(msg: String) {
+        val snack: Snackbar? = Snackbar.make(container, msg, Snackbar.LENGTH_INDEFINITE)
+        snack?.setAction(R.string.retry) { getAccessTokenFromSpotify() }
+        snack?.setActionTextColor(Color.WHITE)
+        snack?.setTextColor(Color.WHITE)
+        val snackView = snack?.view
+        snackView?.setBackgroundColor(Color.parseColor(ColorCodes.ERROR))
+        snack?.show()
     }
 }

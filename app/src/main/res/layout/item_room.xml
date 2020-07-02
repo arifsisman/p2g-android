@@ -62,12 +62,14 @@
             android:id="@+id/roomName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingEnd="60dp"
             android:singleLine="true"
+            android:text="@string/placeholder_room_name"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/placeholder_room_name" />
+            tools:ignore="RtlSymmetry" />
 
         <TextView
             android:id="@+id/roomOwner"
@@ -129,8 +131,8 @@
                 android:id="@+id/song_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="60dp"
                 android:layout_marginTop="5dp"
+                android:paddingStart="60dp"
                 android:singleLine="true"
                 android:text="@string/placeholder_song_name"
                 app:layout_constraintTop_toTopOf="@+id/song_image"

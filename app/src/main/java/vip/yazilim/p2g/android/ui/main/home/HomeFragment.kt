@@ -144,10 +144,10 @@ class HomeFragment : FragmentBase(R.layout.fragment_home) {
 
     private fun refreshRoomsEvent() = Api.client.getRoomModels().queue(
         onSuccess = {
+            swipe_refresh_container.isRefreshing = false
             viewModel.roomModels.postValue(it)
-            swipe_refresh_container.isRefreshing = false
         }, onFailure = {
-            viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
             swipe_refresh_container.isRefreshing = false
+            viewModel.onMessageError.postValue(resources.getString(R.string.err_room_refresh))
         })
 }
